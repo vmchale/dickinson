@@ -12,10 +12,12 @@ import           Language.Dickinson.Name
 --
 -- probability-wise, might be good to look at Hakaru, monadic probability
 -- especially Hakaru (basically monadic text for types idk)
+--
+-- interpolation might be nice
 
-type Dickinson a = [Declaration a]
+type Dickinson name a = [Declaration name a]
 
-data Declaration a = Define a (Name a) (Expression a)
+data Declaration name a = Define a (name a) (Expression a)
 
 data Expression a = Literal a !T.Text
                   | Choice a !Double !T.Text

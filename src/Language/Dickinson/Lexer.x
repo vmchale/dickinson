@@ -3,6 +3,9 @@
                                     , runAlex
                                     , AlexPosn (..)
                                     , Alex (..)
+                                    , Token (..)
+                                    , Keyword (..)
+                                    , Sym (..)
                                     ) where
 
 import Control.Arrow ((&&&))
@@ -27,6 +30,9 @@ tokens :-
 
     -- keywords
     <0> ":def"                     { mkKeyword Def }
+    <0> ":let"                     { mkKeyword Let }
+    <0> ":branch"                  { mkKeyword Branch }
+    <0> ":match"                   { mkKeyword Match }
 
 { 
 
@@ -52,6 +58,9 @@ data Sym = LParen
          deriving (Eq)
 
 data Keyword = Def
+             | Let
+             | Branch
+             | Match
              deriving (Eq)
 
 data Token a = EOF { loc :: a }
