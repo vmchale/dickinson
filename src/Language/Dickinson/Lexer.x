@@ -1,17 +1,18 @@
 {
     module Language.Dickinson.Lexer ( alexMonadScan
                                     , runAlex
+                                    , lexDickinson
                                     , AlexPosn (..)
                                     , Alex (..)
-                                    , LexerError
                                     ) where
 
+import Control.Arrow ((&&&))
 import qualified Data.ByteString.Lazy as BSL
 import Data.Text as T
 
 }
 
-%wrapper "monadUserState-bytestring"
+%wrapper "monad-bytestring"
 
 $digit = [0-9]
 
@@ -30,7 +31,29 @@ tokens :-
 
 { 
 
+alex :: a -> Alex a
+alex = pure
+
+gets_alex :: (AlexState -> a) -> Alex a
+gets_alex f = Alex (Right . (id &&& f))
+
+get_pos :: Alex AlexPosn
+get_pos = gets_alex alex_pos
+
+alexEOF = EOF <$> get_pos
+
+tok f (p,_,s,_) len = f p (BSL.take len s)
+
+constructor c t = tok (\p _ -> alex $ c p t)
+
+mkKeyword = constructor TokKeyword
+
+data Sym = LParen
+         | RParen
+         deriving (Eq)
+
 data Keyword = Def
+             deriving (Eq)
 
 data Token a = EOF { loc :: a }
              | TokIdent { loc :: a, ident :: BSL.ByteString }
@@ -38,8 +61,19 @@ data Token a = EOF { loc :: a }
              | TokString { loc :: a, str :: T.Text }
              | TokMultilineString { loc :: a, str :: T.Text }
              | TokKeyword { loc :: a, kw :: Keyword }
-             | LineComment { loc :: a, comment :: BSL.ByteString }
-             | BlockComment { loc :: a, comment :: BSL.ByteString }
+             | TokLineComment { loc :: a, comment :: BSL.ByteString }
+             | TokBlockComment { loc :: a, comment :: BSL.ByteString }
+             | TokSym { loc :: a, sym :: Sym }
              deriving (Eq)
+
+loop :: Alex [Token AlexPosn]
+loop = do
+    tok' <- alexMonadScan
+    case tok' of
+        EOF{} -> pure []
+        _     -> (tok' :) <$> loop
+
+lexDickinson :: BSL.ByteString -> Either String [Token AlexPosn]
+lexDickinson = flip runAlex loop
 
 }
