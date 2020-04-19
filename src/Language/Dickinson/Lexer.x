@@ -29,10 +29,11 @@ tokens :-
     <0> "#".*                      { tok (\p s -> alex $ TokLineComment p s) }
 
     -- keywords
-    <0> ":def"                     { mkKeyword Def }
-    <0> ":let"                     { mkKeyword Let }
-    <0> ":branch"                  { mkKeyword Branch }
-    <0> ":match"                   { mkKeyword Match }
+    <0> ":def"                     { mkKeyword KwDef }
+    <0> ":let"                     { mkKeyword KwLet }
+    <0> ":branch"                  { mkKeyword KwBranch }
+    <0> ":match"                   { mkKeyword KwMatch }
+    <0> ":oneof"                   { mkKeyword KwOneof }
 
 { 
 
@@ -57,10 +58,11 @@ data Sym = LParen
          | RParen
          deriving (Eq)
 
-data Keyword = Def
-             | Let
-             | Branch
-             | Match
+data Keyword = KwDef
+             | KwLet
+             | KwBranch
+             | KwMatch
+             | KwOneof
              deriving (Eq)
 
 data Token a = EOF { loc :: a }

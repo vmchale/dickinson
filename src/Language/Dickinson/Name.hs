@@ -3,7 +3,7 @@ module Language.Dickinson.Name ( Name (..)
 
 import qualified Data.Text as T
 
-newtype Unique = Unique Word
+newtype Unique = Unique Int
     deriving (Eq, Ord)
 
 data Name a = Name { name   :: T.Text

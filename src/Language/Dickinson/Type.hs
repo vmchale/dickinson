@@ -3,6 +3,7 @@ module Language.Dickinson.Type ( Dickinson
                                , Expression (..)
                                ) where
 
+import           Data.List.NonEmpty      (NonEmpty)
 import qualified Data.Text               as T
 import           Language.Dickinson.Name
 
@@ -14,11 +15,17 @@ import           Language.Dickinson.Name
 -- especially Hakaru (basically monadic text for types idk)
 --
 -- interpolation might be nice
+--
+-- "repeat" function?
+--
+-- -> define discrete probability function tho
+-- -> might want a real type system
 
 type Dickinson name a = [Declaration name a]
 
-data Declaration name a = Define a (name a) (Expression a)
+data Declaration name a = Define a (name a) (Expression name a)
 
-data Expression a = Literal a !T.Text
-                  | Choice a !Double !T.Text
+data Expression name a = Literal a !T.Text
+                       | Choice a !(NonEmpty (Double, Expression name a))
+                       | Let a ![(name a, Expression name a)] !(Expression name a)
                   -- Generalize?

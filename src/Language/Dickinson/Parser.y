@@ -24,7 +24,8 @@ import Language.Dickinson.Type
     lparen { TokSym $$ LParen }
     rparen { TokSym $$ RParen }
 
-    def { TokKeyword $$ Def }
+    def { TokKeyword $$ KwDef }
+    let { TokKeyword $$ KwLet }
 
     ident { $$@(TokIdent _ _) }
 
@@ -48,7 +49,7 @@ Declaration :: { Declaration PreName AlexPosn }
 Name :: { PreName AlexPosn }
      : ident { PreName (loc $1) (decodeUtf8 $ BSL.toStrict $ ident $1) }
 
-Expression :: { Expression AlexPosn }
+Expression :: { Expression PreName AlexPosn }
            : stringLiteral { Literal (loc $1) (str $1) }
 
 {
