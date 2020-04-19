@@ -11,11 +11,12 @@ import           Language.Dickinson.Name
 -- "agreement"
 --
 -- probability-wise, might be good to look at Hakaru, monadic probability
--- especially
+-- especially Hakaru (basically monadic text for types idk)
 
 type Dickinson a = [Declaration a]
 
-data Declaration a = Declaration (Name a) (Expression a)
+data Declaration a = Define a (Name a) (Expression a)
 
 data Expression a = Literal a !T.Text
                   | Choice a !Double !T.Text
+                  -- Generalize?

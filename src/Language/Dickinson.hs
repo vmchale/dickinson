@@ -1,4 +1,4 @@
-module Language.Dickinson ( lexDickinson
+module Language.Dickinson ( parse
                           ) where
 
-import           Language.Dickinson.Lexer
+import           Language.Dickinson.Parser

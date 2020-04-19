@@ -1,7 +1,6 @@
 {
     module Language.Dickinson.Lexer ( alexMonadScan
                                     , runAlex
-                                    , lexDickinson
                                     , AlexPosn (..)
                                     , Alex (..)
                                     ) where
@@ -65,15 +64,5 @@ data Token a = EOF { loc :: a }
              | TokBlockComment { loc :: a, comment :: BSL.ByteString }
              | TokSym { loc :: a, sym :: Sym }
              deriving (Eq)
-
-loop :: Alex [Token AlexPosn]
-loop = do
-    tok' <- alexMonadScan
-    case tok' of
-        EOF{} -> pure []
-        _     -> (tok' :) <$> loop
-
-lexDickinson :: BSL.ByteString -> Either String [Token AlexPosn]
-lexDickinson = flip runAlex loop
 
 }
