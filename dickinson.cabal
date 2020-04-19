@@ -29,7 +29,7 @@ library
     default-language:   Haskell2010
     ghc-options:        -Wall
     build-depends:
-        base >=4.3 && <5,
+        base >=4.9 && <5,
         bytestring -any,
         text -any,
         array,

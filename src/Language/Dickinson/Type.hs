@@ -16,9 +16,6 @@ import           Language.Dickinson.Name
 --
 -- interpolation might be nice
 --
--- "repeat" function?
---
--- -> define discrete probability function tho
 -- -> might want a real type system
 
 type Dickinson name a = [Declaration name a]
@@ -28,4 +25,3 @@ data Declaration name a = Define a (name a) (Expression name a)
 data Expression name a = Literal a !T.Text
                        | Choice a !(NonEmpty (Double, Expression name a))
                        | Let a ![(name a, Expression name a)] !(Expression name a)
-                  -- Generalize?
