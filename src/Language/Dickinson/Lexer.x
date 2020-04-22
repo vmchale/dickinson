@@ -37,11 +37,10 @@ tokens :-
     <0> \=                         { mkSym SymEq }
 
     -- keywords
-    <0> ":def"                     { mkKeyword KwDef }
-    <0> ":let"                     { mkKeyword KwLet }
-    <0> ":branch"                  { mkKeyword KwBranch }
-    <0> ":match"                   { mkKeyword KwMatch }
-    <0> ":oneof"                   { mkKeyword KwOneof }
+    <0> "let"                      { mkKeyword KwLet }
+    <0> "branch"                   { mkKeyword KwBranch }
+    <0> "match"                    { mkKeyword KwMatch }
+    <0> "oneof"                    { mkKeyword KwOneof }
 
     <0> "type"                     { mkKeyword KwType }
 
@@ -79,8 +78,7 @@ data Sym = LParen
          | VBar
          deriving (Eq)
 
-data Keyword = KwDef
-             | KwLet
+data Keyword = KwLet
              | KwBranch
              | KwMatch
              | KwOneof
