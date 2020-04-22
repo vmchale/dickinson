@@ -31,7 +31,8 @@ data BuiltinType = TyText
 data Type name tyname a = SumType a [tyname a]
                         | RecordType a [(name a, tyname a)]
                         | TyVar a (tyname a)
-                        | TyBuildtin a !BuiltinType
+                        | TyBuiltin a !BuiltinType
+                        | FunType a (Type name tyname a) (Type name tyname a)
 
 data Expression tyname name a = Literal a !T.Text
                               | Choice a !(NonEmpty (Double, Expression tyname name a))
