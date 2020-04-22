@@ -11,6 +11,7 @@
 import Control.Arrow ((&&&))
 import qualified Data.ByteString.Lazy as BSL
 import Data.Text as T
+import Language.Dickinson.Type
 
 }
 
@@ -21,12 +22,19 @@ $digit = [0-9]
 @escape_str = \\ [\\\"]
 
 -- single-line string
+-- TODO: interpolations?
 @string = \" ([^\"\\] | @escape_str)* \"
 
 tokens :-
 
     <0> $white+                    ; 
-    <0> "#".*                      { tok (\p s -> alex $ TokLineComment p s) }
+    <0> ";".*                      { tok (\p s -> alex $ TokLineComment p s) }
+
+    <0> ":"                        { mkSym Colon }
+    <0> \(                         { mkSym LParen }
+    <0> \)                         { mkSym RParen }
+    <0> "|"                        { mkSym VBar }
+    <0> \=                         { mkSym SymEq }
 
     -- keywords
     <0> ":def"                     { mkKeyword KwDef }
@@ -34,6 +42,12 @@ tokens :-
     <0> ":branch"                  { mkKeyword KwBranch }
     <0> ":match"                   { mkKeyword KwMatch }
     <0> ":oneof"                   { mkKeyword KwOneof }
+
+    <0> "type"                     { mkKeyword KwType }
+
+    -- builtin types
+    <0> "text"                     { mkTyBuiltin TyText }
+    <0> "probability"              { mkTyBuiltin TyProbability }
 
 { 
 
@@ -54,8 +68,15 @@ constructor c t = tok (\p _ -> alex $ c p t)
 
 mkKeyword = constructor TokKeyword
 
+mkTyBuiltin = constructor TokTyBuiltin
+
+mkSym = constructor TokSym
+
 data Sym = LParen
          | RParen
+         | Colon
+         | SymEq
+         | VBar
          deriving (Eq)
 
 data Keyword = KwDef
@@ -63,6 +84,7 @@ data Keyword = KwDef
              | KwBranch
              | KwMatch
              | KwOneof
+             | KwType
              deriving (Eq)
 
 data Token a = EOF { loc :: a }
@@ -74,6 +96,7 @@ data Token a = EOF { loc :: a }
              | TokLineComment { loc :: a, comment :: BSL.ByteString }
              | TokBlockComment { loc :: a, comment :: BSL.ByteString }
              | TokSym { loc :: a, sym :: Sym }
+             | TokTyBuiltin { loc :: a, tybuiltin :: BuiltinType }
              deriving (Eq)
 
 }
