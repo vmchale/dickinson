@@ -23,8 +23,8 @@ import Language.Dickinson.Type
     
     lparen { TokSym $$ LParen }
     rparen { TokSym $$ RParen }
-    eq { TokSym $$ SymEq }
 
+    def { TokKeyword $$ KwDef }
     let { TokKeyword $$ KwLet }
 
     ident { $$@(TokIdent _ _) }
@@ -40,11 +40,14 @@ many(p)
 some(p)
     : many(p) p { $2 :| $1 }
 
+parens(p)
+    : lparen p rparen { $2 }
+
 Dickinson :: { Dickinson PreTyName PreName AlexPosn }
           : many(Declaration) { $1 }
 
 Declaration :: { Declaration PreTyName PreName AlexPosn }
-            : Name eq Expression { Define $2 $1 $3 }
+            : def parens(Name) parens(Expression) { Define $1 $2 $3 }
 
 Name :: { PreName AlexPosn }
      : ident { PreName (loc $1) (decodeUtf8 $ BSL.toStrict $ ident $1) }
