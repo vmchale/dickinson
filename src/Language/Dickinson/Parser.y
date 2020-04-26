@@ -47,7 +47,7 @@ parens(p)
     : lparen p rparen { $2 }
 
 Dickinson :: { Dickinson Name AlexPosn }
-          : many(Declaration) { $1 }
+          : many(parens(Declaration)) { $1 }
 
 Declaration :: { Declaration Name AlexPosn }
             : def parens(Name) parens(Expression) { Define $1 $2 $3 }
