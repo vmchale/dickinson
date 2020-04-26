@@ -29,16 +29,12 @@ tokens :-
     <0> $white+                    ; 
     <0> ";".*                      { tok (\p s -> alex $ TokLineComment p s) }
 
-    <0> ":"                        { mkSym Colon }
     <0> \(                         { mkSym LParen }
     <0> \)                         { mkSym RParen }
-    <0> "|"                        { mkSym VBar }
-    <0> \=                         { mkSym SymEq }
 
     -- keywords
     <0> ":let"                     { mkKeyword KwLet }
     <0> ":branch"                  { mkKeyword KwBranch }
-    <0> ":match"                   { mkKeyword KwMatch }
     <0> ":oneof"                   { mkKeyword KwOneof }
 
 { 
@@ -64,15 +60,11 @@ mkSym = constructor TokSym
 
 data Sym = LParen
          | RParen
-         | Colon
-         | SymEq
-         | VBar
          deriving (Eq)
 
 data Keyword = KwDef
              | KwLet
              | KwBranch
-             | KwMatch
              | KwOneof
              deriving (Eq)
 

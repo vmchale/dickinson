@@ -1,6 +1,6 @@
 # dickinson
 
-Dickinson is a text-generation language.
+Dickinson is a toy text-generation language.
 
 ## Technical
 

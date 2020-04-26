@@ -26,6 +26,8 @@ import Language.Dickinson.Type
 
     def { TokKeyword $$ KwDef }
     let { TokKeyword $$ KwLet }
+    branch { TokKeyword $$ KwBranch }
+    oneof { TokKeyword $$ KwOneof }
 
     ident { $$@(TokIdent _ _) }
 
