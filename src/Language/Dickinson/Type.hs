@@ -12,5 +12,6 @@ data Declaration name a = Define a (name a) (Expression name a)
 
 data Expression name a = Literal a !T.Text
                        | Choice a !(NonEmpty (Double, Expression name a))
-                       | Let a ![(name a, Expression name a)] !(Expression name a)
+                       | Let a !(name a, Expression name a) !(Expression name a)
                        | Var a (name a)
+                       -- TODO: concat
