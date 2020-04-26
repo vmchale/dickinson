@@ -11,7 +11,6 @@
 import Control.Arrow ((&&&))
 import qualified Data.ByteString.Lazy as BSL
 import Data.Text as T
-import Language.Dickinson.Type
 
 }
 
@@ -42,12 +41,6 @@ tokens :-
     <0> ":match"                   { mkKeyword KwMatch }
     <0> ":oneof"                   { mkKeyword KwOneof }
 
-    <0> "type"                     { mkKeyword KwType }
-
-    -- builtin types
-    <0> "text"                     { mkTyBuiltin TyText }
-    <0> "probability"              { mkTyBuiltin TyProbability }
-
 { 
 
 alex :: a -> Alex a
@@ -67,8 +60,6 @@ constructor c t = tok (\p _ -> alex $ c p t)
 
 mkKeyword = constructor TokKeyword
 
-mkTyBuiltin = constructor TokTyBuiltin
-
 mkSym = constructor TokSym
 
 data Sym = LParen
@@ -83,7 +74,6 @@ data Keyword = KwDef
              | KwBranch
              | KwMatch
              | KwOneof
-             | KwType
              deriving (Eq)
 
 data Token a = EOF { loc :: a }
@@ -95,7 +85,6 @@ data Token a = EOF { loc :: a }
              | TokLineComment { loc :: a, comment :: BSL.ByteString }
              | TokBlockComment { loc :: a, comment :: BSL.ByteString }
              | TokSym { loc :: a, sym :: Sym }
-             | TokTyBuiltin { loc :: a, tybuiltin :: BuiltinType }
              deriving (Eq)
 
 }

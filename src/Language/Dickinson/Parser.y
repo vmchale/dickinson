@@ -43,16 +43,16 @@ some(p)
 parens(p)
     : lparen p rparen { $2 }
 
-Dickinson :: { Dickinson PreTyName PreName AlexPosn }
+Dickinson :: { Dickinson PreName AlexPosn }
           : many(Declaration) { $1 }
 
-Declaration :: { Declaration PreTyName PreName AlexPosn }
+Declaration :: { Declaration PreName AlexPosn }
             : def parens(Name) parens(Expression) { Define $1 $2 $3 }
 
 Name :: { PreName AlexPosn }
      : ident { PreName (loc $1) (decodeUtf8 $ BSL.toStrict $ ident $1) }
 
-Expression :: { Expression PreTyName PreName AlexPosn }
+Expression :: { Expression PreName AlexPosn }
            : stringLiteral { Literal (loc $1) (str $1) }
 
 {
@@ -66,9 +66,8 @@ data ParseError a = Unexpected (Token a)
 type Parse = ExceptT (ParseError AlexPosn) Alex
 
 data PreName a = PreName a !T.Text
-data PreTyName a = PreTyName a !T.Text
 
-parse :: BSL.ByteString -> Either (ParseError AlexPosn) (Dickinson PreTyName PreName AlexPosn)
+parse :: BSL.ByteString -> Either (ParseError AlexPosn) (Dickinson PreName AlexPosn)
 parse str = liftErr $ runAlex str (runExceptT parseDickinson)
     where liftErr (Left err) = Left (LexErr err)
           liftErr (Right (Left err)) = Left err
