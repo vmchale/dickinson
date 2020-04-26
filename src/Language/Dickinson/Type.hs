@@ -6,17 +6,6 @@ module Language.Dickinson.Type ( Dickinson
 import           Data.List.NonEmpty (NonEmpty)
 import qualified Data.Text          as T
 
--- lol functorial modules
--- also fuck I need English (?) grammatical features -> at the very least,
--- "agreement" -> focus on English tbh
---
--- probability-wise, might be good to look at Hakaru, monadic probability
--- especially Hakaru (basically monadic text for types idk)
---
--- interpolation might be nice
---
--- -> might want a real type system
-
 type Dickinson name a = [Declaration name a]
 
 data Declaration name a = Define a (name a) (Expression name a)
