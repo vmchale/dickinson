@@ -9,6 +9,7 @@ import qualified Data.ByteString.Lazy as BSL
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Language.Dickinson.Lexer
+import Language.Dickinson.Name hiding (loc)
 import Language.Dickinson.Type
 
 }
@@ -45,16 +46,16 @@ some(p)
 parens(p)
     : lparen p rparen { $2 }
 
-Dickinson :: { Dickinson PreName AlexPosn }
+Dickinson :: { Dickinson Name AlexPosn }
           : many(Declaration) { $1 }
 
-Declaration :: { Declaration PreName AlexPosn }
+Declaration :: { Declaration Name AlexPosn }
             : def parens(Name) parens(Expression) { Define $1 $2 $3 }
 
-Name :: { PreName AlexPosn }
-     : ident { PreName (loc $1) (decodeUtf8 $ BSL.toStrict $ ident $1) }
+Name :: { Name AlexPosn }
+     : ident { ident $1 }
 
-Expression :: { Expression PreName AlexPosn }
+Expression :: { Expression Name AlexPosn }
            : stringLiteral { Literal (loc $1) (str $1) }
 
 {
@@ -67,9 +68,7 @@ data ParseError a = Unexpected (Token a)
 
 type Parse = ExceptT (ParseError AlexPosn) Alex
 
-data PreName a = PreName a !T.Text
-
-parse :: BSL.ByteString -> Either (ParseError AlexPosn) (Dickinson PreName AlexPosn)
+parse :: BSL.ByteString -> Either (ParseError AlexPosn) (Dickinson Name AlexPosn)
 parse str = liftErr $ runAlex str (runExceptT parseDickinson)
     where liftErr (Left err) = Left (LexErr err)
           liftErr (Right (Left err)) = Left err

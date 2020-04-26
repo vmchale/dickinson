@@ -1,4 +1,7 @@
+{-# LANGUAGE DeriveFunctor #-}
+
 module Language.Dickinson.Name ( Name (..)
+                               , Unique (..)
                                , NameEnv
                                ) where
 
@@ -11,7 +14,7 @@ newtype Unique = Unique Int
 data Name a = Name { name   :: T.Text
                    , unique :: !Unique
                    , loc    :: a
-                   }
+                   } deriving (Functor)
 
 instance Eq (Name a) where
     (==) ~(Name _ u _) ~(Name _ u' _) = u == u'
