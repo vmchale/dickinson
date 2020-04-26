@@ -11,12 +11,15 @@
 import Control.Arrow ((&&&))
 import qualified Data.ByteString.Lazy as BSL
 import Data.Text as T
+import Language.Dickinson.Name
 
 }
 
-%wrapper "monad-bytestring"
+%wrapper "monadUserState-bytestring"
 
 $digit = [0-9]
+
+$latin = [a-zA-Z]
 
 @escape_str = \\ [\\\"]
 
@@ -28,6 +31,8 @@ tokens :-
 
     <0> $white+                    ; 
     <0> ";".*                      { tok (\p s -> alex $ TokLineComment p s) }
+
+    <0> $latin+                    { tok (\p s -> alex $ TokIdent p s) }
 
     <0> \(                         { mkSym LParen }
     <0> \)                         { mkSym RParen }
@@ -41,6 +46,10 @@ tokens :-
 
 alex :: a -> Alex a
 alex = pure
+
+mod_ust :: (AlexUserState -> AlexUserState) -> Alex ()
+mod_ust f = Alex (Right . (go &&& (const ())))
+    where go s = s { alex_ust = f (alex_ust s) }
 
 gets_alex :: (AlexState -> a) -> Alex a
 gets_alex f = Alex (Right . (id &&& f))
@@ -57,6 +66,12 @@ constructor c t = tok (\p _ -> alex $ c p t)
 mkKeyword = constructor TokKeyword
 
 mkSym = constructor TokSym
+
+-- "inside out - track ints by name!"
+type AlexUserState = (Int, NameEnv AlexPosn)
+
+alexInitUserState :: AlexUserState
+alexInitUserState = (0, mempty)
 
 data Sym = LParen
          | RParen

@@ -1,7 +1,9 @@
 module Language.Dickinson.Name ( Name (..)
+                               , NameEnv
                                ) where
 
-import qualified Data.Text as T
+import qualified Data.IntMap as IM
+import qualified Data.Text   as T
 
 newtype Unique = Unique Int
     deriving (Eq, Ord)
@@ -16,3 +18,5 @@ instance Eq (Name a) where
 
 instance Ord (Name a) where
     compare ~(Name _ u _) ~(Name _ u' _) = compare u u'
+
+type NameEnv a = IM.IntMap (Name a)
