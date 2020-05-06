@@ -39,7 +39,13 @@ deleteM (Unique i) = modify (second (IM.delete i))
 -- todo: clone function
 
 renameDickinson :: Dickinson Name a -> Dickinson Name a
-renameDickinson = id
+renameDickinson ds = runRenameM $ traverse renameDeclarationM ds
+
+renameDeclarationM :: Declaration Name a -> RenameM a (Declaration Name a)
+renameDeclarationM (Define p n@(Name _ u _) e) = do
+    e' <- renameExpressionM e
+    insertM u
+    pure $ Define p n e'
 
 renameExpressionM :: Expression Name a -> RenameM a (Expression Name a)
 renameExpressionM e@Literal{} = pure e
