@@ -2,7 +2,9 @@ module Language.Dickinson.Rename ( renameDickinson
                                  , RenameM
                                  ) where
 
+import           Control.Monad           (forM_)
 import           Control.Monad.State     (State, evalState, gets, modify)
+import           Data.Bifunctor          (second)
 import qualified Data.IntMap             as IM
 import qualified Data.List.NonEmpty      as NE
 import           Language.Dickinson.Name
@@ -22,7 +24,6 @@ replaceVar ~pre@(Name n (Unique i) l) = do
         Just j  -> pure $ Name n (Unique j) l
         Nothing -> pure pre
 
--- TODO: deleteM
 insertM :: Unique -> RenameM a ()
 insertM = modify . insertMod
     where insertMod :: Unique -> Renames -> Renames
@@ -30,6 +31,10 @@ insertM = modify . insertMod
             if i `IM.member` rs
                 then (m + 1, IM.insert i (m+1) rs)
                 else (1 + max i m, rs)
+
+deleteM :: Unique -> RenameM a ()
+deleteM (Unique i) = modify (second (IM.delete i))
+-- don't bother deleting max; probably won't run out
 
 -- todo: clone function
 
@@ -45,3 +50,11 @@ renameExpressionM (Choice p branches) = Choice p <$> branches'
                 in let es = fmap snd branches
                     in NE.zip ds <$> traverse renameExpressionM es
 renameExpressionM (Concat p es) = Concat p <$> traverse renameExpressionM es
+renameExpressionM (Let p ns e) = do
+    newBinds <- traverse renameExpressionM (snd <$> ns)
+    forM_ (fst <$> ns) $ \(Name _ u _) ->
+        insertM u
+    e' <- renameExpressionM e
+    forM_ (fst <$> ns) $ \(Name _ u _) ->
+        deleteM u
+    pure $ Let p (NE.zip (fst <$> ns) (newBinds)) e'
