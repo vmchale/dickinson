@@ -28,11 +28,14 @@ import Language.Dickinson.Type
     lparen { TokSym $$ LParen }
     rparen { TokSym $$ RParen }
     vbar { TokSym $$ VBar }
+    lsqbracket { TokSym $$ LSqBracket }
+    rsqbracket { TokSym $$ RSqBracket }
 
     def { TokKeyword $$ KwDef }
     let { TokKeyword $$ KwLet }
     branch { TokKeyword $$ KwBranch }
     oneof { TokKeyword $$ KwOneof }
+    balance { TokKeyword $$ KwBalance }
 
     ident { $$@(TokIdent _ _) }
 
@@ -52,6 +55,9 @@ some(p)
 parens(p)
     : lparen p rparen { $2 }
 
+brackets(p)
+    : lsqbracket p rsqbracket { $2 }
+
 Dickinson :: { Dickinson Name AlexPosn }
           : many(parens(Declaration)) { $1 }
 
@@ -61,10 +67,15 @@ Declaration :: { Declaration Name AlexPosn }
 Name :: { Name AlexPosn }
      : ident { ident $1 }
 
+Bind :: { (Name AlexPosn, Expression Name AlexPosn) }
+     : Name Expression { ($1, $2) }
+
 Expression :: { Expression Name AlexPosn }
            : stringLiteral { Literal (loc $1) (str $1) }
            | branch some(parens(WeightedLeaf)) { Choice $1 $2 }
            | oneof some(parens(Leaf)) { Choice $1 (weight $2) }
+           | let some(brackets(Bind)) parens(Expression) { Let $1 $2 $3 }
+           | ident { Var (loc $1) (ident $1) }
 
 WeightedLeaf :: { (Double, Expression Name AlexPosn) }
              : vbar num Expression { ($2, $3) }

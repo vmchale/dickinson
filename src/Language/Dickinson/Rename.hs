@@ -44,3 +44,4 @@ renameExpressionM (Choice p branches) = Choice p <$> branches'
             let ds = fmap fst branches
                 in let es = fmap snd branches
                     in NE.zip ds <$> traverse renameExpressionM es
+renameExpressionM (Concat p es) = Concat p <$> traverse renameExpressionM es

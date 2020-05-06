@@ -10,8 +10,9 @@ main :: IO ()
 main =
     defaultMain $
         testGroup "Parser tests"
-            [ lexNoError "test/data/const.dck"
+            [ lexNoError "test/data/let.dck"
             , parseNoError "test/data/const.dck"
+            , parseNoError "test/data/let.dck"
             ]
 
 parseNoError :: FilePath -> TestTree

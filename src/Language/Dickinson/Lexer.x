@@ -46,12 +46,16 @@ tokens :-
     <0> \(                         { mkSym LParen }
     <0> \)                         { mkSym RParen }
     <0> \|                         { mkSym VBar }
+    <0> \<                         { mkSym LBracket }
+    <0> \[                         { mkSym LSqBracket }
+    <0> \]                         { mkSym RSqBracket }
 
     -- keywords
     <0> ":let"                     { mkKeyword KwLet }
     <0> ":branch"                  { mkKeyword KwBranch }
     <0> ":oneof"                   { mkKeyword KwOneof }
     <0> ":def"                     { mkKeyword KwDef }
+    <0> ":balance"                 { mkKeyword KwBalance }
 
     -- strings
     <0> @string                    { tok (\p s -> alex $ TokString p (mkShort s)) }
@@ -114,12 +118,16 @@ alexInitUserState = (0, mempty, mempty)
 data Sym = LParen
          | RParen
          | VBar
+         | LBracket 
+         | LSqBracket
+         | RSqBracket
          deriving (Eq)
 
 data Keyword = KwDef
              | KwLet
              | KwBranch
              | KwOneof
+             | KwBalance
              deriving (Eq)
 
 data Token a = EOF { loc :: a }

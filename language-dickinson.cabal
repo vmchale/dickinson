@@ -36,7 +36,8 @@ library
         array,
         mtl,
         transformers,
-        containers
+        containers,
+        random
 
     if impl(ghc >=8.0)
         ghc-options:
