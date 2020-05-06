@@ -2,7 +2,7 @@ module Language.Dickinson.Rename ( renameDickinson
                                  , RenameM
                                  ) where
 
-import           Control.Monad.State     (State, gets, modify)
+import           Control.Monad.State     (State, evalState, gets, modify)
 import qualified Data.IntMap             as IM
 import qualified Data.List.NonEmpty      as NE
 import           Language.Dickinson.Name
@@ -11,6 +11,9 @@ import           Language.Dickinson.Type
 type Renames = (Int, IM.IntMap Int)
 
 type RenameM a = State Renames
+
+runRenameM :: RenameM a (f a) -> f a
+runRenameM = flip evalState (0, mempty)
 
 replaceVar :: Name a -> RenameM a (Name a)
 replaceVar ~pre@(Name n (Unique i) l) = do

@@ -1,0 +1,4 @@
+(:def branchFunction
+    (:branch
+        (| 1.0 "man")
+        (| 1.0 "woman")))
