@@ -1,4 +1,6 @@
 {
+
+    {-# LANGUAGE TupleSections #-}
     module Language.Dickinson.Parser ( parse
                                      , ParseError (..)
                                      ) where
@@ -22,7 +24,7 @@ import Language.Dickinson.Type
 %lexer { lift alexMonadScan >>= } { EOF _ }
 
 %token
-    
+
     lparen { TokSym $$ LParen }
     rparen { TokSym $$ RParen }
     vbar { TokSym $$ VBar }
@@ -62,11 +64,19 @@ Name :: { Name AlexPosn }
 Expression :: { Expression Name AlexPosn }
            : stringLiteral { Literal (loc $1) (str $1) }
            | branch some(parens(WeightedLeaf)) { Choice $1 $2 }
+           | oneof some(parens(Leaf)) { Choice $1 (weight $2) }
 
 WeightedLeaf :: { (Double, Expression Name AlexPosn) }
              : vbar num Expression { ($2, $3) }
 
+Leaf :: { Expression Name AlexPosn }
+     : vbar Expression { $2 }
+
 {
+
+weight :: NonEmpty (Expression name a) -> NonEmpty (Double, Expression name a)
+weight es = (recip, ) <$> es
+    where recip = 1 / (fromIntegral $ length es)
 
 parseError :: Token AlexPosn -> Parse a
 parseError = throwError . Unexpected
