@@ -1,6 +1,7 @@
 {
     module Language.Dickinson.Lexer ( alexMonadScan
                                     , runAlex
+                                    , lexDickinson
                                     , AlexPosn (..)
                                     , Alex (..)
                                     , Token (..)
@@ -23,6 +24,8 @@ import Language.Dickinson.Name
 
 $digit = [0-9]
 
+@num = ($digit+ \. $digit+) | ($digit+)
+
 $latin = [a-zA-Z]
 
 @escape_str = \\ [\\\"]
@@ -41,11 +44,19 @@ tokens :-
 
     <0> \(                         { mkSym LParen }
     <0> \)                         { mkSym RParen }
+    <0> \|                         { mkSym VBar }
 
     -- keywords
     <0> ":let"                     { mkKeyword KwLet }
     <0> ":branch"                  { mkKeyword KwBranch }
     <0> ":oneof"                   { mkKeyword KwOneof }
+    <0> ":def"                     { mkKeyword KwDef }
+
+    -- strings
+    <0> @string                    { tok (\p s -> alex $ TokString p (mkShort s)) }
+
+    -- numbers (as doubles)
+    <0> @num                       { tok (\p s -> alex $ TokDouble p (read $ T.unpack (mkShort s))) }
 
 {
 
@@ -101,6 +112,7 @@ alexInitUserState = (0, mempty, mempty)
 
 data Sym = LParen
          | RParen
+         | VBar
          deriving (Eq)
 
 data Keyword = KwDef
@@ -119,5 +131,17 @@ data Token a = EOF { loc :: a }
              | TokBlockComment { loc :: a, comment :: BSL.ByteString }
              | TokSym { loc :: a, sym :: Sym }
              deriving (Eq)
+
+-- for testing
+loop :: Alex [Token AlexPosn]
+loop = do
+    tok' <- alexMonadScan
+    case tok' of
+        EOF{} -> pure []
+        _ -> (tok' :) <$> loop
+
+-- | N.B. for testing
+lexDickinson :: BSL.ByteString -> Either String [Token AlexPosn]
+lexDickinson = flip runAlex loop
 
 }
