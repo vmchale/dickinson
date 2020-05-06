@@ -15,7 +15,7 @@ type Renames = (Int, IM.IntMap Int)
 type RenameM a = State Renames
 
 runRenameM :: RenameM a (f a) -> f a
-runRenameM = flip evalState (0, mempty)
+runRenameM = flip evalState undefined
 
 replaceVar :: Name a -> RenameM a (Name a)
 replaceVar ~pre@(Name n (Unique i) l) = do
@@ -56,11 +56,3 @@ renameExpressionM (Choice p branches) = Choice p <$> branches'
                 in let es = fmap snd branches
                     in NE.zip ds <$> traverse renameExpressionM es
 renameExpressionM (Concat p es) = Concat p <$> traverse renameExpressionM es
-renameExpressionM (Let p ns e) = do
-    newBinds <- traverse renameExpressionM (snd <$> ns)
-    forM_ (fst <$> ns) $ \(Name _ u _) ->
-        insertM u
-    e' <- renameExpressionM e
-    forM_ (fst <$> ns) $ \(Name _ u _) ->
-        deleteM u
-    pure $ Let p (NE.zip (fst <$> ns) (newBinds)) e'
