@@ -11,6 +11,7 @@
 
 import Control.Arrow ((&&&))
 import qualified Data.ByteString.Lazy as BSL
+import qualified Data.ByteString.Lazy.Char8 as ASCII
 import Data.Functor (($>))
 import qualified Data.IntMap as IM
 import qualified Data.Map as M
@@ -56,7 +57,7 @@ tokens :-
     <0> @string                    { tok (\p s -> alex $ TokString p (mkShort s)) }
 
     -- numbers (as doubles)
-    <0> @num                       { tok (\p s -> alex $ TokDouble p (read $ T.unpack (mkShort s))) }
+    <0> @num                       { tok (\p s -> alex $ TokDouble p (read $ ASCII.unpack s)) } -- shouldn't cause any problems cuz digits
 
 {
 

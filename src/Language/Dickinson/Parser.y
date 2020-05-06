@@ -6,6 +6,7 @@
 import Control.Monad.Except (ExceptT, runExceptT, throwError)
 import Control.Monad.Trans.Class (lift)
 import qualified Data.ByteString.Lazy as BSL
+import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Language.Dickinson.Lexer
@@ -24,6 +25,7 @@ import Language.Dickinson.Type
     
     lparen { TokSym $$ LParen }
     rparen { TokSym $$ RParen }
+    vbar { TokSym $$ VBar }
 
     def { TokKeyword $$ KwDef }
     let { TokKeyword $$ KwLet }
@@ -33,6 +35,8 @@ import Language.Dickinson.Type
     ident { $$@(TokIdent _ _) }
 
     stringLiteral { $$@(TokString _ _) }
+
+    num { TokDouble _ $$ }
 
 %%
 
@@ -50,13 +54,17 @@ Dickinson :: { Dickinson Name AlexPosn }
           : many(parens(Declaration)) { $1 }
 
 Declaration :: { Declaration Name AlexPosn }
-            : def parens(Name) parens(Expression) { Define $1 $2 $3 }
+            : def Name parens(Expression) { Define $1 $2 $3 }
 
 Name :: { Name AlexPosn }
      : ident { ident $1 }
 
 Expression :: { Expression Name AlexPosn }
            : stringLiteral { Literal (loc $1) (str $1) }
+           | branch some(parens(WeightedLeaf)) { Choice $1 $2 }
+
+WeightedLeaf :: { (Double, Expression Name AlexPosn) }
+             : vbar num Expression { ($2, $3) }
 
 {
 
