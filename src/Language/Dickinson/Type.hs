@@ -16,3 +16,6 @@ data Expression name a = Literal a !T.Text
                        | Var a (name a)
                        | Concat a !(NonEmpty (Expression name a))
                        -- TODO: normalize subtree
+
+data DickinsonTy = Text
+                 | Fun DickinsonTy DickinsonTy
