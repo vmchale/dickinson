@@ -21,7 +21,8 @@ replaceVar :: Name a -> RenameM a (Name a)
 replaceVar ~pre@(Name n (Unique i) l) = do
     rSt <- gets snd
     case IM.lookup i rSt of
-        Just j  -> pure $ Name n (Unique j) l
+        -- for recursive lookups rewrites
+        Just j  -> replaceVar $ Name n (Unique j) l
         Nothing -> pure pre
 
 insertM :: Unique -> RenameM a ()
