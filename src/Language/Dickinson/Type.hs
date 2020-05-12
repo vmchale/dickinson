@@ -1,6 +1,7 @@
 module Language.Dickinson.Type ( Dickinson
                                , Declaration (..)
                                , Expression (..)
+                               , DickinsonTy (..)
                                ) where
 
 import           Data.List.NonEmpty (NonEmpty)
@@ -19,3 +20,4 @@ data Expression name a = Literal a !T.Text
 
 data DickinsonTy = Text
                  | Fun DickinsonTy DickinsonTy
+                 -- lol don't even have functions
