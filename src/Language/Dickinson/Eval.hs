@@ -25,3 +25,5 @@ lookupName :: Name a -> EvalM Name a (Expression Name a)
 lookupName n@(Name _ (Unique u) l) = go =<< gets (IM.lookup u)
     where go Nothing  = throwError (UnfoundName l n)
           go (Just x) = pure x
+
+-- lol oulipo/to uppercase &c.
