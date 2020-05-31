@@ -39,7 +39,8 @@ library
         mtl,
         transformers,
         containers,
-        random
+        random,
+        prettyprinter
 
     if impl(ghc >=8.0)
         ghc-options:
