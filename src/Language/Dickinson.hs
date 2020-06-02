@@ -10,12 +10,9 @@ module Language.Dickinson ( parse
                           , renderStrict
                           , Pretty (pretty)
                           , putDoc
-                          -- * Helpers
-                          , prettyLazyText
                           ) where
 
 import           Data.Text.Prettyprint.Doc             (Pretty (pretty))
-import           Data.Text.Prettyprint.Doc.Ext
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc, renderLazy,
                                                         renderStrict)
 import           Language.Dickinson.Lexer

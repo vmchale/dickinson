@@ -1,10 +1,11 @@
 module Golden ( goldenTests
               ) where
 
-import qualified Data.ByteString.Lazy    as BSL
-import           Data.Text.Lazy.Encoding (encodeUtf8)
+import qualified Data.ByteString.Lazy            as BSL
+import           Data.Text.Lazy.Encoding         (encodeUtf8)
+import           Data.Text.Prettyprinter.Doc.Ext
 import           Language.Dickinson
-import           System.FilePath         ((-<.>))
+import           System.FilePath                 ((-<.>))
 import           Test.Tasty
 import           Test.Tasty.Golden
 
