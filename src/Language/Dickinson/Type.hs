@@ -8,9 +8,10 @@ module Language.Dickinson.Type ( Dickinson
 
 import           Data.Foldable             (toList)
 import           Data.List.NonEmpty        (NonEmpty)
+import           Data.Semigroup            ((<>))
 import qualified Data.Text                 as T
 import           Data.Text.Prettyprint.Doc (Doc, Pretty (pretty), brackets,
-                                            dquotes, hsep, parens, pipe, rangle,
+                                            dquotes, hsep, langle, parens, pipe,
                                             sep, (<+>))
 
 type Dickinson name a = [Declaration name a]
@@ -42,4 +43,4 @@ instance Pretty (name a) => Pretty (Expression name a) where
     pretty (Literal _ l) = dquotes $ pretty l
     pretty (Let _ ls e) = parens (":let" <+> (sep (toList $ fmap prettyLetLeaf ls)) <+> pretty e)
     pretty (Choice _ brs) = parens (":branch" <+> (sep (toList $ fmap prettyChoiceBranch brs)))
-    pretty (Concat _ es) = parens (pipe <> rangle <+> hsep (toList $ fmap pretty es))
+    pretty (Concat _ es) = parens (pipe <> langle <+> hsep (toList $ fmap pretty es))

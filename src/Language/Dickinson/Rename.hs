@@ -29,7 +29,7 @@ insertM :: Unique -> RenameM a ()
 insertM = modify . insertMod
     where insertMod :: Unique -> Renames -> Renames
           insertMod (Unique i) ~(m, rs) =
-            if i `IM.member` rs
+            if i `IM.member` rs -- keys?
                 then (m + 1, IM.insert i (m+1) rs)
                 else (1 + max i m, rs)
 

@@ -1,4 +1,5 @@
 {
+    {-# LANGUAGE OverloadedStrings #-}
     module Language.Dickinson.Lexer ( alexMonadScan
                                     , runAlex
                                     , lexDickinson
@@ -15,8 +16,10 @@ import qualified Data.ByteString.Lazy.Char8 as ASCII
 import Data.Functor (($>))
 import qualified Data.IntMap as IM
 import qualified Data.Map as M
+import Data.Semigroup ((<>))
 import Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
+import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, langle, rbracket, lbracket, colon, dquotes)
 import Language.Dickinson.Name
 
 }
@@ -55,7 +58,6 @@ tokens :-
     <0> ":branch"                  { mkKeyword KwBranch }
     <0> ":oneof"                   { mkKeyword KwOneof }
     <0> ":def"                     { mkKeyword KwDef }
-    <0> ":balance"                 { mkKeyword KwBalance }
 
     -- strings
     <0> @string                    { tok (\p s -> alex $ TokString p (mkShort s)) }
@@ -123,23 +125,45 @@ data Sym = LParen
          | RSqBracket
          deriving (Eq)
 
+instance Pretty Sym where
+    pretty LParen     = lparen
+    pretty RParen     = rparen
+    pretty VBar       = pipe
+    pretty LBracket   = langle
+    pretty LSqBracket = lbracket
+    pretty RSqBracket = rbracket
+
 data Keyword = KwDef
              | KwLet
              | KwBranch
              | KwOneof
-             | KwBalance
              deriving (Eq)
+
+instance Pretty Keyword where
+    pretty KwDef    = ":def"
+    pretty KwLet    = ":let"
+    pretty KwBranch = ":branch"
+    pretty KwOneof  = ":oneof"
+
+instance Pretty AlexPosn where
+    pretty (AlexPn _ line col) = pretty line <> colon <> pretty col
 
 data Token a = EOF { loc :: a }
              | TokIdent { loc :: a, ident :: Name a }
              | TokDouble { loc :: a, double :: Double }
              | TokString { loc :: a, str :: T.Text }
-             | TokMultilineString { loc :: a, str :: T.Text }
              | TokKeyword { loc :: a, kw :: Keyword }
              | TokLineComment { loc :: a, comment :: BSL.ByteString }
-             | TokBlockComment { loc :: a, comment :: BSL.ByteString }
              | TokSym { loc :: a, sym :: Sym }
              deriving (Eq)
+
+instance Pretty (Token a) where
+    pretty EOF{}             = mempty
+    pretty (TokIdent _ n)    = pretty n
+    pretty (TokDouble _ d)   = pretty d
+    pretty (TokString _ str') = dquotes (pretty str')
+    pretty (TokKeyword _ kw') = pretty kw'
+    pretty (TokSym _ sym')    = pretty sym'
 
 -- for testing
 loop :: Alex [Token AlexPosn]

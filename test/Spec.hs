@@ -2,6 +2,7 @@ module Main (main) where
 
 import qualified Data.ByteString.Lazy as BSL
 import           Data.Either          (isRight)
+import           Golden
 import           Language.Dickinson
 import           Test.Tasty
 import           Test.Tasty.HUnit
@@ -13,7 +14,11 @@ main =
             [ lexNoError "test/data/let.dck"
             , parseNoError "test/data/const.dck"
             , parseNoError "test/data/let.dck"
+            , parseNoError "test/data/nestLet.dck"
+            , goldenTests
             ]
+
+-- golden tests?
 
 parseNoError :: FilePath -> TestTree
 parseNoError fp = testCase ("Parsing doesn't fail (" ++ fp ++ ")") $ do

@@ -1,6 +1,7 @@
 {
 
     {-# LANGUAGE TupleSections #-}
+    {-# LANGUAGE OverloadedStrings #-}
     module Language.Dickinson.Parser ( parse
                                      , ParseError (..)
                                      ) where
@@ -11,6 +12,7 @@ import qualified Data.ByteString.Lazy as BSL
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
+import Data.Text.Prettyprint.Doc (Pretty (pretty), (<+>))
 import Language.Dickinson.Lexer
 import Language.Dickinson.Name hiding (loc)
 import Language.Dickinson.Type
@@ -35,7 +37,6 @@ import Language.Dickinson.Type
     let { TokKeyword $$ KwLet }
     branch { TokKeyword $$ KwBranch }
     oneof { TokKeyword $$ KwOneof }
-    balance { TokKeyword $$ KwBalance }
 
     ident { $$@(TokIdent _ _) }
 
@@ -94,6 +95,13 @@ parseError = throwError . Unexpected
 
 data ParseError a = Unexpected (Token a)
                   | LexErr String
+
+instance Pretty a => Pretty (ParseError a) where
+    pretty (Unexpected tok) = "Unexpected" <+> pretty tok <+> "at" <+> pretty (loc tok)
+    pretty (LexErr str)     = pretty (T.pack str)
+
+instance Pretty a => Show (ParseError a) where
+    show = show . pretty
 
 type Parse = ExceptT (ParseError AlexPosn) Alex
 
