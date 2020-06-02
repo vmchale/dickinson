@@ -60,7 +60,7 @@ tokens :-
     <0> ":def"                     { mkKeyword KwDef }
 
     -- strings
-    <0> @string                    { tok (\p s -> alex $ TokString p (mkShort s)) }
+    <0> @string                    { tok (\p s -> alex $ TokString p (T.tail . T.init $ mkShort s)) }
 
     -- numbers (as doubles)
     <0> @num                       { tok (\p s -> alex $ TokDouble p (read $ ASCII.unpack s)) } -- shouldn't cause any problems cuz digits
@@ -158,9 +158,9 @@ data Token a = EOF { loc :: a }
              deriving (Eq)
 
 instance Pretty (Token a) where
-    pretty EOF{}             = mempty
-    pretty (TokIdent _ n)    = pretty n
-    pretty (TokDouble _ d)   = pretty d
+    pretty EOF{}              = mempty
+    pretty (TokIdent _ n)     = pretty n
+    pretty (TokDouble _ d)    = pretty d
     pretty (TokString _ str') = dquotes (pretty str')
     pretty (TokKeyword _ kw') = pretty kw'
     pretty (TokSym _ sym')    = pretty sym'

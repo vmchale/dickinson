@@ -75,8 +75,9 @@ Expression :: { Expression Name AlexPosn }
            : stringLiteral { Literal (loc $1) (str $1) }
            | branch some(parens(WeightedLeaf)) { Choice $1 $2 }
            | oneof some(parens(Leaf)) { Choice $1 (weight $2) }
-           | let some(brackets(Bind)) parens(Expression) { Let $1 $2 $3 }
+           | let some(brackets(Bind)) Expression { Let $1 $2 $3 }
            | ident { Var (loc $1) (ident $1) }
+           | parens(Expression) { $1 }
 
 WeightedLeaf :: { (Double, Expression Name AlexPosn) }
              : vbar num Expression { ($2, $3) }
