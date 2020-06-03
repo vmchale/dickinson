@@ -7,9 +7,7 @@ module Language.Dickinson.Eval ( EvalM
                                , evalIO
                                ) where
 
-import           Control.Monad.Except     (Except, ExceptT, runExcept,
-                                           throwError)
-import           Control.Monad.IO.Class   (MonadIO)
+import           Control.Monad.Except     (Except, runExcept, throwError)
 import           Control.Monad.State.Lazy (StateT, evalStateT, gets, modify)
 import           Data.Bifunctor           (first, second)
 import           Data.Foldable            (toList)

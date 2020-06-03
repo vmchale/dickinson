@@ -12,9 +12,9 @@ import           Data.Semigroup                ((<>))
 import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets,
                                                 dquotes, group, hsep, indent,
-                                                langle, parens, pipe, sep, vsep,
+                                                langle, parens, pipe, vsep,
                                                 (<+>))
-import           Data.Text.Prettyprint.Doc.Ext ((<#>), (<:>), (<^>))
+import           Data.Text.Prettyprint.Doc.Ext ((<#>), (<^>))
 
 type Dickinson name a = [Declaration name a]
 
