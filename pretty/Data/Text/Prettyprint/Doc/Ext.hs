@@ -9,7 +9,7 @@ module Data.Text.Prettyprint.Doc.Ext ( prettyText
                                      , (<^>)
                                      ) where
 
--- TODO: internal library
+import           Data.Semigroup                        ((<>))
 import qualified Data.Text                             as T
 import qualified Data.Text.Lazy                        as TL
 import           Data.Text.Prettyprint.Doc             (Doc, LayoutOptions (LayoutOptions),
