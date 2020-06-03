@@ -32,9 +32,7 @@ insertM :: Unique -> RenameM a Unique
 insertM = state . insertMod
     where insertMod :: Unique -> Renames -> (Unique, Renames)
           insertMod (Unique i) ~(m, rs) =
-            if i `IM.member` rs -- keys?
-                then (Unique $ m+1, (m + 1, IM.insert i (m+1) rs))
-                else (Unique i, (1 + max i m, rs))
+                (Unique $ m+1, (m + 1, IM.insert i (m+1) rs))
 
 deleteM :: Unique -> RenameM a ()
 deleteM (Unique i) = modify (second (IM.delete i))

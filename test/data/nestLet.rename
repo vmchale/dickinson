@@ -1,0 +1,7 @@
+(:def letBinding_1
+    (:let
+        [a_2 (:let [a_3 "man"] a_3)]
+        [b_4 (:let [a_5 "woman"] a_5)]
+        (:branch
+            (| 1.0 a_2)
+            (| 1.0 b_4))))
