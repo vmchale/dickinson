@@ -9,6 +9,7 @@
 import Control.Monad.Except (ExceptT, runExceptT, throwError)
 import Control.Monad.Trans.Class (lift)
 import qualified Data.ByteString.Lazy as BSL
+import qualified Data.List.NonEmpty as NE
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
@@ -60,7 +61,7 @@ brackets(p)
     : lsqbracket p rsqbracket { $2 }
 
 Dickinson :: { Dickinson Name AlexPosn }
-          : many(parens(Declaration)) { $1 }
+          : many(parens(Declaration)) { reverse $1 }
 
 Declaration :: { Declaration Name AlexPosn }
             : def Name parens(Expression) { Define $1 $2 $3 }
@@ -73,9 +74,9 @@ Bind :: { (Name AlexPosn, Expression Name AlexPosn) }
 
 Expression :: { Expression Name AlexPosn }
            : stringLiteral { Literal (loc $1) (str $1) }
-           | branch some(parens(WeightedLeaf)) { Choice $1 $2 }
-           | oneof some(parens(Leaf)) { Choice $1 (weight $2) }
-           | let some(brackets(Bind)) Expression { Let $1 $2 $3 }
+           | branch some(parens(WeightedLeaf)) { Choice $1 (NE.reverse $2) }
+           | oneof some(parens(Leaf)) { Choice $1 (NE.reverse (weight $2)) }
+           | let some(brackets(Bind)) Expression { Let $1 (NE.reverse $2) $3 }
            | ident { Var (loc $1) (ident $1) }
            | parens(Expression) { $1 }
 

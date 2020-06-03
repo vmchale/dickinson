@@ -4,6 +4,7 @@ module Language.Dickinson.Rename ( renameDickinson
                                  , RenameM
                                  ) where
 
+import           Control.Monad           (void)
 import           Control.Monad.State     (State, evalState, gets, modify, state)
 import           Data.Bifunctor          (second)
 import           Data.Foldable           (traverse_)
@@ -31,7 +32,7 @@ insertM :: Unique -> RenameM a Unique
 insertM = state . insertMod
     where insertMod :: Unique -> Renames -> (Unique, Renames)
           insertMod (Unique i) ~(m, rs) =
-            if i `IM.member` rs || i <= m -- keys?
+            if i `IM.member` rs -- keys?
                 then (Unique $ m+1, (m + 1, IM.insert i (m+1) rs))
                 else (Unique i, (1 + max i m, rs))
 
@@ -44,7 +45,7 @@ renameDickinson ds = runRenameM $ traverse renameDeclarationM ds
 
 renameDeclarationM :: Declaration Name a -> RenameM a (Declaration Name a)
 renameDeclarationM (Define p n@(Name _ u _) e) = do
-    insertM u
+    void $ insertM u
     Define p n <$> renameExpressionM e
 
 withBinding :: (Name a, Expression Name a) -> RenameM a (Name a, Expression Name a)
