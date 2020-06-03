@@ -5,6 +5,7 @@
 module Language.Dickinson.Name ( Name (..)
                                , Unique (..)
                                , NameEnv
+                               , isMain
                                ) where
 
 import qualified Data.IntMap               as IM
@@ -19,6 +20,9 @@ data Name a = Name { name   :: T.Text
                    , unique :: !Unique
                    , loc    :: a
                    } deriving (Functor)
+
+isMain :: Name a -> Bool
+isMain = (== "main") . name
 
 instance Eq (Name a) where
     (==) ~(Name _ u _) ~(Name _ u' _) = u == u'
