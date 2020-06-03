@@ -60,7 +60,8 @@ library
         transformers,
         containers,
         random,
-        prettyprinter
+        prettyprinter,
+        pretty-ext
 
     if impl(ghc >=8.0)
         ghc-options:

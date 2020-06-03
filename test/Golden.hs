@@ -13,7 +13,7 @@ goldenTests :: TestTree
 goldenTests = withDckFile "test/data/nestLet.dck"
 
 prettyBSL :: Pretty (name a) => Dickinson name a -> BSL.ByteString
-prettyBSL = encodeUtf8 . prettyLazyText
+prettyBSL = encodeUtf8 . dickinsonLazyText . prettyDickinson
 
 withDckFile :: FilePath -> TestTree
 withDckFile fp =
