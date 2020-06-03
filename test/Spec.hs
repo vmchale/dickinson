@@ -10,13 +10,19 @@ import           Test.Tasty.HUnit
 main :: IO ()
 main =
     defaultMain $
-        testGroup "Parser tests"
-            [ lexNoError "test/data/let.dck"
-            , parseNoError "test/data/const.dck"
-            , parseNoError "test/data/let.dck"
-            , parseNoError "test/data/nestLet.dck"
-            , goldenTests
+        testGroup "All tests"
+            [ goldenTests
+            , parserTests
             ]
+
+parserTests :: TestTree
+parserTests =
+    testGroup "Parser tests"
+        [ lexNoError "test/data/let.dck"
+        , parseNoError "test/data/const.dck"
+        , parseNoError "test/data/let.dck"
+        , parseNoError "test/data/nestLet.dck"
+        ]
 
 -- golden tests?
 
