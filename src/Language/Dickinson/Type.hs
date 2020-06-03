@@ -44,6 +44,6 @@ prettyChoiceBranch (d, e) = parens (pipe <+> pretty d <+> pretty e)
 instance Pretty (name a) => Pretty (Expression name a) where
     pretty (Var _ n)     = pretty n
     pretty (Literal _ l) = dquotes $ pretty l
-    pretty (Let _ ls e) = parens (":let" <^> (vsep (toList $ fmap prettyLetLeaf ls)) <^> (pretty e))
+    pretty (Let _ ls e) = parens (":let" <^> (vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e])))
     pretty (Choice _ brs) = parens (":branch" <#> indent 4 (vsep (toList $ fmap prettyChoiceBranch brs)))
     pretty (Concat _ es) = parens (pipe <> langle <+> hsep (toList $ fmap pretty es))
