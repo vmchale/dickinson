@@ -64,11 +64,9 @@ pick brs = do
 
 findMain :: Dickinson Name a -> EvalM Name a (Expression Name a)
 findMain = getMain . filter (isMain.defName)
-    where defName (Define _ n _) = n
-          defExpr (Define _ _ e) = e
-          -- TODO: complain if main is defined more than once
-          getMain (x:_) = pure $ defExpr x
+    where getMain (x:_) = pure $ defExpr x
           getMain []    = throwError NoMain
+          -- TODO: complain if main is defined more than once
 
 evalExpressionM :: Expression Name a -> EvalM Name a T.Text
 evalExpressionM (Literal _ t)  = pure t

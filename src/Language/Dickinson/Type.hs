@@ -18,7 +18,10 @@ import           Data.Text.Prettyprint.Doc.Ext ((<#>), (<:>), (<^>))
 
 type Dickinson name a = [Declaration name a]
 
-data Declaration name a = Define a (name a) (Expression name a)
+data Declaration name a = Define { defAnn  :: a
+                                 , defName :: (name a)
+                                 , defExpr :: (Expression name a)
+                                 }
 
 data Expression name a = Literal a !T.Text
                        | Choice a !(NonEmpty (Double, Expression name a))
