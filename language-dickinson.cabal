@@ -1,15 +1,20 @@
-cabal-version:   2.0
-name:            language-dickinson
-version:         0.1.0.0
-license:         BSD3
-license-file:    LICENSE
-copyright:       Copyright: (c) 2020 Vanessa McHale
-maintainer:      vamchale@gmail.com
-author:          Vanessa McHale
-synopsis:        A language for generative literature
-description:     Dickinson is a language for generative (random) literature
-category:        Language, Text
-build-type:      Simple
+cabal-version:      2.0
+name:               language-dickinson
+version:            0.1.0.0
+license:            BSD3
+license-file:       LICENSE
+copyright:          Copyright: (c) 2020 Vanessa McHale
+maintainer:         vamchale@gmail.com
+author:             Vanessa McHale
+synopsis:           A language for generative literature
+description:        Dickinson is a language for generative (random) literature
+category:           Language, Text
+build-type:         Simple
+extra-source-files:
+    test/data/*.pretty
+    test/data/*.dck
+    test/data/*.rename
+
 extra-doc-files:
     README.md
     CHANGELOG.md
