@@ -17,7 +17,7 @@ prettyBSL = encodeUtf8 . dickinsonLazyText . prettyDickinson
 
 withDckFile :: FilePath -> TestTree
 withDckFile fp =
-    goldenVsString ("Matches golden output " ++ fp) (fp -<.> "out") act
+    goldenVsString ("Matches golden output " ++ fp) (fp -<.> "pretty") act
 
     where act = prettyBSL . yeet . parse <$> BSL.readFile fp
           yeet = either (error.show) id

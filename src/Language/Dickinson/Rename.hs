@@ -15,7 +15,7 @@ type Renames = (Int, IM.IntMap Int)
 type RenameM a = State Renames
 
 runRenameM :: RenameM a (f a) -> f a
-runRenameM = flip evalState undefined
+runRenameM = flip evalState (0, mempty)
 
 replaceVar :: Name a -> RenameM a (Name a)
 replaceVar ~pre@(Name n (Unique i) l) = do
@@ -44,9 +44,8 @@ renameDickinson ds = runRenameM $ traverse renameDeclarationM ds
 
 renameDeclarationM :: Declaration Name a -> RenameM a (Declaration Name a)
 renameDeclarationM (Define p n@(Name _ u _) e) = do
-    e' <- renameExpressionM e
     insertM u
-    pure $ Define p n e'
+    Define p n <$> renameExpressionM e
 
 renameExpressionM :: Expression Name a -> RenameM a (Expression Name a)
 renameExpressionM e@Literal{} = pure e
