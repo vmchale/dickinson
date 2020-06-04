@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveAnyClass    #-}
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Language.Dickinson.Type ( Dickinson
@@ -6,6 +8,7 @@ module Language.Dickinson.Type ( Dickinson
                                , DickinsonTy (..)
                                ) where
 
+import           Control.DeepSeq               (NFData)
 import           Data.Foldable                 (toList)
 import           Data.List.NonEmpty            (NonEmpty)
 import           Data.Semigroup                ((<>))
@@ -15,6 +18,7 @@ import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets,
                                                 langle, parens, pipe, vsep,
                                                 (<+>))
 import           Data.Text.Prettyprint.Doc.Ext ((<#>), (<^>))
+import           GHC.Generics                  (Generic)
 
 type Dickinson name a = [Declaration name a]
 
@@ -22,12 +26,14 @@ data Declaration name a = Define { defAnn  :: a
                                  , defName :: (name a)
                                  , defExpr :: (Expression name a)
                                  }
+                        deriving (Generic, NFData)
 
 data Expression name a = Literal a !T.Text
                        | Choice a !(NonEmpty (Double, Expression name a))
                        | Let a !(NonEmpty (name a, Expression name a)) !(Expression name a)
                        | Var a (name a)
                        | Concat a !(NonEmpty (Expression name a))
+                       deriving (Generic, NFData)
                        -- TODO: normalize subtree
                        -- TODO: builtins?
 

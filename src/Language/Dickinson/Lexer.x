@@ -1,5 +1,8 @@
 {
+    {-# LANGUAGE DeriveAnyClass #-}
+    {-# LANGUAGE DeriveGeneric #-}
     {-# LANGUAGE OverloadedStrings #-}
+    {-# LANGUAGE StandaloneDeriving #-}
     module Language.Dickinson.Lexer ( alexMonadScan
                                     , runAlex
                                     , lexDickinson
@@ -11,6 +14,7 @@
                                     ) where
 
 import Control.Arrow ((&&&))
+import Control.DeepSeq (NFData)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.ByteString.Lazy.Char8 as ASCII
 import Data.Functor (($>))
@@ -20,6 +24,7 @@ import Data.Semigroup ((<>))
 import Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, langle, rbracket, lbracket, colon, dquotes)
+import GHC.Generics (Generic)
 import Language.Dickinson.Name
 
 }
@@ -120,10 +125,10 @@ alexInitUserState = (0, mempty, mempty)
 data Sym = LParen
          | RParen
          | VBar
-         | LBracket 
+         | LBracket
          | LSqBracket
          | RSqBracket
-         deriving (Eq)
+         deriving (Eq, Generic, NFData)
 
 instance Pretty Sym where
     pretty LParen     = lparen
@@ -137,7 +142,7 @@ data Keyword = KwDef
              | KwLet
              | KwBranch
              | KwOneof
-             deriving (Eq)
+             deriving (Eq, Generic, NFData)
 
 instance Pretty Keyword where
     pretty KwDef    = ":def"
@@ -148,13 +153,17 @@ instance Pretty Keyword where
 instance Pretty AlexPosn where
     pretty (AlexPn _ line col) = pretty line <> colon <> pretty col
 
+deriving instance Generic AlexPosn
+
+deriving instance NFData AlexPosn
+
 data Token a = EOF { loc :: a }
              | TokIdent { loc :: a, ident :: Name a }
              | TokDouble { loc :: a, double :: Double }
              | TokString { loc :: a, str :: T.Text }
              | TokKeyword { loc :: a, kw :: Keyword }
              | TokSym { loc :: a, sym :: Sym }
-             deriving (Eq)
+             deriving (Eq, Generic, NFData)
 
 instance Pretty (Token a) where
     pretty EOF{}              = mempty

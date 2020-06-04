@@ -1,11 +1,14 @@
 {
 
-    {-# LANGUAGE TupleSections #-}
+    {-# LANGUAGE DeriveAnyClass #-}
+    {-# LANGUAGE DeriveGeneric #-}
     {-# LANGUAGE OverloadedStrings #-}
+    {-# LANGUAGE TupleSections #-}
     module Language.Dickinson.Parser ( parse
                                      , ParseError (..)
                                      ) where
 
+import Control.DeepSeq (NFData)
 import Control.Monad.Except (ExceptT, runExceptT, throwError)
 import Control.Monad.Trans.Class (lift)
 import qualified Data.ByteString.Lazy as BSL
@@ -14,6 +17,7 @@ import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Data.Text.Prettyprint.Doc (Pretty (pretty), (<+>))
+import GHC.Generics (Generic)
 import Language.Dickinson.Lexer
 import Language.Dickinson.Name hiding (loc)
 import Language.Dickinson.Type
@@ -97,6 +101,7 @@ parseError = throwError . Unexpected
 
 data ParseError a = Unexpected (Token a)
                   | LexErr String
+                  deriving (Generic, NFData)
 
 instance Pretty a => Pretty (ParseError a) where
     pretty (Unexpected tok) = "Unexpected" <+> pretty tok <+> "at" <+> pretty (loc tok)

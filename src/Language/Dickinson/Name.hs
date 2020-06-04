@@ -1,4 +1,7 @@
+{-# LANGUAGE DeriveAnyClass             #-}
 {-# LANGUAGE DeriveFunctor              #-}
+{-# LANGUAGE DeriveGeneric              #-}
+{-# LANGUAGE DerivingVia                #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE OverloadedStrings          #-}
 
@@ -8,18 +11,21 @@ module Language.Dickinson.Name ( Name (..)
                                , isMain
                                ) where
 
+import           Control.DeepSeq           (NFData)
 import qualified Data.IntMap               as IM
 import           Data.Semigroup            ((<>))
 import qualified Data.Text                 as T
 import           Data.Text.Prettyprint.Doc (Pretty (pretty))
+import           GHC.Generics              (Generic)
 
 newtype Unique = Unique Int
-    deriving (Eq, Ord, Pretty)
+    deriving stock (Eq, Ord)
+    deriving newtype (Pretty, NFData)
 
 data Name a = Name { name   :: T.Text
                    , unique :: !Unique
                    , loc    :: a
-                   } deriving (Functor)
+                   } deriving (Functor, Generic, NFData)
 
 isMain :: Name a -> Bool
 isMain = (== "main") . name
