@@ -22,6 +22,8 @@ parserTests =
         , parseNoError "test/data/const.dck"
         , parseNoError "test/data/let.dck"
         , parseNoError "test/data/nestLet.dck"
+        , parseNoError "lib/color.dck"
+        , parseNoError "lib/birds.dck"
         ]
 
 -- golden tests?
