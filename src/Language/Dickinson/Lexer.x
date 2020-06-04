@@ -41,7 +41,7 @@ $latin = [a-zA-Z]
 tokens :-
 
     <0> $white+                    ;
-    <0> ";".*                      { tok (\p s -> alex $ TokLineComment p s) }
+    <0> ";".*                      ;
 
     -- assume utf8
     <0> $latin+                    { tok (\p s -> TokIdent p <$> newIdentAlex p (mkShort s)) }
@@ -153,7 +153,6 @@ data Token a = EOF { loc :: a }
              | TokDouble { loc :: a, double :: Double }
              | TokString { loc :: a, str :: T.Text }
              | TokKeyword { loc :: a, kw :: Keyword }
-             | TokLineComment { loc :: a, comment :: BSL.ByteString }
              | TokSym { loc :: a, sym :: Sym }
              deriving (Eq)
 
