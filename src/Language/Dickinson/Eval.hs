@@ -21,7 +21,7 @@ import qualified Data.Text                as T
 import           Language.Dickinson.Error
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
-import           System.Random            (StdGen, getStdGen, randoms)
+import           System.Random            (StdGen, newStdGen, randoms)
 
 -- map to expression
 type EvalSt name a = ([Double], IM.IntMap (Expression name a))
@@ -31,7 +31,7 @@ type EvalSt name a = ([Double], IM.IntMap (Expression name a))
 type EvalM name a = StateT (EvalSt name a) (Except (DickinsonError name a))
 
 evalIO :: EvalM name a x -> IO (Either (DickinsonError name a) x)
-evalIO me = flip evalWithGen me <$> getStdGen
+evalIO me = flip evalWithGen me <$> newStdGen
 
 evalWithGen :: StdGen -> EvalM name a x -> Either (DickinsonError name a) x
 evalWithGen = (runExcept .) . (flip evalStateT . (, mempty) . randoms)
