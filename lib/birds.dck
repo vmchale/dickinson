@@ -1,0 +1,10 @@
+(:def bird
+    (:oneof
+        (| "kite")
+        (| "swallow")
+        (| "sparrow")
+        (| "crow")
+        (| "raven")
+        (| "gull")
+        (| "pelican")
+        (| "tern")))
