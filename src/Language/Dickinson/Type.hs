@@ -29,6 +29,7 @@ data Expression name a = Literal a !T.Text
                        | Var a (name a)
                        | Concat a !(NonEmpty (Expression name a))
                        -- TODO: normalize subtree
+                       -- TODO: builtins?
 
 data DickinsonTy = Text
                  | Fun DickinsonTy DickinsonTy
@@ -50,5 +51,5 @@ instance Pretty (name a) => Pretty (Expression name a) where
     pretty (Let _ ls e) = parens (":let" <^> (vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e])))
     -- TODO: if they're all equal, use :oneof
     -- also comments lol
-    pretty (Choice _ brs) = parens (":branch" <#> indent 4 (vsep (toList $ fmap prettyChoiceBranch brs)))
+    pretty (Choice _ brs) = parens (":branch" <^> (vsep (toList $ fmap prettyChoiceBranch brs)))
     pretty (Concat _ es) = parens (pipe <> langle <+> hsep (toList $ fmap pretty es))
