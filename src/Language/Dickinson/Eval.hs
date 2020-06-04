@@ -5,9 +5,11 @@ module Language.Dickinson.Eval ( EvalM
                                , evalExpressionM
                                , evalWithGen
                                , evalIO
+                               , findMain
                                ) where
 
-import           Control.Monad.Except     (Except, runExcept, throwError)
+import           Control.Monad.Except     (Except, MonadError, runExcept,
+                                           throwError)
 import           Control.Monad.State.Lazy (StateT, evalStateT, gets, modify)
 import           Data.Bifunctor           (first, second)
 import           Data.Foldable            (toList)
@@ -60,7 +62,7 @@ pick brs = do
         es = toList (snd <$> brs)
     pure $ snd . head . dropWhile ((<= threshold) . fst) $ zip ds es
 
-findMain :: Dickinson Name a -> EvalM Name a (Expression Name a)
+findMain :: MonadError (DickinsonError Name a) m => Dickinson Name a -> m (Expression Name a)
 findMain = getMain . filter (isMain.defName)
     where getMain (x:_) = pure $ defExpr x
           getMain []    = throwError NoMain
