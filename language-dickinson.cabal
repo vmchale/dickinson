@@ -57,7 +57,8 @@ library
         prettyprinter -any,
         pretty-ext -any,
         deepseq -any,
-        microlens -any
+        microlens -any,
+        microlens-mtl -any
 
     if impl(ghc >=8.0)
         ghc-options:
