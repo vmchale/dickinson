@@ -32,6 +32,9 @@ data EvalSt name a = EvalSt
     , renameCtx     :: Renames
     }
 
+instance HasRenames (EvalSt name a) where
+    rename f s = fmap (\x -> s { renameCtx = x }) (f (renameCtx s))
+
 probabilitiesLens :: Lens' (EvalSt name a) [Double]
 probabilitiesLens f s = fmap (\x -> s { probabilities = x }) (f (probabilities s))
 
@@ -56,7 +59,7 @@ deleteName (Name _ (Unique u) _) = modify (over boundExprLens (IM.delete u))
 lookupName :: Name a -> EvalM Name a (Expression Name a)
 lookupName n@(Name _ (Unique u) l) = go =<< gets (IM.lookup u.boundExpr)
     where go Nothing  = throwError (UnfoundName l n)
-          go (Just x) = pure x
+          go (Just x) = renameExpressionM x
 
 normalize :: (Foldable t, Functor t, Fractional a) => t a -> t a
 normalize xs = (/tot) <$> xs
