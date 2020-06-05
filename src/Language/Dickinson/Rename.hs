@@ -19,7 +19,6 @@ import           Lens.Micro              (Lens', over, set, (^.))
 import           Lens.Micro.Extras       (view)
 import           Lens.Micro.Mtl          (modifying, use)
 
--- type Renames = (Int, IM.IntMap Int)
 data Renames = Renames { max_ :: Int, bound :: IM.IntMap Int }
 
 boundLens :: Lens' Renames (IM.IntMap Int)

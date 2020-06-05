@@ -11,8 +11,8 @@ module Language.Dickinson.Eval ( EvalM
 import           Control.Monad.Except      (Except, MonadError, runExcept,
                                             throwError)
 import           Control.Monad.State.Lazy  (StateT, evalStateT, gets, modify)
-import           Data.Bifunctor            (first, second)
 import           Data.Foldable             (toList)
+import           Data.Foldable             (traverse_)
 import qualified Data.IntMap               as IM
 import           Data.List.NonEmpty        (NonEmpty, (<|))
 import qualified Data.List.NonEmpty        as NE
@@ -80,10 +80,12 @@ findMain :: MonadError (DickinsonError Name a) m => Dickinson Name a -> m (Expre
 findMain = getMain . filter (isMain.defName)
     where getMain (x:_) = pure $ defExpr x
           getMain []    = throwError NoMain
-          -- TODO: complain if main is defined more than once
 
 evalExpressionM :: Expression Name a -> EvalM Name a T.Text
 evalExpressionM (Literal _ t)  = pure t
 evalExpressionM (Concat _ es)  = sconcat <$> traverse evalExpressionM es
 evalExpressionM (Var _ n)      = evalExpressionM =<< lookupName n
 evalExpressionM (Choice _ pes) = evalExpressionM =<< pick pes
+evalExpressionM (Let _ bs e) = do
+    traverse_ (uncurry bindName) bs
+    evalExpressionM e <* traverse_ deleteName (fst <$> bs)
