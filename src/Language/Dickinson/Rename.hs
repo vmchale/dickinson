@@ -2,40 +2,59 @@
 
 module Language.Dickinson.Rename ( renameDickinson
                                  , RenameM
+                                 , Renames
+                                 , HasRenames (..)
                                  ) where
 
 import           Control.Monad           (void)
-import           Control.Monad.State     (State, evalState, gets, modify, state)
-import           Data.Bifunctor          (second)
+import           Control.Monad.State     (MonadState, State, evalState, gets,
+                                          modify, state)
 import           Data.Foldable           (traverse_)
 import qualified Data.IntMap             as IM
 import qualified Data.List.NonEmpty      as NE
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
+import           Lens.Micro              (Lens', over, (&), (.~), (^.))
+import           Lens.Micro.Extras       (view)
 
-type Renames = (Int, IM.IntMap Int)
+-- type Renames = (Int, IM.IntMap Int)
+data Renames = Renames { max_ :: Int, bound :: IM.IntMap Int }
 
+boundLens :: Lens' Renames (IM.IntMap Int)
+boundLens f s = fmap (\x -> s { bound = x}) (f (bound s))
+
+class HasRenames a where
+    rename :: Lens' a Renames
+
+instance HasRenames Renames where
+    rename = id
+
+-- data Renames = { max_ :: Int, bound :: IM.IntMap Int }
+
+-- TODO: generalize to renaming monad?
 type RenameM a = State Renames
 
 runRenameM :: RenameM a (f a) -> f a
-runRenameM = flip evalState (0, mempty)
+runRenameM = flip evalState (Renames 0 mempty)
 
-replaceVar :: Name a -> RenameM a (Name a)
+replaceVar :: (MonadState s m, HasRenames s) => Name a -> m (Name a)
 replaceVar ~pre@(Name n (Unique i) l) = do
-    rSt <- gets snd
+    rSt <- gets (view (rename.boundLens)) -- bound
     case IM.lookup i rSt of
         -- for recursive lookups rewrites
         Just j  -> replaceVar $ Name n (Unique j) l
         Nothing -> pure pre
 
-insertM :: Unique -> RenameM a Unique
-insertM = state . insertMod
-    where insertMod :: Unique -> Renames -> (Unique, Renames)
-          insertMod (Unique i) ~(m, rs) =
-                (Unique $ m+1, (m + 1, IM.insert i (m+1) rs))
+insertM :: (MonadState s m, HasRenames s) => Unique -> m Unique
+insertM = state . insertGo
+    where insertGo :: HasRenames s => Unique -> s -> (Unique, s)
+          insertGo u st = let (u', r) = insertMod u (st^.rename) in (u', st & rename .~ r)
+          insertMod :: Unique -> Renames -> (Unique, Renames)
+          insertMod (Unique i) (Renames m rs) =
+                (Unique $ m+1, Renames (m+1) (IM.insert i (m+1) rs))
 
-deleteM :: Unique -> RenameM a ()
-deleteM (Unique i) = modify (second (IM.delete i))
+deleteM :: (MonadState s m, HasRenames s) => Unique -> m ()
+deleteM (Unique i) = modify (over (rename.boundLens) (IM.delete i))
 -- don't bother deleting max; probably won't run out
 
 renameDickinson :: Dickinson Name a -> Dickinson Name a
@@ -46,12 +65,12 @@ renameDeclarationM (Define p n@(Name _ u _) e) = do
     void $ insertM u
     Define p n <$> renameExpressionM e
 
-withBinding :: (Name a, Expression Name a) -> RenameM a (Name a, Expression Name a)
+withBinding :: (MonadState s m, HasRenames s) => (Name a, Expression Name a) -> m (Name a, Expression Name a)
 withBinding (Name n u l, e) = do
     u' <- insertM u
     (Name n u' l ,) <$> renameExpressionM e
 
-renameExpressionM :: Expression Name a -> RenameM a (Expression Name a)
+renameExpressionM :: (MonadState s m, HasRenames s) => Expression Name a -> m (Expression Name a)
 renameExpressionM e@Literal{} = pure e
 renameExpressionM (Var p n)   = Var p <$> replaceVar n
 renameExpressionM (Choice p branches) = Choice p <$> branches'

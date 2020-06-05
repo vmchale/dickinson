@@ -56,7 +56,8 @@ library
         random -any,
         prettyprinter -any,
         pretty-ext -any,
-        deepseq -any
+        deepseq -any,
+        microlens -any
 
     if impl(ghc >=8.0)
         ghc-options:
