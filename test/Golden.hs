@@ -14,6 +14,7 @@ goldenTests =
     testGroup "Golden tests"
         [ withDckFile "test/data/nestLet.dck"
         , renameDckFile "test/data/nestLet.dck"
+        , renameDckFile "test/data/let.dck"
         ]
 
 prettyBSL :: Pretty (name a) => Dickinson name a -> BSL.ByteString
@@ -30,5 +31,5 @@ renameDckFile :: FilePath -> TestTree
 renameDckFile fp =
     goldenVsString ("Matches golden output " ++ fp) (fp -<.> "rename") act
 
-    where act = prettyBSL . renameDickinson . yeet . parse <$> BSL.readFile fp
+    where act = prettyBSL . fst . renameDickinson . yeet . parse <$> BSL.readFile fp
           yeet = either (error.show) id

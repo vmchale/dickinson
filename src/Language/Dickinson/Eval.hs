@@ -44,11 +44,14 @@ boundExprLens f s = fmap (\x -> s { boundExpr = x }) (f (boundExpr s))
 -- TODO: thread generator state instead?
 type EvalM name a = StateT (EvalSt name a) (Except (DickinsonError name a))
 
-evalIO :: EvalM name a x -> IO (Either (DickinsonError name a) x)
-evalIO me = flip evalWithGen me <$> newStdGen
+evalIO :: Renames -> EvalM name a x -> IO (Either (DickinsonError name a) x)
+evalIO rs me = (\g -> evalWithGen g rs me) <$> newStdGen
 
-evalWithGen :: StdGen -> EvalM name a x -> Either (DickinsonError name a) x
-evalWithGen = (runExcept .) . (flip evalStateT . (\be -> EvalSt be mempty undefined) . randoms)
+evalWithGen :: StdGen
+            -> Renames -- ^ Threaded through
+            -> EvalM name a x
+            -> Either (DickinsonError name a) x
+evalWithGen g rs me = runExcept $ flip evalStateT (EvalSt (randoms g) mempty rs) me
 
 bindName :: Name a -> Expression Name a -> EvalM Name a ()
 bindName (Name _ (Unique u) _) e = modify (over boundExprLens (IM.insert u e))

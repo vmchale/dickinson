@@ -2,14 +2,15 @@
 
 module Language.Dickinson.Rename ( renameDickinson
                                  , renameExpressionM
+                                 , initRenames
                                  , RenameM
                                  , Renames (..)
                                  , HasRenames (..)
                                  ) where
 
 import           Control.Monad           (void)
-import           Control.Monad.State     (MonadState, State, evalState, gets,
-                                          modify, state)
+import           Control.Monad.State     (MonadState, State, gets, modify,
+                                          runState, state)
 import           Data.Foldable           (traverse_)
 import qualified Data.IntMap             as IM
 import qualified Data.List.NonEmpty      as NE
@@ -32,14 +33,18 @@ instance HasRenames Renames where
 
 type RenameM a = State Renames
 
-runRenameM :: RenameM a (f a) -> f a
-runRenameM = flip evalState (Renames 0 mempty)
+initRenames :: Renames
+initRenames = Renames 0 mempty
+
+runRenameM :: RenameM a x -> (x, Renames)
+runRenameM = flip runState initRenames
 
 replaceVar :: (MonadState s m, HasRenames s) => Name a -> m (Name a)
 replaceVar ~pre@(Name n (Unique i) l) = do
     rSt <- use (rename.boundLens)
     case IM.lookup i rSt of
         -- for recursive lookups rewrites
+        -- FIXME: we have cycles?
         Just j  -> replaceVar $ Name n (Unique j) l
         Nothing -> pure pre
 
@@ -55,10 +60,10 @@ deleteM :: (MonadState s m, HasRenames s) => Unique -> m ()
 deleteM (Unique i) = modifying (rename.boundLens) (IM.delete i)
 -- don't bother deleting max; probably won't run out
 
-renameDickinson :: Dickinson Name a -> Dickinson Name a
+renameDickinson :: Dickinson Name a -> (Dickinson Name a, Renames)
 renameDickinson ds = runRenameM $ traverse renameDeclarationM ds
 
-renameDeclarationM :: Declaration Name a -> RenameM a (Declaration Name a)
+renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration Name a -> m (Declaration Name a)
 renameDeclarationM (Define p n@(Name _ u _) e) = do
     void $ insertM u
     Define p n <$> renameExpressionM e

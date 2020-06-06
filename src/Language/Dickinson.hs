@@ -30,8 +30,10 @@ import           Language.Dickinson.Pretty
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 
+-- TODO: runDeclarationM
 evalFile :: FilePath -> IO T.Text
-evalFile = fmap yeet . evalIO . evalExpressionM . yeet . findMain . yeet . parse <=< BSL.readFile
+evalFile = fmap yeet . evalIO initRenames . evalExpressionM . yeet . findMain . yeet . parse <=< BSL.readFile
+-- TODO: renameDickinson
 
 yeet :: Show a => Either a x -> x
 yeet = either (error.show) id
