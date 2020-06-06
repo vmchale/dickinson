@@ -18,7 +18,7 @@ import qualified Data.Text                 as T
 import           Data.Text.Prettyprint.Doc (Pretty (pretty))
 import           GHC.Generics              (Generic)
 
-newtype Unique = Unique Int
+newtype Unique = Unique { unUnique :: Int }
     deriving stock (Eq, Ord)
     deriving newtype (Pretty, NFData)
 
