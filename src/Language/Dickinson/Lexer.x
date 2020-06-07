@@ -5,6 +5,7 @@
     {-# LANGUAGE StandaloneDeriving #-}
     module Language.Dickinson.Lexer ( alexMonadScan
                                     , runAlex
+                                    , runAlexSt
                                     , lexDickinson
                                     , AlexPosn (..)
                                     , Alex (..)
@@ -15,6 +16,7 @@
 
 import Control.Arrow ((&&&))
 import Control.DeepSeq (NFData)
+import Data.Bifunctor (first)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.ByteString.Lazy.Char8 as ASCII
 import Data.Functor (($>))
@@ -184,5 +186,16 @@ loop = do
 -- | N.B. for testing
 lexDickinson :: BSL.ByteString -> Either String [Token AlexPosn]
 lexDickinson = flip runAlex loop
+
+runAlexSt :: ByteString.ByteString -> Alex a -> Either String (AlexUserState, a)
+runAlexSt inp (Alex f) = first alex_ust <$> f
+    (AlexState { alex_bpos = 0
+               , alex_pos = alexStartPos
+               , alex_inp = inp
+               , alex_chr = '\n'
+               , alex_ust = alexInitUserState
+               , alex_scd = 0
+               })
+
 
 }

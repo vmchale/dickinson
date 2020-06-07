@@ -9,15 +9,13 @@ module Language.Dickinson.Rename ( renameDickinson
                                  ) where
 
 import           Control.Monad           (void)
-import           Control.Monad.State     (MonadState, State, gets, modify,
-                                          runState, state)
+import           Control.Monad.State     (MonadState, State, runState, state)
 import           Data.Foldable           (traverse_)
 import qualified Data.IntMap             as IM
 import qualified Data.List.NonEmpty      as NE
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
-import           Lens.Micro              (Lens', over, set, (^.))
-import           Lens.Micro.Extras       (view)
+import           Lens.Micro              (Lens', set, (^.))
 import           Lens.Micro.Mtl          (modifying, use)
 
 data Renames = Renames { max_ :: Int, bound :: IM.IntMap Int }
@@ -34,7 +32,7 @@ instance HasRenames Renames where
 type RenameM a = State Renames
 
 initRenames :: Renames
-initRenames = Renames 0 mempty
+initRenames = Renames (maxBound `div` 2) mempty -- FIXME: this is sloppy
 
 runRenameM :: RenameM a x -> (x, Renames)
 runRenameM = flip runState initRenames
@@ -48,13 +46,16 @@ replaceVar ~pre@(Name n (Unique i) l) = do
         Just j  -> replaceVar $ Name n (Unique j) l
         Nothing -> pure pre
 
-insertM :: (MonadState s m, HasRenames s) => Unique -> m Unique
+insertM :: (MonadState s m, HasRenames s) => Unique -> m (Unique, Unique)
 insertM = state . insertGo
-    where insertGo :: HasRenames s => Unique -> s -> (Unique, s)
+    where insertGo :: HasRenames s => Unique -> s -> ((Unique, Unique), s)
           insertGo u st = let (u', r) = insertMod u (st^.rename) in (u', set rename r st)
-          insertMod :: Unique -> Renames -> (Unique, Renames)
+          insertMod :: Unique -> Renames -> ((Unique, Unique), Renames)
           insertMod (Unique i) (Renames m rs) =
-                (Unique $ m+1, Renames (m+1) (IM.insert i (m+1) rs))
+                case IM.lookup i rs of
+                    Just j -> undefined -- (Unique $ m+1, Renames (m+1) (IM.insert i (m+1) rs))
+                    Nothing -> ((Unique i, Unique $ m+1), Renames (m+1) (IM.insert i (m+1) rs))
+                    -- TODO: also return what to delete at the end?
 
 deleteM :: (MonadState s m, HasRenames s) => Unique -> m ()
 deleteM (Unique i) = modifying (rename.boundLens) (IM.delete i)
@@ -68,10 +69,10 @@ renameDeclarationM (Define p n@(Name _ u _) e) = do
     void $ insertM u
     Define p n <$> renameExpressionM e
 
-withBinding :: (MonadState s m, HasRenames s) => (Name a, Expression Name a) -> m (Name a, Expression Name a)
+withBinding :: (MonadState s m, HasRenames s) => (Name a, Expression Name a) -> m (Unique, Name a, Expression Name a)
 withBinding (Name n u l, e) = do
-    u' <- insertM u
-    (Name n u' l ,) <$> renameExpressionM e
+    (j, u') <- insertM u
+    (j, Name n u' l ,) <$> renameExpressionM e
 
 -- TODO: is this 'clone'?
 renameExpressionM :: (MonadState s m, HasRenames s) => Expression Name a -> m (Expression Name a)
@@ -85,8 +86,12 @@ renameExpressionM (Choice p branches) = Choice p <$> branches'
 renameExpressionM (Concat p es) = Concat p <$> traverse renameExpressionM es
 renameExpressionM (Let p ls es) = do
     newBindings <- traverse withBinding ls
-    res <- Let p newBindings <$> renameExpressionM es
-    traverse_ deleteM extrUniques
+    res <- Let p (to2 <$> newBindings) <$> renameExpressionM es
+    traverse_ deleteM (extrUniques newBindings)
+    -- inserts are too zealous? can bind to e.g. '2' twice...
+    -- and then delete it prematurely?
     pure res
 
-    where extrUniques = fmap (unique.fst) ls
+    where extrUniques = fmap fst3
+          to2 (_, x, y) = (x, y)
+          fst3 (x, _, _) = x
