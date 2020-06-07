@@ -187,7 +187,7 @@ loop = do
 lexDickinson :: BSL.ByteString -> Either String [Token AlexPosn]
 lexDickinson = flip runAlex loop
 
-runAlexSt :: ByteString.ByteString -> Alex a -> Either String (AlexUserState, a)
+runAlexSt :: BSL.ByteString -> Alex a -> Either String (AlexUserState, a)
 runAlexSt inp (Alex f) = first alex_ust <$> f
     (AlexState { alex_bpos = 0
                , alex_pos = alexStartPos
