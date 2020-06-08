@@ -1,3 +1,5 @@
 program-options
   alex-options: -g
   happy-options: -gcsa
+
+haddock-internal: true
