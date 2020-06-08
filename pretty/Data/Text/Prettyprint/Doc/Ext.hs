@@ -3,12 +3,14 @@ module Data.Text.Prettyprint.Doc.Ext ( prettyText
                                      , smartDickinson
                                      , dickinsonText
                                      , dickinsonLazyText
+                                     , intercalate
                                      -- * Operators
                                      , (<#>)
                                      , (<:>)
                                      , (<^>)
                                      ) where
 
+import           Data.List                             (intersperse)
 import           Data.Semigroup                        ((<>))
 import qualified Data.Text                             as T
 import qualified Data.Text.Lazy                        as TL
@@ -35,6 +37,9 @@ infixr 6 <^>
 
 (<^>) :: Doc a -> Doc a -> Doc a
 (<^>) x y = flatAlt (x <> hardline <> indent 4 y) (x <+> y)
+
+intercalate :: Doc a -> [Doc a] -> Doc a
+intercalate x = mconcat . intersperse x
 
 dickinsonLayoutOptions :: LayoutOptions
 dickinsonLayoutOptions = LayoutOptions (AvailablePerLine 160 0.8)

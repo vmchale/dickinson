@@ -21,9 +21,10 @@ import qualified Data.ByteString.Lazy as BSL
 import qualified Data.ByteString.Lazy.Char8 as ASCII
 import Data.Functor (($>))
 import qualified Data.IntMap as IM
+import qualified Data.List.NonEmpty as NE
 import qualified Data.Map as M
 import Data.Semigroup ((<>))
-import Data.Text as T
+import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, langle, rbracket, lbracket, colon, dquotes)
 import GHC.Generics (Generic)
@@ -45,13 +46,15 @@ $latin = [a-zA-Z]
 -- TODO: interpolations?
 @string = \" ([^\"\\] | @escape_str)* \"
 
+@name = ($latin+ \.)* $latin+
+
 tokens :-
 
     <0> $white+                    ;
     <0> ";".*                      ;
 
     -- assume utf8
-    <0> $latin+                    { tok (\p s -> TokIdent p <$> newIdentAlex p (mkShort s)) }
+    <0> @name                      { tok (\p s -> TokIdent p <$> newIdentAlex p (mkShort s)) }
 
     <0> \(                         { mkSym LParen }
     <0> \)                         { mkSym RParen }
@@ -65,6 +68,7 @@ tokens :-
     <0> ":branch"                  { mkKeyword KwBranch }
     <0> ":oneof"                   { mkKeyword KwOneof }
     <0> ":def"                     { mkKeyword KwDef }
+    <0> ":import"                  { mkKeyword KwImport }
 
     -- strings
     <0> @string                    { tok (\p s -> alex $ TokString p (T.tail . T.init $ mkShort s)) }
@@ -115,11 +119,11 @@ newIdentAlex pos t = do
 newIdent :: AlexPosn -> T.Text -> AlexUserState -> (AlexUserState, Name AlexPosn)
 newIdent pos t pre@(max', names, uniqs) =
     case M.lookup t names of
-        Just i -> (pre, Name t (Unique i) pos)
+        Just i -> (pre, Name tQual (Unique i) pos)
         Nothing -> let i = max' + 1
-            in let newName = Name t (Unique i) pos
+            in let newName = Name tQual (Unique i) pos
                 in ((i, M.insert t i names, IM.insert i newName uniqs), newName)
-
+    where tQual = NE.fromList (T.splitOn "." t)
 
 alexInitUserState :: AlexUserState
 alexInitUserState = (0, mempty, mempty)
@@ -144,6 +148,7 @@ data Keyword = KwDef
              | KwLet
              | KwBranch
              | KwOneof
+             | KwImport
              deriving (Eq, Generic, NFData)
 
 instance Pretty Keyword where
@@ -151,6 +156,7 @@ instance Pretty Keyword where
     pretty KwLet    = ":let"
     pretty KwBranch = ":branch"
     pretty KwOneof  = ":oneof"
+    pretty KwImport = ":import"
 
 instance Pretty AlexPosn where
     pretty (AlexPn _ line col) = pretty line <> colon <> pretty col

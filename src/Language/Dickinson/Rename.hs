@@ -9,7 +9,8 @@ module Language.Dickinson.Rename ( renameDickinson
                                  ) where
 
 import           Control.Monad           (void)
-import           Control.Monad.State     (MonadState, State, runState, state)
+import           Control.Monad.State     (MonadState, State, get, put, runState,
+                                          state)
 import           Data.Foldable           (traverse_)
 import qualified Data.IntMap             as IM
 import qualified Data.List.NonEmpty      as NE
@@ -37,12 +38,12 @@ initRenames = Renames (maxBound `div` 2) mempty -- FIXME: this is sloppy
 runRenameM :: RenameM a x -> (x, Renames)
 runRenameM = flip runState initRenames
 
+-- Make sure you don't have cycles in the renames map!
+-- not that you should anyway
 replaceVar :: (MonadState s m, HasRenames s) => Name a -> m (Name a)
 replaceVar ~pre@(Name n (Unique i) l) = do
     rSt <- use (rename.boundLens)
     case IM.lookup i rSt of
-        -- for recursive lookups rewrites
-        -- FIXME: we have cycles?
         Just j  -> replaceVar $ Name n (Unique j) l
         Nothing -> pure pre
 
@@ -55,7 +56,6 @@ insertM = state . insertGo
                 case IM.lookup i rs of
                     Just j -> undefined -- (Unique $ m+1, Renames (m+1) (IM.insert i (m+1) rs))
                     Nothing -> ((Unique i, Unique $ m+1), Renames (m+1) (IM.insert i (m+1) rs))
-                    -- TODO: also return what to delete at the end?
 
 deleteM :: (MonadState s m, HasRenames s) => Unique -> m ()
 deleteM (Unique i) = modifying (rename.boundLens) (IM.delete i)
@@ -74,6 +74,12 @@ withBinding (Name n u l, e) = do
     (j, u') <- insertM u
     (j, Name n u' l ,) <$> renameExpressionM e
 
+withState :: MonadState s m => s -> m a -> m a
+withState tmp act = do
+    preSt <- get
+    put tmp
+    act <* put preSt
+
 -- TODO: is this 'clone'?
 renameExpressionM :: (MonadState s m, HasRenames s) => Expression Name a -> m (Expression Name a)
 renameExpressionM e@Literal{} = pure e
@@ -90,6 +96,7 @@ renameExpressionM (Let p ls es) = do
     traverse_ deleteM (extrUniques newBindings)
     -- inserts are too zealous? can bind to e.g. '2' twice...
     -- and then delete it prematurely?
+    -- could just store the state? and use it locally?
     pure res
 
     where extrUniques = fmap fst3

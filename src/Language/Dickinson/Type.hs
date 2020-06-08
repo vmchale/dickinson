@@ -22,9 +22,12 @@ import           GHC.Generics                  (Generic)
 
 type Dickinson name a = [Declaration name a]
 
-data Declaration name a = Define { defAnn  :: a
+data Declaration name a = Define { declAnn :: a
                                  , defName :: (name a)
                                  , defExpr :: (Expression name a)
+                                 }
+                        | Import { declAnn :: a
+                                 , declMod :: !(name a)
                                  }
                         deriving (Generic, NFData)
 

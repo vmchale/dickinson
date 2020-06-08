@@ -42,6 +42,7 @@ import Language.Dickinson.Type
     let { TokKeyword $$ KwLet }
     branch { TokKeyword $$ KwBranch }
     oneof { TokKeyword $$ KwOneof }
+    import { TokKeyword $$ KwImport }
 
     ident { $$@(TokIdent _ _) }
 
@@ -69,6 +70,7 @@ Dickinson :: { Dickinson Name AlexPosn }
 
 Declaration :: { Declaration Name AlexPosn }
             : def Name parens(Expression) { Define $1 $2 $3 }
+            | import Name { Import $1 $2 }
 
 Name :: { Name AlexPosn }
      : ident { ident $1 }
