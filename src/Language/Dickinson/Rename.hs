@@ -17,18 +17,24 @@ import qualified Data.List.NonEmpty      as NE
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
 import           Lens.Micro              (Lens', set, (^.))
-import           Lens.Micro.Mtl          (modifying, use)
+import           Lens.Micro.Mtl          (modifying, use, (%=), (.=))
 
 data Renames = Renames { max_ :: Int, bound :: IM.IntMap Int }
 
 boundLens :: Lens' Renames (IM.IntMap Int)
-boundLens f s = fmap (\x -> s { bound = x}) (f (bound s))
+boundLens f s = fmap (\x -> s { bound = x }) (f (bound s))
+
+maxLens :: Lens' Renames Int
+maxLens f s = fmap (\x -> s { max_ = x }) (f (max_ s))
 
 class HasRenames a where
     rename :: Lens' a Renames
 
 instance HasRenames Renames where
     rename = id
+
+instance Semigroup Renames where
+    (<>) (Renames m1 b1) (Renames m2 b2) = Renames (max m1 m2) (b1 <> b2)
 
 type RenameM a = State Renames
 
@@ -39,7 +45,6 @@ runRenameM :: RenameM a x -> (x, Renames)
 runRenameM = flip runState initRenames
 
 -- Make sure you don't have cycles in the renames map!
--- not that you should anyway
 replaceVar :: (MonadState s m, HasRenames s) => Name a -> m (Name a)
 replaceVar ~pre@(Name n (Unique i) l) = do
     rSt <- use (rename.boundLens)
@@ -47,40 +52,22 @@ replaceVar ~pre@(Name n (Unique i) l) = do
         Just j  -> replaceVar $ Name n (Unique j) l
         Nothing -> pure pre
 
-insertM :: (MonadState s m, HasRenames s) => Unique -> m (Unique, Unique)
-insertM = state . insertGo
-    where insertGo :: HasRenames s => Unique -> s -> ((Unique, Unique), s)
-          insertGo u st = let (u', r) = insertMod u (st^.rename) in (u', set rename r st)
-          insertMod :: Unique -> Renames -> ((Unique, Unique), Renames)
-          insertMod (Unique i) (Renames m rs) =
-                case IM.lookup i rs of
-                    Just j -> undefined -- (Unique $ m+1, Renames (m+1) (IM.insert i (m+1) rs))
-                    Nothing -> ((Unique i, Unique $ m+1), Renames (m+1) (IM.insert i (m+1) rs))
-
-deleteM :: (MonadState s m, HasRenames s) => Unique -> m ()
-deleteM (Unique i) = modifying (rename.boundLens) (IM.delete i)
--- don't bother deleting max; probably won't run out
-
 renameDickinson :: Dickinson Name a -> (Dickinson Name a, Renames)
 renameDickinson ds = runRenameM $ traverse renameDeclarationM ds
 
 renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration Name a -> m (Declaration Name a)
 renameDeclarationM (Define p n@(Name _ u _) e) = do
-    void $ insertM u
     Define p n <$> renameExpressionM e
 
-withBinding :: (MonadState s m, HasRenames s) => (Name a, Expression Name a) -> m (Unique, Name a, Expression Name a)
-withBinding (Name n u l, e) = do
-    (j, u') <- insertM u
-    (j, Name n u' l ,) <$> renameExpressionM e
+withRenames :: (HasRenames s, MonadState s m) => (Renames -> Renames) -> m a -> m a
+withRenames modSt act = do
+    preSt <- use rename
+    rename %= modSt
+    postMax <- use (rename.maxLens)
+    act <* do
+        rename .= preSt
+        rename.maxLens .= postMax
 
-withState :: MonadState s m => s -> m a -> m a
-withState tmp act = do
-    preSt <- get
-    put tmp
-    act <* put preSt
-
--- TODO: is this 'clone'?
 renameExpressionM :: (MonadState s m, HasRenames s) => Expression Name a -> m (Expression Name a)
 renameExpressionM e@Literal{} = pure e
 renameExpressionM (Var p n)   = Var p <$> replaceVar n
@@ -90,15 +77,3 @@ renameExpressionM (Choice p branches) = Choice p <$> branches'
                 in let es = fmap snd branches
                     in NE.zip ds <$> traverse renameExpressionM es
 renameExpressionM (Concat p es) = Concat p <$> traverse renameExpressionM es
-renameExpressionM (Let p ls es) = do
-    newBindings <- traverse withBinding ls
-    res <- Let p (to2 <$> newBindings) <$> renameExpressionM es
-    traverse_ deleteM (extrUniques newBindings)
-    -- inserts are too zealous? can bind to e.g. '2' twice...
-    -- and then delete it prematurely?
-    -- could just store the state? and use it locally?
-    pure res
-
-    where extrUniques = fmap fst3
-          to2 (_, x, y) = (x, y)
-          fst3 (x, _, _) = x

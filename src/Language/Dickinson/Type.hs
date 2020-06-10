@@ -23,8 +23,8 @@ import           GHC.Generics                  (Generic)
 type Dickinson name a = [Declaration name a]
 
 data Declaration name a = Define { declAnn :: a
-                                 , defName :: (name a)
-                                 , defExpr :: (Expression name a)
+                                 , defName :: name a
+                                 , defExpr :: Expression name a
                                  }
                         | Import { declAnn :: a
                                  , declMod :: !(name a)
@@ -57,8 +57,8 @@ prettyChoiceBranch (d, e) = parens (pipe <+> pretty d <+> pretty e)
 instance Pretty (name a) => Pretty (Expression name a) where
     pretty (Var _ n)     = pretty n
     pretty (Literal _ l) = dquotes $ pretty l
-    pretty (Let _ ls e) = parens (":let" <^> (vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e])))
+    pretty (Let _ ls e) = parens (":let" <^> vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e]))
     -- TODO: if they're all equal, use :oneof
     -- also comments lol
-    pretty (Choice _ brs) = parens (":branch" <^> (vsep (toList $ fmap prettyChoiceBranch brs)))
+    pretty (Choice _ brs) = parens (":branch" <^> vsep (toList $ fmap prettyChoiceBranch brs))
     pretty (Concat _ es) = parens (pipe <> langle <+> hsep (toList $ fmap pretty es))

@@ -1,5 +1,4 @@
 {-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE TupleSections    #-}
 
 module Language.Dickinson.Eval ( EvalM
                                , evalExpressionM
@@ -11,8 +10,7 @@ module Language.Dickinson.Eval ( EvalM
 import           Control.Monad.Except      (Except, MonadError, runExcept,
                                             throwError)
 import           Control.Monad.State.Lazy  (StateT, evalStateT, gets, modify)
-import           Data.Foldable             (toList)
-import           Data.Foldable             (traverse_)
+import           Data.Foldable             (toList, traverse_)
 import qualified Data.IntMap               as IM
 import           Data.List.NonEmpty        (NonEmpty, (<|))
 import qualified Data.List.NonEmpty        as NE
@@ -51,7 +49,7 @@ evalWithGen :: StdGen
             -> Renames -- ^ Threaded through
             -> EvalM name a x
             -> Either (DickinsonError name a) x
-evalWithGen g rs me = runExcept $ flip evalStateT (EvalSt (randoms g) mempty rs) me
+evalWithGen g rs me = runExcept $ evalStateT me (EvalSt (randoms g) mempty rs)
 
 bindName :: Name a -> Expression Name a -> EvalM Name a ()
 bindName (Name _ (Unique u) _) e = modify (over boundExprLens (IM.insert u e))
@@ -69,7 +67,7 @@ normalize xs = (/tot) <$> xs
     where tot = sum xs
 
 cdf :: (Num a) => NonEmpty a -> [a]
-cdf = NE.drop 2 . (NE.scanl (+) 0) . ((<|) 0)
+cdf = NE.drop 2 . NE.scanl (+) 0 . (0 <|)
 
 pick :: NonEmpty (Double, Expression name a) -> EvalM name a (Expression name a)
 pick brs = do

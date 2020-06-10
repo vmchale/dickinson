@@ -25,7 +25,7 @@ newtype Unique = Unique { unUnique :: Int }
     deriving stock (Eq, Ord)
     deriving newtype (Pretty, NFData)
 
-data Name a = Name { name   :: NonEmpty (T.Text)
+data Name a = Name { name   :: NonEmpty T.Text
                    , unique :: !Unique
                    , loc    :: a
                    } deriving (Functor, Generic, NFData)
