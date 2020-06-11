@@ -32,10 +32,10 @@ isMain :: Name a -> Bool
 isMain = (== ("main" :| [])) . name
 
 instance Eq (Name a) where
-    (==) ~(Name _ u _) ~(Name _ u' _) = u == u'
+    (==) (Name _ u _) (Name _ u' _) = u == u'
 
 instance Ord (Name a) where
-    compare ~(Name _ u _) ~(Name _ u' _) = compare u u'
+    compare (Name _ u _) (Name _ u' _) = compare u u'
 
 instance Pretty (Name a) where
     pretty (Name t u _) = intercalate "." (toList (pretty <$> t)) <> "_" <> pretty u
