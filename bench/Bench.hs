@@ -2,7 +2,7 @@ module Main (main) where
 
 import           Criterion.Main
 import qualified Data.ByteString.Lazy as BSL
-import           Language.Dickinson   (lexDickinson, parse)
+import           Language.Dickinson
 
 main :: IO ()
 main =
@@ -11,6 +11,14 @@ main =
                     [ bench "parse" $ nf parse c
                     , bench "lex" $ nf lexDickinson c
                     ]
+                , env libParsed $ \p ->
+                  bgroup "bench/data/nestLet.dck"
+                    [ bench "rename" $ nf plainExpr p
+                    ]
                 ]
 
     where libFile = BSL.readFile "lib/color.dck"
+          libParsed = (either (error.show) id) . parse <$> BSL.readFile "bench/data/nestLet.dck"
+
+plainExpr :: Dickinson Name a -> Dickinson Name a
+plainExpr = fst . renameDickinson
