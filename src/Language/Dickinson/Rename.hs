@@ -13,6 +13,7 @@ import           Control.Monad.Ext       (zipWithM)
 import           Control.Monad.State     (MonadState, State, runState)
 import qualified Data.IntMap             as IM
 import qualified Data.List.NonEmpty      as NE
+import           Data.Semigroup          (Semigroup (..))
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
 import           Lens.Micro              (Lens')
@@ -37,6 +38,7 @@ instance Semigroup Renames where
 
 instance Monoid Renames where
     mempty = Renames 0 mempty
+    mappend = (<>)
 
 type RenameM a = State Renames
 
@@ -82,7 +84,7 @@ mapBound :: (IM.IntMap Int -> IM.IntMap Int) -> Renames -> Renames
 mapBound f (Renames m b) = Renames m (f b)
 
 setMax :: Int -> Renames -> Renames
-setMax i (Renames j b) = Renames i b
+setMax i (Renames _ b) = Renames i b
 
 renameExpressionM :: (MonadState s m, HasRenames s) => Expression Name a -> m (Expression Name a)
 renameExpressionM e@Literal{} = pure e
