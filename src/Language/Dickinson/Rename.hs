@@ -60,7 +60,7 @@ renameDickinson :: Int -> Dickinson Name a -> (Dickinson Name a, Renames)
 renameDickinson m ds = runRenameM m $ traverse renameDeclarationM ds
 
 renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration Name a -> m (Declaration Name a)
-renameDeclarationM (Define p n@(Name _ u _) e) = do
+renameDeclarationM (Define p n e) = do
     -- FIXME: broadcast unique?
     Define p n <$> renameExpressionM e
 
