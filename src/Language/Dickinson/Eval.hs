@@ -1,6 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module Language.Dickinson.Eval ( EvalM
+                               , addDecl
                                , evalExpressionM
                                , evalWithGen
                                , evalIO
@@ -50,7 +51,7 @@ evalWithGen :: StdGen
             -> Either (DickinsonError name a) x
 evalWithGen g u me = runExcept $ evalStateT me (EvalSt (randoms g) mempty (initRenames u))
 
--- FIXME: bind it temporarily
+-- TODO: temporary bindings
 bindName :: Name a -> Expression Name a -> EvalM Name a ()
 bindName (Name _ (Unique u) _) e = modify (over boundExprLens (IM.insert u e))
 
@@ -81,6 +82,9 @@ findMain :: MonadError (DickinsonError Name a) m => Dickinson Name a -> m (Expre
 findMain = getMain . filter (isMain.defName)
     where getMain (x:_) = pure $ defExpr x
           getMain []    = throwError NoMain
+
+addDecl :: Declaration Name a -> EvalM Name a ()
+addDecl (Define _ n e) = bindName n e
 
 evalExpressionM :: Expression Name a -> EvalM Name a T.Text
 evalExpressionM (Literal _ t)  = pure t

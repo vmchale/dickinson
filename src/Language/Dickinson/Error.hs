@@ -2,7 +2,9 @@
 module Language.Dickinson.Error ( DickinsonError (..)
                                 ) where
 
+import           Control.Exception         (Exception)
 import           Data.Text.Prettyprint.Doc (Pretty (pretty), squotes, (<+>))
+import           Data.Typeable             (Typeable)
 import           Language.Dickinson.Parser
 
 -- type error but I'll do that later
@@ -19,3 +21,5 @@ instance (Pretty (name a), Pretty a) => Pretty (DickinsonError name a) where
     pretty NoMain              = squotes "main" <+> "not defined"
     pretty (ParseErr e)        = pretty e
     pretty (MultipleNames l n) = pretty n <+> "at" <+> pretty l <+> "has already been defined"
+
+instance (Pretty (name a), Pretty a, Typeable name, Typeable a) => Exception (DickinsonError name a)

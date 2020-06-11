@@ -1,6 +1,7 @@
 module Golden ( goldenTests
               ) where
 
+import           Control.Exception             (throw)
 import qualified Data.ByteString.Lazy          as BSL
 import           Data.Text.Lazy.Encoding       (encodeUtf8)
 import           Data.Text.Prettyprint.Doc.Ext
@@ -27,11 +28,11 @@ withDckFile fp =
     goldenVsString ("Matches golden output " ++ fp) (fp -<.> "pretty") act
 
     where act = prettyBSL . yeet . parse <$> BSL.readFile fp
-          yeet = either (error.show) id
+          yeet = either throw id
 
 renameDckFile :: FilePath -> TestTree
 renameDckFile fp =
     goldenVsString ("Matches golden output " ++ fp) (fp -<.> "rename") act
 
     where act = prettyBSL . fst . uncurry renameDickinson . yeet . parseWithCtx <$> BSL.readFile fp
-          yeet = either (error.show) id
+          yeet = either throw id

@@ -1,5 +1,6 @@
 module Main (main) where
 
+import           Control.Exception    (throw)
 import           Criterion.Main
 import qualified Data.ByteString.Lazy as BSL
 import           Language.Dickinson
@@ -18,7 +19,7 @@ main =
                 ]
 
     where libFile = BSL.readFile "lib/color.dck"
-          libParsed = (either (error.show) id) . parseWithCtx <$> BSL.readFile "bench/data/nestLet.dck"
+          libParsed = (either throw id) . parseWithCtx <$> BSL.readFile "bench/data/nestLet.dck"
 
 plainExpr :: (UniqueCtx, Dickinson Name a) -> Dickinson Name a
 plainExpr = fst . uncurry renameDickinson

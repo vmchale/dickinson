@@ -17,6 +17,7 @@ module Language.Dickinson ( parse
                           , putDoc
                           ) where
 
+import           Control.Exception                     (Exception, throw)
 import           Control.Monad                         ((<=<))
 import           Data.ByteString.Lazy                  as BSL
 import qualified Data.Text                             as T
@@ -35,5 +36,5 @@ evalFile :: FilePath -> IO T.Text
 evalFile = fmap yeet . evalIO 1000 . evalExpressionM . yeet . findMain . yeet . parse <=< BSL.readFile
 -- TODO: renameDickinson
 
-yeet :: Show a => Either a x -> x
-yeet = either (error.show) id
+yeet :: Exception e => Either e x -> x
+yeet = either throw id

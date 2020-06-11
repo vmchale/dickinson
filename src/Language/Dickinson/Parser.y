@@ -10,6 +10,7 @@
                                      ) where
 
 import Control.DeepSeq (NFData)
+import Control.Exception (Exception)
 import Control.Monad.Except (ExceptT, runExceptT, throwError)
 import Control.Monad.Trans.Class (lift)
 import qualified Data.ByteString.Lazy as BSL
@@ -18,6 +19,7 @@ import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Data.Text.Prettyprint.Doc (Pretty (pretty), (<+>))
+import Data.Typeable (Typeable)
 import GHC.Generics (Generic)
 import Language.Dickinson.Lexer
 import Language.Dickinson.Name hiding (loc)
@@ -112,6 +114,8 @@ instance Pretty a => Pretty (ParseError a) where
 
 instance Pretty a => Show (ParseError a) where
     show = show . pretty
+
+instance (Pretty a, Typeable a) => Exception (ParseError a)
 
 type Parse = ExceptT (ParseError AlexPosn) Alex
 
