@@ -48,7 +48,7 @@ runRenameM m = flip runState (initRenames m)
 
 -- Make sure you don't have cycles in the renames map!
 replaceVar :: (MonadState s m, HasRenames s) => Name a -> m (Name a)
-replaceVar ~pre@(Name n (Unique i) l) = {-# SCC "replaceVar" #-} do
+replaceVar pre@(Name n (Unique i) l) = {-# SCC "replaceVar" #-} do
     rSt <- use (rename.boundLens)
     case IM.lookup i rSt of
         Just j  -> replaceVar $ Name n (Unique j) l
