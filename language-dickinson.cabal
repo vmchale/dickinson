@@ -37,6 +37,7 @@ library
         Language.Dickinson.Eval
         Language.Dickinson.Error
         Language.Dickinson.Pretty
+        Control.Monad.Ext
 
     default-language:   Haskell2010
     other-extensions:
@@ -58,7 +59,8 @@ library
         pretty-ext -any,
         deepseq -any,
         microlens -any,
-        microlens-mtl -any
+        microlens-mtl -any,
+        composition-prelude >= 1.1.0.1
 
     if impl(ghc >=8.0)
         ghc-options:

@@ -51,6 +51,7 @@ evalWithGen :: StdGen
             -> Either (DickinsonError name a) x
 evalWithGen g rs me = runExcept $ evalStateT me (EvalSt (randoms g) mempty rs)
 
+-- FIXME: bind it temporarily
 bindName :: Name a -> Expression Name a -> EvalM Name a ()
 bindName (Name _ (Unique u) _) e = modify (over boundExprLens (IM.insert u e))
 
@@ -90,3 +91,4 @@ evalExpressionM (Choice _ pes) = evalExpressionM =<< pick pes
 evalExpressionM (Let _ bs e) = do
     traverse_ (uncurry bindName) bs
     evalExpressionM e <* traverse_ deleteName (fst <$> bs)
+    -- FIXME: doesn't drop context!
