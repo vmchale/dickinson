@@ -1,4 +1,5 @@
 module Language.Dickinson ( parse
+                          , parseWithCtx
                           , lexDickinson
                           , prettyDickinson
                           , renameDickinson

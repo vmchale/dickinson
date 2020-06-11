@@ -6,6 +6,7 @@
     module Language.Dickinson.Lexer ( alexMonadScan
                                     , runAlex
                                     , runAlexSt
+                                    , runAlexMax
                                     , lexDickinson
                                     , AlexPosn (..)
                                     , Alex (..)
@@ -192,6 +193,10 @@ loop = do
 -- | N.B. for testing
 lexDickinson :: BSL.ByteString -> Either String [Token AlexPosn]
 lexDickinson = flip runAlex loop
+
+runAlexMax :: BSL.ByteString -> Alex a -> Either String (Int, a)
+runAlexMax = (fmap (first fst3) .) . runAlexSt
+    where fst3 (x, _, _) = x
 
 runAlexSt :: BSL.ByteString -> Alex a -> Either String (AlexUserState, a)
 runAlexSt inp (Alex f) = first alex_ust <$> f

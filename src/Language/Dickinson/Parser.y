@@ -5,6 +5,7 @@
     {-# LANGUAGE OverloadedStrings #-}
     {-# LANGUAGE TupleSections #-}
     module Language.Dickinson.Parser ( parse
+                                     , parseWithCtx
                                      , ParseError (..)
                                      ) where
 
@@ -115,9 +116,12 @@ instance Pretty a => Show (ParseError a) where
 type Parse = ExceptT (ParseError AlexPosn) Alex
 
 parse :: BSL.ByteString -> Either (ParseError AlexPosn) (Dickinson Name AlexPosn)
-parse str = liftErr $ runAlex str (runExceptT parseDickinson)
-    where liftErr (Left err) = Left (LexErr err)
-          liftErr (Right (Left err)) = Left err
-          liftErr (Right (Right x)) = Right x
+parse = fmap snd . parseWithCtx
+
+parseWithCtx :: BSL.ByteString -> Either (ParseError AlexPosn) (Int, Dickinson Name AlexPosn)
+parseWithCtx str = liftErr $ runAlexMax str (runExceptT parseDickinson)
+    where liftErr (Left err)            = Left (LexErr err)
+          liftErr (Right (_, Left err)) = Left err
+          liftErr (Right (i, Right x))  = Right (i, x)
 
 }

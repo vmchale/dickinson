@@ -31,5 +31,5 @@ renameDckFile :: FilePath -> TestTree
 renameDckFile fp =
     goldenVsString ("Matches golden output " ++ fp) (fp -<.> "rename") act
 
-    where act = prettyBSL . fst . (renameDickinson 100) . yeet . parse <$> BSL.readFile fp
+    where act = prettyBSL . fst . uncurry renameDickinson . yeet . parseWithCtx <$> BSL.readFile fp
           yeet = either (error.show) id
