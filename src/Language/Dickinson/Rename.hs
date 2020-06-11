@@ -68,9 +68,7 @@ withRenames modSt act = do
     rename %= modSt
     -- idk
     postMax <- use (rename.maxLens)
-    act <* do
-        rename .= preSt
-        rename.maxLens .= (postMax + 1)
+    act <* (rename .= (setMax (postMax + 1) preSt))
 
 -- TODO: slow
 withName :: (HasRenames s, MonadState s m) => Name a -> m (Name a, Renames -> Renames)
@@ -82,6 +80,9 @@ withName (Name t (Unique i) l) = do
 
 mapBound :: (IM.IntMap Int -> IM.IntMap Int) -> Renames -> Renames
 mapBound f (Renames m b) = Renames m (f b)
+
+setMax :: Int -> Renames -> Renames
+setMax i (Renames j b) = Renames i b
 
 renameExpressionM :: (MonadState s m, HasRenames s) => Expression Name a -> m (Expression Name a)
 renameExpressionM e@Literal{} = pure e
