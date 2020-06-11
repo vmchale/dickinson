@@ -12,8 +12,8 @@ main =
                     , bench "lex" $ nf lexDickinson c
                     ]
                 , env libParsed $ \p ->
-                  bgroup "bench/data/nestLet.dck"
-                    [ bench "rename" $ nf plainExpr p
+                  bgroup "renamer"
+                    [ bench "bench/data/nestLet.dck" $ nf plainExpr p
                     ]
                 ]
 

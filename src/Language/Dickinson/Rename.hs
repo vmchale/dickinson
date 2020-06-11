@@ -51,7 +51,7 @@ runRenameM = flip runState initRenames
 
 -- Make sure you don't have cycles in the renames map!
 replaceVar :: (MonadState s m, HasRenames s) => Name a -> m (Name a)
-replaceVar ~pre@(Name n (Unique i) l) = do
+replaceVar ~pre@(Name n (Unique i) l) = {-# SCC "replaceVar" #-} do
     rSt <- use (rename.boundLens)
     case IM.lookup i rSt of
         Just j  -> replaceVar $ Name n (Unique j) l
@@ -70,12 +70,12 @@ withRenames modSt act = do
     preSt <- use rename
     rename %= modSt
     -- idk
-    rename.maxLens += 1
     postMax <- use (rename.maxLens)
     act <* do
         rename .= preSt
-        rename.maxLens .= postMax
+        rename.maxLens .= (postMax + 1)
 
+-- TODO: slow
 withName :: (HasRenames s, MonadState s m) => Name a -> m (Name a, Renames -> Renames)
 withName (Name t (Unique i) l) = do
     m <- use (rename.maxLens)
@@ -98,6 +98,7 @@ renameExpressionM (Let p bs e) = do
         newBinds = thread localRenames
         newNames = fst <$> newBs
         preNewBound = snd <$> bs
-    newBound <- zipWithM (\r e -> withRenames r (renameExpressionM e)) localRenames preNewBound
+    newBound <-
+        zipWithM (\r e' -> withRenames r (renameExpressionM e')) localRenames preNewBound
     withRenames newBinds $
         Let p (NE.zip newNames newBound) <$> renameExpressionM e

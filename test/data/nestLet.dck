@@ -2,6 +2,7 @@
     (:let
         [a (:let [a "man"] a)]
         [b (:let [a "woman"] a)]
+        [c (:let [a "non-binary"] a)]
         (:branch
-            (| 1.0 a)
+            (| 1.0 (:let [b a] b))
             (| 1.0 b))))

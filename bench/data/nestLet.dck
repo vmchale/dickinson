@@ -1,12 +1,26 @@
-(:def overlyProlix
+(:def nestedLet
     (:let
         [a (:let [a "man"] a)]
         [b (:let [a "woman"] a)]
+        [c (:let [c "non-binary"] c)]
         (:branch
+            (| 1.0 a)
+            (| 1.0 a)
             (| 1.0 a)
             (| 1.0 b))))
 
 (:def letBinding
   (:branch
     (| 1.0 "man")
+    (| 1.0 "man")
     (| 1.0 "woman")))
+
+(:def overlyProlix
+    (:let
+        [a (:let [a "man"] a)]
+        [b (:let [a "woman"] a)]
+        [c (:let [a "non-binary"] a)]
+        (:branch
+            (| 1.0 (:let [b a] b))
+            (| 1.0 (:let [a b] a))
+            (| 1.0 (:let [c b] c)))))
