@@ -21,4 +21,4 @@ main =
           libParsed = (either (error.show) id) . parse <$> BSL.readFile "bench/data/nestLet.dck"
 
 plainExpr :: Dickinson Name a -> Dickinson Name a
-plainExpr = fst . renameDickinson
+plainExpr = fst . (renameDickinson 1000)

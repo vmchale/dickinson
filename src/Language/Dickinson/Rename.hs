@@ -15,7 +15,7 @@ import qualified Data.IntMap             as IM
 import qualified Data.List.NonEmpty      as NE
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
-import           Lens.Micro              (Lens', over)
+import           Lens.Micro              (Lens')
 import           Lens.Micro.Mtl          (use, (%=), (.=))
 
 data Renames = Renames { max_ :: Int, bound :: IM.IntMap Int }
@@ -40,11 +40,11 @@ instance Monoid Renames where
 
 type RenameM a = State Renames
 
-initRenames :: Renames
-initRenames = Renames (maxBound `div` 2) mempty -- FIXME: this is sloppy
+initRenames :: Int -> Renames
+initRenames m = Renames m mempty -- FIXME: this is sloppy
 
-runRenameM :: RenameM a x -> (x, Renames)
-runRenameM = flip runState initRenames
+runRenameM :: Int -> RenameM a x -> (x, Renames)
+runRenameM m = flip runState (initRenames m)
 
 -- Make sure you don't have cycles in the renames map!
 replaceVar :: (MonadState s m, HasRenames s) => Name a -> m (Name a)
@@ -54,8 +54,8 @@ replaceVar ~pre@(Name n (Unique i) l) = {-# SCC "replaceVar" #-} do
         Just j  -> replaceVar $ Name n (Unique j) l
         Nothing -> pure pre
 
-renameDickinson :: Dickinson Name a -> (Dickinson Name a, Renames)
-renameDickinson ds = runRenameM $ traverse renameDeclarationM ds
+renameDickinson :: Int -> Dickinson Name a -> (Dickinson Name a, Renames)
+renameDickinson m ds = runRenameM m $ traverse renameDeclarationM ds
 
 renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration Name a -> m (Declaration Name a)
 renameDeclarationM (Define p n@(Name _ u _) e) = do
@@ -78,7 +78,10 @@ withName (Name t (Unique i) l) = do
     m <- use (rename.maxLens)
     let newUniq = m+1
     rename.maxLens .= newUniq
-    pure (Name t (Unique newUniq) l, over boundLens (IM.insert i (m+1)))
+    pure (Name t (Unique newUniq) l, mapBound (IM.insert i (m+1)))
+
+mapBound :: (IM.IntMap Int -> IM.IntMap Int) -> Renames -> Renames
+mapBound f (Renames m b) = Renames m (f b)
 
 renameExpressionM :: (MonadState s m, HasRenames s) => Expression Name a -> m (Expression Name a)
 renameExpressionM e@Literal{} = pure e
