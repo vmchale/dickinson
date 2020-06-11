@@ -16,16 +16,10 @@ import           Data.Semigroup                        ((<>))
 import qualified Data.Text                             as T
 import qualified Data.Text.Lazy                        as TL
 import           Data.Text.Prettyprint.Doc             (Doc, LayoutOptions (LayoutOptions),
-                                                        PageWidth (AvailablePerLine),
-                                                        Pretty (pretty),
-                                                        SimpleDocStream,
-                                                        concatWith,
-                                                        defaultLayoutOptions,
-                                                        flatAlt, hardline,
-                                                        indent, layoutSmart,
-                                                        softline, (<+>))
-import           Data.Text.Prettyprint.Doc.Render.Text (renderLazy,
-                                                        renderStrict)
+                                                        PageWidth (AvailablePerLine), Pretty (pretty), SimpleDocStream,
+                                                        concatWith, defaultLayoutOptions, flatAlt, hardline, indent,
+                                                        layoutSmart, softline, (<+>))
+import           Data.Text.Prettyprint.Doc.Render.Text (renderLazy, renderStrict)
 
 infixr 6 <#>
 infixr 6 <:>
