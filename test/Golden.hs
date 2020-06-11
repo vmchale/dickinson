@@ -15,6 +15,7 @@ goldenTests =
         [ withDckFile "test/data/nestLet.dck"
         , renameDckFile "test/data/nestLet.dck"
         , renameDckFile "test/data/let.dck"
+        , renameDckFile "test/data/import.dck"
         ]
 
 prettyBSL :: Pretty (name a) => Dickinson name a -> BSL.ByteString

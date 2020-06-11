@@ -46,6 +46,7 @@ data DickinsonTy = Text
 
 instance Pretty (name a) => Pretty (Declaration name a) where
     pretty (Define _ n e) = parens (":def" <+> pretty n <#> indent 4 (pretty e))
+    pretty (Import _ n)   = parens (":import" <+> pretty n)
 
 prettyLetLeaf :: Pretty (name a) => (name a, Expression name a) -> Doc b
 prettyLetLeaf (n, e) = group (brackets (pretty n <+> pretty e))
