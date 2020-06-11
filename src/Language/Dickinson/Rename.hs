@@ -19,7 +19,7 @@ import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Type
 import           Lens.Micro                (Lens')
-import           Lens.Micro.Mtl            (use, (%=), (.=))
+import           Lens.Micro.Mtl            (modifying, use, (%=), (.=))
 
 data Renames = Renames { max_ :: Int, bound :: IM.IntMap Int }
 
@@ -63,8 +63,9 @@ renameDickinson m ds = runRenameM m $ traverse renameDeclarationM ds
 
 renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration Name a -> m (Declaration Name a)
 renameDeclarationM (Define p n e) = do
-    -- FIXME: broadcast unique?
-    Define p n <$> renameExpressionM e
+    (n', modR) <- withName n
+    modifying rename modR
+    Define p n' <$> renameExpressionM e
 
 withRenames :: (HasRenames s, MonadState s m) => (Renames -> Renames) -> m a -> m a
 withRenames modSt act = do
@@ -74,7 +75,7 @@ withRenames modSt act = do
     postMax <- use (rename.maxLens)
     act <* (rename .= (setMax (postMax + 1) preSt))
 
--- TODO: slow
+-- TODO: slow?
 withName :: (HasRenames s, MonadState s m) => Name a -> m (Name a, Renames -> Renames)
 withName (Name t (Unique i) l) = do
     m <- use (rename.maxLens)

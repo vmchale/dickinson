@@ -13,9 +13,10 @@ goldenTests :: TestTree
 goldenTests =
     testGroup "Golden tests"
         [ withDckFile "test/data/nestLet.dck"
+        , withDckFile "test/data/import.dck"
         , renameDckFile "test/data/nestLet.dck"
         , renameDckFile "test/data/let.dck"
-        , withDckFile "test/data/import.dck"
+        , renameDckFile "test/data/multiLet.dck"
         ]
 
 prettyBSL :: Pretty (name a) => Dickinson name a -> BSL.ByteString
