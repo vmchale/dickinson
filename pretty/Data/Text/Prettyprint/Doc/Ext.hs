@@ -4,6 +4,7 @@ module Data.Text.Prettyprint.Doc.Ext ( prettyText
                                      , dickinsonText
                                      , dickinsonLazyText
                                      , intercalate
+                                     , hardSep
                                      -- * Operators
                                      , (<#>)
                                      , (<:>)
@@ -18,6 +19,7 @@ import           Data.Text.Prettyprint.Doc             (Doc, LayoutOptions (Layo
                                                         PageWidth (AvailablePerLine),
                                                         Pretty (pretty),
                                                         SimpleDocStream,
+                                                        concatWith,
                                                         defaultLayoutOptions,
                                                         flatAlt, hardline,
                                                         indent, layoutSmart,
@@ -37,6 +39,9 @@ infixr 6 <^>
 
 (<^>) :: Doc a -> Doc a -> Doc a
 (<^>) x y = flatAlt (x <> hardline <> indent 4 y) (x <+> y)
+
+hardSep :: [Doc ann] -> Doc ann
+hardSep = concatWith (<#>)
 
 intercalate :: Doc a -> [Doc a] -> Doc a
 intercalate x = mconcat . intersperse x

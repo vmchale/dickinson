@@ -17,7 +17,7 @@ import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets,
                                                 dquotes, group, hsep, indent,
                                                 langle, parens, pipe, vsep,
                                                 (<+>))
-import           Data.Text.Prettyprint.Doc.Ext ((<#>), (<^>))
+import           Data.Text.Prettyprint.Doc.Ext (hardSep, (<#>), (<^>))
 import           GHC.Generics                  (Generic)
 
 type Dickinson name a = [Declaration name a]
@@ -58,8 +58,8 @@ prettyChoiceBranch (d, e) = parens (pipe <+> pretty d <+> pretty e)
 instance Pretty (name a) => Pretty (Expression name a) where
     pretty (Var _ n)     = pretty n
     pretty (Literal _ l) = dquotes $ pretty l
-    pretty (Let _ ls e) = parens (":let" <^> vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e]))
+    pretty (Let _ ls e) = group (parens (":let" <^> vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e])))
     -- TODO: if they're all equal, use :oneof
     -- also comments lol
-    pretty (Choice _ brs) = parens (":branch" <^> vsep (toList $ fmap prettyChoiceBranch brs))
+    pretty (Choice _ brs) = parens (":branch" <#> indent 4 (hardSep (toList $ fmap prettyChoiceBranch brs)))
     pretty (Concat _ es) = parens (pipe <> langle <+> hsep (toList $ fmap pretty es))
