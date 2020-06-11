@@ -2,6 +2,7 @@
 
 module Language.Dickinson.Eval ( EvalM
                                , addDecl
+                               , loadDickinson
                                , evalExpressionM
                                , evalWithGen
                                , evalIO
@@ -82,6 +83,9 @@ findMain :: MonadError (DickinsonError Name a) m => Dickinson Name a -> m (Expre
 findMain = getMain . filter (isMain.defName)
     where getMain (x:_) = pure $ defExpr x
           getMain []    = throwError NoMain
+
+loadDickinson :: Dickinson Name a -> EvalM Name a ()
+loadDickinson = traverse_ addDecl
 
 addDecl :: Declaration Name a -> EvalM Name a ()
 addDecl (Define _ n e) = bindName n e
