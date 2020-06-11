@@ -9,17 +9,14 @@ module Language.Dickinson.Rename ( renameDickinson
                                  ) where
 
 import           Control.Composition     (thread)
-import           Control.Monad           (void)
 import           Control.Monad.Ext       (zipWithM)
-import           Control.Monad.State     (MonadState, State, get, put, runState,
-                                          state)
-import           Data.Foldable           (traverse_)
+import           Control.Monad.State     (MonadState, State, runState)
 import qualified Data.IntMap             as IM
 import qualified Data.List.NonEmpty      as NE
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
-import           Lens.Micro              (Lens', over, set, (^.))
-import           Lens.Micro.Mtl          (modifying, use, (%=), (+=), (.=))
+import           Lens.Micro              (Lens', over)
+import           Lens.Micro.Mtl          (use, (%=), (.=))
 
 data Renames = Renames { max_ :: Int, bound :: IM.IntMap Int }
 
