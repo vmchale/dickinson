@@ -19,7 +19,7 @@ main =
                 ]
 
     where libFile = BSL.readFile "lib/color.dck"
-          libParsed = (either throw id) . parseWithCtx <$> BSL.readFile "bench/data/nestLet.dck"
+          libParsed = either throw id . parseWithCtx <$> BSL.readFile "bench/data/nestLet.dck"
 
 plainExpr :: (UniqueCtx, Dickinson Name a) -> Dickinson Name a
 plainExpr = fst . uncurry renameDickinson

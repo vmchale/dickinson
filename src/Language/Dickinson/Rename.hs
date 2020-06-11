@@ -1,5 +1,3 @@
-{-# LANGUAGE TupleSections #-}
-
 module Language.Dickinson.Rename ( renameDickinson
                                  , renameExpressionM
                                  , initRenames
@@ -48,7 +46,7 @@ initRenames :: UniqueCtx -> Renames
 initRenames m = Renames m mempty
 
 runRenameM :: UniqueCtx -> RenameM a x -> (x, UniqueCtx)
-runRenameM m x = second max_ (flip runState (initRenames m) x)
+runRenameM m x = second max_ (runState x (initRenames m))
 
 -- Make sure you don't have cycles in the renames map!
 replaceVar :: (MonadState s m, HasRenames s) => Name a -> m (Name a)
@@ -73,7 +71,7 @@ withRenames modSt act = do
     rename %= modSt
     -- idk
     postMax <- use (rename.maxLens)
-    act <* (rename .= (setMax (postMax + 1) preSt))
+    act <* (rename .= setMax (postMax + 1) preSt)
 
 -- TODO: slow?
 withName :: (HasRenames s, MonadState s m) => Name a -> m (Name a, Renames -> Renames)
