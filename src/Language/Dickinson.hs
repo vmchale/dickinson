@@ -5,6 +5,7 @@ module Language.Dickinson ( parse
                           -- * Types
                           , Dickinson
                           , Declaration (..)
+                          , Name (..)
                           , evalFile
                           -- * Reëxports from
                           -- "Data.Text.Prettyprint.Doc.Render.Text"
