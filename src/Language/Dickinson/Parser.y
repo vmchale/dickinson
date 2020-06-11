@@ -118,7 +118,7 @@ type Parse = ExceptT (ParseError AlexPosn) Alex
 parse :: BSL.ByteString -> Either (ParseError AlexPosn) (Dickinson Name AlexPosn)
 parse = fmap snd . parseWithCtx
 
-parseWithCtx :: BSL.ByteString -> Either (ParseError AlexPosn) (Int, Dickinson Name AlexPosn)
+parseWithCtx :: BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, Dickinson Name AlexPosn)
 parseWithCtx str = liftErr $ runAlexMax str (runExceptT parseDickinson)
     where liftErr (Left err)            = Left (LexErr err)
           liftErr (Right (_, Left err)) = Left err

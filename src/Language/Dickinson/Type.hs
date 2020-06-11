@@ -6,6 +6,7 @@ module Language.Dickinson.Type ( Dickinson
                                , Declaration (..)
                                , Expression (..)
                                , DickinsonTy (..)
+                               , UniqueCtx
                                ) where
 
 import           Control.DeepSeq               (NFData)
@@ -19,6 +20,8 @@ import           Data.Text.Prettyprint.Doc.Ext (hardSep, (<#>), (<^>))
 import           GHC.Generics                  (Generic)
 
 type Dickinson name a = [Declaration name a]
+
+type UniqueCtx = Int
 
 data Declaration name a = Define { declAnn :: a
                                  , defName :: name a

@@ -8,16 +8,18 @@ module Language.Dickinson.Rename ( renameDickinson
                                  , HasRenames (..)
                                  ) where
 
-import           Control.Composition     (thread)
-import           Control.Monad.Ext       (zipWithM)
-import           Control.Monad.State     (MonadState, State, runState)
-import qualified Data.IntMap             as IM
-import qualified Data.List.NonEmpty      as NE
-import           Data.Semigroup          (Semigroup (..))
+import           Control.Composition       (thread)
+import           Control.Monad.Ext         (zipWithM)
+import           Control.Monad.State       (MonadState, State, runState)
+import           Data.Bifunctor            (second)
+import qualified Data.IntMap               as IM
+import qualified Data.List.NonEmpty        as NE
+import           Data.Semigroup            (Semigroup (..))
 import           Language.Dickinson.Name
+import           Language.Dickinson.Parser
 import           Language.Dickinson.Type
-import           Lens.Micro              (Lens')
-import           Lens.Micro.Mtl          (use, (%=), (.=))
+import           Lens.Micro                (Lens')
+import           Lens.Micro.Mtl            (use, (%=), (.=))
 
 data Renames = Renames { max_ :: Int, bound :: IM.IntMap Int }
 
@@ -42,11 +44,11 @@ instance Monoid Renames where
 
 type RenameM a = State Renames
 
-initRenames :: Int -> Renames
-initRenames m = Renames m mempty -- FIXME: this is sloppy
+initRenames :: UniqueCtx -> Renames
+initRenames m = Renames m mempty
 
-runRenameM :: Int -> RenameM a x -> (x, Renames)
-runRenameM m = flip runState (initRenames m)
+runRenameM :: UniqueCtx -> RenameM a x -> (x, UniqueCtx)
+runRenameM m x = second max_ (flip runState (initRenames m) x)
 
 -- Make sure you don't have cycles in the renames map!
 replaceVar :: (MonadState s m, HasRenames s) => Name a -> m (Name a)
@@ -56,7 +58,7 @@ replaceVar pre@(Name n (Unique i) l) = {-# SCC "replaceVar" #-} do
         Just j  -> replaceVar $ Name n (Unique j) l
         Nothing -> pure pre
 
-renameDickinson :: Int -> Dickinson Name a -> (Dickinson Name a, Renames)
+renameDickinson :: Int -> Dickinson Name a -> (Dickinson Name a, Int)
 renameDickinson m ds = runRenameM m $ traverse renameDeclarationM ds
 
 renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration Name a -> m (Declaration Name a)

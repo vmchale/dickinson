@@ -7,6 +7,7 @@ module Language.Dickinson ( parse
                           , Dickinson
                           , Declaration (..)
                           , Name (..)
+                          , UniqueCtx
                           , evalFile
                           -- * Reëxports from
                           -- "Data.Text.Prettyprint.Doc.Render.Text"
@@ -20,8 +21,7 @@ import           Control.Monad                         ((<=<))
 import           Data.ByteString.Lazy                  as BSL
 import qualified Data.Text                             as T
 import           Data.Text.Prettyprint.Doc             (Pretty (pretty))
-import           Data.Text.Prettyprint.Doc.Render.Text (putDoc, renderLazy,
-                                                        renderStrict)
+import           Data.Text.Prettyprint.Doc.Render.Text (putDoc, renderLazy, renderStrict)
 import           Language.Dickinson.Eval
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
@@ -32,7 +32,7 @@ import           Language.Dickinson.Type
 
 -- TODO: runDeclarationM
 evalFile :: FilePath -> IO T.Text
-evalFile = fmap yeet . evalIO (initRenames 1000) . evalExpressionM . yeet . findMain . yeet . parse <=< BSL.readFile
+evalFile = fmap yeet . evalIO 1000 . evalExpressionM . yeet . findMain . yeet . parse <=< BSL.readFile
 -- TODO: renameDickinson
 
 yeet :: Show a => Either a x -> x

@@ -7,8 +7,7 @@ module Language.Dickinson.Eval ( EvalM
                                , findMain
                                ) where
 
-import           Control.Monad.Except      (Except, MonadError, runExcept,
-                                            throwError)
+import           Control.Monad.Except      (Except, MonadError, runExcept, throwError)
 import           Control.Monad.State.Lazy  (StateT, evalStateT, gets, modify)
 import           Data.Foldable             (toList, traverse_)
 import qualified Data.IntMap               as IM
@@ -42,14 +41,14 @@ boundExprLens f s = fmap (\x -> s { boundExpr = x }) (f (boundExpr s))
 -- TODO: thread generator state instead?
 type EvalM name a = StateT (EvalSt name a) (Except (DickinsonError name a))
 
-evalIO :: Renames -> EvalM name a x -> IO (Either (DickinsonError name a) x)
+evalIO :: UniqueCtx -> EvalM name a x -> IO (Either (DickinsonError name a) x)
 evalIO rs me = (\g -> evalWithGen g rs me) <$> newStdGen
 
 evalWithGen :: StdGen
-            -> Renames -- ^ Threaded through
+            -> UniqueCtx -- ^ Threaded through
             -> EvalM name a x
             -> Either (DickinsonError name a) x
-evalWithGen g rs me = runExcept $ evalStateT me (EvalSt (randoms g) mempty rs)
+evalWithGen g u me = runExcept $ evalStateT me (EvalSt (randoms g) mempty (initRenames u))
 
 -- FIXME: bind it temporarily
 bindName :: Name a -> Expression Name a -> EvalM Name a ()
