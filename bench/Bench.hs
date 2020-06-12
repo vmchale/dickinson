@@ -16,10 +16,15 @@ main =
                   bgroup "renamer"
                     [ bench "bench/data/nestLet.dck" $ nf plainExpr p
                     ]
+                , env multiParsed $ \p ->
+                  bgroup "multiple"
+                    [ bench "bench/data/nestLet.dck" $ nf checkMultiple p
+                    ]
                 ]
 
     where libFile = BSL.readFile "lib/color.dck"
           libParsed = either throw id . parseWithCtx <$> BSL.readFile "bench/data/nestLet.dck"
+          multiParsed = either throw id . parse <$> BSL.readFile "bench/data/multiple.dck"
 
 plainExpr :: (UniqueCtx, Dickinson Name a) -> Dickinson Name a
 plainExpr = fst . uncurry renameDickinson

@@ -1,10 +1,15 @@
+{-# LANGUAGE DeriveAnyClass    #-}
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
+
 module Language.Dickinson.Error ( DickinsonError (..)
                                 ) where
 
+import           Control.DeepSeq           (NFData)
 import           Control.Exception         (Exception)
 import           Data.Text.Prettyprint.Doc (Pretty (pretty), squotes, (<+>))
 import           Data.Typeable             (Typeable)
+import           GHC.Generics              (Generic)
 import           Language.Dickinson.Parser
 
 -- type error but I'll do that later
@@ -12,6 +17,7 @@ data DickinsonError name a = UnfoundName a (name a)
                            | NoMain -- separate from UnfoundName since there is no loc
                            | MultipleNames a (name a) -- TODO: throw both?
                            | ParseErr (ParseError a)
+                           deriving (Generic, NFData)
 
 instance (Pretty (name a), Pretty a) => Show (DickinsonError name a) where
     show = show . pretty
