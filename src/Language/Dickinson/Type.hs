@@ -5,7 +5,6 @@
 module Language.Dickinson.Type ( Dickinson
                                , Declaration (..)
                                , Expression (..)
-                               , DickinsonTy (..)
                                , UniqueCtx
                                ) where
 
@@ -40,10 +39,6 @@ data Expression name a = Literal a !T.Text
                        deriving (Generic, NFData)
                        -- TODO: normalize subtree
                        -- TODO: builtins?
-
-data DickinsonTy = Text
-                 | Fun DickinsonTy DickinsonTy
-                 -- lol don't even have functions
 
 instance Pretty (name a) => Pretty (Declaration name a) where
     pretty (Define _ n e) = parens (":def" <+> pretty n <#> indent 4 (pretty e))

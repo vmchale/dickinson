@@ -3,6 +3,7 @@ module Language.Dickinson ( parse
                           , lexDickinson
                           , prettyDickinson
                           , renameDickinson
+                          , checkMultiple
                           -- * Types
                           , Dickinson
                           , Declaration (..)
@@ -23,6 +24,7 @@ import           Data.ByteString.Lazy                  as BSL
 import qualified Data.Text                             as T
 import           Data.Text.Prettyprint.Doc             (Pretty (pretty))
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc, renderLazy, renderStrict)
+import           Language.Dickinson.Check
 import           Language.Dickinson.Eval
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name

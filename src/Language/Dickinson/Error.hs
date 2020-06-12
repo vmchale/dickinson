@@ -10,9 +10,7 @@ import           Language.Dickinson.Parser
 -- type error but I'll do that later
 data DickinsonError name a = UnfoundName a (name a)
                            | NoMain -- separate from UnfoundName since there is no loc
-                           | MultipleNames a (name a) -- top-level identifier defined more than once
-                                                      -- or stupid shit like
-                                                      -- (:let [a "a"] [a "b"] ...)
+                           | MultipleNames a (name a) -- TODO: throw both?
                            | ParseErr (ParseError a)
 
 instance (Pretty (name a), Pretty a) => Show (DickinsonError name a) where

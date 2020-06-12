@@ -1,7 +1,9 @@
 module Main (main) where
 
+import           Control.Exception    (throw)
 import qualified Data.ByteString.Lazy as BSL
 import           Data.Either          (isRight)
+import           Data.Maybe           (isJust)
 import           Golden
 import           Language.Dickinson
 import           Test.Tasty
@@ -26,7 +28,14 @@ parserTests =
         , parseNoError "lib/birds.dck"
         , lexNoError "test/data/import.dck"
         , parseNoError "test/data/import.dck"
+        , detectDuplicate "test/data/multiple.dck"
         ]
+
+detectDuplicate :: FilePath -> TestTree
+detectDuplicate fp = testCase ("Detects duplicate name (" ++ fp ++ ")") $ do
+    contents <- BSL.readFile fp
+    let parsed = either throw id $ parse contents
+    assertBool "Detects duplicate" $ isJust (checkMultiple parsed)
 
 -- golden tests?
 
