@@ -16,6 +16,9 @@ module Language.Dickinson ( parse
                           , renderStrict
                           , Pretty (pretty)
                           , putDoc
+                          -- * Version info
+                          , languageDickinsonVersion
+                          , languageDickinsonVersionString
                           ) where
 
 import           Control.Exception                     (Exception, throw)
@@ -32,6 +35,8 @@ import           Language.Dickinson.Parser
 import           Language.Dickinson.Pretty
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
+import qualified Data.Version as V
+import qualified Paths_language_dickinson as P
 
 -- TODO: runDeclarationM
 evalFile :: FilePath -> IO T.Text
@@ -40,3 +45,9 @@ evalFile = fmap yeet . evalIO 1000 . evalDickinsonAsMain . yeet . parse <=< BSL.
 
 yeet :: Exception e => Either e x -> x
 yeet = either throw id
+
+languageDickinsonVersion :: V.Version
+languageDickinsonVersion = P.version
+
+languageDickinsonVersionString :: String
+languageDickinsonVersionString = V.showVersion languageDickinsonVersion

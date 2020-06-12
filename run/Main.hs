@@ -25,10 +25,13 @@ dckCompletions :: HasCompleter f => Mod f a
 dckCompletions = completer . bashCompleter $ "file -X '*.dck' -o plusdirs"
 
 wrapper :: ParserInfo Act
-wrapper = info (helper <*> act)
+wrapper = info (helper <*> versionMod <*> act)
     (fullDesc 
     <> progDesc "Dickinson text-generation language"
     <> header "Dickinson - a text-generation language")
+
+versionMod :: Parser (a -> a)
+versionMod = infoOption languageDickinsonVersionString (short 'V' <> long "version" <> help "Show version")
 
 run :: Act -> IO ()
 run (Run fp) = TIO.putStrLn =<< evalFile fp
