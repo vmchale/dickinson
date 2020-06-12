@@ -18,7 +18,7 @@ main =
                     ]
                 , env multiParsed $ \p ->
                   bgroup "multiple"
-                    [ bench "bench/data/nestLet.dck" $ nf checkMultiple p
+                    [ bench "bench/data/multiple.dck" $ nf checkMultiple p
                     ]
                 ]
 
