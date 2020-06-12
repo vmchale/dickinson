@@ -35,7 +35,7 @@ import           Language.Dickinson.Type
 
 -- TODO: runDeclarationM
 evalFile :: FilePath -> IO T.Text
-evalFile = fmap yeet . evalIO 1000 . evalExpressionM . yeet . findMain . yeet . parse <=< BSL.readFile
+evalFile = fmap yeet . evalIO 1000 . evalDickinsonAsMain . yeet . parse <=< BSL.readFile
 -- TODO: renameDickinson
 
 yeet :: Exception e => Either e x -> x
