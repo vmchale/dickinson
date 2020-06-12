@@ -13,3 +13,5 @@ syntax match dickinsonComment "\v;.*$" contains=@Spell
 
 highlight link dickinsonComment Comment
 highlight link dickinsonKeyword Keyword
+
+let b:current_syntax = 'dickinson'
