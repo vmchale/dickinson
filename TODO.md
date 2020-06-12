@@ -15,6 +15,8 @@
 # Features
 - [ ] Figure out mutual recursion? (or recursion)
 - [ ] User-defined functions on text?
+  - [ ] "character map" approach?
+    - [ ] Requires expression application + type checker pass?
 - [ ] Import/module system
 - [ ] Multiline strings
 - [ ] Interpolated strings
@@ -25,6 +27,9 @@
 - [ ] Escpaed characters
 # Libraries
 - [x] Colors
+- [ ] Animals
+  - [ ] Birds
+- [ ] builtins (capitalization &c.)
 # Performance
 - [ ] Benchmark renamer
 - [ ] `+RTS -Ax`
