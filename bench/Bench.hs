@@ -1,6 +1,7 @@
 module Main (main) where
 
 import           Control.Exception    (throw)
+import Control.Monad (void)
 import           Criterion.Main
 import qualified Data.ByteString.Lazy as BSL
 import           Language.Dickinson
@@ -17,8 +18,8 @@ main =
                   bgroup "renamer"
                     [ bench "bench/data/nestLet.dck" $ nf plainExpr p
                     ]
-                , env (void libParsed) $ \p ->
-                  bgroup "encoder" $ \p ->
+                , env (void . snd <$> libParsed) $ \p ->
+                  bgroup "encoder" $ 
                     [ bench "bench/data/nestLet.dck" $ nf encode p
                     ]
                 , env multiParsed $ \p ->
