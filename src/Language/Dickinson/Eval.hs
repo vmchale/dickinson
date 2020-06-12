@@ -65,14 +65,14 @@ lookupName n@(Name _ (Unique u) l) = go =<< gets (IM.lookup u.boundExpr)
           go (Just x) = renameExpressionM x
 
 normalize :: (Foldable t, Functor t, Fractional a) => t a -> t a
-normalize xs = (/tot) <$> xs
+normalize xs = {-# SCC "normalize" #-} (/tot) <$> xs
     where tot = sum xs
 
 cdf :: (Num a) => NonEmpty a -> [a]
-cdf = NE.drop 2 . NE.scanl (+) 0 . (0 <|)
+cdf = {-# SCC "cdf" #-} NE.drop 2 . NE.scanl (+) 0 . (0 <|)
 
 pick :: NonEmpty (Double, Expression name a) -> EvalM name a (Expression name a)
-pick brs = do
+pick brs = {-# SCC "pick" #-} do
     threshold <- gets (head.probabilities)
     modify (over probabilitiesLens tail)
     let ds = cdf (normalize (fst <$> brs))
