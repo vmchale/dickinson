@@ -186,6 +186,7 @@ benchmark dickinson-bench
     build-depends:
         base -any,
         language-dickinson -any,
+        binary,
         criterion -any,
         bytestring -any
 

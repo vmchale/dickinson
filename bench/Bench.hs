@@ -4,6 +4,7 @@ import           Control.Exception    (throw)
 import           Criterion.Main
 import qualified Data.ByteString.Lazy as BSL
 import           Language.Dickinson
+import Data.Binary (encode)
 
 main :: IO ()
 main =
@@ -15,6 +16,10 @@ main =
                 , env libParsed $ \p ->
                   bgroup "renamer"
                     [ bench "bench/data/nestLet.dck" $ nf plainExpr p
+                    ]
+                , env (void libParsed) $ \p ->
+                  bgroup "encoder" $ \p ->
+                    [ bench "bench/data/nestLet.dck" $ nf encode p
                     ]
                 , env multiParsed $ \p ->
                   bgroup "multiple"
