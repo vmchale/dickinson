@@ -20,6 +20,9 @@ main =
                   bgroup "multiple"
                     [ bench "bench/data/multiple.dck" $ nf checkMultiple p
                     ]
+                , bgroup "result"
+                    [ bench "test/eval/context.dck" $ nfIO (evalFile "test/eval/context.dck")
+                    ]
                 ]
 
     where libFile = BSL.readFile "lib/color.dck"
