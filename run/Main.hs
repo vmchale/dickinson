@@ -26,7 +26,7 @@ dckCompletions = completer . bashCompleter $ "file -X '*.dck' -o plusdirs"
 
 wrapper :: ParserInfo Act
 wrapper = info (helper <*> versionMod <*> act)
-    (fullDesc 
+    (fullDesc
     <> progDesc "Dickinson text-generation language"
     <> header "Dickinson - a text-generation language")
 
