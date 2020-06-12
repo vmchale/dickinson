@@ -21,6 +21,7 @@
 - [ ] Multiline strings
 - [ ] Interpolated strings
 - [ ] Builtins
+- [ ] Escapes
 # Tooling
 - [ ] REPL
 # Tests
