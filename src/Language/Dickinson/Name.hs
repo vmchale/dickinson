@@ -1,5 +1,8 @@
 {-# LANGUAGE DeriveFunctor              #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE DeriveGeneric              #-}
+{-# LANGUAGE DeriveAnyClass             #-}
+{-# LANGUAGE DerivingVia                #-}
 {-# LANGUAGE OverloadedStrings          #-}
 
 module Language.Dickinson.Name ( Name (..)
@@ -10,6 +13,8 @@ module Language.Dickinson.Name ( Name (..)
 
 import           Control.DeepSeq               (NFData (..))
 import           Data.Foldable                 (toList)
+import Data.Binary (Binary)
+import GHC.Generics (Generic)
 import qualified Data.IntMap                   as IM
 import           Data.List.NonEmpty            (NonEmpty (..))
 import           Data.Semigroup                ((<>))
@@ -18,12 +23,13 @@ import           Data.Text.Prettyprint.Doc     (Pretty (pretty))
 import           Data.Text.Prettyprint.Doc.Ext (intercalate)
 
 newtype Unique = Unique { unUnique :: Int }
-    deriving (Eq, Ord, Pretty, NFData)
+    deriving stock (Eq, Ord)
+    deriving newtype (Pretty, NFData, Binary)
 
 data Name a = Name { name   :: NonEmpty T.Text
                    , unique :: !Unique
                    , loc    :: a
-                   } deriving (Functor)
+                   } deriving (Functor, Generic, Binary)
 
 instance NFData a => NFData (Name a) where
     rnf (Name _ u x) = rnf x `seq` u `seq` ()
