@@ -14,7 +14,6 @@ import qualified Data.IntMap               as IM
 import qualified Data.List.NonEmpty        as NE
 import           Data.Semigroup            (Semigroup (..))
 import           Language.Dickinson.Name
-import           Language.Dickinson.Parser
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
 import           Lens.Micro                (Lens')
