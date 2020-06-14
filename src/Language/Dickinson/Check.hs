@@ -2,6 +2,7 @@ module Language.Dickinson.Check ( checkMultiple
                                 ) where
 
 import           Control.Applicative      (Alternative (..))
+import           Data.Foldable            (asum)
 import           Data.Foldable            (toList)
 import           Data.List                (group, sort)
 import           Data.Maybe               (mapMaybe)
@@ -35,7 +36,4 @@ checkMultipleExpr (Let _ bs e)   =
     <|> checkMultipleExpr e
 
 foldMapAlternative :: (Traversable t, Alternative f) => (a -> f b) -> t a -> f b
-foldMapAlternative f xs = foldAlternative (f <$> xs)
-
-foldAlternative :: (Traversable t, Alternative f) => t (f a) -> f a
-foldAlternative = foldr (<|>) empty
+foldMapAlternative f xs = asum (f <$> xs)
