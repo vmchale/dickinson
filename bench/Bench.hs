@@ -38,7 +38,10 @@ main =
     where libFile = BSL.readFile "lib/color.dck"
           libParsed = either throw id . parseWithCtx <$> BSL.readFile "bench/data/nestLet.dck"
           multiParsed = either throw id . parse <$> BSL.readFile "bench/data/multiple.dck"
-          encoded = encode . map void <$> multiParsed
+          encoded = encode . yeet <$> multiParsed
+
+yeet :: Dickinson Name AlexPosn -> Dickinson Name ()
+yeet = fmap void
 
 plainExpr :: (UniqueCtx, Dickinson Name a) -> Dickinson Name a
 plainExpr = fst . uncurry renameDickinson
