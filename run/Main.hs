@@ -1,8 +1,9 @@
 module Main (main) where
 
-import Options.Applicative
-import Language.Dickinson
-import qualified Data.Text.IO as TIO
+import           Data.Semigroup
+import qualified Data.Text.IO        as TIO
+import           Language.Dickinson
+import           Options.Applicative
 
 -- TODO debug/verbosity options...
 data Act = Run !FilePath
