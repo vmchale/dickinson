@@ -1,11 +1,11 @@
 module Main (main) where
 
 import           Control.Exception    (throw)
-import Control.Monad (void)
+import           Control.Monad        (void)
 import           Criterion.Main
+import           Data.Binary          (decode, encode)
 import qualified Data.ByteString.Lazy as BSL
 import           Language.Dickinson
-import Data.Binary (encode)
 
 main :: IO ()
 main =
@@ -18,9 +18,13 @@ main =
                   bgroup "renamer"
                     [ bench "bench/data/nestLet.dck" $ nf plainExpr p
                     ]
-                , env (void . snd <$> libParsed) $ \p ->
-                  bgroup "encoder" $ 
-                    [ bench "bench/data/nestLet.dck" $ nf encode p
+                , env (void <$> multiParsed) $ \p ->
+                  bgroup "encoder" $
+                    [ bench "bench/data/multiple.dck" $ nf encode p
+                    ]
+                , env encoded $ \e ->
+                  bgroup "decoder"
+                    [ bench "bench/data/multiple.dck" $ nf (decode :: BSL.ByteString -> Dickinson Name ()) e
                     ]
                 , env multiParsed $ \p ->
                   bgroup "multiple"
@@ -34,6 +38,7 @@ main =
     where libFile = BSL.readFile "lib/color.dck"
           libParsed = either throw id . parseWithCtx <$> BSL.readFile "bench/data/nestLet.dck"
           multiParsed = either throw id . parse <$> BSL.readFile "bench/data/multiple.dck"
+          encoded = encode . void <$> multiParsed
 
 plainExpr :: (UniqueCtx, Dickinson Name a) -> Dickinson Name a
 plainExpr = fst . uncurry renameDickinson

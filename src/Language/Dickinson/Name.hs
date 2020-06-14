@@ -23,7 +23,7 @@ import           Language.Dickinson.Unique
 data Name a = Name { name   :: NonEmpty T.Text
                    , unique :: !Unique
                    , loc    :: a
-                   } deriving (Functor)
+                   } deriving (Functor, Generic, Binary)
 
 instance NFData a => NFData (Name a) where
     rnf (Name _ u x) = rnf x `seq` u `seq` ()
