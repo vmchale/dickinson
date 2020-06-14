@@ -23,6 +23,7 @@
 - [ ] Builtins
 - [ ] Escapes
 - [ ] docs? links...?
+- [ ] Normalization (for encoding, for one)
 # Tooling
 - [ ] REPL
 # Tests
