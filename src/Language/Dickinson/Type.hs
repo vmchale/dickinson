@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveAnyClass    #-}
+{-# LANGUAGE DeriveFunctor     #-}
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
@@ -9,10 +10,10 @@ module Language.Dickinson.Type ( Dickinson
                                ) where
 
 import           Control.DeepSeq               (NFData)
+import           Data.Binary                   (Binary)
 import           Data.Foldable                 (toList)
 import           Data.List.NonEmpty            (NonEmpty)
 import           Data.Semigroup                ((<>))
-import Data.Binary (Binary)
 import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, dquotes, group, hsep, indent, langle,
                                                 parens, pipe, vsep, (<+>))
@@ -30,14 +31,14 @@ data Declaration name a = Define { declAnn :: a
                         | Import { declAnn :: a
                                  , declMod :: !(name a)
                                  }
-                        deriving (Generic, NFData, Binary)
+                        deriving (Generic, NFData, Binary, Functor)
 
 data Expression name a = Literal a !T.Text
                        | Choice a !(NonEmpty (Double, Expression name a))
                        | Let a !(NonEmpty (name a, Expression name a)) !(Expression name a)
                        | Var a (name a)
                        | Concat a !(NonEmpty (Expression name a))
-                       deriving (Generic, NFData, Binary)
+                       deriving (Generic, NFData, Binary, Functor)
                        -- TODO: normalize subtree
                        -- TODO: builtins?
 

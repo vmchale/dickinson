@@ -19,7 +19,7 @@ main =
                     [ bench "bench/data/nestLet.dck" $ nf plainExpr p
                     ]
                 , env (void <$> multiParsed) $ \p ->
-                  bgroup "encoder" $
+                  bgroup "encoder"
                     [ bench "bench/data/multiple.dck" $ nf encode p
                     ]
                 , env encoded $ \e ->
@@ -38,7 +38,7 @@ main =
     where libFile = BSL.readFile "lib/color.dck"
           libParsed = either throw id . parseWithCtx <$> BSL.readFile "bench/data/nestLet.dck"
           multiParsed = either throw id . parse <$> BSL.readFile "bench/data/multiple.dck"
-          encoded = encode . void <$> multiParsed
+          encoded = encode . map void <$> multiParsed
 
 plainExpr :: (UniqueCtx, Dickinson Name a) -> Dickinson Name a
 plainExpr = fst . uncurry renameDickinson
