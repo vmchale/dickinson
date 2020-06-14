@@ -42,6 +42,7 @@ library
         Language.Dickinson.Error
         Language.Dickinson.Pretty
         Language.Dickinson.Check
+        Language.Dickinson.Unique
         Control.Monad.Ext
         Paths_language_dickinson
 
@@ -69,7 +70,7 @@ library
         microlens -any,
         microlens-mtl -any,
         composition-prelude >=1.1.0.1,
-        binary -any
+        binary >=0.8.4.0
 
     if !flag(cross)
         build-tool-depends: alex:alex -any, happy:happy -any
