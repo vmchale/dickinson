@@ -22,6 +22,7 @@ import           Language.Dickinson.Error
 import           Language.Dickinson.Name
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
+import           Language.Dickinson.Unique
 import           Lens.Micro                (Lens', over)
 import           System.Random             (StdGen, newStdGen, randoms)
 

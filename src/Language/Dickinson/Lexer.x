@@ -30,6 +30,7 @@ import Data.Text.Encoding (decodeUtf8)
 import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, langle, rbracket, lbracket, colon, dquotes)
 import GHC.Generics (Generic)
 import Language.Dickinson.Name
+import Language.Dickinson.Unique
 
 }
 

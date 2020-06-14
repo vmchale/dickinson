@@ -16,6 +16,7 @@ import           Data.Semigroup            (Semigroup (..))
 import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Type
+import           Language.Dickinson.Unique
 import           Lens.Micro                (Lens')
 import           Lens.Micro.Mtl            (modifying, use, (%=), (.=))
 
