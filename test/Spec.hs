@@ -29,6 +29,8 @@ parserTests =
         , lexNoError "test/data/import.dck"
         , parseNoError "test/data/import.dck"
         , detectDuplicate "test/data/multiple.dck"
+        , lexNoError "examples/shakespeare.dck"
+        , parseNoError "examples/shakespeare.dck"
         ]
 
 detectDuplicate :: FilePath -> TestTree

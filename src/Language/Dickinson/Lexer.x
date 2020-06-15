@@ -27,7 +27,7 @@ import qualified Data.Map as M
 import Data.Semigroup ((<>))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
-import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, langle, rbracket, lbracket, colon, dquotes)
+import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, rangle, rbracket, lbracket, colon, dquotes)
 import GHC.Generics (Generic)
 import Language.Dickinson.Name
 import Language.Dickinson.Unique
@@ -61,7 +61,7 @@ tokens :-
     <0> \(                         { mkSym LParen }
     <0> \)                         { mkSym RParen }
     <0> \|                         { mkSym VBar }
-    <0> \<                         { mkSym LBracket }
+    <0> ">"                        { mkSym RBracket }
     <0> \[                         { mkSym LSqBracket }
     <0> \]                         { mkSym RSqBracket }
 
@@ -133,7 +133,7 @@ alexInitUserState = (0, mempty, mempty)
 data Sym = LParen
          | RParen
          | VBar
-         | LBracket
+         | RBracket
          | LSqBracket
          | RSqBracket
          deriving (Eq, Generic, NFData)
@@ -142,7 +142,7 @@ instance Pretty Sym where
     pretty LParen     = lparen
     pretty RParen     = rparen
     pretty VBar       = pipe
-    pretty LBracket   = langle
+    pretty RBracket   = rangle
     pretty LSqBracket = lbracket
     pretty RSqBracket = rbracket
 

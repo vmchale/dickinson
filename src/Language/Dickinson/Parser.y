@@ -40,6 +40,7 @@ import Language.Dickinson.Type
     vbar { TokSym $$ VBar }
     lsqbracket { TokSym $$ LSqBracket }
     rsqbracket { TokSym $$ RSqBracket }
+    rbracket { TokSym $$ RBracket }
 
     def { TokKeyword $$ KwDef }
     let { TokKeyword $$ KwLet }
@@ -87,6 +88,7 @@ Expression :: { Expression Name AlexPosn }
            | oneof some(parens(Leaf)) { Choice $1 (NE.reverse (weight $2)) }
            | let some(brackets(Bind)) Expression { Let $1 (NE.reverse $2) $3 }
            | ident { Var (loc $1) (ident $1) }
+           | rbracket some(Expression) { Concat $1 (NE.reverse $2) }
            | parens(Expression) { $1 }
 
 WeightedLeaf :: { (Double, Expression Name AlexPosn) }
@@ -109,8 +111,8 @@ data ParseError a = Unexpected (Token a)
                   deriving (Generic, NFData)
 
 instance Pretty a => Pretty (ParseError a) where
-    pretty (Unexpected tok) = "Unexpected" <+> pretty tok <+> "at" <+> pretty (loc tok)
-    pretty (LexErr str)     = pretty (T.pack str)
+    pretty (Unexpected tok)  = "Unexpected" <+> pretty tok <+> "at" <+> pretty (loc tok)
+    pretty (LexErr str)      = pretty (T.pack str)
 
 instance Pretty a => Show (ParseError a) where
     show = show . pretty
