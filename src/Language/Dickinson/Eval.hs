@@ -12,8 +12,8 @@ module Language.Dickinson.Eval ( EvalM
                                , findMain
                                ) where
 
-import           Control.Monad.Except      (Except, MonadError, runExcept, throwError)
-import           Control.Monad.State.Lazy  (StateT, evalStateT, gets, modify)
+import           Control.Monad.Except      (Except, runExcept, throwError)
+import           Control.Monad.State.Lazy  (MonadState, StateT, evalStateT, gets, modify)
 import           Data.Foldable             (toList, traverse_)
 import qualified Data.IntMap               as IM
 import           Data.List.NonEmpty        (NonEmpty ((:|)), (<|))
@@ -63,10 +63,10 @@ evalWithGen :: StdGen
 evalWithGen g u me = runExcept $ evalStateT me (EvalSt (randoms g) mempty (initRenames u) mempty)
 
 -- TODO: temporary bindings
-bindName :: Name a -> Expression Name a -> EvalM a ()
+bindName :: MonadState (EvalSt a) m => Name a -> Expression Name a -> m ()
 bindName (Name _ (Unique u) _) e = modify (over boundExprLens (IM.insert u e))
 
-topLevelAdd :: Name a -> EvalM a ()
+topLevelAdd :: MonadState (EvalSt a) m => Name a -> m ()
 topLevelAdd (Name (n :| []) u _) = modify (over topLevelLens (M.insert n u))
 topLevelAdd (Name{})             = error "Error message not yet implemented."
 
@@ -85,7 +85,7 @@ normalize xs = {-# SCC "normalize" #-} (/tot) <$> xs
 cdf :: (Num a) => NonEmpty a -> [a]
 cdf = {-# SCC "cdf" #-} NE.drop 2 . NE.scanl (+) 0 . (0 <|)
 
-pick :: NonEmpty (Double, Expression name a) -> EvalM a (Expression name a)
+pick :: MonadState (EvalSt a) m => NonEmpty (Double, Expression name a) -> m (Expression name a)
 pick brs = {-# SCC "pick" #-} do
     threshold <- gets (head.probabilities)
     modify (over probabilitiesLens tail)
