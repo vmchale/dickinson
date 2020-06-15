@@ -122,7 +122,7 @@ evalExpressionM (Literal _ t)  = pure t
 evalExpressionM (StrChunk _ t) = pure t
 evalExpressionM (Var _ n)      = evalExpressionM =<< lookupName n
 evalExpressionM (Choice _ pes) = evalExpressionM =<< pick pes
-evalExpressionM (Interp es)    = mconcat <$> traverse evalExpressionM es
+evalExpressionM (Interp _ es)  = mconcat <$> traverse evalExpressionM es
 evalExpressionM (Let _ bs e) = do
     traverse_ (uncurry bindName) bs
     evalExpressionM e <* traverse_ deleteName (fst <$> bs)

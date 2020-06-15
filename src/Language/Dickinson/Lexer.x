@@ -27,7 +27,7 @@ import qualified Data.Map as M
 import Data.Semigroup ((<>))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
-import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, rbrace, rbracket, lbracket, colon, dquotes)
+import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, rbrace, rbracket, lbracket, colon, dquotes, dquote)
 import GHC.Generics (Generic)
 import Language.Dickinson.Name
 import Language.Dickinson.Unique
@@ -59,7 +59,6 @@ tokens :-
     <0> $white+                    ;
     <0> ";".*                      ;
 
-    -- assume utf8
     <0> @name                      { tok (\p s -> TokIdent p <$> newIdentAlex p (mkText s)) }
 
     <0> \(                         { mkSym LParen }
@@ -76,12 +75,13 @@ tokens :-
     <0> ":import"                  { mkKeyword KwImport }
     <0> ":lambda"                  { mkKeyword KwLambda }
 
+    -- TODO: StrBegin token?
     -- strings
-    <0> \"                         { begin string }
+    <0> \"                         { mkSym StrBegin `andBegin` string }
     <string> $str_chunk+           { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
     <string> \$\{                  { mkSym BeginInterp `andBegin` 0 }
     <0> \}                         { mkSym EndInterp `andBegin` string }
-    <string> \"                    { begin 0 }
+    <string> \"                    { mkSym StrEnd `andBegin` 0 }
 
     -- strings
     <0> @string                    { tok (\p s -> alex $ TokString p (T.tail . T.init $ mkText s)) }
@@ -148,6 +148,8 @@ data Sym = LParen
          | RSqBracket
          | BeginInterp
          | EndInterp
+         | StrBegin
+         | StrEnd
          deriving (Eq, Generic, NFData)
 
 instance Pretty Sym where
@@ -158,6 +160,8 @@ instance Pretty Sym where
     pretty RSqBracket  = rbracket
     pretty BeginInterp = "${"
     pretty EndInterp   = rbrace
+    pretty StrBegin    = dquote
+    pretty StrEnd      = dquote
 
 data Keyword = KwDef
              | KwLet

@@ -36,7 +36,7 @@ data Expression name a = Literal a !T.Text
                        | Choice a !(NonEmpty (Double, Expression name a))
                        | Let a !(NonEmpty (name a, Expression name a)) !(Expression name a)
                        | Var a (name a)
-                       | Interp ![Expression name a]
+                       | Interp a ![Expression name a]
                        | Lambda a (name a) (Expression name a) -- TODO: application, type checker
                        | Apply (Expression name a) (Expression name a)
                        deriving (Generic, NFData, Binary, Functor)

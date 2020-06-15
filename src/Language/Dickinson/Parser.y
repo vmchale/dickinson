@@ -42,6 +42,8 @@ import Language.Dickinson.Unique
     vbar { TokSym $$ VBar }
     lsqbracket { TokSym $$ LSqBracket }
     rsqbracket { TokSym $$ RSqBracket }
+    strBegin { TokSym $$ StrBegin }
+    strEnd { TokSym $$ StrEnd }
 
     beginInterp { TokSym $$ BeginInterp }
     endInterp { TokSym $$ EndInterp }
@@ -100,7 +102,7 @@ Expression :: { Expression Name AlexPosn }
            | ident { Var (loc $1) (ident $1) }
            | stringLiteral { Literal (loc $1) (str $1) }
            | Expression Expression { Apply $1 $2 }
-           | some(Interp) { Interp (toList $ NE.reverse $1) }
+           | strBegin some(Interp) strEnd { Interp $1 (toList $ NE.reverse $2) }
            | parens(Expression) { $1 }
 
 WeightedLeaf :: { (Double, Expression Name AlexPosn) }
