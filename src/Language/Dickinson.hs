@@ -11,6 +11,9 @@ module Language.Dickinson ( parse
                           , Name (..)
                           , UniqueCtx
                           , evalFile
+                          -- * Monads
+                          , EvalT
+                          , EvalM
                           -- * Reëxports from
                           -- "Data.Text.Prettyprint.Doc.Render.Text"
                           , renderLazy
