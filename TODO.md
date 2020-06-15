@@ -1,4 +1,3 @@
-- [ ] Look at hakaru; monadic probability
 - [ ] Type system
 - [ ] REPL! I would actually use this.
 - [ ] spec
@@ -6,11 +5,14 @@
 - [ ] Grammar
 - [ ] Types &c.
 - [ ] Modules
+# Documentation
+- [ ] manpages
+- [ ] Tutorial/walkthrough?
 # Passes
 - [ ] Typechecker?
 - [ ] Warn if a string is duplicate?
-- [ ] Make sure there are no top-level name clashes
-- [ ] Scoping check (not lazy, like evaluation)
+- [x] Make sure there are no top-level name clashes
+- [x] Scoping check (not lazy, like evaluation)
 - [ ] Error on negative numbers? (useful error)
 # Features
 - [ ] Figure out mutual recursion? (or recursion)
@@ -19,7 +21,12 @@
     - [ ] Requires expression application + type checker pass?
 - [ ] Import/module system
 - [ ] Multiline strings
-- [ ] Interpolated strings
+- [ ] Tuples/multi-return & agreement.
+  - [ ] Def need product types...
+    - [ ] Dog example?
+- [ ] Lambdas?
+- [ ] let-bindings are kind of painful to use
+- [x] Interpolated strings
 - [ ] Builtins
   - [ ] Alliteration
   - [ ] Capitalization lol
@@ -37,8 +44,7 @@
   - [x] Birds
 - [ ] builtins (capitalization &c.)
 # Performance
-- [ ] Benchmark renamer
+- [ ] http://hackage.haskell.org/package/text-short
+- [x] Benchmark renamer
 - [ ] `+RTS -Ax`
 - [ ] https://github.com/AndrasKovacs/smalltt/blob/master/krakow-pres.pdf
-# Library Support
-- [ ] Rust parser via generators? dunk on them for fun.
