@@ -8,5 +8,7 @@
         (| "crow")
         (| "raven")
         (| "gull")
+        (| "rook")
+        (| "ibis")
         (| "pelican")
         (| "tern")))
