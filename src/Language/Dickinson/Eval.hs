@@ -119,6 +119,7 @@ addDecl (Define _ n e) = bindName n e *> topLevelAdd n
 
 evalExpressionM :: Expression Name a -> EvalM a T.Text
 evalExpressionM (Literal _ t)  = pure t
+evalExpressionM (StrChunk _ t) = pure t
 evalExpressionM (Var _ n)      = evalExpressionM =<< lookupName n
 evalExpressionM (Choice _ pes) = evalExpressionM =<< pick pes
 evalExpressionM (Interp es)    = mconcat <$> traverse evalExpressionM es

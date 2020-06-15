@@ -60,7 +60,7 @@ tokens :-
     <0> ";".*                      ;
 
     -- assume utf8
-    <0> @name                      { tok (\p s -> TokIdent p <$> newIdentAlex p (mkShort s)) }
+    <0> @name                      { tok (\p s -> TokIdent p <$> newIdentAlex p (mkText s)) }
 
     <0> \(                         { mkSym LParen }
     <0> \)                         { mkSym RParen }
@@ -77,21 +77,21 @@ tokens :-
 
     -- strings
     <0> \"                         { begin string }
-    <string> $str_chunk+           { tok (\p s -> alex $ TokStrChunk p (mkShort s)) }
+    <string> $str_chunk+           { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
     <string> \$\{                  { mkSym BeginInterp `andBegin` 0 }
     <0> \}                         { mkSym EndInterp `andBegin` string }
     <string> \"                    { begin 0 }
 
     -- strings
-    <0> @string                    { tok (\p s -> alex $ TokString p (T.tail . T.init $ mkShort s)) }
+    <0> @string                    { tok (\p s -> alex $ TokString p (T.tail . T.init $ mkText s)) }
 
     -- numbers (as doubles)
     <0> @num                       { tok (\p s -> alex $ TokDouble p (read $ ASCII.unpack s)) } -- shouldn't cause any problems cuz digits
 
 {
 
-mkShort :: BSL.ByteString -> T.Text
-mkShort = decodeUtf8 . BSL.toStrict
+mkText :: BSL.ByteString -> T.Text
+mkText = decodeUtf8 . BSL.toStrict
 
 alex :: a -> Alex a
 alex = pure
