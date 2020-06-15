@@ -8,6 +8,7 @@ module Language.Dickinson.Eval ( EvalM
                                , evalExpressionM
                                , evalWithGen
                                , evalIO
+                               , findDecl
                                , findMain
                                ) where
 
@@ -33,6 +34,7 @@ data EvalSt a = EvalSt
     -- map to expression
     , boundExpr     :: IM.IntMap (Expression Name a)
     , renameCtx     :: Renames
+    -- TODO: map to uniques or an expression?
     , topLevel      :: M.Map T.Text Unique
     }
 
@@ -49,29 +51,29 @@ topLevelLens :: Lens' (EvalSt a) (M.Map T.Text Unique)
 topLevelLens f s = fmap (\x -> s { topLevel = x }) (f (topLevel s))
 
 -- TODO: thread generator state instead?
-type EvalM name a = StateT (EvalSt a) (Except (DickinsonError name a))
+type EvalM a = StateT (EvalSt a) (Except (DickinsonError Name a))
 
-evalIO :: UniqueCtx -> EvalM name a x -> IO (Either (DickinsonError name a) x)
+evalIO :: UniqueCtx -> EvalM a x -> IO (Either (DickinsonError Name a) x)
 evalIO rs me = (\g -> evalWithGen g rs me) <$> newStdGen
 
 evalWithGen :: StdGen
             -> UniqueCtx -- ^ Threaded through
-            -> EvalM name a x
-            -> Either (DickinsonError name a) x
+            -> EvalM a x
+            -> Either (DickinsonError Name a) x
 evalWithGen g u me = runExcept $ evalStateT me (EvalSt (randoms g) mempty (initRenames u) mempty)
 
 -- TODO: temporary bindings
-bindName :: Name a -> Expression Name a -> EvalM Name a ()
+bindName :: Name a -> Expression Name a -> EvalM a ()
 bindName (Name _ (Unique u) _) e = modify (over boundExprLens (IM.insert u e))
 
-topLevelAdd :: Name a -> EvalM Name a ()
+topLevelAdd :: Name a -> EvalM a ()
 topLevelAdd (Name (n :| []) u _) = modify (over topLevelLens (M.insert n u))
 topLevelAdd (Name{})             = error "Error message not yet implemented."
 
-deleteName :: Name a -> EvalM Name a ()
+deleteName :: Name a -> EvalM a ()
 deleteName (Name _ (Unique u) _) = modify (over boundExprLens (IM.delete u))
 
-lookupName :: Name a -> EvalM Name a (Expression Name a)
+lookupName :: Name a -> EvalM a (Expression Name a)
 lookupName n@(Name _ (Unique u) l) = go =<< gets (IM.lookup u.boundExpr)
     where go Nothing  = throwError (UnfoundName l n)
           go (Just x) = renameExpressionM x
@@ -83,7 +85,7 @@ normalize xs = {-# SCC "normalize" #-} (/tot) <$> xs
 cdf :: (Num a) => NonEmpty a -> [a]
 cdf = {-# SCC "cdf" #-} NE.drop 2 . NE.scanl (+) 0 . (0 <|)
 
-pick :: NonEmpty (Double, Expression name a) -> EvalM name a (Expression name a)
+pick :: NonEmpty (Double, Expression name a) -> EvalM a (Expression name a)
 pick brs = {-# SCC "pick" #-} do
     threshold <- gets (head.probabilities)
     modify (over probabilitiesLens tail)
@@ -91,26 +93,29 @@ pick brs = {-# SCC "pick" #-} do
         es = toList (snd <$> brs)
     pure $ snd . head . dropWhile ((<= threshold) . fst) $ zip ds es
 
-findMain :: EvalM name a (Expression Name a)
-findMain = do
+findDecl :: T.Text -> EvalM a (Expression Name a)
+findDecl t = do
     tops <- gets topLevel
-    case M.lookup "main" tops of
+    case M.lookup t tops of
         Just (Unique i) -> do { es <- gets boundExpr ; pure (es IM.! i) }
         Nothing         -> throwError NoMain
 
-evalDickinsonAsMain :: Dickinson Name a -> EvalM Name a T.Text
+findMain :: EvalM a (Expression Name a)
+findMain = findDecl "main"
+
+evalDickinsonAsMain :: Dickinson Name a -> EvalM a T.Text
 evalDickinsonAsMain d = do
     loadDickinson d
     e <- findMain
     evalExpressionM e
 
-loadDickinson :: Dickinson Name a -> EvalM Name a ()
+loadDickinson :: Dickinson Name a -> EvalM a ()
 loadDickinson = traverse_ addDecl
 
-addDecl :: Declaration Name a -> EvalM Name a ()
+addDecl :: Declaration Name a -> EvalM a ()
 addDecl (Define _ n e) = bindName n e *> topLevelAdd n
 
-evalExpressionM :: Expression Name a -> EvalM Name a T.Text
+evalExpressionM :: Expression Name a -> EvalM a T.Text
 evalExpressionM (Literal _ t)  = pure t
 evalExpressionM (Concat _ es)  = sconcat <$> traverse evalExpressionM es
 evalExpressionM (Var _ n)      = evalExpressionM =<< lookupName n
@@ -118,4 +123,4 @@ evalExpressionM (Choice _ pes) = evalExpressionM =<< pick pes
 evalExpressionM (Let _ bs e) = do
     traverse_ (uncurry bindName) bs
     evalExpressionM e <* traverse_ deleteName (fst <$> bs)
-    -- FIXME: doesn't drop context!
+    -- FIXME: local context?
