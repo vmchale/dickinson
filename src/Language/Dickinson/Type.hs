@@ -38,7 +38,7 @@ data Expression name a = Literal a !T.Text
                        | Var a (name a)
                        | Interp ![Expression name a]
                        | Lambda a (name a) (Expression name a) -- TODO: application, type checker
-                       | Apply a (Expression name a) (Expression name a)
+                       | Apply (Expression name a) (Expression name a)
                        deriving (Generic, NFData, Binary, Functor)
                        -- TODO: tuples &. such
                        -- concat back again?
@@ -67,7 +67,7 @@ instance Pretty (name a) => Pretty (Expression name a) where
     -- also comments lol
     pretty (Choice _ brs) = parens (":branch" <#> indent 4 (hardSep (toList $ fmap prettyChoiceBranch brs)))
     pretty (Lambda _ n e) = parens (":lambda" <+> pretty n <#> indent 4 (pretty e))
-    pretty (Apply _ e e') = pretty e <+> pretty e'
+    pretty (Apply e e')   = pretty e <+> pretty e'
 
 instance Pretty (DickinsonTy a) where
     pretty TyText{}       = "text"

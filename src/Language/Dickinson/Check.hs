@@ -30,6 +30,7 @@ checkMultipleExpr :: Expression Name a -> Maybe (DickinsonError Name a)
 checkMultipleExpr Var{}          = Nothing
 checkMultipleExpr Literal{}      = Nothing
 checkMultipleExpr StrChunk{}     = Nothing
+checkMultipleExpr (Apply e e')   = checkMultipleExpr e <|> checkMultipleExpr e'
 checkMultipleExpr (Choice _ brs) = foldMapAlternative (checkMultipleExpr . snd) brs
 checkMultipleExpr (Let _ bs e)   =
         checkNames (toList $ fmap fst bs)

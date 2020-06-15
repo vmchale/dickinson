@@ -1,0 +1,8 @@
+(:def greeter
+  (:lambda name
+    ("Hello, ${name}!")))
+
+(:def main
+  (:let 
+    [boy (:oneof (| "tom") (| "harry"))]
+    (greeter boy)))

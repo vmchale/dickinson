@@ -99,6 +99,7 @@ Expression :: { Expression Name AlexPosn }
            | lambda Name parens(Expression) { Lambda $1 $2 $3 }
            | ident { Var (loc $1) (ident $1) }
            | stringLiteral { Literal (loc $1) (str $1) }
+           | Expression Expression { Apply $1 $2 }
            | some(Interp) { Interp (toList $ NE.reverse $1) }
            | parens(Expression) { $1 }
 

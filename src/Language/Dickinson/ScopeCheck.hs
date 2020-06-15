@@ -37,8 +37,12 @@ checkDecl (Define _ n e) =
 checkExpr :: Expression Name a -> CheckM (Maybe (DickinsonError Name a))
 checkExpr Literal{}      = pure Nothing
 checkExpr StrChunk{}     = pure Nothing
+checkExpr (Apply e e')   = (<|>) <$> checkExpr e <*> checkExpr e'
 checkExpr (Interp es)    = mapSumM checkExpr es
 checkExpr (Choice _ brs) = mapSumM checkExpr (snd <$> brs)
+checkExpr (Lambda _ n e)    = do
+    insertName n
+    checkExpr e <* deleteName n
 checkExpr (Var _ n@(Name _ (Unique i) l)) = do
     b <- get
     if i `IS.member` b
