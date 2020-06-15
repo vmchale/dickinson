@@ -1,4 +1,5 @@
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleContexts  #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Language.Dickinson.Eval ( EvalM
                                , addDecl
@@ -14,8 +15,9 @@ import           Control.Monad.Except      (Except, MonadError, runExcept, throw
 import           Control.Monad.State.Lazy  (StateT, evalStateT, gets, modify)
 import           Data.Foldable             (toList, traverse_)
 import qualified Data.IntMap               as IM
-import           Data.List.NonEmpty        (NonEmpty, (<|))
+import           Data.List.NonEmpty        (NonEmpty ((:|)), (<|))
 import qualified Data.List.NonEmpty        as NE
+import qualified Data.Map                  as M
 import           Data.Semigroup            (sconcat)
 import qualified Data.Text                 as T
 import           Language.Dickinson.Error
@@ -26,24 +28,28 @@ import           Language.Dickinson.Unique
 import           Lens.Micro                (Lens', over)
 import           System.Random             (StdGen, newStdGen, randoms)
 
-data EvalSt name a = EvalSt
+data EvalSt a = EvalSt
     { probabilities :: [Double]
     -- map to expression
-    , boundExpr     :: IM.IntMap (Expression name a)
+    , boundExpr     :: IM.IntMap (Expression Name a)
     , renameCtx     :: Renames
+    , topLevel      :: M.Map T.Text Unique
     }
 
-instance HasRenames (EvalSt name a) where
+instance HasRenames (EvalSt a) where
     rename f s = fmap (\x -> s { renameCtx = x }) (f (renameCtx s))
 
-probabilitiesLens :: Lens' (EvalSt name a) [Double]
+probabilitiesLens :: Lens' (EvalSt a) [Double]
 probabilitiesLens f s = fmap (\x -> s { probabilities = x }) (f (probabilities s))
 
-boundExprLens :: Lens' (EvalSt name a) (IM.IntMap (Expression name a))
+boundExprLens :: Lens' (EvalSt a) (IM.IntMap (Expression Name a))
 boundExprLens f s = fmap (\x -> s { boundExpr = x }) (f (boundExpr s))
 
+topLevelLens :: Lens' (EvalSt a) (M.Map T.Text Unique)
+topLevelLens f s = fmap (\x -> s { topLevel = x }) (f (topLevel s))
+
 -- TODO: thread generator state instead?
-type EvalM name a = StateT (EvalSt name a) (Except (DickinsonError name a))
+type EvalM name a = StateT (EvalSt a) (Except (DickinsonError name a))
 
 evalIO :: UniqueCtx -> EvalM name a x -> IO (Either (DickinsonError name a) x)
 evalIO rs me = (\g -> evalWithGen g rs me) <$> newStdGen
@@ -52,11 +58,15 @@ evalWithGen :: StdGen
             -> UniqueCtx -- ^ Threaded through
             -> EvalM name a x
             -> Either (DickinsonError name a) x
-evalWithGen g u me = runExcept $ evalStateT me (EvalSt (randoms g) mempty (initRenames u))
+evalWithGen g u me = runExcept $ evalStateT me (EvalSt (randoms g) mempty (initRenames u) mempty)
 
 -- TODO: temporary bindings
 bindName :: Name a -> Expression Name a -> EvalM Name a ()
 bindName (Name _ (Unique u) _) e = modify (over boundExprLens (IM.insert u e))
+
+topLevelAdd :: Name a -> EvalM Name a ()
+topLevelAdd (Name (n :| []) u _) = modify (over topLevelLens (M.insert n u))
+topLevelAdd (Name{})             = error "Error message not yet implemented."
 
 deleteName :: Name a -> EvalM Name a ()
 deleteName (Name _ (Unique u) _) = modify (over boundExprLens (IM.delete u))
@@ -81,22 +91,24 @@ pick brs = {-# SCC "pick" #-} do
         es = toList (snd <$> brs)
     pure $ snd . head . dropWhile ((<= threshold) . fst) $ zip ds es
 
-findMain :: MonadError (DickinsonError Name a) m => Dickinson Name a -> m (Expression Name a)
-findMain = getMain . filter (isMain.defName)
-    where getMain (x:_) = pure $ defExpr x
-          getMain []    = throwError NoMain
+findMain :: EvalM name a (Expression Name a)
+findMain = do
+    tops <- gets topLevel
+    case M.lookup "main" tops of
+        Just (Unique i) -> do { es <- gets boundExpr ; pure (es IM.! i) }
+        Nothing         -> throwError NoMain
 
 evalDickinsonAsMain :: Dickinson Name a -> EvalM Name a T.Text
 evalDickinsonAsMain d = do
     loadDickinson d
-    e <- findMain d
+    e <- findMain
     evalExpressionM e
 
 loadDickinson :: Dickinson Name a -> EvalM Name a ()
 loadDickinson = traverse_ addDecl
 
 addDecl :: Declaration Name a -> EvalM Name a ()
-addDecl (Define _ n e) = bindName n e
+addDecl (Define _ n e) = bindName n e *> topLevelAdd n
 
 evalExpressionM :: Expression Name a -> EvalM Name a T.Text
 evalExpressionM (Literal _ t)  = pure t
