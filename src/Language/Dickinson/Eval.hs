@@ -107,10 +107,9 @@ findMain :: EvalM a (Expression Name a)
 findMain = findDecl "main"
 
 evalDickinsonAsMain :: Dickinson Name a -> EvalM a T.Text
-evalDickinsonAsMain d = do
-    loadDickinson d
-    e <- findMain
-    evalExpressionM e
+evalDickinsonAsMain d =
+    loadDickinson d *>
+    (evalExpressionM =<< findMain)
 
 loadDickinson :: Dickinson Name a -> EvalM a ()
 loadDickinson = traverse_ addDecl
