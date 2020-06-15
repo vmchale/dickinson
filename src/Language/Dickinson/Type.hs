@@ -15,8 +15,8 @@ import           Data.Foldable                 (toList)
 import           Data.List.NonEmpty            (NonEmpty)
 import           Data.Semigroup                ((<>))
 import qualified Data.Text                     as T
-import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, dquotes, group, hsep, indent, parens,
-                                                pipe, vsep, (<+>))
+import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, dquotes, group, indent, parens, pipe,
+                                                vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext (hardSep, (<#>), (<^>))
 import           GHC.Generics                  (Generic)
 
@@ -34,9 +34,11 @@ data Declaration name a = Define { declAnn :: a
                         deriving (Generic, NFData, Binary, Functor)
 
 data Expression name a = Literal a !T.Text
+                       -- TODO: strChunk for pretty-printing?
                        | Choice a !(NonEmpty (Double, Expression name a))
                        | Let a !(NonEmpty (name a, Expression name a)) !(Expression name a)
                        | Var a (name a)
+                       | StrChunk a !T.Text
                        | Interp ![Expression name a]
                        -- TODO: tuples &. such
                        deriving (Generic, NFData, Binary, Functor)

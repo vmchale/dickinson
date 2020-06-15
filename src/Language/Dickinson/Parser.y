@@ -87,7 +87,7 @@ Bind :: { (Name AlexPosn, Expression Name AlexPosn) }
      : Name Expression { ($1, $2) }
 
 Interp :: { Expression Name AlexPosn }
-Interp : strChunk { Literal (loc $1) (str $1) }
+Interp : strChunk { StrChunk (loc $1) (str $1) }
        | beginInterp Expression endInterp { $2 }
 
 Expression :: { Expression Name AlexPosn }
