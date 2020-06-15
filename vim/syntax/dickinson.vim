@@ -4,8 +4,6 @@ if exists('b:current_syntax')
     finish
 endif
 
-syntax match dickinsonInterpolation "\v\$\{[^\}]*\}"
-
 syntax match dickinsonKeyword ":import"
 syntax match dickinsonKeyword ":def"
 syntax match dickinsonKeyword ":branch"
@@ -19,15 +17,17 @@ syntax match dickinsonIdentifier "\v[a-zA-Z]+"
 
 syntax match dickinsonEsc +\\["\\n]+
 
+syntax region dickinsonInterpolation start='${' end='}' contains=dickinsonIdentifier,dickinsonKeyword
+
 syntax region dickinsonString start=+"+ end=+"+ contains=@Spell,dickinsonEsc,dickinsonInterpolation
 
 syntax match dickinsonComment "\v;.*$" contains=@Spell
 
 highlight link dickinsonComment Comment
+highlight link dickinsonInterpolation Special
 highlight link dickinsonKeyword Keyword
+highlight link dickinsonNum Number
 highlight link dickinsonIdentifier Identifier
 highlight link dickinsonString String
-highlight link dickinsonNum Number
-highlight link dickinsonInterpolation Special
 
 let b:current_syntax = 'dickinson'
