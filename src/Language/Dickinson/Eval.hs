@@ -12,7 +12,7 @@ module Language.Dickinson.Eval ( EvalM
                                , findMain
                                ) where
 
-import           Control.Monad.Except      (Except, runExcept, throwError)
+import           Control.Monad.Except      (Except, MonadError, runExcept, throwError)
 import           Control.Monad.State.Lazy  (MonadState, StateT, evalStateT, gets, modify)
 import           Data.Foldable             (toList, traverse_)
 import qualified Data.IntMap               as IM
@@ -93,12 +93,13 @@ pick brs = {-# SCC "pick" #-} do
         es = toList (snd <$> brs)
     pure $ snd . head . dropWhile ((<= threshold) . fst) $ zip ds es
 
-findDecl :: T.Text -> EvalM a (Expression Name a)
+{-# SPECIALIZE findDecl :: T.Text -> EvalM a (Expression Name a) #-}
+findDecl :: (MonadState (EvalSt a) m, MonadError (DickinsonError Name a) m) => T.Text -> m (Expression Name a)
 findDecl t = do
     tops <- gets topLevel
     case M.lookup t tops of
         Just (Unique i) -> do { es <- gets boundExpr ; pure (es IM.! i) }
-        Nothing         -> throwError NoMain
+        Nothing         -> throwError (NoText t)
 
 findMain :: EvalM a (Expression Name a)
 findMain = findDecl "main"
