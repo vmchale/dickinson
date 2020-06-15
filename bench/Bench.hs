@@ -28,7 +28,7 @@ main =
                     [ bench "bench/data/multiple.dck" $ nf (decode :: BSL.ByteString -> Dickinson Name ()) e
                     ]
                 , env multiParsed $ \p ->
-                  bgroup "multiple"
+                  bgroup "check"
                     [ bench "bench/data/multiple.dck" $ nf checkMultiple p
                     ]
                 , bgroup "result"
