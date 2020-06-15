@@ -19,6 +19,10 @@ main =
                   bgroup "renamer"
                     [ bench "bench/data/nestLet.dck" $ nf plainExpr p
                     ]
+                , env (plainExpr <$> libParsed) $ \r ->
+                  bgroup "scope checker"
+                    [ bench "bench/data/nestLet.dck" $ nf checkScope r
+                    ]
                 , env (void <$> multiParsed) $ \p ->
                   bgroup "encoder"
                     [ bench "bench/data/multiple.dck" $ nf encode p
