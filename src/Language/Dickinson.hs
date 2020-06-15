@@ -6,6 +6,7 @@ module Language.Dickinson ( parse
                           , renameDickinson
                           , checkMultiple
                           , checkScope
+                          , checkFile
                           -- * Types
                           , Dickinson
                           , Declaration (..)
@@ -27,7 +28,7 @@ module Language.Dickinson ( parse
                           , languageDickinsonVersionString
                           ) where
 
-import           Control.Exception                     (Exception, throw)
+import           Control.Exception                     (Exception, throw, throwIO)
 import           Control.Monad                         ((<=<))
 import           Data.ByteString.Lazy                  as BSL
 import qualified Data.Text                             as T
@@ -44,6 +45,13 @@ import           Language.Dickinson.Rename
 import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import qualified Paths_language_dickinson              as P
+
+-- | Check scoping
+checkFile :: FilePath -> IO ()
+checkFile = h . go <=< BSL.readFile
+    where go = checkScope . fst . uncurry renameDickinson . yeet . parseWithCtx
+          h (Just err) = throwIO err
+          h Nothing    = pure ()
 
 -- TODO: runDeclarationM
 evalFile :: FilePath -> IO T.Text

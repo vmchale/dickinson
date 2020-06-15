@@ -9,6 +9,7 @@ import           REPL
 -- TODO debug/verbosity options...
 data Act = Run !FilePath
          | REPL ![FilePath]
+         | Check !FilePath
          -- CHECK subcommand (scoping &c.)
 
 main :: IO ()
@@ -20,6 +21,7 @@ act :: Parser Act
 act = hsubparser
     (command "run" (info runP (progDesc "Execute a file"))
     <> command "repl" (info replP (progDesc "Start a REPL"))
+    <> command "check" (info checkP (progDesc "Check that some code is valid."))
     )
 
 replP :: Parser Act
@@ -27,6 +29,9 @@ replP = REPL <$> many dckFile
 
 runP :: Parser Act
 runP = Run <$> dckFile
+
+checkP :: Parser Act
+checkP = Check <$> dckFile
 
 dckFile :: Parser FilePath
 dckFile = argument str
@@ -47,5 +52,6 @@ versionMod :: Parser (a -> a)
 versionMod = infoOption languageDickinsonVersionString (short 'V' <> long "version" <> help "Show version")
 
 run :: Act -> IO ()
-run (Run fp) = TIO.putStrLn =<< evalFile fp
-run (REPL _) = dickinsonRepl
+run (Run fp)  = TIO.putStrLn =<< evalFile fp
+run (REPL _)  = dickinsonRepl
+run (Check f) = checkFile f
