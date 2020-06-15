@@ -31,6 +31,7 @@ parserTests =
         , detectDuplicate "test/data/multiple.dck"
         , lexNoError "examples/shakespeare.dck"
         , parseNoError "examples/shakespeare.dck"
+        , detectScopeError "test/demo/improbableScope.dck"
         ]
 
 detectDuplicate :: FilePath -> TestTree
@@ -38,6 +39,12 @@ detectDuplicate fp = testCase ("Detects duplicate name (" ++ fp ++ ")") $ do
     contents <- BSL.readFile fp
     let parsed = either throw id $ parse contents
     assertBool "Detects duplicate" $ isJust (checkMultiple parsed)
+
+detectScopeError :: FilePath -> TestTree
+detectScopeError fp = testCase "Finds scoping error" $ do
+    contents <- BSL.readFile fp
+    let parsed = either throw id $ parseWithCtx contents
+    assertBool "Detects scope error" $ isJust (checkScope . fst $ uncurry renameDickinson parsed)
 
 -- golden tests?
 

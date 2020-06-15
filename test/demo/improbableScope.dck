@@ -1,12 +1,9 @@
-(:def valid
-  (:branch
-    (| 1.0 "yes")
-    (| 1.0 "no")))
-
 (:def invalid
-  (:branch
-    (| 1.0 "yes")
-    (| 0.001 no)))
+  (:let 
+    [yes "yes"]
+      (:branch
+        (| 1.0 yes)
+        (| 0.001 no))))
 
 (:def main
   ("hello ${invalid}"))

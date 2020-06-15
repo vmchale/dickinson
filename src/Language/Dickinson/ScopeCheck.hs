@@ -1,9 +1,9 @@
 module Language.Dickinson.ScopeCheck ( checkScope
                                      ) where
 
-import           Control.Applicative       (Alternative)
+import           Control.Applicative       (Alternative, (<|>))
 import           Control.Monad.State       (State, evalState, get, modify)
-import           Data.Foldable             (asum)
+import           Data.Foldable             (asum, traverse_)
 import qualified Data.IntSet               as IS
 import           Language.Dickinson.Error
 import           Language.Dickinson.Name
@@ -43,6 +43,11 @@ checkExpr (Var _ n@(Name _ (Unique i) l)) = do
     if i `IS.member` b
         then pure Nothing
         else pure $ Just (UnfoundName l n)
+checkExpr (Let _ bs e) = do
+    let ns = fst <$> bs
+    traverse_ insertName ns
+    (<|>) <$> checkExpr e <*> mapSumM checkExpr (snd <$> bs)
+        <* traverse_ deleteName ns
 
 mapSumM :: (Traversable t, Alternative f, Applicative m) => (a -> m (f b)) -> t a -> m (f b)
 mapSumM = (fmap asum .) . traverse

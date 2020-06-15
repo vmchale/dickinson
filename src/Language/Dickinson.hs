@@ -5,6 +5,7 @@ module Language.Dickinson ( parse
                           , prettyDickinson
                           , renameDickinson
                           , checkMultiple
+                          , checkScope
                           -- * Types
                           , Dickinson
                           , Declaration (..)
@@ -40,6 +41,7 @@ import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Pretty
 import           Language.Dickinson.Rename
+import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import qualified Paths_language_dickinson              as P
 

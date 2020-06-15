@@ -89,6 +89,7 @@ setMax i (Renames _ b) = Renames i b
 
 renameExpressionM :: (MonadState s m, HasRenames s) => Expression Name a -> m (Expression Name a)
 renameExpressionM e@Literal{} = pure e
+renameExpressionM e@StrChunk{} = pure e
 renameExpressionM (Var p n)   = Var p <$> replaceVar n
 renameExpressionM (Choice p branches) = Choice p <$> branches'
     where branches' =
