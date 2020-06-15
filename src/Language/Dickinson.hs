@@ -1,3 +1,4 @@
+-- | This modules contains some bits and pieces to work with Dickinson code.
 module Language.Dickinson ( parse
                           , parseWithCtx
                           , lexDickinson
@@ -10,9 +11,9 @@ module Language.Dickinson ( parse
                           , AlexPosn
                           , Name (..)
                           , UniqueCtx
+                          , EvalSt (..)
                           , evalFile
                           -- * Monads
-                          , EvalT
                           , EvalM
                           -- * Reëxports from
                           -- "Data.Text.Prettyprint.Doc.Render.Text"

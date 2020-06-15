@@ -127,8 +127,10 @@ executable emd
         base -any,
         language-dickinson -any,
         optparse-applicative -any,
+        bytestring -any,
         text -any,
-        haskeline -any
+        haskeline -any,
+        mtl -any
 
     if impl(ghc >=8.0)
         ghc-options:

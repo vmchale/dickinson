@@ -14,6 +14,7 @@ import Control.Exception (Exception)
 import Control.Monad.Except (ExceptT, runExceptT, throwError)
 import Control.Monad.Trans.Class (lift)
 import qualified Data.ByteString.Lazy as BSL
+import Data.Foldable (toList)
 import qualified Data.List.NonEmpty as NE
 import Data.List.NonEmpty (NonEmpty ((:|)))
 import qualified Data.Text as T
@@ -40,7 +41,9 @@ import Language.Dickinson.Type
     vbar { TokSym $$ VBar }
     lsqbracket { TokSym $$ LSqBracket }
     rsqbracket { TokSym $$ RSqBracket }
-    rbracket { TokSym $$ RBracket }
+
+    beginInterp { TokSym $$ BeginInterp }
+    endInterp { TokSym $$ EndInterp }
 
     def { TokKeyword $$ KwDef }
     let { TokKeyword $$ KwLet }
@@ -50,6 +53,7 @@ import Language.Dickinson.Type
 
     ident { $$@(TokIdent _ _) }
 
+    strChunk { $$@(TokStrChunk _ _) }
     stringLiteral { $$@(TokString _ _) }
 
     num { TokDouble _ $$ }
@@ -82,13 +86,17 @@ Name :: { Name AlexPosn }
 Bind :: { (Name AlexPosn, Expression Name AlexPosn) }
      : Name Expression { ($1, $2) }
 
+Interp :: { Expression Name AlexPosn }
+Interp : strChunk { Literal (loc $1) (str $1) }
+       | beginInterp Expression endInterp { $2 }
+
 Expression :: { Expression Name AlexPosn }
-           : stringLiteral { Literal (loc $1) (str $1) }
-           | branch some(parens(WeightedLeaf)) { Choice $1 (NE.reverse $2) }
+           : branch some(parens(WeightedLeaf)) { Choice $1 (NE.reverse $2) }
            | oneof some(parens(Leaf)) { Choice $1 (NE.reverse (weight $2)) }
            | let some(brackets(Bind)) Expression { Let $1 (NE.reverse $2) $3 }
            | ident { Var (loc $1) (ident $1) }
-           | rbracket some(Expression) { Concat $1 (NE.reverse $2) }
+           | stringLiteral { Literal (loc $1) (str $1) }
+           | some(Interp) { Interp (toList $ NE.reverse $1) }
            | parens(Expression) { $1 }
 
 WeightedLeaf :: { (Double, Expression Name AlexPosn) }

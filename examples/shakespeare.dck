@@ -154,4 +154,4 @@
     (| "whey-face")))
 
 (:def main
-  (> "Thou " adjective " " adjective " " noun "!"))
+  ("Thou ${adjective} ${adjective} ${noun}!"))

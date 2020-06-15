@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Language.Dickinson.Eval ( EvalM
-                               , EvalT
+                               , EvalSt (..)
                                , addDecl
                                , loadDickinson
                                , evalDickinsonAsMain
@@ -13,7 +13,7 @@ module Language.Dickinson.Eval ( EvalM
                                , findMain
                                ) where
 
-import           Control.Monad.Except      (Except, ExceptT, MonadError, runExcept, throwError)
+import           Control.Monad.Except      (Except, MonadError, runExcept, throwError)
 import           Control.Monad.State.Lazy  (MonadState, StateT, evalStateT, gets, modify)
 import           Data.Foldable             (toList, traverse_)
 import qualified Data.IntMap               as IM
@@ -30,6 +30,7 @@ import           Language.Dickinson.Unique
 import           Lens.Micro                (Lens', over)
 import           System.Random             (StdGen, newStdGen, randoms)
 
+-- | The state during evaluation
 data EvalSt a = EvalSt
     { probabilities :: [Double]
     -- map to expression
@@ -53,7 +54,6 @@ topLevelLens f s = fmap (\x -> s { topLevel = x }) (f (topLevel s))
 
 -- TODO: thread generator state instead?
 type EvalM a = StateT (EvalSt a) (Except (DickinsonError Name a))
-type EvalT m a = StateT (EvalSt a) (ExceptT (DickinsonError Name a) m)
 
 evalIO :: UniqueCtx -> EvalM a x -> IO (Either (DickinsonError Name a) x)
 evalIO rs me = (\g -> evalWithGen g rs me) <$> newStdGen
@@ -119,9 +119,9 @@ addDecl (Define _ n e) = bindName n e *> topLevelAdd n
 
 evalExpressionM :: Expression Name a -> EvalM a T.Text
 evalExpressionM (Literal _ t)  = pure t
-evalExpressionM (Concat _ es)  = sconcat <$> traverse evalExpressionM es
 evalExpressionM (Var _ n)      = evalExpressionM =<< lookupName n
 evalExpressionM (Choice _ pes) = evalExpressionM =<< pick pes
+evalExpressionM (Interp es)    = mconcat <$> traverse evalExpressionM es
 evalExpressionM (Let _ bs e) = do
     traverse_ (uncurry bindName) bs
     evalExpressionM e <* traverse_ deleteName (fst <$> bs)

@@ -9,6 +9,7 @@ import           REPL
 -- TODO debug/verbosity options...
 data Act = Run !FilePath
          | REPL ![FilePath]
+         -- CHECK subcommand (scoping &c.)
 
 main :: IO ()
 main = run =<< execParser wrapper

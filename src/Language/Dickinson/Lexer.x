@@ -27,7 +27,7 @@ import qualified Data.Map as M
 import Data.Semigroup ((<>))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
-import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, rangle, rbracket, lbracket, colon, dquotes)
+import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, rbrace, rbracket, lbracket, colon, dquotes)
 import GHC.Generics (Generic)
 import Language.Dickinson.Name
 import Language.Dickinson.Unique
@@ -42,11 +42,15 @@ $digit = [0-9]
 
 $latin = [a-zA-Z]
 
-@escape_str = \\ [\\\"]
+$str_special = [\\\"\$]
+
+@escape_str = \\ $str_special
 
 -- single-line string
 -- TODO: interpolations?
-@string = \" ([^\"\\] | @escape_str)* \"
+@string = \" ([^ $str_special] | @escape_str)* \"
+
+$str_chunk = [^ \"\\\$]
 
 @name = ($latin+ \.)* $latin+
 
@@ -61,7 +65,6 @@ tokens :-
     <0> \(                         { mkSym LParen }
     <0> \)                         { mkSym RParen }
     <0> \|                         { mkSym VBar }
-    <0> ">"                        { mkSym RBracket }
     <0> \[                         { mkSym LSqBracket }
     <0> \]                         { mkSym RSqBracket }
 
@@ -71,6 +74,13 @@ tokens :-
     <0> ":oneof"                   { mkKeyword KwOneof }
     <0> ":def"                     { mkKeyword KwDef }
     <0> ":import"                  { mkKeyword KwImport }
+
+    -- strings
+    <0> \"                         { begin string }
+    <string> $str_chunk+           { tok (\p s -> alex $ TokStrChunk p (mkShort s)) }
+    <string> \$\{                  { mkSym BeginInterp `andBegin` 0 }
+    <0> \}                         { mkSym EndInterp `andBegin` string }
+    <string> \"                    { begin 0 }
 
     -- strings
     <0> @string                    { tok (\p s -> alex $ TokString p (T.tail . T.init $ mkShort s)) }
@@ -133,18 +143,20 @@ alexInitUserState = (0, mempty, mempty)
 data Sym = LParen
          | RParen
          | VBar
-         | RBracket
          | LSqBracket
          | RSqBracket
+         | BeginInterp
+         | EndInterp
          deriving (Eq, Generic, NFData)
 
 instance Pretty Sym where
-    pretty LParen     = lparen
-    pretty RParen     = rparen
-    pretty VBar       = pipe
-    pretty RBracket   = rangle
-    pretty LSqBracket = lbracket
-    pretty RSqBracket = rbracket
+    pretty LParen      = lparen
+    pretty RParen      = rparen
+    pretty VBar        = pipe
+    pretty LSqBracket  = lbracket
+    pretty RSqBracket  = rbracket
+    pretty BeginInterp = "${"
+    pretty EndInterp   = rbrace
 
 data Keyword = KwDef
              | KwLet
@@ -171,17 +183,19 @@ data Token a = EOF { loc :: a }
              | TokIdent { loc :: a, ident :: Name a }
              | TokDouble { loc :: a, double :: Double }
              | TokString { loc :: a, str :: T.Text }
+             | TokStrChunk { loc :: a, str :: T.Text }
              | TokKeyword { loc :: a, kw :: Keyword }
              | TokSym { loc :: a, sym :: Sym }
              deriving (Eq, Generic, NFData)
 
 instance Pretty (Token a) where
-    pretty EOF{}              = mempty
-    pretty (TokIdent _ n)     = pretty n
-    pretty (TokDouble _ d)    = pretty d
-    pretty (TokString _ str') = dquotes (pretty str')
-    pretty (TokKeyword _ kw') = pretty kw'
-    pretty (TokSym _ sym')    = pretty sym'
+    pretty EOF{}                = mempty
+    pretty (TokIdent _ n)       = pretty n
+    pretty (TokDouble _ d)      = pretty d
+    pretty (TokString _ str')   = dquotes (pretty str')
+    pretty (TokStrChunk _ str') = pretty str'
+    pretty (TokKeyword _ kw')   = pretty kw'
+    pretty (TokSym _ sym')      = pretty sym'
 
 -- for testing
 loop :: Alex [Token AlexPosn]

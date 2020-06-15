@@ -15,8 +15,8 @@ import           Data.Foldable                 (toList)
 import           Data.List.NonEmpty            (NonEmpty)
 import           Data.Semigroup                ((<>))
 import qualified Data.Text                     as T
-import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, dquotes, group, hsep, indent, langle,
-                                                parens, pipe, vsep, (<+>))
+import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, dquotes, group, hsep, indent, parens,
+                                                pipe, vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext (hardSep, (<#>), (<^>))
 import           GHC.Generics                  (Generic)
 
@@ -37,8 +37,10 @@ data Expression name a = Literal a !T.Text
                        | Choice a !(NonEmpty (Double, Expression name a))
                        | Let a !(NonEmpty (name a, Expression name a)) !(Expression name a)
                        | Var a (name a)
-                       | Concat a !(NonEmpty (Expression name a))
+                       | Interp ![Expression name a]
+                       -- TODO: tuples &. such
                        deriving (Generic, NFData, Binary, Functor)
+                       -- concat back again?
                        -- TODO: normalize subtree
                        -- TODO: builtins?
 
@@ -60,4 +62,3 @@ instance Pretty (name a) => Pretty (Expression name a) where
     -- TODO: if they're all equal, use :oneof
     -- also comments lol
     pretty (Choice _ brs) = parens (":branch" <#> indent 4 (hardSep (toList $ fmap prettyChoiceBranch brs)))
-    pretty (Concat _ es)  = parens (pipe <> langle <+> hsep (toList $ fmap pretty es))

@@ -95,7 +95,7 @@ renameExpressionM (Choice p branches) = Choice p <$> branches'
             let ds = fst <$> branches
                 in let es = fmap snd branches
                     in NE.zip ds <$> traverse renameExpressionM es
-renameExpressionM (Concat p es) = Concat p <$> traverse renameExpressionM es
+renameExpressionM (Interp es) = Interp <$> traverse renameExpressionM es
 renameExpressionM (Let p bs e) = do
     newBs <- traverse withName (fst <$> bs)
     let localRenames = snd <$> newBs

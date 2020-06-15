@@ -21,9 +21,12 @@
 - [ ] Multiline strings
 - [ ] Interpolated strings
 - [ ] Builtins
+  - [ ] Alliteration
+  - [ ] Capitalization lol
 - [ ] Escapes
 - [ ] docs? links...?
 - [ ] Normalization (for encoding, for one)
+- [ ] Remove duplicates (for regen adjectives...)
 # Tooling
 - [ ] REPL
 # Tests
@@ -31,7 +34,7 @@
 # Libraries
 - [x] Colors
 - [ ] Animals
-  - [ ] Birds
+  - [x] Birds
 - [ ] builtins (capitalization &c.)
 # Performance
 - [ ] Benchmark renamer
