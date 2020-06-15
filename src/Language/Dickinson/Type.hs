@@ -6,6 +6,7 @@
 module Language.Dickinson.Type ( Dickinson
                                , Declaration (..)
                                , Expression (..)
+                               , DickinsonTy (..)
                                ) where
 
 import           Control.DeepSeq               (NFData)
@@ -36,11 +37,16 @@ data Expression name a = Literal a !T.Text
                        | Let a !(NonEmpty (name a, Expression name a)) !(Expression name a)
                        | Var a (name a)
                        | Interp ![Expression name a]
-                       -- TODO: tuples &. such
+                       | Lambda a (name a) (Expression name a) -- TODO: application, type checker
+                       | Apply a (Expression name a) (Expression name a)
                        deriving (Generic, NFData, Binary, Functor)
+                       -- TODO: tuples &. such
                        -- concat back again?
                        -- TODO: normalize subtree
                        -- TODO: builtins?
+
+data DickinsonTy a = TyText a
+                   | TyFun a (DickinsonTy a) (DickinsonTy a)
 
 instance Pretty (name a) => Pretty (Declaration name a) where
     pretty (Define _ n e) = parens (":def" <+> pretty n <#> indent 4 (pretty e))
@@ -60,3 +66,9 @@ instance Pretty (name a) => Pretty (Expression name a) where
     -- TODO: if they're all equal, use :oneof
     -- also comments lol
     pretty (Choice _ brs) = parens (":branch" <#> indent 4 (hardSep (toList $ fmap prettyChoiceBranch brs)))
+    pretty (Lambda _ n e) = parens (":lambda" <+> pretty n <#> indent 4 (pretty e))
+    pretty (Apply _ e e') = pretty e <+> pretty e'
+
+instance Pretty (DickinsonTy a) where
+    pretty TyText{}       = "text"
+    pretty (TyFun _ t t') = pretty t <+> "⟶" <+> pretty t'

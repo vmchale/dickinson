@@ -51,6 +51,7 @@ import Language.Dickinson.Unique
     branch { TokKeyword $$ KwBranch }
     oneof { TokKeyword $$ KwOneof }
     import { TokKeyword $$ KwImport }
+    lambda { TokKeyword $$ KwLambda }
 
     ident { $$@(TokIdent _ _) }
 
@@ -95,6 +96,7 @@ Expression :: { Expression Name AlexPosn }
            : branch some(parens(WeightedLeaf)) { Choice $1 (NE.reverse $2) }
            | oneof some(parens(Leaf)) { Choice $1 (NE.reverse (weight $2)) }
            | let some(brackets(Bind)) Expression { Let $1 (NE.reverse $2) $3 }
+           | lambda Name parens(Expression) { Lambda $1 $2 $3 }
            | ident { Var (loc $1) (ident $1) }
            | stringLiteral { Literal (loc $1) (str $1) }
            | some(Interp) { Interp (toList $ NE.reverse $1) }

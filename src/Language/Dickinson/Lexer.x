@@ -74,6 +74,7 @@ tokens :-
     <0> ":oneof"                   { mkKeyword KwOneof }
     <0> ":def"                     { mkKeyword KwDef }
     <0> ":import"                  { mkKeyword KwImport }
+    <0> ":lambda"                  { mkKeyword KwLambda }
 
     -- strings
     <0> \"                         { begin string }
@@ -163,6 +164,7 @@ data Keyword = KwDef
              | KwBranch
              | KwOneof
              | KwImport
+             | KwLambda
              deriving (Eq, Generic, NFData)
 
 instance Pretty Keyword where
@@ -171,6 +173,7 @@ instance Pretty Keyword where
     pretty KwBranch = ":branch"
     pretty KwOneof  = ":oneof"
     pretty KwImport = ":import"
+    pretty KwLambda = ":lambda"
 
 instance Pretty AlexPosn where
     pretty (AlexPn _ line col) = pretty line <> colon <> pretty col
