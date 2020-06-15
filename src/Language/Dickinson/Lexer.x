@@ -182,6 +182,7 @@ deriving instance NFData AlexPosn
 data Token a = EOF { loc :: a }
              | TokIdent { loc :: a, ident :: Name a }
              | TokDouble { loc :: a, double :: Double }
+             -- separate tok for full strings for sake of speed
              | TokString { loc :: a, str :: T.Text }
              | TokStrChunk { loc :: a, str :: T.Text }
              | TokKeyword { loc :: a, kw :: Keyword }
