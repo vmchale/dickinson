@@ -33,6 +33,7 @@ main =
                     ]
                 , bgroup "result"
                     [ bench "test/eval/context.dck" $ nfIO (evalFile "test/eval/context.dck")
+                    , bench "examples/shakespeare.dck" $ nfIO (evalFile "examples/shakespeare.dck")
                     ]
                 ]
 
