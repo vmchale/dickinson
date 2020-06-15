@@ -2,6 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Language.Dickinson.Eval ( EvalM
+                               , EvalT
                                , addDecl
                                , loadDickinson
                                , evalDickinsonAsMain
@@ -12,7 +13,7 @@ module Language.Dickinson.Eval ( EvalM
                                , findMain
                                ) where
 
-import           Control.Monad.Except      (Except, MonadError, runExcept, throwError)
+import           Control.Monad.Except      (Except, ExceptT, MonadError, runExcept, throwError)
 import           Control.Monad.State.Lazy  (MonadState, StateT, evalStateT, gets, modify)
 import           Data.Foldable             (toList, traverse_)
 import qualified Data.IntMap               as IM
@@ -52,6 +53,7 @@ topLevelLens f s = fmap (\x -> s { topLevel = x }) (f (topLevel s))
 
 -- TODO: thread generator state instead?
 type EvalM a = StateT (EvalSt a) (Except (DickinsonError Name a))
+type EvalT m a = StateT (EvalSt a) (ExceptT (DickinsonError Name a) m)
 
 evalIO :: UniqueCtx -> EvalM a x -> IO (Either (DickinsonError Name a) x)
 evalIO rs me = (\g -> evalWithGen g rs me) <$> newStdGen
