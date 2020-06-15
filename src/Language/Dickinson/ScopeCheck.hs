@@ -29,6 +29,7 @@ checkDickinson :: Dickinson Name a -> CheckM (Maybe (DickinsonError Name a))
 checkDickinson = mapSumM checkDecl
 
 checkDecl :: Declaration Name a -> CheckM (Maybe (DickinsonError Name a))
+checkDecl Import{} = pure Nothing
 checkDecl (Define _ n e) =
     insertName n *>
     checkExpr e

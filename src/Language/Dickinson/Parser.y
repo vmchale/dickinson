@@ -25,6 +25,7 @@ import GHC.Generics (Generic)
 import Language.Dickinson.Lexer
 import Language.Dickinson.Name hiding (loc)
 import Language.Dickinson.Type
+import Language.Dickinson.Unique
 
 }
 

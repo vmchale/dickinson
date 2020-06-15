@@ -16,6 +16,7 @@ checkNames ns = foldMapAlternative announce (group $ sort ns)
           announce _       = Nothing
 
 -- runs after the parser
+-- | Checks that there are not name clashes at the top level.
 checkMultiple :: Dickinson Name a -> Maybe (DickinsonError Name a)
 checkMultiple ds =
         checkNames (mapMaybe extrName ds)

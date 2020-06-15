@@ -44,6 +44,7 @@ import           Language.Dickinson.Pretty
 import           Language.Dickinson.Rename
 import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
+import           Language.Dickinson.Unique
 import qualified Paths_language_dickinson              as P
 
 -- | Check scoping

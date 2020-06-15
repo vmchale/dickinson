@@ -6,7 +6,6 @@
 module Language.Dickinson.Type ( Dickinson
                                , Declaration (..)
                                , Expression (..)
-                               , UniqueCtx
                                ) where
 
 import           Control.DeepSeq               (NFData)
@@ -22,8 +21,6 @@ import           GHC.Generics                  (Generic)
 
 type Dickinson name a = [Declaration name a]
 
-type UniqueCtx = Int
-
 data Declaration name a = Define { declAnn :: a
                                  , defName :: name a
                                  , defExpr :: Expression name a
@@ -34,11 +31,10 @@ data Declaration name a = Define { declAnn :: a
                         deriving (Generic, NFData, Binary, Functor)
 
 data Expression name a = Literal a !T.Text
-                       -- TODO: strChunk for pretty-printing?
+                       | StrChunk a !T.Text
                        | Choice a !(NonEmpty (Double, Expression name a))
                        | Let a !(NonEmpty (name a, Expression name a)) !(Expression name a)
                        | Var a (name a)
-                       | StrChunk a !T.Text
                        | Interp ![Expression name a]
                        -- TODO: tuples &. such
                        deriving (Generic, NFData, Binary, Functor)

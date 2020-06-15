@@ -20,7 +20,6 @@ import qualified Data.IntMap               as IM
 import           Data.List.NonEmpty        (NonEmpty ((:|)), (<|))
 import qualified Data.List.NonEmpty        as NE
 import qualified Data.Map                  as M
-import           Data.Semigroup            (sconcat)
 import qualified Data.Text                 as T
 import           Language.Dickinson.Error
 import           Language.Dickinson.Name
@@ -72,10 +71,10 @@ topLevelAdd :: MonadState (EvalSt a) m => Name a -> m ()
 topLevelAdd (Name (n :| []) u _) = modify (over topLevelLens (M.insert n u))
 topLevelAdd (Name{})             = error "Error message not yet implemented."
 
-deleteName :: Name a -> EvalM a ()
+deleteName :: MonadState (EvalSt a) m => Name a -> m ()
 deleteName (Name _ (Unique u) _) = modify (over boundExprLens (IM.delete u))
 
-lookupName :: Name a -> EvalM a (Expression Name a)
+lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError Name a) m) => Name a -> m (Expression Name a)
 lookupName n@(Name _ (Unique u) l) = go =<< gets (IM.lookup u.boundExpr)
     where go Nothing  = throwError (UnfoundName l n)
           go (Just x) = renameExpressionM x
@@ -111,10 +110,11 @@ evalDickinsonAsMain d =
     loadDickinson d *>
     (evalExpressionM =<< findMain)
 
-loadDickinson :: Dickinson Name a -> EvalM a ()
+{-# SPECIALIZE loadDickinson :: Dickinson Name a -> EvalM a () #-}
+loadDickinson :: MonadState (EvalSt a) m => Dickinson Name a -> m ()
 loadDickinson = traverse_ addDecl
 
-addDecl :: Declaration Name a -> EvalM a ()
+addDecl :: MonadState (EvalSt a) m => Declaration Name a -> m ()
 addDecl (Define _ n e) = bindName n e *> topLevelAdd n
 
 evalExpressionM :: Expression Name a -> EvalM a T.Text
@@ -126,4 +126,4 @@ evalExpressionM (Interp es)    = mconcat <$> traverse evalExpressionM es
 evalExpressionM (Let _ bs e) = do
     traverse_ (uncurry bindName) bs
     evalExpressionM e <* traverse_ deleteName (fst <$> bs)
-    -- FIXME: local context?
+    -- FIXME: assumes global uniqueness in renaming

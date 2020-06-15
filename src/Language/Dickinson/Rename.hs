@@ -60,6 +60,10 @@ renameDickinson :: Int -> Dickinson Name a -> (Dickinson Name a, Int)
 renameDickinson m ds = runRenameM m $ traverse renameDeclarationM ds
 
 renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration Name a -> m (Declaration Name a)
+renameDeclarationM i@(Import _ n) = do
+    (_, modR) <- withName n
+    modifying rename modR
+    pure i
 renameDeclarationM (Define p n e) = do
     (n', modR) <- withName n
     modifying rename modR
