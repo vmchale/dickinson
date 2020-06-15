@@ -209,5 +209,4 @@ runAlexSt inp (Alex f) = first alex_ust <$> f
                , alex_scd = 0
                })
 
-
 }
