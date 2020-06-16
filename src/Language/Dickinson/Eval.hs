@@ -52,15 +52,15 @@ topLevelLens :: Lens' (EvalSt a) (M.Map T.Text Unique)
 topLevelLens f s = fmap (\x -> s { topLevel = x }) (f (topLevel s))
 
 -- TODO: thread generator state instead?
-type EvalM a = StateT (EvalSt a) (Except (DickinsonError Name a))
+type EvalM a = StateT (EvalSt a) (Except (DickinsonError a))
 
-evalIO :: UniqueCtx -> EvalM a x -> IO (Either (DickinsonError Name a) x)
+evalIO :: UniqueCtx -> EvalM a x -> IO (Either (DickinsonError a) x)
 evalIO rs me = (\g -> evalWithGen g rs me) <$> newStdGen
 
 evalWithGen :: StdGen
             -> UniqueCtx -- ^ Threaded through
             -> EvalM a x
-            -> Either (DickinsonError Name a) x
+            -> Either (DickinsonError a) x
 evalWithGen g u me = runExcept $ evalStateT me (EvalSt (randoms g) mempty (initRenames u) mempty)
 
 -- TODO: temporary bindings
@@ -74,7 +74,7 @@ topLevelAdd (Name{})             = error "Error message not yet implemented."
 deleteName :: MonadState (EvalSt a) m => Name a -> m ()
 deleteName (Name _ (Unique u) _) = modify (over boundExprLens (IM.delete u))
 
-lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError Name a) m) => Name a -> m (Expression Name a)
+lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression Name a)
 lookupName n@(Name _ (Unique u) l) = go =<< gets (IM.lookup u.boundExpr)
     where go Nothing  = throwError (UnfoundName l n)
           go (Just x) = renameExpressionM x
@@ -95,14 +95,14 @@ pick brs = {-# SCC "pick" #-} do
     pure $ snd . head . dropWhile ((<= threshold) . fst) $ zip ds es
 
 {-# SPECIALIZE findDecl :: T.Text -> EvalM a (Expression Name a) #-}
-findDecl :: (MonadState (EvalSt a) m, MonadError (DickinsonError Name a) m) => T.Text -> m (Expression Name a)
+findDecl :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => T.Text -> m (Expression Name a)
 findDecl t = do
     tops <- gets topLevel
     case M.lookup t tops of
         Just (Unique i) -> do { es <- gets boundExpr ; pure (es IM.! i) }
         Nothing         -> throwError (NoText t)
 
-findMain :: EvalM a (Expression Name a)
+findMain :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => m (Expression Name a)
 findMain = findDecl "main"
 
 evalDickinsonAsMain :: Dickinson Name a -> EvalM a T.Text
@@ -117,7 +117,8 @@ loadDickinson = traverse_ addDecl
 addDecl :: MonadState (EvalSt a) m => Declaration Name a -> m ()
 addDecl (Define _ n e) = bindName n e *> topLevelAdd n
 
-evalExpressionM :: Expression Name a -> EvalM a T.Text
+{-# SPECIALIZE evalExpressionM :: Expression Name a -> EvalM a T.Text #-}
+evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression Name a -> m T.Text
 evalExpressionM (Literal _ t)  = pure t
 evalExpressionM (StrChunk _ t) = pure t
 evalExpressionM (Var _ n)      = evalExpressionM =<< lookupName n

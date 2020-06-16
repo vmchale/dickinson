@@ -10,14 +10,14 @@ import           Language.Dickinson.Error
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
 
-checkNames :: [Name a] -> Maybe (DickinsonError Name a)
+checkNames :: [Name a] -> Maybe (DickinsonError a)
 checkNames ns = foldMapAlternative announce (group $ sort ns)
     where announce (_:y:_) = Just $ MultipleNames (loc y) y
           announce _       = Nothing
 
 -- runs after the parser
 -- | Checks that there are not name clashes at the top level.
-checkMultiple :: Dickinson Name a -> Maybe (DickinsonError Name a)
+checkMultiple :: Dickinson Name a -> Maybe (DickinsonError a)
 checkMultiple ds =
         checkNames (mapMaybe extrName ds)
     <|> foldMapAlternative checkMultipleExpr (mapMaybe extrExpr ds)
@@ -26,7 +26,7 @@ checkMultiple ds =
           extrExpr (Define _ _ e) = Just e
           extrExpr Import{}       = Nothing
 
-checkMultipleExpr :: Expression Name a -> Maybe (DickinsonError Name a)
+checkMultipleExpr :: Expression Name a -> Maybe (DickinsonError a)
 checkMultipleExpr Var{}          = Nothing
 checkMultipleExpr Literal{}      = Nothing
 checkMultipleExpr StrChunk{}     = Nothing

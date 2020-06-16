@@ -21,7 +21,7 @@ tyAssert ty e = do
 
 type TyEnv = IM.IntMap (DickinsonTy ())
 
-type TypeM = ExceptT (DickinsonError Name ()) (State TyEnv)
+type TypeM = ExceptT (DickinsonError ()) (State TyEnv)
 
 tyInsert :: Name a -> DickinsonTy () -> TypeM ()
 tyInsert (Name _ (Unique i) _) ty = modify (IM.insert i ty)

@@ -22,19 +22,19 @@ deleteName :: Name a -> CheckM ()
 deleteName (Name _ (Unique i) _) = modify (IS.delete i)
 
 -- runs after renamer
-checkScope :: Dickinson Name a -> Maybe (DickinsonError Name a)
+checkScope :: Dickinson Name a -> Maybe (DickinsonError a)
 checkScope = runCheckM . checkDickinson
 
-checkDickinson :: Dickinson Name a -> CheckM (Maybe (DickinsonError Name a))
+checkDickinson :: Dickinson Name a -> CheckM (Maybe (DickinsonError a))
 checkDickinson = mapSumM checkDecl
 
-checkDecl :: Declaration Name a -> CheckM (Maybe (DickinsonError Name a))
+checkDecl :: Declaration Name a -> CheckM (Maybe (DickinsonError a))
 checkDecl Import{} = pure Nothing
 checkDecl (Define _ n e) =
     insertName n *>
     checkExpr e
 
-checkExpr :: Expression Name a -> CheckM (Maybe (DickinsonError Name a))
+checkExpr :: Expression Name a -> CheckM (Maybe (DickinsonError a))
 checkExpr Literal{}      = pure Nothing
 checkExpr StrChunk{}     = pure Nothing
 checkExpr (Apply e e')   = (<|>) <$> checkExpr e <*> checkExpr e'

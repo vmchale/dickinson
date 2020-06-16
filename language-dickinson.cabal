@@ -132,8 +132,9 @@ executable emd
         bytestring -any,
         text -any,
         haskeline -any,
-        repline -any,
-        mtl -any
+        prettyprinter -any,
+        mtl -any,
+        microlens-mtl -any
 
     if impl(ghc >=8.0)
         ghc-options:

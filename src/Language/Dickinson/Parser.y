@@ -6,6 +6,7 @@
     {-# LANGUAGE TupleSections #-}
     module Language.Dickinson.Parser ( parse
                                      , parseWithCtx
+                                     , parseExpressionWithCtx
                                      , ParseError (..)
                                      ) where
 
@@ -30,6 +31,7 @@ import Language.Dickinson.Unique
 }
 
 %name parseDickinson Dickinson
+%name parseExpression Expression
 %tokentype { Token AlexPosn }
 %error { parseError }
 %monad { Parse } { (>>=) } { pure }
@@ -146,8 +148,13 @@ type Parse = ExceptT (ParseError AlexPosn) Alex
 parse :: BSL.ByteString -> Either (ParseError AlexPosn) (Dickinson Name AlexPosn)
 parse = fmap snd . parseWithCtx
 
+parseExpressionWithCtx :: BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, Expression Name AlexPosn)
+parseExpressionWithCtx = parseWrapper parseExpression
+
 parseWithCtx :: BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, Dickinson Name AlexPosn)
-parseWithCtx str = liftErr $ runAlexMax str (runExceptT parseDickinson)
+parseWithCtx = parseWrapper parseDickinson
+
+parseWrapper parser str = liftErr $ runAlexMax str (runExceptT parser)
     where liftErr (Left err)            = Left (LexErr err)
           liftErr (Right (_, Left err)) = Left err
           liftErr (Right (i, Right x))  = Right (i, x)

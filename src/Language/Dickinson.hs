@@ -1,9 +1,12 @@
 -- | This modules contains some bits and pieces to work with Dickinson code.
 module Language.Dickinson ( parse
                           , parseWithCtx
+                          , parseExpressionWithCtx
                           , lexDickinson
                           , prettyDickinson
                           , renameDickinson
+                          , renameDickinsonM
+                          , renameExpressionM
                           , checkMultiple
                           , checkScope
                           , checkFile
@@ -15,8 +18,14 @@ module Language.Dickinson ( parse
                           , UniqueCtx
                           , EvalSt (..)
                           , evalFile
+                          , loadDickinson
+                          , evalExpressionM
+                          -- * Lens
+                          , maxLens
                           -- * Monads
                           , EvalM
+                          , HasRenames (..)
+                          , DickinsonError (..)
                           -- * Reëxports from
                           -- "Data.Text.Prettyprint.Doc.Render.Text"
                           , renderLazy
@@ -36,6 +45,7 @@ import           Data.Text.Prettyprint.Doc             (Pretty (pretty))
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc, renderLazy, renderStrict)
 import qualified Data.Version                          as V
 import           Language.Dickinson.Check
+import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name

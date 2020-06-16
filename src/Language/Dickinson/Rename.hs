@@ -1,6 +1,8 @@
 module Language.Dickinson.Rename ( renameDickinson
+                                 , renameDickinsonM
                                  , renameExpressionM
                                  , initRenames
+                                 , maxLens
                                  , RenameM
                                  , Renames (..)
                                  , HasRenames (..)
@@ -57,7 +59,10 @@ replaceVar pre@(Name n (Unique i) l) = {-# SCC "replaceVar" #-} do
         Nothing -> pure pre
 
 renameDickinson :: Int -> Dickinson Name a -> (Dickinson Name a, Int)
-renameDickinson m ds = runRenameM m $ traverse renameDeclarationM ds
+renameDickinson m ds = runRenameM m $ renameDickinsonM ds
+
+renameDickinsonM :: (MonadState s m, HasRenames s) => Dickinson Name a -> m (Dickinson Name a)
+renameDickinsonM = traverse renameDeclarationM
 
 renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration Name a -> m (Declaration Name a)
 renameDeclarationM i@(Import _ n) = do
