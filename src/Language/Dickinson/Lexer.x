@@ -65,6 +65,7 @@ tokens :-
     <0> \[                         { mkSym LSqBracket }
     <0> \]                         { mkSym RSqBracket }
     <0> "⟶"                        { mkSym Arrow }
+    <0> "->"                       { mkSym Arrow }
 
     -- keywords
     <0> ":let"                     { mkKeyword KwLet }
