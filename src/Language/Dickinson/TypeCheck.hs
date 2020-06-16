@@ -4,6 +4,7 @@ module Language.Dickinson.TypeCheck ( typeOf
 import           Control.Monad             (unless, void)
 import           Control.Monad.Except      (ExceptT, throwError)
 import           Control.Monad.State       (State, StateT, get, modify)
+import Data.List.NonEmpty (NonEmpty ((:|)))
 import           Data.Foldable             (traverse_)
 import           Data.Functor              (($>))
 import qualified Data.IntMap               as IM
@@ -25,10 +26,16 @@ type TypeM = ExceptT (DickinsonError Name ()) (State TyEnv)
 tyInsert :: Name a -> DickinsonTy () -> TypeM ()
 tyInsert (Name _ (Unique i) _) ty = modify (IM.insert i ty)
 
+tyMatch :: NonEmpty (Expression Name ()) -> TypeM (DickinsonTy ())
+tyMatch (e :| es) = do
+    ty <- typeOf e
+    traverse_ (tyAssert $ TyText ()) es $> ty
+
 -- run after global renamer &c.
 typeOf :: Expression Name () -> TypeM (DickinsonTy ())
 typeOf Literal{}  = pure $ TyText ()
 typeOf StrChunk{} = pure $ TyText ()
+typeOf (Choice _ brs) = tyMatch (snd <$> brs)
 typeOf (Var l n@(Name _ (Unique i) _))  = do
     tyEnv <- get
     case IM.lookup i tyEnv of
