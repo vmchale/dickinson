@@ -18,7 +18,9 @@ syntax match dickinsonIdentifier "\v[a-zA-Z]+"
 
 syntax match dickinsonEsc +\\["\\n]+
 
-syntax region dickinsonInterpolation start='${' end='}' contains=dickinsonIdentifier,dickinsonKeyword
+syntax match dickinsonType "text"
+
+syntax region dickinsonInterpolation start='${' end='}' contains=dickinsonIdentifier,dickinsonKeyword,dickinsonType
 
 syntax region dickinsonString start=+"+ end=+"+ contains=@Spell,dickinsonEsc,dickinsonInterpolation
 
@@ -30,5 +32,6 @@ highlight link dickinsonKeyword Keyword
 highlight link dickinsonNum Number
 highlight link dickinsonIdentifier Identifier
 highlight link dickinsonString String
+highlight link dickinsonType Type
 
 let b:current_syntax = 'dickinson'
