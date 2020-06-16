@@ -47,7 +47,7 @@ data Expression name a = Literal a !T.Text
 
 data DickinsonTy a = TyText a
                    | TyFun a (DickinsonTy a) (DickinsonTy a)
-                   deriving (Generic, NFData, Binary, Functor)
+                   deriving (Eq, Generic, NFData, Binary, Functor)
 
 instance Pretty (name a) => Pretty (Declaration name a) where
     pretty (Define _ n e) = parens (":def" <+> pretty n <#> indent 4 (pretty e))
