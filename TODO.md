@@ -44,6 +44,7 @@
   - [x] Birds
 - [ ] builtins (capitalization &c.)
 # Performance
+- [ ] Normalization-by-evaluation? NbE
 - [ ] http://hackage.haskell.org/package/text-short
 - [x] Benchmark renamer
 - [ ] `+RTS -Ax`

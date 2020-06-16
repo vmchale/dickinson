@@ -7,6 +7,7 @@ module Language.Dickinson.Error ( DickinsonError (..)
 
 import           Control.DeepSeq           (NFData)
 import           Control.Exception         (Exception)
+import           Data.Semigroup            ((<>))
 import qualified Data.Text                 as T
 import           Data.Text.Prettyprint.Doc (Pretty (pretty), squotes, (<+>))
 import           Data.Typeable             (Typeable)
