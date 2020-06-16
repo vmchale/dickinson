@@ -36,8 +36,10 @@ loop = do
         -- TODO: qualified imports?
         Just [":l", f] -> loadFile f *> loop
         Just [":q"]    -> pure ()
+        -- TODO: dump out top-level names (for users)
         Just [":d"]    -> dumpSt *> loop
         -- FIXME: expression renames?
+        -- lexer has no context...
         Just{}         -> printExpr (fromJust inp) *> loop
         Nothing        -> pure ()
 

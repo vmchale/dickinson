@@ -42,14 +42,16 @@ data EvalSt a = EvalSt
     }
 
 prettyBound :: (Int, Expression Name a) -> Doc b
-prettyBound (i, e) = pretty i <#*> (pretty e)
+prettyBound (i, e) = pretty i <+> "←" <#*> (pretty e)
 
 prettyTl :: (T.Text, Unique) -> Doc a
 prettyTl (t, i) = pretty t <+> ":" <+> pretty i
 
 instance Pretty (EvalSt a) where
     pretty (EvalSt _ b r t) =
-        vsep (prettyBound <$> IM.toList b) <#> pretty r <#> vsep (prettyTl <$> M.toList t)
+        "bound expressions:" <#> vsep (prettyBound <$> IM.toList b)
+            <#> pretty r
+            <#> "top-level names:" <#> vsep (prettyTl <$> M.toList t)
 
 instance HasRenames (EvalSt a) where
     rename f s = fmap (\x -> s { renameCtx = x }) (f (renameCtx s))
