@@ -36,6 +36,6 @@ typeOf (Var l n@(Name _ (Unique i) _))  = do
         Nothing -> throwError $ UnfoundName l n
 typeOf (Interp _ es) =
     traverse_ (tyAssert $ TyText ()) es $> TyText ()
-typeOf (Lambda _ n ty e) = do
-    tyInsert n ty
-    TyFun () ty <$> typeOf e
+typeOf (Lambda _ n ty e) =
+    tyInsert n ty *>
+    (TyFun () ty <$> typeOf e)
