@@ -1,38 +1,43 @@
 -- | This modules contains some bits and pieces to work with Dickinson code.
-module Language.Dickinson ( parse
+module Language.Dickinson ( -- * Parser
+                            parse
                           , parseWithCtx
                           , parseExpressionWithCtx
+                          , ParseError (..)
+                          -- * Lexer
+                          , AlexPosn
                           , lexDickinson
-                          , prettyDickinson
+                          , Token
+                          -- * Renamer
+                          , maxLens
                           , initRenames
                           , renameDickinson
                           , renameDickinsonM
                           , renameExpressionM
+                          , UniqueCtx
+                          , Renames
+                          , HasRenames (..)
+                          -- * Checks/passes
                           , checkMultiple
                           , checkScope
                           , checkFile
-                          -- * Types
+                          -- * AST
                           , Dickinson
                           , Declaration (..)
-                          , AlexPosn
-                          , Name (..)
-                          , UniqueCtx
-                          , EvalSt (..)
-                          , evalFile
+                          , Name
+                          , Unique
+                          , Expression (..)
+                          , DickinsonTy (..)
+                          -- * Evaluation and Environments
                           , loadDickinson
                           , evalExpressionM
-                          -- * Lens
-                          , maxLens
-                          -- * Monads
+                          , evalFile
                           , EvalM
-                          , HasRenames (..)
+                          , EvalSt (..)
+                          -- * Errors
                           , DickinsonError (..)
-                          -- * Reëxports from
-                          -- "Data.Text.Prettyprint.Doc.Render.Text"
-                          , renderLazy
-                          , renderStrict
-                          , Pretty (pretty)
-                          , putDoc
+                          -- * Pretty-printing
+                          , prettyDickinson
                           -- * Version info
                           , languageDickinsonVersion
                           , languageDickinsonVersionString

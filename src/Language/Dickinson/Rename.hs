@@ -25,6 +25,7 @@ import           Language.Dickinson.Unique
 import           Lens.Micro                    (Lens')
 import           Lens.Micro.Mtl                (modifying, use, (%=), (.=))
 
+-- | Renamer state passed between various stages of compilation
 data Renames = Renames { max_ :: Int, bound :: IM.IntMap Int }
 
 instance Pretty Renames where

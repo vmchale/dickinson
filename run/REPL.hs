@@ -5,21 +5,23 @@
 module REPL ( dickinsonRepl
             ) where
 
-import           Control.Monad.Except     (runExceptT)
-import           Control.Monad.IO.Class   (liftIO)
-import           Control.Monad.State.Lazy (StateT, evalStateT, get, gets, lift)
-import qualified Data.ByteString.Lazy     as BSL
-import           Data.Foldable            (traverse_)
-import qualified Data.Map                 as M
-import           Data.Maybe               (fromJust)
-import qualified Data.Text                as T
-import qualified Data.Text.IO             as TIO
-import qualified Data.Text.Lazy           as TL
-import           Data.Text.Lazy.Encoding  (encodeUtf8)
+import           Control.Monad.Except                  (runExceptT)
+import           Control.Monad.IO.Class                (liftIO)
+import           Control.Monad.State.Lazy              (StateT, evalStateT, get, gets, lift)
+import qualified Data.ByteString.Lazy                  as BSL
+import           Data.Foldable                         (traverse_)
+import qualified Data.Map                              as M
+import           Data.Maybe                            (fromJust)
+import qualified Data.Text                             as T
+import qualified Data.Text.IO                          as TIO
+import qualified Data.Text.Lazy                        as TL
+import           Data.Text.Lazy.Encoding               (encodeUtf8)
+import           Data.Text.Prettyprint.Doc             (Pretty (pretty))
+import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Language.Dickinson
-import           Lens.Micro.Mtl           (modifying)
-import           System.Console.Haskeline (InputT, defaultSettings, getInputLine, runInputT)
-import           System.Random            (newStdGen, randoms)
+import           Lens.Micro.Mtl                        (modifying)
+import           System.Console.Haskeline              (InputT, defaultSettings, getInputLine, runInputT)
+import           System.Random                         (newStdGen, randoms)
 
 dickinsonRepl :: IO ()
 dickinsonRepl = runRepl loop
