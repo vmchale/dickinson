@@ -59,13 +59,12 @@ tokens :-
     <0> $white+                    ;
     <0> ";".*                      ;
 
-    <0> @name                      { tok (\p s -> TokIdent p <$> newIdentAlex p (mkText s)) }
-
     <0> \(                         { mkSym LParen }
     <0> \)                         { mkSym RParen }
     <0> \|                         { mkSym VBar }
     <0> \[                         { mkSym LSqBracket }
     <0> \]                         { mkSym RSqBracket }
+    <0> "⟶"                        { mkSym Arrow }
 
     -- keywords
     <0> ":let"                     { mkKeyword KwLet }
@@ -74,6 +73,9 @@ tokens :-
     <0> ":def"                     { mkKeyword KwDef }
     <0> ":import"                  { mkKeyword KwImport }
     <0> ":lambda"                  { mkKeyword KwLambda }
+    <0> "text"                     { mkKeyword KwText }
+
+    <0> @name                      { tok (\p s -> TokIdent p <$> newIdentAlex p (mkText s)) }
 
     -- TODO: StrBegin token?
     -- strings
@@ -150,6 +152,7 @@ data Sym = LParen
          | EndInterp
          | StrBegin
          | StrEnd
+         | Arrow
          deriving (Eq, Generic, NFData)
 
 instance Pretty Sym where
@@ -162,6 +165,7 @@ instance Pretty Sym where
     pretty EndInterp   = rbrace
     pretty StrBegin    = dquote
     pretty StrEnd      = dquote
+    pretty Arrow       = "⟶"
 
 data Keyword = KwDef
              | KwLet
@@ -169,6 +173,7 @@ data Keyword = KwDef
              | KwOneof
              | KwImport
              | KwLambda
+             | KwText
              deriving (Eq, Generic, NFData)
 
 instance Pretty Keyword where
@@ -178,6 +183,7 @@ instance Pretty Keyword where
     pretty KwOneof  = ":oneof"
     pretty KwImport = ":import"
     pretty KwLambda = ":lambda"
+    pretty KwText   = "text"
 
 instance Pretty AlexPosn where
     pretty (AlexPn _ line col) = pretty line <> colon <> pretty col

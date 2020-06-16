@@ -44,6 +44,7 @@ import Language.Dickinson.Unique
     rsqbracket { TokSym $$ RSqBracket }
     strBegin { TokSym $$ StrBegin }
     strEnd { TokSym $$ StrEnd }
+    arrow { TokSym $$ Arrow }
 
     beginInterp { TokSym $$ BeginInterp }
     endInterp { TokSym $$ EndInterp }
@@ -54,6 +55,8 @@ import Language.Dickinson.Unique
     oneof { TokKeyword $$ KwOneof }
     import { TokKeyword $$ KwImport }
     lambda { TokKeyword $$ KwLambda }
+
+    text { TokKeyword $$ KwText }
 
     ident { $$@(TokIdent _ _) }
 
@@ -87,6 +90,10 @@ Declaration :: { Declaration Name AlexPosn }
 Name :: { Name AlexPosn }
      : ident { ident $1 }
 
+Type :: { DickinsonTy AlexPosn }
+     : text { TyText $1 }
+     | arrow Type Type { TyFun $1 $2 $3 }
+
 Bind :: { (Name AlexPosn, Expression Name AlexPosn) }
      : Name Expression { ($1, $2) }
 
@@ -98,7 +105,7 @@ Expression :: { Expression Name AlexPosn }
            : branch some(parens(WeightedLeaf)) { Choice $1 (NE.reverse $2) }
            | oneof some(parens(Leaf)) { Choice $1 (NE.reverse (weight $2)) }
            | let some(brackets(Bind)) Expression { Let $1 (NE.reverse $2) $3 }
-           | lambda Name parens(Expression) { Lambda $1 $2 $3 }
+           | lambda Name parens(Type) parens(Expression) { Lambda $1 $2 $3 $4 }
            | ident { Var (loc $1) (ident $1) }
            | stringLiteral { Literal (loc $1) (str $1) }
            | Expression Expression { Apply $1 $2 }

@@ -1,5 +1,5 @@
 (:def greeter
-  (:lambda name
+  (:lambda name (⟶ text text)
     ("Hello, ${name}!")))
 
 (:def main

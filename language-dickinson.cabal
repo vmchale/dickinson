@@ -36,6 +36,7 @@ library
         Language.Dickinson.Lexer
         Language.Dickinson.Name
         Language.Dickinson.Type
+        Language.Dickinson.TypeCheck
         Language.Dickinson.Parser
         Language.Dickinson.Rename
         Language.Dickinson.Eval

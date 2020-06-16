@@ -1,0 +1,9 @@
+(:def greeter_5
+    (:lambda name_6 (⟶ text text)
+        "Hello, ${name_6}!"))
+(:def main_8
+    (:let
+        [boy_9 (:branch
+            (| 0.5 "tom")
+            (| 0.5 "harry"))]
+        greeter_5 boy_9))

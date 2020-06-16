@@ -40,7 +40,7 @@ checkExpr StrChunk{}     = pure Nothing
 checkExpr (Apply e e')   = (<|>) <$> checkExpr e <*> checkExpr e'
 checkExpr (Interp _ es)  = mapSumM checkExpr es
 checkExpr (Choice _ brs) = mapSumM checkExpr (snd <$> brs)
-checkExpr (Lambda _ n e)    = do
+checkExpr (Lambda _ n _ e) = do
     insertName n
     checkExpr e <* deleteName n
 checkExpr (Var _ n@(Name _ (Unique i) l)) = do
