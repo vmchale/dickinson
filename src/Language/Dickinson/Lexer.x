@@ -5,7 +5,6 @@
     {-# LANGUAGE StandaloneDeriving #-}
     module Language.Dickinson.Lexer ( alexMonadScan
                                     , runAlex
-                                    , runAlexSt
                                     , runAlexMax
                                     , lexDickinson
                                     , AlexPosn (..)
@@ -225,16 +224,16 @@ lexDickinson :: BSL.ByteString -> Either String [Token AlexPosn]
 lexDickinson = flip runAlex loop
 
 runAlexMax :: BSL.ByteString -> Alex a -> Either String (Int, a)
-runAlexMax = (fmap (first fst3) .) . runAlexSt
+runAlexMax = (fmap (first fst3) .) . (\inp -> withAlexSt inp alexInitUserState)
     where fst3 (x, _, _) = x
 
-runAlexSt :: BSL.ByteString -> Alex a -> Either String (AlexUserState, a)
-runAlexSt inp (Alex f) = first alex_ust <$> f
+withAlexSt :: BSL.ByteString -> AlexUserState -> Alex a -> Either String (AlexUserState, a)
+withAlexSt inp ust (Alex f) = first alex_ust <$> f
     (AlexState { alex_bpos = 0
                , alex_pos = alexStartPos
                , alex_inp = inp
                , alex_chr = '\n'
-               , alex_ust = alexInitUserState
+               , alex_ust = ust
                , alex_scd = 0
                })
 

@@ -59,6 +59,7 @@ listNames = liftIO . traverse_ TIO.putStrLn =<< names
 names :: Repl AlexPosn [T.Text]
 names = lift $ gets (M.keys . topLevel)
 
+-- TODO: check
 printExpr :: String -> Repl AlexPosn ()
 printExpr str =
     let bsl = encodeUtf8 (TL.pack str)
@@ -71,6 +72,7 @@ printExpr str =
                         Right x  -> liftIO $ TIO.putStrLn x
                         Left err -> liftIO $ putDoc (pretty err)
 
+-- TODO: check
 loadFile :: FilePath -> Repl AlexPosn ()
 loadFile fp = do
     contents <- liftIO $ BSL.readFile fp

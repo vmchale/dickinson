@@ -154,6 +154,7 @@ parseExpressionWithCtx = parseWrapper parseExpression
 parseWithCtx :: BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, Dickinson Name AlexPosn)
 parseWithCtx = parseWrapper parseDickinson
 
+parseWrapper :: Parse a -> BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, a)
 parseWrapper parser str = liftErr $ runAlexMax str (runExceptT parser)
     where liftErr (Left err)            = Left (LexErr err)
           liftErr (Right (_, Left err)) = Left err
