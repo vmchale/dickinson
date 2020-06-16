@@ -7,9 +7,12 @@ module REPL ( dickinsonRepl
 
 import           Control.Monad.Except     (runExceptT)
 import           Control.Monad.IO.Class   (liftIO)
-import           Control.Monad.State.Lazy (StateT, evalStateT, get, lift)
+import           Control.Monad.State.Lazy (StateT, evalStateT, get, gets, lift)
 import qualified Data.ByteString.Lazy     as BSL
+import           Data.Foldable            (traverse_)
+import qualified Data.Map                 as M
 import           Data.Maybe               (fromJust)
+import qualified Data.Text                as T
 import qualified Data.Text.IO             as TIO
 import qualified Data.Text.Lazy           as TL
 import           Data.Text.Lazy.Encoding  (encodeUtf8)
@@ -34,10 +37,10 @@ loop = do
     inp <- getInputLine "emd> "
     case words <$> inp of
         -- TODO: qualified imports?
-        Just [":l", f] -> loadFile f *> loop
+        Just (":l":fs) -> traverse loadFile fs *> loop
         Just [":q"]    -> pure ()
-        -- TODO: dump out top-level names (for users)
-        Just [":d"]    -> dumpSt *> loop
+        Just [":list"] -> listNames *> loop
+        Just [":dump"] -> dumpSt *> loop
         -- FIXME: expression renames?
         -- lexer has no context...
         Just{}         -> printExpr (fromJust inp) *> loop
@@ -48,6 +51,12 @@ dumpSt :: Repl AlexPosn ()
 dumpSt = do
     st <- lift get
     liftIO $ putDoc $ pretty st
+
+listNames :: Repl AlexPosn ()
+listNames = liftIO . traverse_ TIO.putStrLn =<< names
+
+names :: Repl AlexPosn [T.Text]
+names = lift $ gets (M.keys . topLevel)
 
 printExpr :: String -> Repl AlexPosn ()
 printExpr str =
@@ -60,9 +69,6 @@ printExpr str =
                     case mErr of
                         Right x  -> liftIO $ TIO.putStrLn x
                         Left err -> liftIO $ putDoc (pretty err)
-
--- eval expression OR load file
--- also should be able to set stuff
 
 loadFile :: FilePath -> Repl AlexPosn ()
 loadFile fp = do

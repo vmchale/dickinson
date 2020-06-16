@@ -134,7 +134,8 @@ executable emd
         haskeline >=0.8,
         mtl -any,
         random -any,
-        microlens-mtl -any
+        microlens-mtl -any,
+        containers -any
 
     if impl(ghc >=8.0)
         ghc-options:
