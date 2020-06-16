@@ -4,10 +4,10 @@ module Language.Dickinson.TypeCheck ( typeOf
 import           Control.Monad             (unless, void)
 import           Control.Monad.Except      (ExceptT, throwError)
 import           Control.Monad.State       (State, StateT, get, modify)
-import Data.List.NonEmpty (NonEmpty ((:|)))
 import           Data.Foldable             (traverse_)
 import           Data.Functor              (($>))
 import qualified Data.IntMap               as IM
+import           Data.List.NonEmpty        (NonEmpty ((:|)))
 import           Language.Dickinson.Error
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
@@ -25,6 +25,9 @@ type TypeM = ExceptT (DickinsonError Name ()) (State TyEnv)
 
 tyInsert :: Name a -> DickinsonTy () -> TypeM ()
 tyInsert (Name _ (Unique i) _) ty = modify (IM.insert i ty)
+
+tyDelete :: Name a -> TypeM ()
+tyDelete (Name _ (Unique i) _) = modify (IM.delete i)
 
 tyMatch :: NonEmpty (Expression Name ()) -> TypeM (DickinsonTy ())
 tyMatch (e :| es) = do
