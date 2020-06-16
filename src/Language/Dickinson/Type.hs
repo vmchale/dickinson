@@ -17,7 +17,7 @@ import           Data.Semigroup                ((<>))
 import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, dquotes, group, indent, parens, pipe,
                                                 vsep, (<+>))
-import           Data.Text.Prettyprint.Doc.Ext (hardSep, (<#>), (<^>))
+import           Data.Text.Prettyprint.Doc.Ext (hardSep, (<#*>), (<#>), (<^>))
 import           GHC.Generics                  (Generic)
 
 type Dickinson name a = [Declaration name a]
@@ -72,7 +72,7 @@ instance Pretty (name a) => Pretty (Expression name a) where
     -- TODO: if they're all equal, use :oneof
     -- also comments lol
     pretty (Choice _ brs)    = parens (":branch" <#> indent 4 (hardSep (toList $ fmap prettyChoiceBranch brs)))
-    pretty (Lambda _ n ty e) = parens (":lambda" <+> pretty n <+> parens (pretty ty) <#> indent 4 (pretty e))
+    pretty (Lambda _ n ty e) = parens (":lambda" <+> pretty n <+> parens (pretty ty) <#*> (pretty e))
     pretty (Apply e e')      = pretty e <+> pretty e'
     pretty (Interp _ es)     = dquotes (foldMap prettyInterp es)
     pretty StrChunk{}        = error "Internal error: naked StrChunk"

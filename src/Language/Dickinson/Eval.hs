@@ -13,21 +13,23 @@ module Language.Dickinson.Eval ( EvalM
                                , findMain
                                ) where
 
-import           Control.Monad.Except      (Except, MonadError, runExcept, throwError)
-import           Control.Monad.State.Lazy  (MonadState, StateT, evalStateT, gets, modify)
-import           Data.Foldable             (toList, traverse_)
-import qualified Data.IntMap               as IM
-import           Data.List.NonEmpty        (NonEmpty ((:|)), (<|))
-import qualified Data.List.NonEmpty        as NE
-import qualified Data.Map                  as M
-import qualified Data.Text                 as T
+import           Control.Monad.Except          (Except, MonadError, runExcept, throwError)
+import           Control.Monad.State.Lazy      (MonadState, StateT, evalStateT, gets, modify)
+import           Data.Foldable                 (toList, traverse_)
+import qualified Data.IntMap                   as IM
+import           Data.List.NonEmpty            (NonEmpty ((:|)), (<|))
+import qualified Data.List.NonEmpty            as NE
+import qualified Data.Map                      as M
+import qualified Data.Text                     as T
+import           Data.Text.Prettyprint.Doc     (Doc, Pretty (..), vsep, (<+>))
+import           Data.Text.Prettyprint.Doc.Ext
 import           Language.Dickinson.Error
 import           Language.Dickinson.Name
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
-import           Lens.Micro                (Lens', over)
-import           System.Random             (StdGen, newStdGen, randoms)
+import           Lens.Micro                    (Lens', over)
+import           System.Random                 (StdGen, newStdGen, randoms)
 
 -- | The state during evaluation
 data EvalSt a = EvalSt
@@ -38,6 +40,16 @@ data EvalSt a = EvalSt
     -- TODO: map to uniques or an expression?
     , topLevel      :: M.Map T.Text Unique
     }
+
+prettyBound :: (Int, Expression Name a) -> Doc b
+prettyBound (i, e) = pretty i <#*> (pretty e)
+
+prettyTl :: (T.Text, Unique) -> Doc a
+prettyTl (t, i) = pretty t <+> ":" <+> pretty i
+
+instance Pretty (EvalSt a) where
+    pretty (EvalSt _ b r t) =
+        vsep (prettyBound <$> IM.toList b) <#> pretty r <#> vsep (prettyTl <$> M.toList t)
 
 instance HasRenames (EvalSt a) where
     rename f s = fmap (\x -> s { renameCtx = x }) (f (renameCtx s))

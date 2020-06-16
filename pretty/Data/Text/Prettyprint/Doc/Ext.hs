@@ -9,6 +9,7 @@ module Data.Text.Prettyprint.Doc.Ext ( prettyText
                                      , (<#>)
                                      , (<:>)
                                      , (<^>)
+                                     , (<#*>)
                                      ) where
 
 import           Data.List                             (intersperse)
@@ -30,6 +31,9 @@ infixr 6 <^>
 
 (<:>) :: Doc a -> Doc a -> Doc a
 (<:>) x y = x <> softline <> y
+
+(<#*>) :: Doc a -> Doc a -> Doc a
+(<#*>) x y = x <> hardline <> indent 4 y
 
 (<^>) :: Doc a -> Doc a -> Doc a
 (<^>) x y = flatAlt (x <> hardline <> indent 4 y) (x <+> y)

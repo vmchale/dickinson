@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Language.Dickinson.Rename ( renameDickinson
                                  , renameDickinsonM
                                  , renameExpressionM
@@ -8,20 +10,25 @@ module Language.Dickinson.Rename ( renameDickinson
                                  , HasRenames (..)
                                  ) where
 
-import           Control.Composition       (thread)
-import           Control.Monad.Ext         (zipWithM)
-import           Control.Monad.State       (MonadState, State, runState)
-import           Data.Bifunctor            (second)
-import qualified Data.IntMap               as IM
-import qualified Data.List.NonEmpty        as NE
-import           Data.Semigroup            (Semigroup (..))
+import           Control.Composition           (thread)
+import           Control.Monad.Ext             (zipWithM)
+import           Control.Monad.State           (MonadState, State, runState)
+import           Data.Bifunctor                (second)
+import qualified Data.IntMap                   as IM
+import qualified Data.List.NonEmpty            as NE
+import           Data.Semigroup                (Semigroup (..))
+import           Data.Text.Prettyprint.Doc     (Pretty (..), vsep, (<+>))
+import           Data.Text.Prettyprint.Doc.Ext
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
-import           Lens.Micro                (Lens')
-import           Lens.Micro.Mtl            (modifying, use, (%=), (.=))
+import           Lens.Micro                    (Lens')
+import           Lens.Micro.Mtl                (modifying, use, (%=), (.=))
 
 data Renames = Renames { max_ :: Int, bound :: IM.IntMap Int }
+
+instance Pretty Renames where
+    pretty (Renames m b) = "max:" <+> pretty m <#> vsep (pretty <$> IM.toList b)
 
 boundLens :: Lens' Renames (IM.IntMap Int)
 boundLens f s = fmap (\x -> s { bound = x }) (f (bound s))
