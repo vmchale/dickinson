@@ -35,7 +35,8 @@
 - [ ] Normalization (for encoding, for one)
 - [ ] Remove duplicates (for regen adjectives...)
 # Tooling
-- [ ] REPL
+- [x] REPL
+  - [ ] Actually fix identifiers/threading state to the lexer
 # Tests
 - [ ] Escpaed characters
 # Libraries
