@@ -131,7 +131,7 @@ executable emd
         optparse-applicative -any,
         bytestring -any,
         text -any,
-        haskeline -any,
+        haskeline >=0.8,
         mtl -any,
         random -any,
         microlens-mtl -any
