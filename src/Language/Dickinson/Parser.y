@@ -93,6 +93,7 @@ Name :: { Name AlexPosn }
 Type :: { DickinsonTy AlexPosn }
      : text { TyText $1 }
      | arrow Type Type { TyFun $1 $2 $3 }
+     | parens(Type) { $1 }
 
 Bind :: { (Name AlexPosn, Expression Name AlexPosn) }
      : Name Expression { ($1, $2) }
