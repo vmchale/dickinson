@@ -37,6 +37,7 @@ loop = do
     inp <- getInputLine "emd> "
     case words <$> inp of
         -- TODO: qualified imports?
+        Just []        -> loop
         Just (":l":fs) -> traverse loadFile fs *> loop
         Just [":q"]    -> pure ()
         Just [":list"] -> listNames *> loop
