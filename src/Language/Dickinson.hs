@@ -4,6 +4,7 @@ module Language.Dickinson ( parse
                           , parseExpressionWithCtx
                           , lexDickinson
                           , prettyDickinson
+                          , initRenames
                           , renameDickinson
                           , renameDickinsonM
                           , renameExpressionM

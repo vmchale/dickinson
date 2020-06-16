@@ -132,8 +132,8 @@ executable emd
         bytestring -any,
         text -any,
         haskeline -any,
-        prettyprinter -any,
         mtl -any,
+        random -any,
         microlens-mtl -any
 
     if impl(ghc >=8.0)

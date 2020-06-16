@@ -1,19 +1,57 @@
+{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE TypeSynonymInstances  #-}
+
 module REPL ( dickinsonRepl
             ) where
 
+import           Control.Monad.Except     (runExceptT)
 import           Control.Monad.IO.Class   (liftIO)
-import           Control.Monad.State.Lazy (StateT)
+import           Control.Monad.State.Lazy (StateT, evalStateT, lift)
 import qualified Data.ByteString.Lazy     as BSL
+import           Data.Maybe               (fromJust)
+import qualified Data.Text.IO             as TIO
+import qualified Data.Text.Lazy           as TL
+import           Data.Text.Lazy.Encoding  (encodeUtf8)
 import           Language.Dickinson
-import System.Console.Repline (HaskelineT)
+import           Lens.Micro.Mtl           (modifying)
+import           System.Console.Haskeline (InputT, defaultSettings, getInputLine, runInputT)
+import           System.Random            (newStdGen, randoms)
 
 dickinsonRepl :: IO ()
-dickinsonRepl = putStrLn "Not yet implemented."
+dickinsonRepl = runRepl loop
 
--- repl lexer?
--- "emd> "
+type Repl a = InputT (StateT (EvalSt a) IO)
 
-type Repl a = HaskelineT (StateT (EvalSt a) IO)
+runRepl :: Repl a x -> IO x
+runRepl x = do
+    g <- newStdGen
+    let initSt = EvalSt (randoms g) mempty (initRenames 0) mempty
+    flip evalStateT initSt $ runInputT defaultSettings x
+
+loop :: Repl AlexPosn ()
+loop = do
+    inp <- getInputLine "emd> "
+    case words <$> inp of
+        -- TODO: qualified imports?
+        Just [":l", f] -> loadFile f *> loop
+        Just [":q"]    -> pure ()
+        Just{}         -> printExpr (fromJust inp) *> loop
+        Nothing        -> pure ()
+
+printExpr :: String -> Repl AlexPosn ()
+printExpr str =
+    let bsl = encodeUtf8 (TL.pack str)
+        in case parseExpressionWithCtx bsl of
+            Left err -> liftIO $ putDoc (pretty err)
+            Right (m, p) ->
+                lift $ do
+                        -- TODO: think about global uniqueness
+                        modifying (rename.maxLens) (\m' -> max m m')
+                        mErr <- runExceptT $ evalExpressionM =<< renameExpressionM p
+                        case mErr of
+                            Right x  -> liftIO $ TIO.putStrLn x
+                            Left err -> liftIO $ putDoc (pretty err)
 
 
 -- eval expression OR load file
@@ -22,4 +60,9 @@ type Repl a = HaskelineT (StateT (EvalSt a) IO)
 loadFile :: FilePath -> Repl AlexPosn ()
 loadFile fp = do
     contents <- liftIO $ BSL.readFile fp
-    pure ()
+    case parseWithCtx contents of
+        Left err     -> liftIO $ putDoc (pretty err)
+        Right (m, p) -> lift $ do
+            -- TODO: think about global uniqueness
+            modifying (rename.maxLens) (\m' -> max m m')
+            loadDickinson =<< renameDickinsonM p
