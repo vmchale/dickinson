@@ -1,5 +1,4 @@
 (:import color)
 
 (:def main
-  (:oneof
-    (| color.color)))
+  (color.color))

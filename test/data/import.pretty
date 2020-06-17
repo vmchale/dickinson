@@ -1,4 +1,3 @@
 (:import color_1)
 (:def main_2
-    (:branch
-        (| 1.0 color.color_3)))
+    color.color_3)
