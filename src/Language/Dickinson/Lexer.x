@@ -88,9 +88,6 @@ tokens :-
     <0> \}                         { mkSym EndInterp `andBegin` string }
     <string> \"                    { mkSym StrEnd `andBegin` 0 }
 
-    <0> "'''"                      { mkSym MultiStrBegin `andBegin` multiString }
-    <multiString> "''''"           { mkSym MultiStrEnd `andBegin` 0 }
-
     -- strings
     <0> @string                    { tok (\p s -> alex $ TokString p (T.tail . T.init $ mkText s)) }
 
@@ -159,8 +156,6 @@ data Sym = LParen
          | StrBegin
          | StrEnd
          | Arrow
-         | MultiStrBegin
-         | MultiStrEnd
          deriving (Eq, Generic, NFData)
 
 instance Pretty Sym where
@@ -174,8 +169,6 @@ instance Pretty Sym where
     pretty StrBegin      = dquote
     pretty StrEnd        = dquote
     pretty Arrow         = "⟶"
-    pretty MultiStrBegin = "'''"
-    pretty MultiStrEnd   = "'''"
 
 data Keyword = KwDef
              | KwLet
