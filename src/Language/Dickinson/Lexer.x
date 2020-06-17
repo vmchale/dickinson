@@ -51,6 +51,8 @@ $str_special = [\\\"\$]
 
 $str_chunk = [^ \"\\\$]
 
+@interp = \$\{
+
 @name = ($latin+ \.)* $latin+
 
 tokens :-
@@ -81,11 +83,12 @@ tokens :-
     -- strings
     <0> \"                         { mkSym StrBegin `andBegin` string }
     <string> $str_chunk+           { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
-    <string> \$\{                  { mkSym BeginInterp `andBegin` 0 }
+    <string> @interp               { mkSym BeginInterp `andBegin` 0 }
     <0> \}                         { mkSym EndInterp `andBegin` string }
     <string> \"                    { mkSym StrEnd `andBegin` 0 }
 
     <0> "'''"                      { mkSym MultiStrBegin `andBegin` multiString }
+    <multiString> @interp          { mkSym BeginInterp `andBegin` 0 }
     <multiString> "''''"           { mkSym MultiStrEnd `andBegin` 0 }
 
     -- strings
