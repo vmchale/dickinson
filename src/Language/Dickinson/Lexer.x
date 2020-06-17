@@ -84,11 +84,11 @@ tokens :-
     <0> \"                         { mkSym StrBegin `andBegin` string }
     <string> $str_chunk+           { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
     <string> @interp               { mkSym BeginInterp `andBegin` 0 }
+    -- FIXME: doesn't distinguish strings/multiline strings
     <0> \}                         { mkSym EndInterp `andBegin` string }
     <string> \"                    { mkSym StrEnd `andBegin` 0 }
 
     <0> "'''"                      { mkSym MultiStrBegin `andBegin` multiString }
-    <multiString> @interp          { mkSym BeginInterp `andBegin` 0 }
     <multiString> "''''"           { mkSym MultiStrEnd `andBegin` 0 }
 
     -- strings
