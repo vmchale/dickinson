@@ -103,7 +103,8 @@ library pretty-ext
     build-depends:
         base -any,
         prettyprinter -any,
-        text -any
+        text -any,
+        containers -any
 
     if !impl(ghc >=8.0)
         build-depends: semigroups -any
@@ -140,7 +141,8 @@ executable emd
         random -any,
         microlens-mtl -any,
         microlens -any,
-        containers -any
+        containers -any,
+        pretty-ext -any
 
     if impl(ghc >=8.0)
         ghc-options:

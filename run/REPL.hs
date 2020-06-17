@@ -1,6 +1,5 @@
-{-# LANGUAGE FlexibleInstances     #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE TypeSynonymInstances  #-}
+{-# LANGUAGE OverloadedStrings    #-}
+{-# LANGUAGE TypeSynonymInstances #-}
 
 module REPL ( dickinsonRepl
             ) where
@@ -16,7 +15,8 @@ import qualified Data.Text                             as T
 import qualified Data.Text.IO                          as TIO
 import qualified Data.Text.Lazy                        as TL
 import           Data.Text.Lazy.Encoding               (encodeUtf8)
-import           Data.Text.Prettyprint.Doc             (Pretty (pretty))
+import           Data.Text.Prettyprint.Doc             (Doc, Pretty (pretty), (<+>))
+import           Data.Text.Prettyprint.Doc.Ext         (prettyDumpBinds, (<#>))
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Language.Dickinson
 import           Lens.Micro                            (Lens')
@@ -37,7 +37,10 @@ lexerStateLens :: Lens' (ReplSt a) AlexUserState
 lexerStateLens f s = fmap (\x -> s { lexerState = x }) (f (lexerState s))
 
 instance Pretty (ReplSt a) where
-    pretty (ReplSt e _) = pretty e -- TODO: AlexUserState
+    pretty (ReplSt e st) = pretty e <#> prettyAlexState st
+
+prettyAlexState :: AlexUserState -> Doc a
+prettyAlexState (m, _, nEnv) = "max:" <+> pretty m <#> prettyDumpBinds nEnv
 
 instance HasRenames (ReplSt a) where
     rename = evalSt.rename
@@ -80,8 +83,8 @@ names = lift $ gets (M.keys . topLevel . eSt)
 
 setSt :: AlexUserState -> Repl AlexPosn ()
 setSt newSt = lift $ do
-    modifying (rename.maxLens) (\m' -> max (fst3 newSt) m')
     lexerStateLens .= newSt
+    modifying (rename.maxLens) (\m' -> 1 + max (fst3 newSt) m')
 
     where fst3 (x, _, _) = x
 
@@ -107,5 +110,5 @@ loadFile fp = do
         Left err     -> liftIO $ putDoc (pretty err)
         Right (newSt, p) -> do
             setSt newSt
-            -- TODO: think about global uniqueness
+            -- TODO: this still screws up if you load two files
             lift $ loadDickinson =<< renameDickinsonM p

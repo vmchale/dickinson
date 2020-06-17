@@ -29,10 +29,7 @@ import           Lens.Micro.Mtl                (modifying, use, (%=), (.=))
 data Renames = Renames { max_ :: Int, bound :: IM.IntMap Int }
 
 instance Pretty Renames where
-    pretty (Renames m b) = "max:" <+> pretty m <#> "renames:" <#*> vsep (prettyBind <$> IM.toList b)
-
-prettyBind :: (Int, Int) -> Doc a
-prettyBind (i, j) = pretty i <+> "→" <+> pretty j
+    pretty (Renames m b) = "max:" <+> pretty m <#> "renames:" <#*> prettyDumpBinds b
 
 boundLens :: Lens' Renames (IM.IntMap Int)
 boundLens f s = fmap (\x -> s { bound = x }) (f (bound s))
