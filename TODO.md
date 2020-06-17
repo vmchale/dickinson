@@ -8,8 +8,6 @@
 # Documentation
 - [ ] manpages
 - [ ] Tutorial/walkthrough?
-# Bugs
-- [ ] Nesting levels + interpolated strings?
 # Passes
 - [ ] Typechecker?
 - [ ] Warn if a string is duplicate?
@@ -41,6 +39,7 @@
   - [ ] Actually fix identifiers/threading state to the lexer
 # Tests
 - [ ] Escpaed characters
+- [ ] Nested interpolated strings
 # Libraries
 - [x] Colors
 - [ ] Animals

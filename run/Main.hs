@@ -40,7 +40,7 @@ dckFile = argument str
     <> dckCompletions)
 
 dckCompletions :: HasCompleter f => Mod f a
-dckCompletions = completer . bashCompleter $ "file -X '*.dck' -o plusdirs"
+dckCompletions = completer . bashCompleter $ "file -X '!*.dck' -o plusdirs"
 
 wrapper :: ParserInfo Act
 wrapper = info (helper <*> versionMod <*> act)
