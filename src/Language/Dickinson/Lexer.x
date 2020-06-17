@@ -5,9 +5,11 @@
     {-# LANGUAGE StandaloneDeriving #-}
     module Language.Dickinson.Lexer ( alexMonadScan
                                     , runAlex
-                                    , runAlexMax
+                                    , runAlexSt
+                                    , withAlexSt
                                     , lexDickinson
                                     , AlexPosn (..)
+                                    , AlexUserState
                                     , Alex (..)
                                     , Token (..)
                                     , Keyword (..)
@@ -126,7 +128,7 @@ mkKeyword = constructor TokKeyword
 mkSym = constructor TokSym
 
 -- "inside out - track ints by name!"
-type AlexUserState = (Int, M.Map T.Text Int, NameEnv AlexPosn)
+type AlexUserState = (UniqueCtx, M.Map T.Text Int, NameEnv AlexPosn)
 
 newIdentAlex :: AlexPosn -> T.Text -> Alex (Name AlexPosn)
 newIdentAlex pos t = do
@@ -226,9 +228,8 @@ loop = do
 lexDickinson :: BSL.ByteString -> Either String [Token AlexPosn]
 lexDickinson = flip runAlex loop
 
-runAlexMax :: BSL.ByteString -> Alex a -> Either String (Int, a)
-runAlexMax = (fmap (first fst3) .) . (\inp -> withAlexSt inp alexInitUserState)
-    where fst3 (x, _, _) = x
+runAlexSt :: BSL.ByteString -> Alex a -> Either String (AlexUserState, a)
+runAlexSt inp = withAlexSt inp alexInitUserState
 
 withAlexSt :: BSL.ByteString -> AlexUserState -> Alex a -> Either String (AlexUserState, a)
 withAlexSt inp ust (Alex f) = first alex_ust <$> f

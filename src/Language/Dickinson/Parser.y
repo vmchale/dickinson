@@ -10,6 +10,7 @@
                                      , ParseError (..)
                                      ) where
 
+import Data.Bifunctor (first)
 import Control.DeepSeq (NFData)
 import Control.Exception (Exception)
 import Control.Monad.Except (ExceptT, runExceptT, throwError)
@@ -159,10 +160,19 @@ parseExpressionWithCtx = parseWrapper parseExpression
 parseWithCtx :: BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, Dickinson Name AlexPosn)
 parseWithCtx = parseWrapper parseDickinson
 
-parseWrapper :: Parse a -> BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, a)
-parseWrapper parser str = liftErr $ runAlexMax str (runExceptT parser)
+parseWithInitSt :: Parse a -> BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, a)
+parseWithInitSt parser str st = liftErr $ withAlexSt str st (runExceptT parser)
     where liftErr (Left err)            = Left (LexErr err)
           liftErr (Right (_, Left err)) = Left err
           liftErr (Right (i, Right x))  = Right (i, x)
+
+parseWrapper :: Parse a -> BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, a)
+parseWrapper parser str = fmap (first fst3) $ liftErr $ runAlexSt str (runExceptT parser)
+    where fst3 (x, _, _) = x
+
+liftErr :: Either String (b, Either (ParseError a) c) -> Either (ParseError a) (b, c)
+liftErr (Left err)            = Left (LexErr err)
+liftErr (Right (_, Left err)) = Left err
+liftErr (Right (i, Right x))  = Right (i, x)
 
 }
