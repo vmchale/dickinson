@@ -8,6 +8,7 @@ module Language.Dickinson ( -- * Parser
                           , AlexPosn
                           , lexDickinson
                           , Token
+                          , AlexUserState
                           -- * Renamer
                           , maxLens
                           , initRenames
@@ -35,6 +36,7 @@ module Language.Dickinson ( -- * Parser
                           , evalFile
                           , EvalM
                           , EvalSt (..)
+                          , HasEvalSt (..)
                           -- * Import resolution
                           , resolveImport
                           -- * Errors

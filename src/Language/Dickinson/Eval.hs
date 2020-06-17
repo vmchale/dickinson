@@ -3,6 +3,7 @@
 
 module Language.Dickinson.Eval ( EvalM
                                , EvalSt (..)
+                               , HasEvalSt (..)
                                , addDecl
                                , loadDickinson
                                , evalDickinsonAsMain
@@ -41,6 +42,12 @@ data EvalSt a = EvalSt
     , topLevel      :: M.Map T.Text Unique
     }
 
+class HasEvalSt a where
+    evalSt :: Lens' (a b) (EvalSt b)
+
+instance HasEvalSt EvalSt where
+    evalSt = id
+
 prettyBound :: (Int, Expression Name a) -> Doc b
 prettyBound (i, e) = pretty i <+> "←" <#*> (pretty e)
 
@@ -78,15 +85,15 @@ evalWithGen :: StdGen
 evalWithGen g u me = runExcept $ evalStateT me (EvalSt (randoms g) mempty (initRenames u) mempty)
 
 -- TODO: temporary bindings
-bindName :: MonadState (EvalSt a) m => Name a -> Expression Name a -> m ()
-bindName (Name _ (Unique u) _) e = modify (over boundExprLens (IM.insert u e))
+bindName :: (HasEvalSt s, MonadState (s a) m) => Name a -> Expression Name a -> m ()
+bindName (Name _ (Unique u) _) e = modify (over (evalSt.boundExprLens) (IM.insert u e))
 
-topLevelAdd :: MonadState (EvalSt a) m => Name a -> m ()
-topLevelAdd (Name (n :| []) u _) = modify (over topLevelLens (M.insert n u))
+topLevelAdd :: (HasEvalSt s, MonadState (s a) m) => Name a -> m ()
+topLevelAdd (Name (n :| []) u _) = modify (over (evalSt.topLevelLens) (M.insert n u))
 topLevelAdd (Name{})             = error "Top-level names cannot be qualified"
 
-deleteName :: MonadState (EvalSt a) m => Name a -> m ()
-deleteName (Name _ (Unique u) _) = modify (over boundExprLens (IM.delete u))
+deleteName :: (HasEvalSt s, MonadState (s a) m) => Name a -> m ()
+deleteName (Name _ (Unique u) _) = modify (over (evalSt.boundExprLens) (IM.delete u))
 
 lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression Name a)
 lookupName n@(Name _ (Unique u) l) = go =<< gets (IM.lookup u.boundExpr)

@@ -28,6 +28,13 @@ dickinsonRepl = runRepl loop
 
 type Repl a = InputT (StateT (EvalSt a) IO)
 
+data ReplSt a = ReplSt { eSt        :: (EvalSt a)
+                       , lexerState :: AlexUserState
+                       }
+
+instance HasEvalSt ReplSt where
+    evalSt f s = fmap (\x -> s { eSt = x }) (f (eSt s))
+
 runRepl :: Repl a x -> IO x
 runRepl x = do
     g <- newStdGen
