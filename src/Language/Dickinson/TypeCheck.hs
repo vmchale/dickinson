@@ -1,9 +1,9 @@
 module Language.Dickinson.TypeCheck ( typeOf
                                     ) where
 
-import           Control.Monad             (unless, void)
+import           Control.Monad             (unless)
 import           Control.Monad.Except      (ExceptT, throwError)
-import           Control.Monad.State       (State, StateT, get, modify)
+import           Control.Monad.State       (State, get, modify)
 import           Data.Foldable             (traverse_)
 import           Data.Functor              (($>))
 import qualified Data.IntMap               as IM

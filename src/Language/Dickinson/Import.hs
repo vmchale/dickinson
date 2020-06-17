@@ -2,7 +2,6 @@ module Language.Dickinson.Import ( resolveImport
                                  ) where
 
 import           Control.Monad           (filterM)
-import           Data.List.NonEmpty      (NonEmpty)
 import           Data.Maybe              (listToMaybe)
 import qualified Data.Text               as T
 import           Language.Dickinson.Name
@@ -19,4 +18,4 @@ resolveImport incl n = fmap listToMaybe .
     fmap (</> getFileName n) $ incl
 
 getFileName :: Name a -> FilePath
-getFileName = (<> ".dck") . foldr (</>) mempty . fmap (T.unpack) . name
+getFileName = (<> ".dck") . foldr (</>) mempty . fmap T.unpack . name

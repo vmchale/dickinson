@@ -2,8 +2,7 @@ module Language.Dickinson.Check ( checkMultiple
                                 ) where
 
 import           Control.Applicative      (Alternative (..))
-import           Data.Foldable            (asum)
-import           Data.Foldable            (toList)
+import           Data.Foldable            (asum, toList)
 import           Data.List                (group, sort)
 import           Data.Maybe               (mapMaybe)
 import           Language.Dickinson.Error

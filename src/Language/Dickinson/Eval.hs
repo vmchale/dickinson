@@ -52,7 +52,7 @@ instance HasEvalSt EvalSt where
     evalSt = id
 
 prettyBound :: (Int, Expression Name a) -> Doc b
-prettyBound (i, e) = pretty i <+> "←" <#*> (pretty e)
+prettyBound (i, e) = pretty i <+> "←" <#*> pretty e
 
 prettyTl :: (T.Text, Unique) -> Doc a
 prettyTl (t, i) = pretty t <+> ":" <+> pretty i
@@ -98,7 +98,7 @@ bindName (Name _ (Unique u) _) e = modify (over (evalSt.boundExprLens) (IM.inser
 
 topLevelAdd :: (HasEvalSt s, MonadState (s a) m) => Name a -> m ()
 topLevelAdd (Name (n :| []) u _) = modify (over (evalSt.topLevelLens) (M.insert n u))
-topLevelAdd (Name{})             = error "Top-level names cannot be qualified"
+topLevelAdd Name{}               = error "Top-level names cannot be qualified"
 
 deleteName :: (HasEvalSt s, MonadState (s a) m) => Name a -> m ()
 deleteName (Name _ (Unique u) _) = modify (over (evalSt.boundExprLens) (IM.delete u))
