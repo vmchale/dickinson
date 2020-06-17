@@ -32,6 +32,7 @@ import Language.Dickinson.Unique
 
 %name parseDickinson Dickinson
 %name parseExpression Expression
+%name parseRepl DeclarationOrExpression
 %tokentype { Token AlexPosn }
 %error { parseError }
 %monad { Parse } { (>>=) } { pure }
@@ -120,6 +121,10 @@ WeightedLeaf :: { (Double, Expression Name AlexPosn) }
 
 Leaf :: { Expression Name AlexPosn }
      : vbar Expression { $2 }
+
+DeclarationOrExpression :: { Either (Declaration Name AlexPosn) (Expression Name AlexPosn) }
+                        : Expression { Right $1 }
+                        | Declaration { Left $1 }
 
 {
 

@@ -83,7 +83,7 @@ bindName (Name _ (Unique u) _) e = modify (over boundExprLens (IM.insert u e))
 
 topLevelAdd :: MonadState (EvalSt a) m => Name a -> m ()
 topLevelAdd (Name (n :| []) u _) = modify (over topLevelLens (M.insert n u))
-topLevelAdd (Name{})             = error "Error message not yet implemented."
+topLevelAdd (Name{})             = error "Top-level names cannot be qualified"
 
 deleteName :: MonadState (EvalSt a) m => Name a -> m ()
 deleteName (Name _ (Unique u) _) = modify (over boundExprLens (IM.delete u))
