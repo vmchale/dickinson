@@ -24,16 +24,19 @@ module Language.Dickinson ( -- * Parser
                           -- * AST
                           , Dickinson
                           , Declaration (..)
-                          , Name
-                          , Unique
                           , Expression (..)
                           , DickinsonTy (..)
+                          , Name (..)
+                          , Unique
+                          , dummyUnique
                           -- * Evaluation and Environments
                           , loadDickinson
                           , evalExpressionM
                           , evalFile
                           , EvalM
                           , EvalSt (..)
+                          -- * Import resolution
+                          , resolveImport
                           -- * Errors
                           , DickinsonError (..)
                           -- * Pretty-printing
@@ -43,16 +46,15 @@ module Language.Dickinson ( -- * Parser
                           , languageDickinsonVersionString
                           ) where
 
-import           Control.Exception                     (Exception, throw, throwIO)
-import           Control.Monad                         ((<=<))
-import           Data.ByteString.Lazy                  as BSL
-import qualified Data.Text                             as T
-import           Data.Text.Prettyprint.Doc             (Pretty (pretty))
-import           Data.Text.Prettyprint.Doc.Render.Text (putDoc, renderLazy, renderStrict)
-import qualified Data.Version                          as V
+import           Control.Exception             (Exception, throw, throwIO)
+import           Control.Monad                 ((<=<))
+import           Data.ByteString.Lazy          as BSL
+import qualified Data.Text                     as T
+import qualified Data.Version                  as V
 import           Language.Dickinson.Check
 import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
+import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
@@ -61,7 +63,7 @@ import           Language.Dickinson.Rename
 import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
-import qualified Paths_language_dickinson              as P
+import qualified Paths_language_dickinson      as P
 
 -- | Check scoping
 checkFile :: FilePath -> IO ()

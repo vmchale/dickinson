@@ -1,8 +1,11 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Main (main) where
 
 import           Control.Exception    (throw)
 import qualified Data.ByteString.Lazy as BSL
 import           Data.Either          (isRight)
+import           Data.List.NonEmpty   (NonEmpty (..))
 import           Data.Maybe           (isJust)
 import           Golden
 import           Language.Dickinson
@@ -32,7 +35,13 @@ parserTests =
         , lexNoError "examples/shakespeare.dck"
         , parseNoError "examples/shakespeare.dck"
         , detectScopeError "test/demo/improbableScope.dck"
+        , findPath
         ]
+
+findPath :: TestTree
+findPath = testCase "Finds import at correct path" $ do
+    res <- resolveImport ["lib", "."] (Name ("color" :| []) dummyUnique undefined)
+    res @?= Just "lib/color.dck"
 
 detectDuplicate :: FilePath -> TestTree
 detectDuplicate fp = testCase ("Detects duplicate name (" ++ fp ++ ")") $ do
