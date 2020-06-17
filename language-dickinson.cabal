@@ -140,7 +140,6 @@ executable emd
         mtl -any,
         random -any,
         microlens-mtl -any,
-        microlens -any,
         containers -any,
         pretty-ext -any
 

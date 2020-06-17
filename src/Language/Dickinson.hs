@@ -36,9 +36,9 @@ module Language.Dickinson ( -- * Parser
                           , loadDickinson
                           , evalExpressionM
                           , evalFile
+                          , lexerStateLens
                           , EvalM
                           , EvalSt (..)
-                          , HasEvalSt (..)
                           -- * Import resolution
                           , resolveImport
                           -- * Errors

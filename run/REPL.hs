@@ -15,11 +15,9 @@ import qualified Data.Text                             as T
 import qualified Data.Text.IO                          as TIO
 import qualified Data.Text.Lazy                        as TL
 import           Data.Text.Lazy.Encoding               (encodeUtf8)
-import           Data.Text.Prettyprint.Doc             (Doc, Pretty (pretty), (<+>))
-import           Data.Text.Prettyprint.Doc.Ext         (prettyDumpBinds, (<#>))
+import           Data.Text.Prettyprint.Doc             (Pretty (pretty))
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Language.Dickinson
-import           Lens.Micro                            (Lens')
 import           Lens.Micro.Mtl                        (modifying, (.=))
 import           System.Console.Haskeline              (InputT, defaultSettings, getInputLine, runInputT)
 import           System.Random                         (newStdGen, randoms)
@@ -27,31 +25,12 @@ import           System.Random                         (newStdGen, randoms)
 dickinsonRepl :: IO ()
 dickinsonRepl = runRepl loop
 
-type Repl a = InputT (StateT (ReplSt a) IO)
-
-data ReplSt a = ReplSt { eSt        :: (EvalSt a)
-                       , lexerState :: AlexUserState
-                       }
-
-lexerStateLens :: Lens' (ReplSt a) AlexUserState
-lexerStateLens f s = fmap (\x -> s { lexerState = x }) (f (lexerState s))
-
-instance Pretty (ReplSt a) where
-    pretty (ReplSt e st) = pretty e <#> prettyAlexState st
-
-prettyAlexState :: AlexUserState -> Doc a
-prettyAlexState (m, _, nEnv) = "max:" <+> pretty m <#> prettyDumpBinds nEnv
-
-instance HasRenames (ReplSt a) where
-    rename = evalSt.rename
-
-instance HasEvalSt ReplSt where
-    evalSt f s = fmap (\x -> s { eSt = x }) (f (eSt s))
+type Repl a = InputT (StateT (EvalSt a) IO)
 
 runRepl :: Repl a x -> IO x
 runRepl x = do
     g <- newStdGen
-    let initSt = ReplSt (EvalSt (randoms g) mempty (initRenames 0) mempty alexInitUserState) alexInitUserState
+    let initSt = EvalSt (randoms g) mempty (initRenames 0) mempty alexInitUserState
     flip evalStateT initSt $ runInputT defaultSettings x
 
 loop :: Repl AlexPosn ()
@@ -78,7 +57,7 @@ listNames :: Repl AlexPosn ()
 listNames = liftIO . traverse_ TIO.putStrLn =<< names
 
 names :: Repl AlexPosn [T.Text]
-names = lift $ gets (M.keys . topLevel . eSt)
+names = lift $ gets (M.keys . topLevel)
 
 setSt :: AlexUserState -> Repl AlexPosn ()
 setSt newSt = lift $ do

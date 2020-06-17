@@ -3,7 +3,6 @@
 
 module Language.Dickinson.Eval ( EvalM
                                , EvalSt (..)
-                               , HasEvalSt (..)
                                , addDecl
                                , loadDickinson
                                , evalDickinsonAsMain
@@ -12,6 +11,7 @@ module Language.Dickinson.Eval ( EvalM
                                , evalIO
                                , findDecl
                                , findMain
+                               , lexerStateLens
                                ) where
 
 import           Control.Monad.Except          (Except, MonadError, runExcept, throwError)
@@ -30,26 +30,22 @@ import           Language.Dickinson.Name
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
-import           Lens.Micro                    (Lens', over, to)
-import           Lens.Micro.Mtl                (use)
+import           Lens.Micro                    (Lens', over)
 import           System.Random                 (StdGen, newStdGen, randoms)
 
 -- | The state during evaluation
 data EvalSt a = EvalSt
-    { probabilities    :: [Double]
+    { probabilities :: [Double]
     -- map to expression
-    , boundExpr        :: IM.IntMap (Expression Name a)
-    , renameCtx        :: Renames
+    , boundExpr     :: IM.IntMap (Expression Name a)
+    , renameCtx     :: Renames
     -- TODO: map to uniques or an expression?
-    , topLevel         :: M.Map T.Text Unique
-    , importLexerState :: AlexUserState
+    , topLevel      :: M.Map T.Text Unique
+    , lexerState    :: AlexUserState
     }
 
-class HasEvalSt a where
-    evalSt :: Lens' (a b) (EvalSt b)
-
-instance HasEvalSt EvalSt where
-    evalSt = id
+lexerStateLens :: Lens' (EvalSt a) AlexUserState
+lexerStateLens f s = fmap (\x -> s { lexerState = x }) (f (lexerState s))
 
 prettyBound :: (Int, Expression Name a) -> Doc b
 prettyBound (i, e) = pretty i <+> "←" <#*> pretty e
@@ -93,19 +89,19 @@ evalWithGen g u me = runExcept $ evalStateT me (EvalSt (randoms g) mempty (initR
     where fst3 (x, _, _) = x
 
 -- TODO: temporary bindings
-bindName :: (HasEvalSt s, MonadState (s a) m) => Name a -> Expression Name a -> m ()
-bindName (Name _ (Unique u) _) e = modify (over (evalSt.boundExprLens) (IM.insert u e))
+bindName :: (MonadState (EvalSt a) m) => Name a -> Expression Name a -> m ()
+bindName (Name _ (Unique u) _) e = modify (over boundExprLens (IM.insert u e))
 
-topLevelAdd :: (HasEvalSt s, MonadState (s a) m) => Name a -> m ()
-topLevelAdd (Name (n :| []) u _) = modify (over (evalSt.topLevelLens) (M.insert n u))
+topLevelAdd :: (MonadState (EvalSt a) m) => Name a -> m ()
+topLevelAdd (Name (n :| []) u _) = modify (over topLevelLens (M.insert n u))
 topLevelAdd Name{}               = error "Top-level names cannot be qualified"
 
-deleteName :: (HasEvalSt s, MonadState (s a) m) => Name a -> m ()
-deleteName (Name _ (Unique u) _) = modify (over (evalSt.boundExprLens) (IM.delete u))
+deleteName :: (MonadState (EvalSt a) m) => Name a -> m ()
+deleteName (Name _ (Unique u) _) = modify (over boundExprLens (IM.delete u))
 
 {-# SPECIALIZE lookupName :: Name a -> EvalM a (Expression Name a) #-}
-lookupName :: (HasRenames (s a), HasEvalSt s, MonadState (s a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression Name a)
-lookupName n@(Name _ (Unique u) l) = go =<< use (evalSt.to (IM.lookup u.boundExpr))
+lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression Name a)
+lookupName n@(Name _ (Unique u) l) = go =<< gets (IM.lookup u.boundExpr)
     where go Nothing  = throwError (UnfoundName l n)
           go (Just x) = renameExpressionM x
 
@@ -117,10 +113,10 @@ cdf :: (Num a) => NonEmpty a -> [a]
 cdf = {-# SCC "cdf" #-} NE.drop 2 . NE.scanl (+) 0 . (0 <|)
 
 {-# SPECIALIZE pick :: NonEmpty (Double, Expression name a) -> EvalM a (Expression name a) #-}
-pick :: (HasEvalSt s, MonadState (s a) m) => NonEmpty (Double, Expression name a) -> m (Expression name a)
+pick :: (MonadState (EvalSt a) m) => NonEmpty (Double, Expression name a) -> m (Expression name a)
 pick brs = {-# SCC "pick" #-} do
-    threshold <- use (evalSt.to (head.probabilities)) -- gets (head.probabilities)
-    modify (over (evalSt.probabilitiesLens) tail)
+    threshold <- gets (head.probabilities)
+    modify (over probabilitiesLens tail)
     let ds = cdf (normalize (fst <$> brs))
         es = toList (snd <$> brs)
     pure $ snd . head . dropWhile ((<= threshold) . fst) $ zip ds es
@@ -142,16 +138,16 @@ evalDickinsonAsMain d =
     (evalExpressionM =<< findMain)
 
 {-# SPECIALIZE loadDickinson :: Dickinson Name a -> EvalM a () #-}
-loadDickinson :: (HasEvalSt s, MonadState (s a) m) => Dickinson Name a -> m ()
+loadDickinson :: (MonadState (EvalSt a) m) => Dickinson Name a -> m ()
 loadDickinson = traverse_ addDecl
 
 -- TODO: MonadIO to addDecl so can import
 {-# SPECIALIZE addDecl :: Declaration Name a -> EvalM a () #-}
-addDecl :: (HasEvalSt s, MonadState (s a) m) => Declaration Name a -> m ()
+addDecl :: (MonadState (EvalSt a) m) => Declaration Name a -> m ()
 addDecl (Define _ n e) = bindName n e *> topLevelAdd n
 
 {-# SPECIALIZE evalExpressionM :: Expression Name a -> EvalM a T.Text #-}
-evalExpressionM :: (HasRenames (s a), HasEvalSt s, MonadState (s a) m, MonadError (DickinsonError a) m) => Expression Name a -> m T.Text
+evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression Name a -> m T.Text
 evalExpressionM (Literal _ t)  = pure t
 evalExpressionM (StrChunk _ t) = pure t
 evalExpressionM (Var _ n)      = evalExpressionM =<< lookupName n
