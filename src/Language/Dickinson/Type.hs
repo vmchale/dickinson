@@ -72,7 +72,7 @@ instance Pretty (name a) => Pretty (Expression name a) where
     -- TODO: if they're all equal, use :oneof
     -- also comments lol
     pretty (Choice _ brs)    = parens (":branch" <#> indent 4 (hardSep (toList $ fmap prettyChoiceBranch brs)))
-    pretty (Lambda _ n ty e) = parens (":lambda" <+> pretty n <+> parens (pretty ty) <#*> (pretty e))
+    pretty (Lambda _ n ty e) = parens (":lambda" <+> pretty n <+> parens (pretty ty) <#*> pretty e)
     pretty (Apply e e')      = pretty e <+> pretty e'
     pretty (Interp _ es)     = dquotes (foldMap prettyInterp es)
     pretty StrChunk{}        = error "Internal error: naked StrChunk"

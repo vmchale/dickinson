@@ -51,7 +51,7 @@ instance HasEvalSt ReplSt where
 runRepl :: Repl a x -> IO x
 runRepl x = do
     g <- newStdGen
-    let initSt = ReplSt (EvalSt (randoms g) mempty (initRenames 0) mempty) alexInitUserState
+    let initSt = ReplSt (EvalSt (randoms g) mempty (initRenames 0) mempty alexInitUserState) alexInitUserState
     flip evalStateT initSt $ runInputT defaultSettings x
 
 loop :: Repl AlexPosn ()
@@ -69,7 +69,6 @@ loop = do
         Just{}         -> printExpr (fromJust inp) *> loop
         Nothing        -> pure ()
 
--- TODO: dump EvalSt?
 dumpSt :: Repl AlexPosn ()
 dumpSt = do
     st <- lift get
@@ -110,5 +109,4 @@ loadFile fp = do
         Left err     -> liftIO $ putDoc (pretty err)
         Right (newSt, p) -> do
             setSt newSt
-            -- TODO: this still screws up if you load two files
             lift $ loadDickinson =<< renameDickinsonM p

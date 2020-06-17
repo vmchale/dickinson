@@ -25,6 +25,7 @@ import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc     (Doc, Pretty (..), vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
 import           Language.Dickinson.Error
+import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
@@ -35,12 +36,13 @@ import           System.Random                 (StdGen, newStdGen, randoms)
 
 -- | The state during evaluation
 data EvalSt a = EvalSt
-    { probabilities :: [Double]
+    { probabilities    :: [Double]
     -- map to expression
-    , boundExpr     :: IM.IntMap (Expression Name a)
-    , renameCtx     :: Renames
+    , boundExpr        :: IM.IntMap (Expression Name a)
+    , renameCtx        :: Renames
     -- TODO: map to uniques or an expression?
-    , topLevel      :: M.Map T.Text Unique
+    , topLevel         :: M.Map T.Text Unique
+    , importLexerState :: AlexUserState
     }
 
 class HasEvalSt a where
@@ -56,10 +58,14 @@ prettyTl :: (T.Text, Unique) -> Doc a
 prettyTl (t, i) = pretty t <+> ":" <+> pretty i
 
 instance Pretty (EvalSt a) where
-    pretty (EvalSt _ b r t) =
+    pretty (EvalSt _ b r t st) =
         "bound expressions:" <#> vsep (prettyBound <$> IM.toList b)
             <#> pretty r
             <#> "top-level names:" <#> vsep (prettyTl <$> M.toList t)
+            <#> prettyAlexState st
+
+prettyAlexState :: AlexUserState -> Doc a
+prettyAlexState (m, _, nEnv) = "max:" <+> pretty m <#> prettyDumpBinds nEnv
 
 instance HasRenames (EvalSt a) where
     rename f s = fmap (\x -> s { renameCtx = x }) (f (renameCtx s))
@@ -76,14 +82,15 @@ topLevelLens f s = fmap (\x -> s { topLevel = x }) (f (topLevel s))
 -- TODO: thread generator state instead?
 type EvalM a = StateT (EvalSt a) (Except (DickinsonError a))
 
-evalIO :: UniqueCtx -> EvalM a x -> IO (Either (DickinsonError a) x)
+evalIO :: AlexUserState -> EvalM a x -> IO (Either (DickinsonError a) x)
 evalIO rs me = (\g -> evalWithGen g rs me) <$> newStdGen
 
 evalWithGen :: StdGen
-            -> UniqueCtx -- ^ Threaded through
+            -> AlexUserState -- ^ Threaded through
             -> EvalM a x
             -> Either (DickinsonError a) x
-evalWithGen g u me = runExcept $ evalStateT me (EvalSt (randoms g) mempty (initRenames u) mempty)
+evalWithGen g u me = runExcept $ evalStateT me (EvalSt (randoms g) mempty (initRenames $ fst3 u) mempty u)
+    where fst3 (x, _, _) = x
 
 -- TODO: temporary bindings
 bindName :: (HasEvalSt s, MonadState (s a) m) => Name a -> Expression Name a -> m ()

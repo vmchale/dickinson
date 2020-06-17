@@ -52,6 +52,7 @@ module Language.Dickinson ( -- * Parser
 
 import           Control.Exception             (Exception, throw, throwIO)
 import           Control.Monad                 ((<=<))
+import           Data.Bifunctor                (second)
 import           Data.ByteString.Lazy          as BSL
 import qualified Data.Text                     as T
 import qualified Data.Version                  as V
@@ -78,7 +79,7 @@ checkFile = h . go <=< BSL.readFile
 
 -- TODO: runDeclarationM
 evalFile :: FilePath -> IO T.Text
-evalFile = fmap yeet . evalIO 1000 . evalDickinsonAsMain . yeet . parse <=< BSL.readFile
+evalFile = fmap yeet . uncurry evalIO . second evalDickinsonAsMain . yeet . flip parseWithCtx alexInitUserState <=< BSL.readFile
 -- TODO: renameDickinson
 
 yeet :: Exception e => Either e x -> x
