@@ -17,7 +17,7 @@ import           Data.Bifunctor                (second)
 import qualified Data.IntMap                   as IM
 import qualified Data.List.NonEmpty            as NE
 import           Data.Semigroup                (Semigroup (..))
-import           Data.Text.Prettyprint.Doc     (Doc, Pretty (..), vsep, (<+>))
+import           Data.Text.Prettyprint.Doc     (Pretty (..), (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type

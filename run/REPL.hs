@@ -1,12 +1,12 @@
-{-# LANGUAGE OverloadedStrings    #-}
-{-# LANGUAGE TypeSynonymInstances #-}
+{-# LANGUAGE FlexibleContexts  #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module REPL ( dickinsonRepl
             ) where
 
 import           Control.Monad.Except                  (runExceptT)
 import           Control.Monad.IO.Class                (liftIO)
-import           Control.Monad.State.Lazy              (StateT, evalStateT, get, gets, lift)
+import           Control.Monad.State.Lazy              (MonadState, StateT, evalStateT, get, gets, lift)
 import qualified Data.ByteString.Lazy                  as BSL
 import           Data.Foldable                         (traverse_)
 import qualified Data.Map                              as M
@@ -18,7 +18,8 @@ import           Data.Text.Lazy.Encoding               (encodeUtf8)
 import           Data.Text.Prettyprint.Doc             (Pretty (pretty))
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Language.Dickinson
-import           Lens.Micro.Mtl                        (modifying, (.=))
+import           Lens.Micro                            (_1)
+import           Lens.Micro.Mtl                        (use, (.=))
 import           System.Console.Haskeline              (InputT, defaultSettings, getInputLine, runInputT)
 import           System.Random                         (newStdGen, randoms)
 
@@ -61,10 +62,21 @@ names = lift $ gets (M.keys . topLevel)
 
 setSt :: AlexUserState -> Repl AlexPosn ()
 setSt newSt = lift $ do
+    m' <- use (rename.maxLens)
+    let newM = 1 + max (fst3 newSt) m'
     lexerStateLens .= newSt
-    modifying (rename.maxLens) (\m' -> 1 + max (fst3 newSt) m')
+    lexerStateLens._1 .= newM
+    rename.maxLens .= newM
 
     where fst3 (x, _, _) = x
+
+balanceMax :: MonadState (EvalSt a) m => m ()
+balanceMax = do
+    m0 <- use (rename.maxLens)
+    m1 <- use (lexerStateLens._1)
+    let m' = max m0 m1
+    rename.maxLens .= m'
+    lexerStateLens._1 .= m'
 
 printExpr :: String -> Repl AlexPosn ()
 printExpr str = do
@@ -73,10 +85,9 @@ printExpr str = do
     case parseExpressionWithCtx bsl aSt of
         Left err -> liftIO $ putDoc (pretty err)
         Right (newSt, p) -> do
-        -- FIXME: this gets the names wrong? e.g. 'c' might work if you're
-        -- lucky..
                 setSt newSt
                 mErr <- lift $ runExceptT $ evalExpressionM =<< renameExpressionM p
+                lift balanceMax
                 putErr mErr (liftIO . TIO.putStrLn)
 
 putErr :: Pretty e => Either e b -> (b -> Repl a ()) -> Repl a ()
@@ -93,4 +104,5 @@ loadFile fp = do
         Right (newSt, p) -> do
             setSt newSt
             mErr <- lift $ runExceptT $ loadDickinson =<< renameDickinsonM p
+            lift balanceMax
             putErr mErr (const $ pure ())

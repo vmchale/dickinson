@@ -4,6 +4,7 @@ module Language.Dickinson.Import ( resolveImport
 import           Control.Monad           (filterM)
 import           Control.Monad.IO.Class  (MonadIO (..))
 import           Data.Maybe              (listToMaybe)
+import           Data.Semigroup          ((<>))
 import qualified Data.Text               as T
 import           Language.Dickinson.Name
 import           System.Directory        (doesFileExist)

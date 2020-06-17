@@ -35,8 +35,8 @@ import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
-import           Lens.Micro                    (Lens', over, _1)
-import           Lens.Micro.Mtl                (use, (.=))
+import           Lens.Micro                    (Lens', over)
+import           Lens.Micro.Mtl                ((.=))
 import           System.Random                 (StdGen, newStdGen, randoms)
 
 -- | The state during evaluation
@@ -161,9 +161,6 @@ addDecl (Import l n) = do
     mFile <- resolveImport [".", "lib"] n -- FIXME: don't hardcode this
     case mFile of
         Just f ->  do
-            -- r <- use (rename.maxLens)
-            -- r' <- use (lexerStateLens._1)
-            -- lexerStateLens._1 .= (max r r')
             fileRead <- parseEval =<< liftIO (BSL.readFile f)
             loadDickinson =<< renameDickinsonM fileRead
         Nothing -> throwError (ModuleNotFound l n)
