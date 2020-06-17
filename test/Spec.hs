@@ -52,7 +52,7 @@ detectDuplicate fp = testCase ("Detects duplicate name (" ++ fp ++ ")") $ do
 detectScopeError :: FilePath -> TestTree
 detectScopeError fp = testCase "Finds scoping error" $ do
     contents <- BSL.readFile fp
-    let parsed = either throw id $ parseWithCtx contents
+    let parsed = either throw id $ parseWithMax contents
     assertBool "Detects scope error" $ isJust (checkScope . fst $ uncurry renameDickinson parsed)
 
 -- golden tests?

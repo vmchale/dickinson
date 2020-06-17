@@ -29,7 +29,8 @@ import           Language.Dickinson.Name
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
-import           Lens.Micro                    (Lens', over)
+import           Lens.Micro                    (Lens', over, to)
+import           Lens.Micro.Mtl                (use)
 import           System.Random                 (StdGen, newStdGen, randoms)
 
 -- | The state during evaluation
@@ -95,8 +96,9 @@ topLevelAdd (Name{})             = error "Top-level names cannot be qualified"
 deleteName :: (HasEvalSt s, MonadState (s a) m) => Name a -> m ()
 deleteName (Name _ (Unique u) _) = modify (over (evalSt.boundExprLens) (IM.delete u))
 
-lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression Name a)
-lookupName n@(Name _ (Unique u) l) = go =<< gets (IM.lookup u.boundExpr)
+{-# SPECIALIZE lookupName :: Name a -> EvalM a (Expression Name a) #-}
+lookupName :: (HasRenames (s a), HasEvalSt s, MonadState (s a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression Name a)
+lookupName n@(Name _ (Unique u) l) = go =<< use (evalSt.to (IM.lookup u.boundExpr))
     where go Nothing  = throwError (UnfoundName l n)
           go (Just x) = renameExpressionM x
 
@@ -107,10 +109,11 @@ normalize xs = {-# SCC "normalize" #-} (/tot) <$> xs
 cdf :: (Num a) => NonEmpty a -> [a]
 cdf = {-# SCC "cdf" #-} NE.drop 2 . NE.scanl (+) 0 . (0 <|)
 
-pick :: MonadState (EvalSt a) m => NonEmpty (Double, Expression name a) -> m (Expression name a)
+{-# SPECIALIZE pick :: NonEmpty (Double, Expression name a) -> EvalM a (Expression name a) #-}
+pick :: (HasEvalSt s, MonadState (s a) m) => NonEmpty (Double, Expression name a) -> m (Expression name a)
 pick brs = {-# SCC "pick" #-} do
-    threshold <- gets (head.probabilities)
-    modify (over probabilitiesLens tail)
+    threshold <- use (evalSt.to (head.probabilities)) -- gets (head.probabilities)
+    modify (over (evalSt.probabilitiesLens) tail)
     let ds = cdf (normalize (fst <$> brs))
         es = toList (snd <$> brs)
     pure $ snd . head . dropWhile ((<= threshold) . fst) $ zip ds es
@@ -132,14 +135,16 @@ evalDickinsonAsMain d =
     (evalExpressionM =<< findMain)
 
 {-# SPECIALIZE loadDickinson :: Dickinson Name a -> EvalM a () #-}
-loadDickinson :: MonadState (EvalSt a) m => Dickinson Name a -> m ()
+loadDickinson :: (HasEvalSt s, MonadState (s a) m) => Dickinson Name a -> m ()
 loadDickinson = traverse_ addDecl
 
-addDecl :: MonadState (EvalSt a) m => Declaration Name a -> m ()
+-- TODO: MonadIO to addDecl so can import
+{-# SPECIALIZE addDecl :: Declaration Name a -> EvalM a () #-}
+addDecl :: (HasEvalSt s, MonadState (s a) m) => Declaration Name a -> m ()
 addDecl (Define _ n e) = bindName n e *> topLevelAdd n
 
 {-# SPECIALIZE evalExpressionM :: Expression Name a -> EvalM a T.Text #-}
-evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression Name a -> m T.Text
+evalExpressionM :: (HasRenames (s a), HasEvalSt s, MonadState (s a) m, MonadError (DickinsonError a) m) => Expression Name a -> m T.Text
 evalExpressionM (Literal _ t)  = pure t
 evalExpressionM (StrChunk _ t) = pure t
 evalExpressionM (Var _ n)      = evalExpressionM =<< lookupName n

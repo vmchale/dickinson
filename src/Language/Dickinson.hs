@@ -1,6 +1,7 @@
 -- | This modules contains some bits and pieces to work with Dickinson code.
 module Language.Dickinson ( -- * Parser
                             parse
+                          , parseWithMax
                           , parseWithCtx
                           , parseExpressionWithCtx
                           , ParseError (..)
@@ -9,6 +10,7 @@ module Language.Dickinson ( -- * Parser
                           , lexDickinson
                           , Token
                           , AlexUserState
+                          , alexInitUserState
                           -- * Renamer
                           , maxLens
                           , initRenames
@@ -70,7 +72,7 @@ import qualified Paths_language_dickinson      as P
 -- | Check scoping
 checkFile :: FilePath -> IO ()
 checkFile = h . go <=< BSL.readFile
-    where go = checkScope . fst . uncurry renameDickinson . yeet . parseWithCtx
+    where go = checkScope . fst . uncurry renameDickinson . yeet . parseWithMax
           h (Just err) = throwIO err
           h Nothing    = pure ()
 

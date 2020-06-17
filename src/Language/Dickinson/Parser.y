@@ -5,6 +5,7 @@
     {-# LANGUAGE OverloadedStrings #-}
     {-# LANGUAGE TupleSections #-}
     module Language.Dickinson.Parser ( parse
+                                     , parseWithMax
                                      , parseWithCtx
                                      , parseExpressionWithCtx
                                      , ParseError (..)
@@ -152,13 +153,16 @@ instance (Pretty a, Typeable a) => Exception (ParseError a)
 type Parse = ExceptT (ParseError AlexPosn) Alex
 
 parse :: BSL.ByteString -> Either (ParseError AlexPosn) (Dickinson Name AlexPosn)
-parse = fmap snd . parseWithCtx
+parse = fmap snd . parseWithMax
 
-parseExpressionWithCtx :: BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, Expression Name AlexPosn)
-parseExpressionWithCtx = parseWrapper parseExpression
+parseExpressionWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Expression Name AlexPosn)
+parseExpressionWithCtx = parseWithInitSt parseExpression
 
-parseWithCtx :: BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, Dickinson Name AlexPosn)
-parseWithCtx = parseWrapper parseDickinson
+parseWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Dickinson Name AlexPosn)
+parseWithCtx = parseWithInitSt parseDickinson
+
+parseWithMax :: BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, Dickinson Name AlexPosn)
+parseWithMax = parseWrapper parseDickinson
 
 parseWithInitSt :: Parse a -> BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, a)
 parseWithInitSt parser str st = liftErr $ withAlexSt str st (runExceptT parser)

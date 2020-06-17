@@ -139,6 +139,7 @@ executable emd
         mtl -any,
         random -any,
         microlens-mtl -any,
+        microlens -any,
         containers -any
 
     if impl(ghc >=8.0)

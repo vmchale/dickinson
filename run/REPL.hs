@@ -19,18 +19,28 @@ import           Data.Text.Lazy.Encoding               (encodeUtf8)
 import           Data.Text.Prettyprint.Doc             (Pretty (pretty))
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Language.Dickinson
-import           Lens.Micro.Mtl                        (modifying)
+import           Lens.Micro                            (Lens')
+import           Lens.Micro.Mtl                        (modifying, (.=))
 import           System.Console.Haskeline              (InputT, defaultSettings, getInputLine, runInputT)
 import           System.Random                         (newStdGen, randoms)
 
 dickinsonRepl :: IO ()
 dickinsonRepl = runRepl loop
 
-type Repl a = InputT (StateT (EvalSt a) IO)
+type Repl a = InputT (StateT (ReplSt a) IO)
 
 data ReplSt a = ReplSt { eSt        :: (EvalSt a)
                        , lexerState :: AlexUserState
                        }
+
+lexerStateLens :: Lens' (ReplSt a) AlexUserState
+lexerStateLens f s = fmap (\x -> s { lexerState = x }) (f (lexerState s))
+
+instance Pretty (ReplSt a) where
+    pretty (ReplSt e _) = pretty e -- TODO: AlexUserState
+
+instance HasRenames (ReplSt a) where
+    rename = evalSt.rename
 
 instance HasEvalSt ReplSt where
     evalSt f s = fmap (\x -> s { eSt = x }) (f (eSt s))
@@ -38,7 +48,7 @@ instance HasEvalSt ReplSt where
 runRepl :: Repl a x -> IO x
 runRepl x = do
     g <- newStdGen
-    let initSt = EvalSt (randoms g) mempty (initRenames 0) mempty
+    let initSt = ReplSt (EvalSt (randoms g) mempty (initRenames 0) mempty) alexInitUserState
     flip evalStateT initSt $ runInputT defaultSettings x
 
 loop :: Repl AlexPosn ()
@@ -66,28 +76,36 @@ listNames :: Repl AlexPosn ()
 listNames = liftIO . traverse_ TIO.putStrLn =<< names
 
 names :: Repl AlexPosn [T.Text]
-names = lift $ gets (M.keys . topLevel)
+names = lift $ gets (M.keys . topLevel . eSt)
 
--- TODO: check
+setSt :: AlexUserState -> Repl AlexPosn ()
+setSt newSt = lift $ do
+    modifying (rename.maxLens) (\m' -> max (fst3 newSt) m')
+    lexerStateLens .= newSt
+
+    where fst3 (x, _, _) = x
+
 printExpr :: String -> Repl AlexPosn ()
-printExpr str =
+printExpr str = do
     let bsl = encodeUtf8 (TL.pack str)
-        in case parseExpressionWithCtx bsl of
-            Left err -> liftIO $ putDoc (pretty err)
-            Right (m, p) -> lift $ do
-                    modifying (rename.maxLens) (\m' -> max m m')
-                    mErr <- runExceptT $ evalExpressionM =<< renameExpressionM p
-                    case mErr of
-                        Right x  -> liftIO $ TIO.putStrLn x
-                        Left err -> liftIO $ putDoc (pretty err)
+    aSt <- lift $ gets lexerState
+    case parseExpressionWithCtx bsl aSt of
+        Left err -> liftIO $ putDoc (pretty err)
+        Right (newSt, p) -> do
+                setSt newSt
+                mErr <- lift $ runExceptT $ evalExpressionM =<< renameExpressionM p
+                case mErr of
+                    Right x  -> liftIO $ TIO.putStrLn x
+                    Left err -> liftIO $ putDoc (pretty err)
 
 -- TODO: check
 loadFile :: FilePath -> Repl AlexPosn ()
 loadFile fp = do
     contents <- liftIO $ BSL.readFile fp
-    case parseWithCtx contents of
+    preSt <- lift $ gets lexerState
+    case parseWithCtx contents preSt of
         Left err     -> liftIO $ putDoc (pretty err)
-        Right (m, p) -> lift $ do
+        Right (newSt, p) -> do
+            setSt newSt
             -- TODO: think about global uniqueness
-            modifying (rename.maxLens) (\m' -> max m m')
-            loadDickinson =<< renameDickinsonM p
+            lift $ loadDickinson =<< renameDickinsonM p

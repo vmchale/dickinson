@@ -8,6 +8,7 @@
                                     , runAlexSt
                                     , withAlexSt
                                     , lexDickinson
+                                    , alexInitUserState
                                     , AlexPosn (..)
                                     , AlexUserState
                                     , Alex (..)

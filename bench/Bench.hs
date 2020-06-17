@@ -44,7 +44,7 @@ main =
     where libFile = BSL.readFile "lib/color.dck"
           shakespeare = BSL.readFile "examples/shakespeare.dck"
           parses = (,) <$> libFile <*> shakespeare
-          libParsed = either throw id . parseWithCtx <$> BSL.readFile "bench/data/nestLet.dck"
+          libParsed = either throw id . parseWithMax <$> BSL.readFile "bench/data/nestLet.dck"
           multiParsed = either throw id . parse <$> BSL.readFile "bench/data/multiple.dck"
           encoded = encode . yeet <$> multiParsed
 
