@@ -14,9 +14,12 @@ module Language.Dickinson.Eval ( EvalM
                                , lexerStateLens
                                ) where
 
-import           Control.Monad.Except          (Except, MonadError, runExcept, throwError)
+import           Control.Monad.Except          (ExceptT, MonadError, runExceptT, throwError)
+import           Control.Monad.IO.Class        (MonadIO (..))
 import           Control.Monad.State.Lazy      (MonadState, StateT, evalStateT, gets, modify)
+import qualified Data.ByteString.Lazy          as BSL
 import           Data.Foldable                 (toList, traverse_)
+import           Data.Functor                  (($>))
 import qualified Data.IntMap                   as IM
 import           Data.List.NonEmpty            (NonEmpty ((:|)), (<|))
 import qualified Data.List.NonEmpty            as NE
@@ -25,12 +28,15 @@ import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc     (Doc, Pretty (..), vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
 import           Language.Dickinson.Error
+import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
+import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
-import           Lens.Micro                    (Lens', over)
+import           Lens.Micro                    (Lens', over, _1)
+import           Lens.Micro.Mtl                (use, (.=))
 import           System.Random                 (StdGen, newStdGen, randoms)
 
 -- | The state during evaluation
@@ -41,6 +47,7 @@ data EvalSt a = EvalSt
     , renameCtx     :: Renames
     -- TODO: map to uniques or an expression?
     , topLevel      :: M.Map T.Text Unique
+    -- For imports & such.
     , lexerState    :: AlexUserState
     }
 
@@ -76,16 +83,16 @@ topLevelLens :: Lens' (EvalSt a) (M.Map T.Text Unique)
 topLevelLens f s = fmap (\x -> s { topLevel = x }) (f (topLevel s))
 
 -- TODO: thread generator state instead?
-type EvalM a = StateT (EvalSt a) (Except (DickinsonError a))
+type EvalM a = StateT (EvalSt a) (ExceptT (DickinsonError a) IO)
 
 evalIO :: AlexUserState -> EvalM a x -> IO (Either (DickinsonError a) x)
-evalIO rs me = (\g -> evalWithGen g rs me) <$> newStdGen
+evalIO rs me = (\g -> evalWithGen g rs me) =<< newStdGen
 
 evalWithGen :: StdGen
             -> AlexUserState -- ^ Threaded through
             -> EvalM a x
-            -> Either (DickinsonError a) x
-evalWithGen g u me = runExcept $ evalStateT me (EvalSt (randoms g) mempty (initRenames $ fst3 u) mempty u)
+            -> IO (Either (DickinsonError a) x)
+evalWithGen g u me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty (initRenames $ fst3 u) mempty u)
     where fst3 (x, _, _) = x
 
 -- TODO: temporary bindings
@@ -99,7 +106,6 @@ topLevelAdd Name{}               = error "Top-level names cannot be qualified"
 deleteName :: (MonadState (EvalSt a) m) => Name a -> m ()
 deleteName (Name _ (Unique u) _) = modify (over boundExprLens (IM.delete u))
 
-{-# SPECIALIZE lookupName :: Name a -> EvalM a (Expression Name a) #-}
 lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression Name a)
 lookupName n@(Name _ (Unique u) l) = go =<< gets (IM.lookup u.boundExpr)
     where go Nothing  = throwError (UnfoundName l n)
@@ -112,7 +118,6 @@ normalize xs = {-# SCC "normalize" #-} (/tot) <$> xs
 cdf :: (Num a) => NonEmpty a -> [a]
 cdf = {-# SCC "cdf" #-} NE.drop 2 . NE.scanl (+) 0 . (0 <|)
 
-{-# SPECIALIZE pick :: NonEmpty (Double, Expression name a) -> EvalM a (Expression name a) #-}
 pick :: (MonadState (EvalSt a) m) => NonEmpty (Double, Expression name a) -> m (Expression name a)
 pick brs = {-# SCC "pick" #-} do
     threshold <- gets (head.probabilities)
@@ -121,7 +126,6 @@ pick brs = {-# SCC "pick" #-} do
         es = toList (snd <$> brs)
     pure $ snd . head . dropWhile ((<= threshold) . fst) $ zip ds es
 
-{-# SPECIALIZE findDecl :: T.Text -> EvalM a (Expression Name a) #-}
 findDecl :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => T.Text -> m (Expression Name a)
 findDecl t = do
     tops <- gets topLevel
@@ -132,21 +136,39 @@ findDecl t = do
 findMain :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => m (Expression Name a)
 findMain = findDecl "main"
 
-evalDickinsonAsMain :: Dickinson Name a -> EvalM a T.Text
+-- parse declarations from an import
+parseEval :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m) => BSL.ByteString -> m (Dickinson Name AlexPosn)
+parseEval bsl = do
+    preSt <- gets lexerState
+    let res = parseWithCtx bsl preSt
+    case res of
+        Right (newSt, d) -> (lexerStateLens .= newSt) $> d
+        Left err         -> throwError (ParseErr err)
+
+evalDickinsonAsMain :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m) => Dickinson Name AlexPosn -> m T.Text
 evalDickinsonAsMain d =
     loadDickinson d *>
     (evalExpressionM =<< findMain)
 
-{-# SPECIALIZE loadDickinson :: Dickinson Name a -> EvalM a () #-}
-loadDickinson :: (MonadState (EvalSt a) m) => Dickinson Name a -> m ()
+loadDickinson :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m) => Dickinson Name AlexPosn -> m ()
 loadDickinson = traverse_ addDecl
 
 -- TODO: MonadIO to addDecl so can import
-{-# SPECIALIZE addDecl :: Declaration Name a -> EvalM a () #-}
-addDecl :: (MonadState (EvalSt a) m) => Declaration Name a -> m ()
+addDecl :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m) => Declaration Name AlexPosn -> m ()
 addDecl (Define _ n e) = bindName n e *> topLevelAdd n
+addDecl (Import l n) = do
+    -- TODO: make this relative to the file?
+    mFile <- resolveImport [".", "lib"] n -- FIXME: don't hardcode this
+    case mFile of
+        Just f ->  do
+            -- r <- use (rename.maxLens)
+            -- r' <- use (lexerStateLens._1)
+            -- lexerStateLens._1 .= (max r r')
+            fileRead <- parseEval =<< liftIO (BSL.readFile f)
+            loadDickinson =<< renameDickinsonM fileRead
+        Nothing -> throwError (ModuleNotFound l n)
+        -- FIXME: this doesn't handle transitive imports
 
-{-# SPECIALIZE evalExpressionM :: Expression Name a -> EvalM a T.Text #-}
 evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression Name a -> m T.Text
 evalExpressionM (Literal _ t)  = pure t
 evalExpressionM (StrChunk _ t) = pure t

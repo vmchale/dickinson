@@ -21,6 +21,7 @@ data DickinsonError a = UnfoundName a (Name a)
                       | NoText T.Text -- separate from UnfoundName since there is no loc
                       | MultipleNames a (Name a) -- TODO: throw both?
                       | ParseErr (ParseError a)
+                      | ModuleNotFound a (Name a)
                       | TypeMismatch (Expression Name a) (DickinsonTy a) (DickinsonTy a) -- TODO: location information
                       deriving (Generic, NFData)
 
@@ -33,5 +34,6 @@ instance (Pretty a) => Pretty (DickinsonError a) where
     pretty (ParseErr e)            = pretty e
     pretty (MultipleNames l n)     = pretty n <+> "at" <+> pretty l <+> "has already been defined"
     pretty (TypeMismatch e ty ty') = "Expected" <+> pretty e <+> "to have type" <+> pretty ty <> ", found type" <+> pretty ty'
+    pretty (ModuleNotFound l n)    = "Module" <+> pretty n <> ", referenced at" <+> pretty l <> ", not found"
 
 instance (Pretty a, Typeable a) => Exception (DickinsonError a)

@@ -14,6 +14,8 @@
 - [x] Make sure there are no top-level name clashes
 - [x] Scoping check (not lazy, like evaluation)
 - [ ] Error on negative numbers? (useful error)
+# Library API
+- [ ] Maybe spin out internal library?
 # Features
 - [ ] Figure out mutual recursion? (or recursion)
 - [ ] User-defined functions on text?

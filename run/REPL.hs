@@ -73,11 +73,15 @@ printExpr str = do
     case parseExpressionWithCtx bsl aSt of
         Left err -> liftIO $ putDoc (pretty err)
         Right (newSt, p) -> do
+        -- FIXME: this gets the names wrong? e.g. 'c' might work if you're
+        -- lucky..
                 setSt newSt
                 mErr <- lift $ runExceptT $ evalExpressionM =<< renameExpressionM p
-                case mErr of
-                    Right x  -> liftIO $ TIO.putStrLn x
-                    Left err -> liftIO $ putDoc (pretty err)
+                putErr mErr (liftIO . TIO.putStrLn)
+
+putErr :: Pretty e => Either e b -> (b -> Repl a ()) -> Repl a ()
+putErr (Right x) f = f x
+putErr (Left y) _  = liftIO $ putDoc (pretty y)
 
 -- TODO: check
 loadFile :: FilePath -> Repl AlexPosn ()
@@ -88,4 +92,5 @@ loadFile fp = do
         Left err     -> liftIO $ putDoc (pretty err)
         Right (newSt, p) -> do
             setSt newSt
-            lift $ loadDickinson =<< renameDickinsonM p
+            mErr <- lift $ runExceptT $ loadDickinson =<< renameDickinsonM p
+            putErr mErr (const $ pure ())
