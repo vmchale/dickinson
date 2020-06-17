@@ -8,6 +8,8 @@
 # Documentation
 - [ ] manpages
 - [ ] Tutorial/walkthrough?
+# Bugs
+- [ ] Nesting levels + interpolated strings?
 # Passes
 - [ ] Typechecker?
 - [ ] Warn if a string is duplicate?
