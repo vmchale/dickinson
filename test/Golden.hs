@@ -4,7 +4,6 @@ module Golden ( goldenTests
 import           Control.Exception             (throw)
 import qualified Data.ByteString.Lazy          as BSL
 import           Data.Text.Lazy.Encoding       (encodeUtf8)
-import           Data.Text.Prettyprint.Doc     (Pretty)
 import           Data.Text.Prettyprint.Doc.Ext
 import           Language.Dickinson
 import           System.FilePath               ((-<.>))

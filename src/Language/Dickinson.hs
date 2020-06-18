@@ -25,8 +25,10 @@ module Language.Dickinson ( -- * Parser
                           , HasRenames (..)
                           -- * Checks/passes
                           , checkMultiple
+                          , checkDuplicates
                           , checkScope
                           , checkFile
+                          , warnFile
                           -- * AST
                           , Dickinson
                           , Declaration (..)
@@ -53,13 +55,15 @@ module Language.Dickinson ( -- * Parser
                           , languageDickinsonVersionString
                           ) where
 
-import           Control.Exception             (Exception, throw, throwIO)
-import           Control.Monad                 ((<=<))
-import           Data.Bifunctor                (second)
-import           Data.ByteString.Lazy          as BSL
-import qualified Data.Text                     as T
-import qualified Data.Version                  as V
+import           Control.Applicative               ((<|>))
+import           Control.Exception                 (Exception, throw, throwIO)
+import           Control.Monad                     ((<=<))
+import           Data.Bifunctor                    (second)
+import           Data.ByteString.Lazy              as BSL
+import qualified Data.Text                         as T
+import qualified Data.Version                      as V
 import           Language.Dickinson.Check
+import           Language.Dickinson.DuplicateCheck
 import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
 import           Language.Dickinson.Import
@@ -71,7 +75,7 @@ import           Language.Dickinson.Rename
 import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
-import qualified Paths_language_dickinson      as P
+import qualified Paths_language_dickinson          as P
 
 -- | Check scoping
 checkFile :: FilePath -> IO ()
@@ -79,6 +83,14 @@ checkFile = h . go <=< BSL.readFile
     where go = checkScope . fst . uncurry renameDickinson . yeet . parseWithMax
           h (Just err) = throwIO err
           h Nothing    = pure ()
+
+-- | Run some lints
+warnFile :: FilePath -> IO ()
+warnFile = h . go <=< BSL.readFile
+    where go = checks . yeet . parse
+          h (Just err) = throwIO err
+          h Nothing    = pure ()
+          checks x = checkDuplicates x <|> checkMultiple x
 
 -- TODO: runDeclarationM
 evalFile :: FilePath -> IO T.Text

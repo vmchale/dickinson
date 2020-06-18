@@ -35,6 +35,7 @@ parserTests =
         , lexNoError "examples/shakespeare.dck"
         , parseNoError "examples/shakespeare.dck"
         , detectScopeError "test/demo/improbableScope.dck"
+        , detectBadBranch "test/demo/sillyOption.dck"
         , findPath
         ]
 
@@ -43,11 +44,17 @@ findPath = testCase "Finds import at correct path" $ do
     res <- resolveImport ["lib", "."] (Name ("color" :| []) dummyUnique undefined)
     res @?= Just "lib/color.dck"
 
+detectBadBranch :: FilePath -> TestTree
+detectBadBranch fp = testCase "Detects suspicious branch" $ do
+    contents <- BSL.readFile fp
+    let parsed = either throw id $ parse contents
+    assertBool fp $ isJust (checkDuplicates parsed)
+
 detectDuplicate :: FilePath -> TestTree
 detectDuplicate fp = testCase ("Detects duplicate name (" ++ fp ++ ")") $ do
     contents <- BSL.readFile fp
     let parsed = either throw id $ parse contents
-    assertBool "Detects duplicate" $ isJust (checkMultiple parsed)
+    assertBool fp $ isJust (checkMultiple parsed)
 
 detectScopeError :: FilePath -> TestTree
 detectScopeError fp = testCase "Finds scoping error" $ do

@@ -15,8 +15,8 @@ import           Data.Foldable                 (toList)
 import           Data.List.NonEmpty            (NonEmpty)
 import           Data.Semigroup                ((<>))
 import qualified Data.Text                     as T
-import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, dquotes, group, indent, parens, pipe,
-                                                vsep, (<+>))
+import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, dquotes, group, hsep, indent, parens,
+                                                pipe, rangle, vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext (hardSep, (<#*>), (<#>), (<^>))
 import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Name
@@ -40,6 +40,7 @@ data Expression a = Literal a !T.Text
                   | Interp a ![Expression a]
                   | Lambda a (Name a) (DickinsonTy a) (Expression a) -- TODO: application, type checker
                   | Apply (Expression a) (Expression a)
+                  | Concat a [Expression a]
                   deriving (Generic, NFData, Binary, Functor)
                   -- TODO: tuples &. such
                   -- concat back again?
@@ -76,6 +77,7 @@ instance Pretty (Expression a) where
     pretty (Lambda _ n ty e) = parens (":lambda" <+> pretty n <+> parens (pretty ty) <#*> pretty e)
     pretty (Apply e e')      = pretty e <+> pretty e'
     pretty (Interp _ es)     = dquotes (foldMap prettyInterp es)
+    pretty (Concat _ es)     = parens (rangle <+> hsep (pretty <$> es))
     pretty StrChunk{}        = error "Internal error: naked StrChunk"
 
 instance Pretty (DickinsonTy a) where

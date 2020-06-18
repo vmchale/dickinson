@@ -6,21 +6,28 @@
 - [ ] Types &c.
 - [ ] Modules
 # Documentation
-- [ ] manpages
+- [x] manpages
 - [ ] Tutorial/walkthrough?
+## Examples
+- [ ] Insult generator (port)
+- [ ] Magical realism bot
+# Editor Integration
+- [ ] Syntastic checker
 # Passes
 - [ ] Typechecker?
-- [ ] Warn if a string is duplicate?
+- [ ] Warn if a string is duplicate? (warn on duplicate branches)
 - [x] Make sure there are no top-level name clashes
 - [x] Scoping check (not lazy, like evaluation)
 - [ ] Error on negative numbers? (useful error)
 # Library API
 - [ ] Maybe spin out internal library?
 # Features
+- [ ] Formatter
 - [ ] Figure out mutual recursion? (or recursion)
 - [ ] User-defined functions on text?
   - [ ] "character map" approach?
     - [ ] Requires expression application + type checker pass?
+  - [ ] Filter? (e.g. vowels...)
 - [ ] Import/module system
 - [ ] Multiline strings
 - [ ] Tuples/multi-return & agreement.
@@ -38,7 +45,8 @@
 - [ ] Remove duplicates (for regen adjectives...)
 # Tooling
 - [x] REPL
-  - [ ] Actually fix identifiers/threading state to the lexer
+  - [x] Actually fix identifiers/threading state to the lexer
+  - [ ] Completions!
 # Tests
 - [ ] Escpaed characters
 - [ ] Nested interpolated strings

@@ -47,6 +47,7 @@ import Language.Dickinson.Unique
     vbar { TokSym $$ VBar }
     lsqbracket { TokSym $$ LSqBracket }
     rsqbracket { TokSym $$ RSqBracket }
+    rbracket { TokSym $$ RBracket }
     strBegin { TokSym $$ StrBegin }
     strEnd { TokSym $$ StrEnd }
     arrow { TokSym $$ Arrow }
@@ -114,12 +115,14 @@ Expression :: { Expression AlexPosn }
            | lambda Name parens(Type) parens(Expression) { Lambda $1 $2 $3 $4 }
            | ident { Var (loc $1) (ident $1) }
            | stringLiteral { Literal (loc $1) (str $1) }
-           | Expression Expression { Apply $1 $2 }
            | strBegin some(Interp) strEnd { Interp $1 (toList $ NE.reverse $2) }
+           | lparen rbracket many(Expression) rparen { Concat $2 (reverse $3) }
+           | ident Expression { Apply (Var (loc $1) (ident $1)) $2 }
            | parens(Expression) { $1 }
 
 WeightedLeaf :: { (Double, Expression AlexPosn) }
              : vbar num Expression { ($2, $3) }
+             | num Expression { ($1, $2) }
 
 Leaf :: { Expression AlexPosn }
      : vbar Expression { $2 }

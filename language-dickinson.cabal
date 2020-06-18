@@ -45,9 +45,11 @@ library
         Language.Dickinson.Pretty
         Language.Dickinson.Check
         Language.Dickinson.ScopeCheck
+        Language.Dickinson.DuplicateCheck
         Language.Dickinson.Unique
         Language.Dickinson.Import
         Control.Monad.Ext
+        Data.Foldable.Ext
         Paths_language_dickinson
 
     autogen-modules:  Paths_language_dickinson

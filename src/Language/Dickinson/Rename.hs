@@ -120,6 +120,7 @@ renameExpressionM (Choice p branches) = Choice p <$> branches'
                 in let es = fmap snd branches
                     in NE.zip ds <$> traverse renameExpressionM es
 renameExpressionM (Interp p es) = Interp p <$> traverse renameExpressionM es
+renameExpressionM (Concat p es) = Concat p <$> traverse renameExpressionM es
 renameExpressionM (Apply e e') = Apply <$> renameExpressionM e <*> renameExpressionM e'
 renameExpressionM (Lambda p n ty e) = do
     (n', modR) <- withName n

@@ -10,6 +10,7 @@ import           REPL
 data Act = Run !FilePath
          | REPL ![FilePath]
          | Check !FilePath
+         | Lint !FilePath
          -- CHECK subcommand (scoping &c.)
 
 main :: IO ()
@@ -22,6 +23,7 @@ act = hsubparser
     (command "run" (info runP (progDesc "Execute a file"))
     <> command "repl" (info replP (progDesc "Start a REPL"))
     <> command "check" (info checkP (progDesc "Check that some code is valid."))
+    <> command "lint" (info lintP (progDesc "Examine a file for common errors."))
     )
 
 replP :: Parser Act
@@ -32,6 +34,9 @@ runP = Run <$> dckFile
 
 checkP :: Parser Act
 checkP = Check <$> dckFile
+
+lintP :: Parser Act
+lintP = Lint <$> dckFile
 
 dckFile :: Parser FilePath
 dckFile = argument str
@@ -55,3 +60,4 @@ run :: Act -> IO ()
 run (Run fp)  = TIO.putStrLn =<< evalFile fp
 run (REPL _)  = dickinsonRepl
 run (Check f) = checkFile f
+run (Lint f)  = warnFile f

@@ -29,7 +29,7 @@ import qualified Data.Map as M
 import Data.Semigroup ((<>))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
-import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, rbrace, rbracket, lbracket, colon, dquotes, dquote)
+import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, rbrace, rbracket, lbracket, colon, dquotes, dquote, rangle)
 import GHC.Generics (Generic)
 import Language.Dickinson.Name
 import Language.Dickinson.Unique
@@ -65,6 +65,7 @@ tokens :-
 
     <0> \(                         { mkSym LParen }
     <0> \)                         { mkSym RParen }
+    <0> \>                         { mkSym RBracket }
     <0> \|                         { mkSym VBar }
     <0> \[                         { mkSym LSqBracket }
     <0> \]                         { mkSym RSqBracket }
@@ -154,6 +155,7 @@ data Sym = LParen
          | VBar
          | LSqBracket
          | RSqBracket
+         | RBracket
          | BeginInterp
          | EndInterp
          | StrBegin
@@ -167,6 +169,7 @@ instance Pretty Sym where
     pretty VBar          = pipe
     pretty LSqBracket    = lbracket
     pretty RSqBracket    = rbracket
+    pretty RBracket      = rangle
     pretty BeginInterp   = "${"
     pretty EndInterp     = rbrace
     pretty StrBegin      = dquote
