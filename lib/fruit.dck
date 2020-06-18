@@ -1,0 +1,16 @@
+(:def fruit
+  (:oneof
+    (| "banana")
+    (| "pear")
+    (| "mango")
+    (| "papaya")
+    (| "watermelon")
+    (| "canteloupe")
+    (| "honeydew melon")
+    (| "apple")
+    (| "nectarine")
+    (| "peach")
+    (| "apricot")
+    (| "plum")
+    (| "fig")
+    (| "date")))
