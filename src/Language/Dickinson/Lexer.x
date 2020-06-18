@@ -29,7 +29,7 @@ import qualified Data.Map as M
 import Data.Semigroup ((<>))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
-import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, rbrace, rbracket, lbracket, colon, dquotes, dquote, rangle)
+import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, rbrace, rbracket, lbracket, colon, dquotes, dquote, rangle, comma)
 import GHC.Generics (Generic)
 import Language.Dickinson.Name
 import Language.Dickinson.Unique
@@ -70,6 +70,7 @@ tokens :-
     <0> \[                         { mkSym LSqBracket }
     <0> \]                         { mkSym RSqBracket }
     <0> \$                         { mkSym DollarSign }
+    <0> \,                         { mkSym Comma }
     <0> "⟶"                        { mkSym Arrow }
     <0> "->"                       { mkSym Arrow }
 
@@ -163,6 +164,7 @@ data Sym = LParen
          | StrEnd
          | Arrow
          | DollarSign
+         | Comma
          deriving (Eq, Generic, NFData)
 
 instance Pretty Sym where
@@ -178,6 +180,7 @@ instance Pretty Sym where
     pretty StrEnd        = dquote
     pretty Arrow         = "⟶"
     pretty DollarSign    = "$"
+    pretty Comma         = comma
 
 data Keyword = KwDef
              | KwLet

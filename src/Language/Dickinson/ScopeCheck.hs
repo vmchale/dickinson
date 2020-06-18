@@ -44,6 +44,7 @@ checkExpr (Apply _ e e') = (<|>) <$> checkExpr e <*> checkExpr e'
 checkExpr (Interp _ es)  = mapSumM checkExpr es
 checkExpr (Choice _ brs) = mapSumM checkExpr (snd <$> brs)
 checkExpr (Concat _ es)  = mapSumM checkExpr es
+checkExpr (Tuple _ es)   = mapSumM checkExpr es
 checkExpr (Lambda _ n _ e) = do
     insertName n
     checkExpr e <* deleteName n

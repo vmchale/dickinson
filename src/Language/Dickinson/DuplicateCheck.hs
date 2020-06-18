@@ -36,6 +36,7 @@ checkExprDuplicates Literal{}        = Nothing
 checkExprDuplicates StrChunk{}       = Nothing
 checkExprDuplicates (Interp _ es)    = foldMapAlternative checkExprDuplicates es
 checkExprDuplicates (Concat _ es)    = foldMapAlternative checkExprDuplicates es
+checkExprDuplicates (Tuple _ es)     = foldMapAlternative checkExprDuplicates es
 checkExprDuplicates (Apply _ e e')   = checkExprDuplicates e <|> checkExprDuplicates e'
 checkExprDuplicates (Choice _ brs)   = checkNames (collectText $ toList brs)
 checkExprDuplicates (Let _ brs es)   = foldMapAlternative checkExprDuplicates (snd <$> brs) <|> checkExprDuplicates es

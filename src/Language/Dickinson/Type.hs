@@ -16,7 +16,7 @@ import           Data.List.NonEmpty            (NonEmpty)
 import           Data.Semigroup                ((<>))
 import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, dquotes, group, hsep, indent, parens,
-                                                pipe, rangle, vsep, (<+>))
+                                                pipe, rangle, tupled, vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext (hardSep, (<#*>), (<#>), (<^>))
 import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Name
@@ -41,6 +41,7 @@ data Expression a = Literal a !T.Text
                   | Lambda a (Name a) (DickinsonTy a) (Expression a) -- TODO: application, type checker
                   | Apply a (Expression a) (Expression a)
                   | Concat a [Expression a]
+                  | Tuple a [Expression a]
                   deriving (Generic, NFData, Binary, Functor)
                   -- TODO: tuples &. such
                   -- concat back again?
@@ -49,6 +50,7 @@ data Expression a = Literal a !T.Text
 
 data DickinsonTy a = TyText a
                    | TyFun a (DickinsonTy a) (DickinsonTy a)
+                   | TyTuple a [DickinsonTy a]
                    deriving (Eq, Generic, NFData, Binary, Functor)
 
 instance Pretty (Declaration a) where
@@ -83,3 +85,4 @@ instance Pretty (Expression a) where
 instance Pretty (DickinsonTy a) where
     pretty TyText{}       = "text"
     pretty (TyFun _ t t') = "⟶" <+> pretty t <+> pretty t'
+    pretty (TyTuple _ ts) = tupled (pretty <$> ts)

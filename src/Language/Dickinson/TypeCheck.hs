@@ -49,3 +49,4 @@ typeOf (Interp _ es) =
 typeOf (Lambda _ n ty e) =
     tyInsert n ty *>
     (TyFun () ty <$> typeOf e)
+typeOf (Tuple _ es) = TyTuple () <$> traverse typeOf es

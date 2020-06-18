@@ -52,6 +52,7 @@ import Language.Dickinson.Unique
     strEnd { TokSym $$ StrEnd }
     arrow { TokSym $$ Arrow }
     dollar { TokSym $$ DollarSign }
+    comma { TokSym $$ Comma }
 
     beginInterp { TokSym $$ BeginInterp }
     endInterp { TokSym $$ EndInterp }
@@ -80,6 +81,10 @@ many(p)
 
 some(p)
     : many(p) p { $2 :| $1 }
+
+sepBy(p,q)
+    : sepBy(p,q) q p { $3 : $1 }
+    | p { [$1] }
 
 parens(p)
     : lparen p rparen { $2 }
@@ -119,6 +124,7 @@ Expression :: { Expression AlexPosn }
            | strBegin some(Interp) strEnd { Interp $1 (toList $ NE.reverse $2) }
            | rbracket many(Expression) { Concat $1 (reverse $2) }
            | dollar Expression Expression { Apply $1 $2 $3 }
+           | lparen sepBy(Expression,comma) rparen { Tuple $1 (reverse $2) }
            | parens(Expression) { $1 }
 
 WeightedLeaf :: { (Double, Expression AlexPosn) }
