@@ -39,7 +39,7 @@ instance (Pretty a) => Show (DickinsonError a) where
     show = show . pretty
 
 instance (Pretty a) => Pretty (DickinsonError a) where
-    pretty (UnfoundName l n)       = pretty n <+> "at" <+> pretty l <+> "is not in scope."
+    pretty (UnfoundName l n)       = pretty l <+> pretty n <+> "is not in scope."
     pretty (NoText t)              = squotes (pretty t) <+> "not defined"
     pretty (ParseErr e)            = pretty e
     pretty (TypeMismatch e ty ty') = "Expected" <+> pretty e <+> "to have type" <+> pretty ty <> ", found type" <+> pretty ty'
@@ -52,6 +52,6 @@ instance (Pretty a) => Show (DickinsonWarning a) where
 
 instance (Pretty a) => Pretty (DickinsonWarning a) where
     pretty (MultipleNames l n) = pretty n <+> "at" <+> pretty l <+> "has already been defined"
-    pretty (DuplicateStr l t)  = "Duplicate string" <+> dquotes (pretty t) <+> "at" <+> pretty l
+    pretty (DuplicateStr l t)  = pretty l <+> "duplicate string"
 
 instance (Pretty a, Typeable a) => Exception (DickinsonWarning a)
