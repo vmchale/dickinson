@@ -179,7 +179,6 @@ test-suite dickinson-test
         tasty -any,
         tasty-hunit -any,
         bytestring -any,
-        prettyprinter -any,
         text -any,
         filepath -any,
         tasty-golden -any,
