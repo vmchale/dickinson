@@ -51,6 +51,7 @@ import Language.Dickinson.Unique
     strBegin { TokSym $$ StrBegin }
     strEnd { TokSym $$ StrEnd }
     arrow { TokSym $$ Arrow }
+    dollar { TokSym $$ DollarSign }
 
     beginInterp { TokSym $$ BeginInterp }
     endInterp { TokSym $$ EndInterp }
@@ -117,6 +118,7 @@ Expression :: { Expression AlexPosn }
            | stringLiteral { Literal (loc $1) (str $1) }
            | strBegin some(Interp) strEnd { Interp $1 (toList $ NE.reverse $2) }
            | rbracket many(Expression) { Concat $1 (reverse $2) }
+           | dollar Expression Expression { Apply $1 $2 $3 }
            | parens(Expression) { $1 }
 
 WeightedLeaf :: { (Double, Expression AlexPosn) }

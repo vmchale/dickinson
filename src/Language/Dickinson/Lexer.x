@@ -69,6 +69,7 @@ tokens :-
     <0> \|                         { mkSym VBar }
     <0> \[                         { mkSym LSqBracket }
     <0> \]                         { mkSym RSqBracket }
+    <0> \$                         { mkSym DollarSign }
     <0> "⟶"                        { mkSym Arrow }
     <0> "->"                       { mkSym Arrow }
 
@@ -161,6 +162,7 @@ data Sym = LParen
          | StrBegin
          | StrEnd
          | Arrow
+         | DollarSign
          deriving (Eq, Generic, NFData)
 
 instance Pretty Sym where
@@ -175,6 +177,7 @@ instance Pretty Sym where
     pretty StrBegin      = dquote
     pretty StrEnd        = dquote
     pretty Arrow         = "⟶"
+    pretty DollarSign    = "$"
 
 data Keyword = KwDef
              | KwLet

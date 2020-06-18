@@ -38,7 +38,7 @@ checkDecl (Define _ n e) =
 checkExpr :: Expression a -> CheckM (Maybe (DickinsonError a))
 checkExpr Literal{}      = pure Nothing
 checkExpr StrChunk{}     = pure Nothing
-checkExpr (Apply e e')   = (<|>) <$> checkExpr e <*> checkExpr e'
+checkExpr (Apply _ e e') = (<|>) <$> checkExpr e <*> checkExpr e'
 checkExpr (Interp _ es)  = mapSumM checkExpr es
 checkExpr (Choice _ brs) = mapSumM checkExpr (snd <$> brs)
 checkExpr (Concat _ es)  = mapSumM checkExpr es

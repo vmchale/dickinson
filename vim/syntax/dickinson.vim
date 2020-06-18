@@ -26,6 +26,9 @@ syntax region dickinsonString start=+"+ end=+"+ contains=@Spell,dickinsonEsc,dic
 
 syntax match dickinsonComment "\v;.*$" contains=@Spell
 
+syntax match dickinsonSymbol ">"
+syntax match dickinsonSymbol "\$"
+
 highlight link dickinsonComment Comment
 highlight link dickinsonInterpolation Special
 highlight link dickinsonKeyword Keyword
@@ -33,5 +36,6 @@ highlight link dickinsonNum Number
 highlight link dickinsonIdentifier Identifier
 highlight link dickinsonString String
 highlight link dickinsonType Type
+highlight link dickinsonSymbol Special
 
 let b:current_syntax = 'dickinson'

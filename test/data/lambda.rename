@@ -6,4 +6,4 @@
         [boy_9 (:branch
             (| 0.5 "tom")
             (| 0.5 "harry"))]
-        greeter_5 boy_9))
+        ($ greeter_5 boy_9)))

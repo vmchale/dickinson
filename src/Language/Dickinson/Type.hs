@@ -39,7 +39,7 @@ data Expression a = Literal a !T.Text
                   | Var a (Name a)
                   | Interp a ![Expression a]
                   | Lambda a (Name a) (DickinsonTy a) (Expression a) -- TODO: application, type checker
-                  | Apply (Expression a) (Expression a)
+                  | Apply a (Expression a) (Expression a)
                   | Concat a [Expression a]
                   deriving (Generic, NFData, Binary, Functor)
                   -- TODO: tuples &. such
@@ -75,7 +75,7 @@ instance Pretty (Expression a) where
     -- also comments lol
     pretty (Choice _ brs)    = parens (":branch" <#> indent 4 (hardSep (toList $ fmap prettyChoiceBranch brs)))
     pretty (Lambda _ n ty e) = parens (":lambda" <+> pretty n <+> parens (pretty ty) <#*> pretty e)
-    pretty (Apply e e')      = pretty e <+> pretty e'
+    pretty (Apply _ e e')    = parens ("$" <+> pretty e <+> pretty e')
     pretty (Interp _ es)     = dquotes (foldMap prettyInterp es)
     pretty (Concat _ es)     = parens (rangle <+> hsep (pretty <$> es))
     pretty StrChunk{}        = error "Internal error: naked StrChunk"
