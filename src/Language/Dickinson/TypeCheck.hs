@@ -8,6 +8,7 @@ module Language.Dickinson.TypeCheck ( typeOf
 
 import           Control.Monad             (unless)
 import           Control.Monad.Except      (MonadError, throwError)
+import           Control.Monad.Ext         (zipWithM_)
 import           Control.Monad.State       (MonadState)
 import           Data.Foldable             (traverse_)
 import           Data.Functor              (($>))
@@ -67,3 +68,8 @@ typeOf (Apply _ e e') = do
             tyAssert ty' e'
             pure ty''
         _ -> throwError $ ExpectedLambda e ty
+typeOf (Let _ bs e) = do
+    es' <- traverse typeOf (snd <$> bs)
+    let ns = fst <$> bs
+    zipWithM_ tyInsert ns es'
+    typeOf e
