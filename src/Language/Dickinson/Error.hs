@@ -19,7 +19,6 @@ import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Type
 
--- type error but I'll do that later
 data DickinsonError a = UnfoundName a (Name a)
                       | NoText T.Text -- separate from UnfoundName since there is no loc
                       | ParseErr (ParseError a)
@@ -54,6 +53,6 @@ instance (Pretty a) => Show (DickinsonWarning a) where
 
 instance (Pretty a) => Pretty (DickinsonWarning a) where
     pretty (MultipleNames l n) = pretty n <+> "at" <+> pretty l <+> "has already been defined"
-    pretty (DuplicateStr l t)  = pretty l <+> "duplicate string"
+    pretty (DuplicateStr l t)  = pretty l <+> "duplicate string" <+> dquotes (pretty t)
 
 instance (Pretty a, Typeable a) => Exception (DickinsonWarning a)

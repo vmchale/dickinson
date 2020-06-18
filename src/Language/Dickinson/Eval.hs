@@ -78,6 +78,9 @@ prettyAlexState (m, _, nEnv) = "max:" <+> pretty m <#> prettyDumpBinds nEnv
 instance HasRenames (EvalSt a) where
     rename f s = fmap (\x -> s { renameCtx = x }) (f (renameCtx s))
 
+instance HasTyEnv (EvalSt a) where
+    tyEnvLens f s = fmap (\x -> s { tyEnv = x }) (f (tyEnv s))
+
 probabilitiesLens :: Lens' (EvalSt a) [Double]
 probabilitiesLens f s = fmap (\x -> s { probabilities = x }) (f (probabilities s))
 
@@ -103,6 +106,7 @@ evalWithGen g u me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty (init
 -- TODO: temporary bindings
 bindName :: (MonadState (EvalSt a) m) => Name a -> Expression a -> m ()
 bindName (Name _ (Unique u) _) e = modify (over boundExprLens (IM.insert u e))
+-- TODO: bind type information
 
 topLevelAdd :: (MonadState (EvalSt a) m) => Name a -> m ()
 topLevelAdd (Name (n :| []) u _) = modify (over topLevelLens (M.insert n u))
@@ -180,10 +184,10 @@ addDecl (Import l n) = do
         Nothing -> throwError (ModuleNotFound l n)
         -- FIXME: this doesn't handle transitive imports
 
-extrText :: (MonadError (DickinsonError a) m) => Expression a -> m T.Text
+extrText :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 extrText (Literal _ t)  = pure t
 extrText (StrChunk _ t) = pure t
-extrText _              = error "Error message not yet implemented."
+extrText e              = throwError =<< (TypeMismatch e TyText <$> typeOf e)
 
 normalizeExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 normalizeExpressionM e@Literal{}    = pure e
@@ -204,7 +208,7 @@ normalizeExpressionM (Apply _ e e') = do
         Lambda _ n _ e''' -> do
             bindName n e'
             normalizeExpressionM e'''
-        _ -> throwError $ ExpectedLambda e (error "Error message not yet implemented.")
+        _ -> throwError =<< (ExpectedLambda e <$> typeOf e)
 normalizeExpressionM e@Lambda{} = pure e
 
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)

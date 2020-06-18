@@ -1,0 +1,6 @@
+(:def silly
+  (:lambda func (-> text text)
+    ("Helo, ${func}")))
+
+(:def main
+  silly)
