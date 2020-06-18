@@ -1,6 +1,6 @@
 (:def vegetable
   (:oneof
-    (| "carrot")
+    (| "carrots")
     (| "kale")
     (| "lettuce")
     (| "broccoli")
