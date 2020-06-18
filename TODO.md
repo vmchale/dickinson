@@ -1,6 +1,5 @@
 - [ ] Type system
-- [ ] REPL! I would actually use this.
-- [ ] spec
+- [ ] Something about sno executable/snow white that came to me in a dream
 # Specification
 - [ ] Grammar
 - [ ] Types &c.

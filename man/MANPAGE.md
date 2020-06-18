@@ -23,6 +23,8 @@ emd - [Emily] Dickinson
 
 **check** - Check that a program is correct without running it
 
+**lint** - Give suggestions for common mistakes
+
 # OPTIONS
 
 **-h** **-\-help**
