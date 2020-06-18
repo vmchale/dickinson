@@ -1,13 +1,14 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module Language.Dickinson.TypeCheck ( typeOf
+                                    , tyAdd
                                     , TyEnv
                                     , HasTyEnv (..)
                                     ) where
 
 import           Control.Monad             (unless)
-import           Control.Monad.Except      (ExceptT, MonadError, throwError)
-import           Control.Monad.State       (MonadState, State, get, modify)
+import           Control.Monad.Except      (MonadError, throwError)
+import           Control.Monad.State       (MonadState)
 import           Data.Foldable             (traverse_)
 import           Data.Functor              (($>))
 import qualified Data.IntMap               as IM
@@ -38,7 +39,10 @@ tyMatch (e :| es) = do
     ty <- typeOf e
     traverse_ (tyAssert TyText) es $> ty
 
--- run after global renamer &c.
+tyAdd :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Declaration a -> m ()
+tyAdd (Define _ n e) = tyInsert n =<< typeOf e
+
+-- run after global renamer
 typeOf :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Expression a -> m DickinsonTy
 typeOf Literal{}  = pure TyText
 typeOf StrChunk{} = pure TyText

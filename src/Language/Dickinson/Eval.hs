@@ -187,7 +187,7 @@ addDecl (Import l n) = do
 extrText :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 extrText (Literal _ t)  = pure t
 extrText (StrChunk _ t) = pure t
-extrText e              = throwError =<< (TypeMismatch e TyText <$> typeOf e)
+extrText e              = do { ty <- typeOf e ; throwError $ TypeMismatch e TyText ty }
 
 normalizeExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 normalizeExpressionM e@Literal{}    = pure e
@@ -208,7 +208,7 @@ normalizeExpressionM (Apply _ e e') = do
         Lambda _ n _ e''' -> do
             bindName n e'
             normalizeExpressionM e'''
-        _ -> throwError =<< (ExpectedLambda e <$> typeOf e)
+        _ -> error "Ill-typed expression"
 normalizeExpressionM e@Lambda{} = pure e
 
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)
