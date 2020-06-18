@@ -12,7 +12,8 @@ function! SyntaxCheckers_dickinson_emd_GetLocList() dict
                 \ 'fname': shellescape(expand('%') )})
 
     let errorformat =
-        \ 'emd: %l:%c %m'
+        \ 'emd: %l:%c %m,' .
+        \ 'emd: %m at line %l\, column %c'
 
     let loclist = SyntasticMake({
             \ 'makeprg': makeprg,

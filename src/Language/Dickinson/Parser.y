@@ -146,7 +146,7 @@ data ParseError a = Unexpected (Token a)
                   deriving (Generic, NFData)
 
 instance Pretty a => Pretty (ParseError a) where
-    pretty (Unexpected tok)  = "Unexpected" <+> pretty tok <+> "at" <+> pretty (loc tok)
+    pretty (Unexpected tok)  = pretty (loc tok) <+> "Unexpected" <+> pretty tok
     pretty (LexErr str)      = pretty (T.pack str)
 
 instance Pretty a => Show (ParseError a) where
