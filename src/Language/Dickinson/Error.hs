@@ -44,7 +44,7 @@ instance (Pretty a) => Pretty (DickinsonError a) where
     pretty (ParseErr e)            = pretty e
     pretty (TypeMismatch e ty ty') = "Expected" <+> pretty e <+> "to have type" <+> pretty ty <> ", found type" <+> pretty ty'
     pretty (ModuleNotFound l n)    = "Module" <+> pretty n <> ", referenced at" <+> pretty l <> ", not found"
-    pretty (ExpectedLambda e ty)   = "Expected" <+> squotes (pretty e) <+> "to have function type, found" <+> pretty ty
+    pretty (ExpectedLambda e ty)   = "Expected" <+> squotes (pretty e) <+> "to be of function type, found type" <+> pretty ty
 
 instance (Pretty a, Typeable a) => Exception (DickinsonError a)
 

@@ -50,7 +50,16 @@ typeOf (Var l n@(Name _ (Unique i) _))  = do
         Nothing -> throwError $ UnfoundName l n
 typeOf (Interp _ es) =
     traverse_ (tyAssert TyText) es $> TyText
+typeOf (Concat _ es) =
+    traverse_ (tyAssert TyText) es $> TyText
 typeOf (Lambda _ n ty e) =
     tyInsert n ty *>
     (TyFun ty <$> typeOf e)
 typeOf (Tuple _ es) = TyTuple <$> traverse typeOf es
+typeOf (Apply _ e e') = do
+    ty <- typeOf e
+    case ty of
+        TyFun ty' ty'' -> do
+            tyAssert ty' e'
+            pure ty''
+        _ -> throwError $ ExpectedLambda e ty
