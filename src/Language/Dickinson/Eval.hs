@@ -172,12 +172,12 @@ balanceMax = do
 
 -- TODO: MonadIO to addDecl so can import
 addDecl :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m) => Declaration AlexPosn -> m ()
-addDecl d@(Define _ n e) = bindName n e *> topLevelAdd n
+addDecl (Define _ n e) = bindName n e *> topLevelAdd n
 addDecl (Import l n) = do
     -- TODO: make this relative to the file?
     mFile <- resolveImport [".", "lib"] n -- FIXME: don't hardcode this
     case mFile of
-        Just f ->  do
+        Just f -> do
             fileRead <- parseEval =<< liftIO (BSL.readFile f)
             loadDickinson =<< renameDickinsonM fileRead
             balanceMax
