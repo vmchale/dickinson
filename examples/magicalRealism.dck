@@ -1,0 +1,32 @@
+; TODO: spin out libraries
+
+(:def profession
+  (:oneof
+    (| "psychologist")
+    (| "professor")
+    (| "painter")
+    (| "doctor")
+    (| "physician")
+    (| "pharmacist")
+    (| "psychiatrist")
+    (| "surgeon")
+    (| "lawyer")
+    (| "engineer")
+    (| "esthetician")
+    (| "writer")
+    (| "student")
+    (| "poet")
+    (| "artist")
+    (| "soldier")
+    (| "gardener")))
+
+(:def bigCity
+  (:oneof
+    (| "New York")
+    (| "Calcutta")
+    (| "Berlin")
+    (| "Hong Kong")
+    (| "Moscow")
+    (| "Istanbul")
+    (| "Cairo")
+    (| "Paris")))
