@@ -1,0 +1,9 @@
+; TODO: import bird
+
+(:def animal
+  (:oneof
+    (| "hippopotamus")
+    (| "rhinoceros")
+    (| "giraffe")
+    (| "deer")
+    (| "zebra")))
