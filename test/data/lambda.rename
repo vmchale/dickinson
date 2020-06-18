@@ -1,7 +1,7 @@
 (:def greeter_5
-    (:lambda name_6 (⟶ text text)
-        "Hello, ${name_6}!"))
-(:def main_8
+    (:lambda name_7 (⟶ text text)
+        "Hello, ${name_7}!"))
+(:def main_6
     (:let
         [boy_9 (:branch
             (| 0.5 "tom")
