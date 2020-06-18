@@ -1,0 +1,7 @@
+(:def nut
+  (:oneof
+    (| "cashew")
+    (| "brazil nut")
+    (| "macadamia nut")
+    (| "peanut")
+    (| "almond")))

@@ -1,0 +1,12 @@
+(:def vegetable
+  (:oneof
+    (| "carrot")
+    (| "kale")
+    (| "lettuce")
+    (| "broccoli")
+    (| "cauliflower")
+    (| "spinach")))
+
+(:def legume
+  (:oneof
+    (| "lentils")))
