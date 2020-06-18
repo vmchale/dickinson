@@ -3,12 +3,13 @@
 # Specification
 - [ ] Grammar
 - [ ] Types &c.
+  - [ ] Right now tc doesn't even work lol
 - [ ] Modules
+- [ ] Normalization
 # Documentation
 - [x] manpages
 - [ ] Tutorial/walkthrough?
 ## Examples
-- [ ] Insult generator (port)
 - [ ] Magical realism bot
 # Editor Integration
 - [ ] Syntastic checker
