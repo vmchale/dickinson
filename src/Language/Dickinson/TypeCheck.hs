@@ -1,15 +1,18 @@
-{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleContexts  #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 module Language.Dickinson.TypeCheck ( typeOf
                                     , tyAdd
+                                    , tyTraverse
+                                    , tyRun
                                     , TyEnv
                                     , HasTyEnv (..)
                                     ) where
 
 import           Control.Monad             (unless)
-import           Control.Monad.Except      (MonadError, throwError)
+import           Control.Monad.Except      (ExceptT, MonadError, runExceptT, throwError)
 import           Control.Monad.Ext         (zipWithM_)
-import           Control.Monad.State       (MonadState)
+import           Control.Monad.State       (MonadState, State, evalState)
 import           Data.Foldable             (traverse_)
 import           Data.Functor              (($>))
 import qualified Data.IntMap               as IM
@@ -32,6 +35,9 @@ type TyEnv = IM.IntMap DickinsonTy
 class HasTyEnv a where
     tyEnvLens :: Lens' a TyEnv
 
+instance HasTyEnv (IM.IntMap DickinsonTy) where
+    tyEnvLens = id
+
 tyInsert :: (HasTyEnv s, MonadState s m) => Name a -> DickinsonTy -> m ()
 tyInsert (Name _ (Unique i) _) ty = modifying tyEnvLens (IM.insert i ty)
 
@@ -39,6 +45,14 @@ tyMatch :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => NonE
 tyMatch (e :| es) = do
     ty <- typeOf e
     traverse_ (tyAssert TyText) es $> ty
+
+type TypeM a = ExceptT (DickinsonError a) (State TyEnv)
+
+tyRun :: Dickinson a -> Either (DickinsonError a) ()
+tyRun = flip evalState mempty . runExceptT . (tyTraverse :: Dickinson a -> TypeM a ())
+
+tyTraverse :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Dickinson a -> m ()
+tyTraverse = traverse_ tyAdd
 
 tyAdd :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Declaration a -> m ()
 tyAdd (Define _ n e) = tyInsert n =<< typeOf e

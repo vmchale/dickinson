@@ -44,6 +44,8 @@ module Language.Dickinson ( -- * Parser
                           , lexerStateLens
                           , EvalM
                           , EvalSt (..)
+                          -- * Type inference
+                          , tcFile
                           -- * Import resolution
                           , resolveImport
                           -- * Errors
@@ -74,6 +76,7 @@ import           Language.Dickinson.Pretty
 import           Language.Dickinson.Rename
 import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
+import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
 import qualified Paths_language_dickinson          as P
 
@@ -91,6 +94,12 @@ warnFile = h . go <=< BSL.readFile
           h (Just err) = throwIO err
           h Nothing    = pure ()
           checks x = checkDuplicates x <|> checkMultiple x
+
+tcFile :: FilePath -> IO ()
+tcFile = h . go <=< BSL.readFile
+    where go = tyRun . fst . uncurry renameDickinson . yeet . parseWithMax
+          h Right{}    = pure ()
+          h (Left err) = throwIO err
 
 -- TODO: runDeclarationM
 evalFile :: FilePath -> IO T.Text

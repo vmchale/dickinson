@@ -42,7 +42,7 @@ instance (Pretty a) => Pretty (DickinsonError a) where
     pretty (UnfoundName l n)       = pretty l <+> pretty n <+> "is not in scope."
     pretty (NoText t)              = squotes (pretty t) <+> "not defined"
     pretty (ParseErr e)            = pretty e
-    pretty (TypeMismatch e ty ty') = "Expected" <+> pretty e <+> "to have type" <+> pretty ty <> ", found type" <+> pretty ty'
+    pretty (TypeMismatch e ty ty') = "Expected" <+> pretty e <+> "to have type" <+> squotes (pretty ty) <> ", found type" <+> squotes (pretty ty')
     pretty (ModuleNotFound l n)    = "Module" <+> pretty n <> ", referenced at" <+> pretty l <> ", not found"
     pretty (ExpectedLambda e ty)   = "Expected" <+> squotes (pretty e) <+> "to be of function type, found type" <+> pretty ty
 
