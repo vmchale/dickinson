@@ -116,8 +116,7 @@ Expression :: { Expression AlexPosn }
            | ident { Var (loc $1) (ident $1) }
            | stringLiteral { Literal (loc $1) (str $1) }
            | strBegin some(Interp) strEnd { Interp $1 (toList $ NE.reverse $2) }
-           | lparen rbracket many(Expression) rparen { Concat $2 (reverse $3) }
-           | ident Expression { Apply (Var (loc $1) (ident $1)) $2 }
+           | rbracket many(Expression) { Concat $1 (reverse $2) }
            | parens(Expression) { $1 }
 
 WeightedLeaf :: { (Double, Expression AlexPosn) }
