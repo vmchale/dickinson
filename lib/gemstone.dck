@@ -1,0 +1,9 @@
+(:def gemstone
+  (:oneof
+    (| "opal")
+    (| "turquoise")
+    (| "diamond")
+    (| "emerald")
+    (| "amethyst")
+    (| "sapphire")
+    (| "carnelian")))
