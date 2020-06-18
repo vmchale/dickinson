@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+set -e pipefail
+
+cabal install exe:emd --overwrite-policy=always
+cp man/emd.1 "$HOME"/.local/share/man/man1
