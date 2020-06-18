@@ -38,7 +38,7 @@ data Expression a = Literal a !T.Text
                   | Let a !(NonEmpty (Name a, Expression a)) !(Expression a)
                   | Var a (Name a)
                   | Interp a ![Expression a]
-                  | Lambda a (Name a) (DickinsonTy a) (Expression a) -- TODO: application, type checker
+                  | Lambda a (Name a) DickinsonTy (Expression a) -- TODO: application, type checker
                   | Apply a (Expression a) (Expression a)
                   | Concat a [Expression a]
                   | Tuple a [Expression a]
@@ -48,10 +48,10 @@ data Expression a = Literal a !T.Text
                   -- TODO: normalize subtree
                   -- TODO: builtins?
 
-data DickinsonTy a = TyText a
-                   | TyFun a (DickinsonTy a) (DickinsonTy a)
-                   | TyTuple a [DickinsonTy a]
-                   deriving (Eq, Generic, NFData, Binary, Functor)
+data DickinsonTy = TyText
+                 | TyFun DickinsonTy DickinsonTy
+                 | TyTuple [DickinsonTy]
+                 deriving (Eq, Generic, NFData, Binary)
 
 instance Pretty (Declaration a) where
     pretty (Define _ n e) = parens (":def" <+> pretty n <#> indent 4 (pretty e))
@@ -81,8 +81,9 @@ instance Pretty (Expression a) where
     pretty (Interp _ es)     = dquotes (foldMap prettyInterp es)
     pretty (Concat _ es)     = parens (rangle <+> hsep (pretty <$> es))
     pretty StrChunk{}        = error "Internal error: naked StrChunk"
+    pretty (Tuple _ es)      = tupled (pretty <$> es)
 
-instance Pretty (DickinsonTy a) where
-    pretty TyText{}       = "text"
-    pretty (TyFun _ t t') = "⟶" <+> pretty t <+> pretty t'
-    pretty (TyTuple _ ts) = tupled (pretty <$> ts)
+instance Pretty DickinsonTy where
+    pretty TyText{}     = "text"
+    pretty (TyFun t t') = "⟶" <+> pretty t <+> pretty t'
+    pretty (TyTuple ts) = tupled (pretty <$> ts)

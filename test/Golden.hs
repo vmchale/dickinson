@@ -19,6 +19,7 @@ goldenTests =
         , renameDckFile "test/data/let.dck"
         , renameDckFile "test/data/multiLet.dck"
         , renameDckFile "test/data/lambda.dck"
+        , renameDckFile "test/data/higerOrder.dck"
         ]
 
 prettyBSL :: Dickinson a -> BSL.ByteString

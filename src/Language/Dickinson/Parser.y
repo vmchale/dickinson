@@ -102,9 +102,10 @@ Declaration :: { Declaration AlexPosn }
 Name :: { Name AlexPosn }
      : ident { ident $1 }
 
-Type :: { DickinsonTy AlexPosn }
-     : text { TyText $1 }
-     | arrow Type Type { TyFun $1 $2 $3 }
+Type :: { DickinsonTy }
+     : text { TyText }
+     | arrow Type Type { TyFun $2 $3 }
+     | lparen sepBy(Type,comma) rparen { TyTuple (reverse $2) }
      | parens(Type) { $1 }
 
 Bind :: { (Name AlexPosn, Expression AlexPosn) }
@@ -118,7 +119,7 @@ Expression :: { Expression AlexPosn }
            : branch some(parens(WeightedLeaf)) { Choice $1 (NE.reverse $2) }
            | oneof some(parens(Leaf)) { Choice $1 (NE.reverse (weight $2)) }
            | let some(brackets(Bind)) Expression { Let $1 (NE.reverse $2) $3 }
-           | lambda Name parens(Type) parens(Expression) { Lambda $1 $2 $3 $4 }
+           | lambda Name parens(Type) Expression { Lambda $1 $2 $3 $4 }
            | ident { Var (loc $1) (ident $1) }
            | stringLiteral { Literal (loc $1) (str $1) }
            | strBegin some(Interp) strEnd { Interp $1 (toList $ NE.reverse $2) }

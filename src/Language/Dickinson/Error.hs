@@ -24,8 +24,8 @@ data DickinsonError a = UnfoundName a (Name a)
                       | NoText T.Text -- separate from UnfoundName since there is no loc
                       | ParseErr (ParseError a)
                       | ModuleNotFound a (Name a)
-                      | TypeMismatch (Expression a) (DickinsonTy a) (DickinsonTy a) -- TODO: location information
-                      | ExpectedLambda (Expression a) (DickinsonTy a)
+                      | TypeMismatch (Expression a) DickinsonTy DickinsonTy -- TODO: location information
+                      | ExpectedLambda (Expression a) DickinsonTy
                       deriving (Generic, NFData)
 
 data DickinsonWarning a = MultipleNames a (Name a) -- TODO: throw both?

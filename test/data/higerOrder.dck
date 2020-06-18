@@ -1,0 +1,8 @@
+(:def top
+  (:lambda f (-> text text)
+    ($f "me")))
+
+(:def main
+  (:let
+    [fun (:lambda a (text) "It's ${a}")]
+    ($ top fun)))
