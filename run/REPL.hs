@@ -34,7 +34,7 @@ runRepl :: Repl a x -> IO x
 runRepl x = do
     g <- newStdGen
     emdDir <- (</> ".emd_history") <$> getHomeDirectory
-    let initSt = EvalSt (randoms g) mempty (initRenames 0) mempty alexInitUserState
+    let initSt = EvalSt (randoms g) mempty (initRenames 0) mempty alexInitUserState mempty
     let emdSettings = defaultSettings { historyFile = Just emdDir }
     flip evalStateT initSt $ runInputT emdSettings x
 

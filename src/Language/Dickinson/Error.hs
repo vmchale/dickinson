@@ -25,6 +25,7 @@ data DickinsonError a = UnfoundName a (Name a)
                       | ParseErr (ParseError a)
                       | ModuleNotFound a (Name a)
                       | TypeMismatch (Expression a) (DickinsonTy a) (DickinsonTy a) -- TODO: location information
+                      | ExpectedLambda (Expression a) (DickinsonTy a)
                       deriving (Generic, NFData)
 
 data DickinsonWarning a = MultipleNames a (Name a) -- TODO: throw both?
@@ -44,6 +45,7 @@ instance (Pretty a) => Pretty (DickinsonError a) where
     pretty (ParseErr e)            = pretty e
     pretty (TypeMismatch e ty ty') = "Expected" <+> pretty e <+> "to have type" <+> pretty ty <> ", found type" <+> pretty ty'
     pretty (ModuleNotFound l n)    = "Module" <+> pretty n <> ", referenced at" <+> pretty l <> ", not found"
+    pretty (ExpectedLambda e ty)   = "Expected" <+> squotes (pretty e) <+> "to have function type, found" <+> pretty ty
 
 instance (Pretty a, Typeable a) => Exception (DickinsonError a)
 

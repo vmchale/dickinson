@@ -1,4 +1,5 @@
 module Language.Dickinson.TypeCheck ( typeOf
+                                    , TyEnv
                                     ) where
 
 import           Control.Monad             (unless)

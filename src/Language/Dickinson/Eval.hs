@@ -36,6 +36,7 @@ import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
+import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
 import           Lens.Micro                    (Lens', over, _1)
 import           Lens.Micro.Mtl                (use, (.=))
@@ -51,6 +52,8 @@ data EvalSt a = EvalSt
     , topLevel      :: M.Map T.Text Unique
     -- For imports & such.
     , lexerState    :: AlexUserState
+    -- For error messages
+    , tyEnv         :: TyEnv
     }
 
 lexerStateLens :: Lens' (EvalSt a) AlexUserState
@@ -63,7 +66,7 @@ prettyTl :: (T.Text, Unique) -> Doc a
 prettyTl (t, i) = pretty t <+> ":" <+> pretty i
 
 instance Pretty (EvalSt a) where
-    pretty (EvalSt _ b r t st) =
+    pretty (EvalSt _ b r t st _) =
         "bound expressions:" <#> vsep (prettyBound <$> IM.toList b)
             <#> pretty r
             <#> "top-level names:" <#> vsep (prettyTl <$> M.toList t)
@@ -94,7 +97,7 @@ evalWithGen :: StdGen
             -> AlexUserState -- ^ Threaded through
             -> EvalM a x
             -> IO (Either (DickinsonError a) x)
-evalWithGen g u me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty (initRenames $ fst3 u) mempty u)
+evalWithGen g u me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty (initRenames $ fst3 u) mempty u mempty)
     where fst3 (x, _, _) = x
 
 -- TODO: temporary bindings
@@ -195,6 +198,14 @@ normalizeExpressionM (Let _ bs e) = do
     traverse_ (uncurry bindName) bs
     normalizeExpressionM e <* traverse_ deleteName (fst <$> bs)
     -- FIXME: assumes global uniqueness in renaming
+normalizeExpressionM (Apply _ e e') = do
+    e'' <- normalizeExpressionM e
+    case e'' of
+        Lambda _ n _ e''' -> do
+            bindName n e'
+            normalizeExpressionM e'''
+        _ -> throwError $ ExpectedLambda e (error "Error message not yet implemented.")
+normalizeExpressionM e@Lambda{} = pure e
 
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)
 concatOrFail l = fmap (Literal l . mconcat) . traverse evalExpressionM
