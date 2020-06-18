@@ -4,10 +4,12 @@
 
 module Language.Dickinson.Error ( DickinsonError (..)
                                 , DickinsonWarning (..)
+                                , maybeThrow
                                 ) where
 
 import           Control.DeepSeq           (NFData)
 import           Control.Exception         (Exception)
+import           Control.Monad.Except      (MonadError, throwError)
 import           Data.Semigroup            ((<>))
 import qualified Data.Text                 as T
 import           Data.Text.Prettyprint.Doc (Pretty (pretty), dquotes, squotes, (<+>))
@@ -28,6 +30,10 @@ data DickinsonError a = UnfoundName a (Name a)
 data DickinsonWarning a = MultipleNames a (Name a) -- TODO: throw both?
                         | DuplicateStr a T.Text
                         deriving (Generic, NFData)
+
+maybeThrow :: MonadError e m => Maybe e -> m ()
+maybeThrow (Just err) = throwError err
+maybeThrow Nothing    = pure ()
 
 instance (Pretty a) => Show (DickinsonError a) where
     show = show . pretty
