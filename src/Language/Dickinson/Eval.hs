@@ -15,6 +15,7 @@ module Language.Dickinson.Eval ( EvalM
                                , balanceMax
                                ) where
 
+import           Control.Monad                 ((<=<))
 import           Control.Monad.Except          (ExceptT, MonadError, runExceptT, throwError)
 import           Control.Monad.IO.Class        (MonadIO (..))
 import           Control.Monad.State.Lazy      (MonadState, StateT, evalStateT, gets, modify)
@@ -176,14 +177,27 @@ addDecl (Import l n) = do
         Nothing -> throwError (ModuleNotFound l n)
         -- FIXME: this doesn't handle transitive imports
 
-evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
-evalExpressionM (Literal _ t)  = pure t
-evalExpressionM (StrChunk _ t) = pure t
-evalExpressionM (Var _ n)      = evalExpressionM =<< lookupName n
-evalExpressionM (Choice _ pes) = evalExpressionM =<< pick pes
-evalExpressionM (Interp _ es)  = mconcat <$> traverse evalExpressionM es
-evalExpressionM (Concat _ es)  = mconcat <$> traverse evalExpressionM es
-evalExpressionM (Let _ bs e) = do
+extrText :: (MonadError (DickinsonError a) m) => Expression a -> m T.Text
+extrText (Literal _ t)  = pure t
+extrText (StrChunk _ t) = pure t
+extrText _              = error "Error message not yet implemented."
+
+normalizeExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
+normalizeExpressionM e@Literal{}    = pure e
+normalizeExpressionM e@StrChunk{}   = pure e
+normalizeExpressionM (Var _ n)      = normalizeExpressionM =<< lookupName n
+normalizeExpressionM (Choice _ pes) = normalizeExpressionM =<< pick pes
+-- FIXME: this is overzealous I think...
+normalizeExpressionM (Interp l es)  = concatOrFail l es
+normalizeExpressionM (Concat l es)  = concatOrFail l es
+normalizeExpressionM (Tuple l es)   = Tuple l <$> traverse normalizeExpressionM es
+normalizeExpressionM (Let _ bs e) = do
     traverse_ (uncurry bindName) bs
-    evalExpressionM e <* traverse_ deleteName (fst <$> bs)
+    normalizeExpressionM e <* traverse_ deleteName (fst <$> bs)
     -- FIXME: assumes global uniqueness in renaming
+
+concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)
+concatOrFail l = fmap (Literal l . mconcat) . traverse evalExpressionM
+
+evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
+evalExpressionM = extrText <=< normalizeExpressionM

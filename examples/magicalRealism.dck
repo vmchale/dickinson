@@ -24,6 +24,7 @@
   (:oneof
     (| "New York")
     (| "Calcutta")
+    (| "St. Petersburg")
     (| "Berlin")
     (| "Hong Kong")
     (| "Moscow")
