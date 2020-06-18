@@ -1,0 +1,9 @@
+; US states
+(:def state
+  (:oneof
+    (| "Maryland")
+    (| "Illinois")
+    (| "Wisconsin")
+    (| "Texas")
+    (| "California")
+    (| "New Hampshire")))
