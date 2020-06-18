@@ -16,7 +16,7 @@ checkNames ns = foldMapAlternative announce (group $ sort ns)
 
 -- runs after the parser
 -- | Checks that there are not name clashes at the top level.
-checkMultiple :: Dickinson Name a -> Maybe (DickinsonError a)
+checkMultiple :: Dickinson a -> Maybe (DickinsonError a)
 checkMultiple ds =
         checkNames (mapMaybe extrName ds)
     <|> foldMapAlternative checkMultipleExpr (mapMaybe extrExpr ds)
@@ -25,7 +25,7 @@ checkMultiple ds =
           extrExpr (Define _ _ e) = Just e
           extrExpr Import{}       = Nothing
 
-checkMultipleExpr :: Expression Name a -> Maybe (DickinsonError a)
+checkMultipleExpr :: Expression a -> Maybe (DickinsonError a)
 checkMultipleExpr Var{}          = Nothing
 checkMultipleExpr Literal{}      = Nothing
 checkMultipleExpr StrChunk{}     = Nothing

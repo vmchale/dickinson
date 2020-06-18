@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveAnyClass    #-}
+{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Language.Dickinson.Rename ( renameDickinson
@@ -15,11 +17,13 @@ import           Control.Composition           (thread)
 import           Control.Monad.Ext             (zipWithM)
 import           Control.Monad.State           (MonadState, State, runState)
 import           Data.Bifunctor                (second)
+import           Data.Binary                   (Binary)
 import qualified Data.IntMap                   as IM
 import qualified Data.List.NonEmpty            as NE
 import           Data.Semigroup                (Semigroup (..))
 import           Data.Text.Prettyprint.Doc     (Pretty (..), (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
+import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
@@ -28,6 +32,7 @@ import           Lens.Micro.Mtl                (modifying, use, (%=), (.=))
 
 -- | Renamer state passed between various stages of compilation
 data Renames = Renames { max_ :: Int, bound :: IM.IntMap Int }
+    deriving (Generic, Binary)
 
 instance Pretty Renames where
     pretty (Renames m b) = "max:" <+> pretty m <#> "renames:" <#*> prettyDumpBinds b
@@ -67,13 +72,13 @@ replaceVar pre@(Name n (Unique i) l) = {-# SCC "replaceVar" #-} do
         Just j  -> replaceVar $ Name n (Unique j) l
         Nothing -> pure pre
 
-renameDickinson :: Int -> Dickinson Name a -> (Dickinson Name a, Int)
+renameDickinson :: Int -> Dickinson a -> (Dickinson a, Int)
 renameDickinson m ds = runRenameM m $ renameDickinsonM ds
 
-renameDickinsonM :: (MonadState s m, HasRenames s) => Dickinson Name a -> m (Dickinson Name a)
+renameDickinsonM :: (MonadState s m, HasRenames s) => Dickinson a -> m (Dickinson a)
 renameDickinsonM = traverse renameDeclarationM
 
-renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration Name a -> m (Declaration Name a)
+renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)
 renameDeclarationM i@(Import _ n) = do
     (_, modR) <- withName n
     modifying rename modR
@@ -105,7 +110,7 @@ mapBound f (Renames m b) = Renames m (f b)
 setMax :: Int -> Renames -> Renames
 setMax i (Renames _ b) = Renames i b
 
-renameExpressionM :: (MonadState s m, HasRenames s) => Expression Name a -> m (Expression Name a)
+renameExpressionM :: (MonadState s m, HasRenames s) => Expression a -> m (Expression a)
 renameExpressionM e@Literal{} = pure e
 renameExpressionM e@StrChunk{} = pure e
 renameExpressionM (Var p n)   = Var p <$> replaceVar n

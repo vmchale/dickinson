@@ -29,7 +29,7 @@ main =
                     ]
                 , env encoded $ \e ->
                   bgroup "decoder"
-                    [ bench "bench/data/multiple.dck" $ nf (decode :: BSL.ByteString -> Dickinson Name ()) e
+                    [ bench "bench/data/multiple.dck" $ nf (decode :: BSL.ByteString -> Dickinson ()) e
                     ]
                 , env multiParsed $ \p ->
                   bgroup "check"
@@ -48,8 +48,8 @@ main =
           multiParsed = either throw id . parse <$> BSL.readFile "bench/data/multiple.dck"
           encoded = encode . yeet <$> multiParsed
 
-yeet :: Dickinson Name AlexPosn -> Dickinson Name ()
+yeet :: Dickinson AlexPosn -> Dickinson ()
 yeet = fmap void
 
-plainExpr :: (UniqueCtx, Dickinson Name a) -> Dickinson Name a
+plainExpr :: (UniqueCtx, Dickinson a) -> Dickinson a
 plainExpr = fst . uncurry renameDickinson

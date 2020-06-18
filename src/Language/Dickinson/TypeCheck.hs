@@ -13,7 +13,7 @@ import           Language.Dickinson.Name
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
 
-tyAssert :: DickinsonTy () -> Expression Name () -> TypeM ()
+tyAssert :: DickinsonTy () -> Expression () -> TypeM ()
 tyAssert ty e = do
     ty' <- typeOf e
     unless (ty' == ty) $
@@ -29,13 +29,13 @@ tyInsert (Name _ (Unique i) _) ty = modify (IM.insert i ty)
 tyDelete :: Name a -> TypeM ()
 tyDelete (Name _ (Unique i) _) = modify (IM.delete i)
 
-tyMatch :: NonEmpty (Expression Name ()) -> TypeM (DickinsonTy ())
+tyMatch :: NonEmpty (Expression ()) -> TypeM (DickinsonTy ())
 tyMatch (e :| es) = do
     ty <- typeOf e
     traverse_ (tyAssert $ TyText ()) es $> ty
 
 -- run after global renamer &c.
-typeOf :: Expression Name () -> TypeM (DickinsonTy ())
+typeOf :: Expression () -> TypeM (DickinsonTy ())
 typeOf Literal{}  = pure $ TyText ()
 typeOf StrChunk{} = pure $ TyText ()
 typeOf (Choice _ brs) = tyMatch (snd <$> brs)

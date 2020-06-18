@@ -22,7 +22,7 @@ goldenTests =
         , renameDckFile "test/data/lambda.dck"
         ]
 
-prettyBSL :: Pretty (name a) => Dickinson name a -> BSL.ByteString
+prettyBSL :: Dickinson a -> BSL.ByteString
 prettyBSL = encodeUtf8 . dickinsonLazyText . prettyDickinson
 
 withDckFile :: FilePath -> TestTree

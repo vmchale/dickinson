@@ -22,7 +22,7 @@ data DickinsonError a = UnfoundName a (Name a)
                       | MultipleNames a (Name a) -- TODO: throw both?
                       | ParseErr (ParseError a)
                       | ModuleNotFound a (Name a)
-                      | TypeMismatch (Expression Name a) (DickinsonTy a) (DickinsonTy a) -- TODO: location information
+                      | TypeMismatch (Expression a) (DickinsonTy a) (DickinsonTy a) -- TODO: location information
                       deriving (Generic, NFData)
 
 instance (Pretty a) => Show (DickinsonError a) where

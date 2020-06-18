@@ -85,10 +85,10 @@ parens(p)
 brackets(p)
     : lsqbracket p rsqbracket { $2 }
 
-Dickinson :: { Dickinson Name AlexPosn }
+Dickinson :: { Dickinson AlexPosn }
           : many(parens(Declaration)) { reverse $1 }
 
-Declaration :: { Declaration Name AlexPosn }
+Declaration :: { Declaration AlexPosn }
             : def Name Expression { Define $1 $2 $3 }
             | import Name { Import $1 $2 }
 
@@ -100,14 +100,14 @@ Type :: { DickinsonTy AlexPosn }
      | arrow Type Type { TyFun $1 $2 $3 }
      | parens(Type) { $1 }
 
-Bind :: { (Name AlexPosn, Expression Name AlexPosn) }
+Bind :: { (Name AlexPosn, Expression AlexPosn) }
      : Name Expression { ($1, $2) }
 
-Interp :: { Expression Name AlexPosn }
+Interp :: { Expression AlexPosn }
 Interp : strChunk { StrChunk (loc $1) (str $1) }
        | beginInterp Expression endInterp { $2 }
 
-Expression :: { Expression Name AlexPosn }
+Expression :: { Expression AlexPosn }
            : branch some(parens(WeightedLeaf)) { Choice $1 (NE.reverse $2) }
            | oneof some(parens(Leaf)) { Choice $1 (NE.reverse (weight $2)) }
            | let some(brackets(Bind)) Expression { Let $1 (NE.reverse $2) $3 }
@@ -118,19 +118,19 @@ Expression :: { Expression Name AlexPosn }
            | strBegin some(Interp) strEnd { Interp $1 (toList $ NE.reverse $2) }
            | parens(Expression) { $1 }
 
-WeightedLeaf :: { (Double, Expression Name AlexPosn) }
+WeightedLeaf :: { (Double, Expression AlexPosn) }
              : vbar num Expression { ($2, $3) }
 
-Leaf :: { Expression Name AlexPosn }
+Leaf :: { Expression AlexPosn }
      : vbar Expression { $2 }
 
-DeclarationOrExpression :: { Either (Declaration Name AlexPosn) (Expression Name AlexPosn) }
+DeclarationOrExpression :: { Either (Declaration AlexPosn) (Expression AlexPosn) }
                         : Expression { Right $1 }
                         | parens(Declaration) { Left $1 }
 
 {
 
-weight :: NonEmpty (Expression name a) -> NonEmpty (Double, Expression name a)
+weight :: NonEmpty (Expression a) -> NonEmpty (Double, Expression a)
 weight es = (recip, ) <$> es
     where recip = 1 / (fromIntegral $ length es)
 
@@ -152,16 +152,16 @@ instance (Pretty a, Typeable a) => Exception (ParseError a)
 
 type Parse = ExceptT (ParseError AlexPosn) Alex
 
-parse :: BSL.ByteString -> Either (ParseError AlexPosn) (Dickinson Name AlexPosn)
+parse :: BSL.ByteString -> Either (ParseError AlexPosn) (Dickinson AlexPosn)
 parse = fmap snd . parseWithMax
 
-parseReplWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Either (Declaration Name AlexPosn) (Expression Name AlexPosn))
+parseReplWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Either (Declaration AlexPosn) (Expression AlexPosn))
 parseReplWithCtx = parseWithInitSt parseRepl
 
-parseWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Dickinson Name AlexPosn)
+parseWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Dickinson AlexPosn)
 parseWithCtx = parseWithInitSt parseDickinson
 
-parseWithMax :: BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, Dickinson Name AlexPosn)
+parseWithMax :: BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, Dickinson AlexPosn)
 parseWithMax = parseWrapper parseDickinson
 
 parseWithInitSt :: Parse a -> BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, a)

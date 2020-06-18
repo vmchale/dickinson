@@ -43,20 +43,21 @@ loop = do
     inp <- getInputLine "emd> "
     case words <$> inp of
         -- TODO: qualified imports?
-        Just []        -> loop
-        Just (":l":fs) -> traverse loadFile fs *> loop
-        Just [":q"]    -> pure ()
-        Just [":list"] -> listNames *> loop
-        Just [":dump"] -> dumpSt *> loop
-        -- FIXME: expression renames?
-        -- lexer has no context...
-        Just{}         -> printExpr (fromJust inp) *> loop
-        Nothing        -> pure ()
+        Just []           -> loop
+        Just (":l":fs)    -> traverse loadFile fs *> loop
+        Just (":load":fs) -> traverse loadFile fs *> loop
+        Just [":q"]       -> pure ()
+        Just [":quit"]    -> pure ()
+        Just [":list"]    -> listNames *> loop
+        Just [":dump"]    -> dumpSt *> loop
+        -- TODO: erase/delete names?
+        Just{}            -> printExpr (fromJust inp) *> loop
+        Nothing           -> pure ()
 
 dumpSt :: Repl AlexPosn ()
 dumpSt = do
     st <- lift get
-    liftIO $ putDoc $ pretty st
+    liftIO $ putDoc $ pretty st <> hardline
 
 listNames :: Repl AlexPosn ()
 listNames = liftIO . traverse_ TIO.putStrLn =<< names
