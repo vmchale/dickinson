@@ -13,6 +13,7 @@ module Language.Dickinson ( -- * Parser
                           , alexInitUserState
                           -- * Renamer
                           , maxLens
+                          , balanceMax
                           , initRenames
                           , renameDickinson
                           , renameDickinsonM

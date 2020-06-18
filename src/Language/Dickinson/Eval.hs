@@ -12,6 +12,7 @@ module Language.Dickinson.Eval ( EvalM
                                , findDecl
                                , findMain
                                , lexerStateLens
+                               , balanceMax
                                ) where
 
 import           Control.Monad.Except          (ExceptT, MonadError, runExceptT, throwError)
@@ -35,8 +36,8 @@ import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
-import           Lens.Micro                    (Lens', over)
-import           Lens.Micro.Mtl                ((.=))
+import           Lens.Micro                    (Lens', over, _1)
+import           Lens.Micro.Mtl                (use, (.=))
 import           System.Random                 (StdGen, newStdGen, randoms)
 
 -- | The state during evaluation
@@ -153,6 +154,14 @@ evalDickinsonAsMain d =
 loadDickinson :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m) => Dickinson Name AlexPosn -> m ()
 loadDickinson = traverse_ addDecl
 
+balanceMax :: MonadState (EvalSt a) m => m ()
+balanceMax = do
+    m0 <- use (rename.maxLens)
+    m1 <- use (lexerStateLens._1)
+    let m' = max m0 m1
+    rename.maxLens .= m'
+    lexerStateLens._1 .= m'
+
 -- TODO: MonadIO to addDecl so can import
 addDecl :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m) => Declaration Name AlexPosn -> m ()
 addDecl (Define _ n e) = bindName n e *> topLevelAdd n
@@ -163,6 +172,7 @@ addDecl (Import l n) = do
         Just f ->  do
             fileRead <- parseEval =<< liftIO (BSL.readFile f)
             loadDickinson =<< renameDickinsonM fileRead
+            balanceMax
         Nothing -> throwError (ModuleNotFound l n)
         -- FIXME: this doesn't handle transitive imports
 

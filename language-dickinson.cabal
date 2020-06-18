@@ -143,7 +143,9 @@ executable emd
         microlens-mtl -any,
         microlens -any,
         containers -any,
-        pretty-ext -any
+        pretty-ext -any,
+        filepath -any,
+        directory -any
 
     if impl(ghc >=8.0)
         ghc-options:

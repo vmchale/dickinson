@@ -6,7 +6,7 @@ module REPL ( dickinsonRepl
 
 import           Control.Monad.Except                  (runExceptT)
 import           Control.Monad.IO.Class                (liftIO)
-import           Control.Monad.State.Lazy              (MonadState, StateT, evalStateT, get, gets, lift)
+import           Control.Monad.State.Lazy              (StateT, evalStateT, get, gets, lift)
 import qualified Data.ByteString.Lazy                  as BSL
 import           Data.Foldable                         (traverse_)
 import qualified Data.Map                              as M
@@ -20,7 +20,9 @@ import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Language.Dickinson
 import           Lens.Micro                            (_1)
 import           Lens.Micro.Mtl                        (use, (.=))
-import           System.Console.Haskeline              (InputT, defaultSettings, getInputLine, runInputT)
+import           System.Console.Haskeline              (InputT, defaultSettings, getInputLine, historyFile, runInputT)
+import           System.Directory                      (getHomeDirectory)
+import           System.FilePath                       ((</>))
 import           System.Random                         (newStdGen, randoms)
 
 dickinsonRepl :: IO ()
@@ -31,8 +33,10 @@ type Repl a = InputT (StateT (EvalSt a) IO)
 runRepl :: Repl a x -> IO x
 runRepl x = do
     g <- newStdGen
+    emdDir <- (</> ".emd_history") <$> getHomeDirectory
     let initSt = EvalSt (randoms g) mempty (initRenames 0) mempty alexInitUserState
-    flip evalStateT initSt $ runInputT defaultSettings x
+    let emdSettings = defaultSettings { historyFile = Just emdDir }
+    flip evalStateT initSt $ runInputT emdSettings x
 
 loop :: Repl AlexPosn ()
 loop = do
@@ -69,14 +73,6 @@ setSt newSt = lift $ do
     rename.maxLens .= newM
 
     where fst3 (x, _, _) = x
-
-balanceMax :: MonadState (EvalSt a) m => m ()
-balanceMax = do
-    m0 <- use (rename.maxLens)
-    m1 <- use (lexerStateLens._1)
-    let m' = max m0 m1
-    rename.maxLens .= m'
-    lexerStateLens._1 .= m'
 
 printExpr :: String -> Repl AlexPosn ()
 printExpr str = do
