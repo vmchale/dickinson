@@ -15,7 +15,7 @@ import qualified Data.Text                             as T
 import qualified Data.Text.IO                          as TIO
 import qualified Data.Text.Lazy                        as TL
 import           Data.Text.Lazy.Encoding               (encodeUtf8)
-import           Data.Text.Prettyprint.Doc             (Pretty (pretty))
+import           Data.Text.Prettyprint.Doc             (Pretty (pretty), hardline)
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Language.Dickinson
 import           Lens.Micro                            (_1)
@@ -78,17 +78,23 @@ printExpr :: String -> Repl AlexPosn ()
 printExpr str = do
     let bsl = encodeUtf8 (TL.pack str)
     aSt <- lift $ gets lexerState
-    case parseExpressionWithCtx bsl aSt of
-        Left err -> liftIO $ putDoc (pretty err)
+    case parseReplWithCtx bsl aSt of
+        Left err -> liftIO $ putDoc (pretty err <> hardline)
         Right (newSt, p) -> do
                 setSt newSt
-                mErr <- lift $ runExceptT $ evalExpressionM =<< renameExpressionM p
-                lift balanceMax
-                putErr mErr (liftIO . TIO.putStrLn)
+                case p of
+                    Right expr -> do
+                        mErr <- lift $ runExceptT $ evalExpressionM =<< renameExpressionM expr
+                        lift balanceMax
+                        putErr mErr (liftIO . TIO.putStrLn)
+                    Left decl -> do
+                        mErr <- lift $ runExceptT $ addDecl =<< renameDeclarationM decl
+                        lift balanceMax
+                        putErr mErr (const $ pure ())
 
 putErr :: Pretty e => Either e b -> (b -> Repl a ()) -> Repl a ()
 putErr (Right x) f = f x
-putErr (Left y) _  = liftIO $ putDoc (pretty y)
+putErr (Left y) _  = liftIO $ putDoc (pretty y <> hardline)
 
 -- TODO: check
 loadFile :: FilePath -> Repl AlexPosn ()

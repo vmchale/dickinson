@@ -2,6 +2,7 @@
 
 module Language.Dickinson.Rename ( renameDickinson
                                  , renameDickinsonM
+                                 , renameDeclarationM
                                  , renameExpressionM
                                  , initRenames
                                  , maxLens

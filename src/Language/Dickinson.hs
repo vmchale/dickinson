@@ -3,7 +3,7 @@ module Language.Dickinson ( -- * Parser
                             parse
                           , parseWithMax
                           , parseWithCtx
-                          , parseExpressionWithCtx
+                          , parseReplWithCtx
                           , ParseError (..)
                           -- * Lexer
                           , AlexPosn
@@ -15,8 +15,10 @@ module Language.Dickinson ( -- * Parser
                           , maxLens
                           , balanceMax
                           , initRenames
+                          , addDecl
                           , renameDickinson
                           , renameDickinsonM
+                          , renameDeclarationM
                           , renameExpressionM
                           , UniqueCtx
                           , Renames

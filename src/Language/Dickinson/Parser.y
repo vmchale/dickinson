@@ -7,7 +7,7 @@
     module Language.Dickinson.Parser ( parse
                                      , parseWithMax
                                      , parseWithCtx
-                                     , parseExpressionWithCtx
+                                     , parseReplWithCtx
                                      , ParseError (..)
                                      ) where
 
@@ -89,7 +89,7 @@ Dickinson :: { Dickinson Name AlexPosn }
           : many(parens(Declaration)) { reverse $1 }
 
 Declaration :: { Declaration Name AlexPosn }
-            : def Name parens(Expression) { Define $1 $2 $3 }
+            : def Name Expression { Define $1 $2 $3 }
             | import Name { Import $1 $2 }
 
 Name :: { Name AlexPosn }
@@ -126,7 +126,7 @@ Leaf :: { Expression Name AlexPosn }
 
 DeclarationOrExpression :: { Either (Declaration Name AlexPosn) (Expression Name AlexPosn) }
                         : Expression { Right $1 }
-                        | Declaration { Left $1 }
+                        | parens(Declaration) { Left $1 }
 
 {
 
@@ -155,8 +155,8 @@ type Parse = ExceptT (ParseError AlexPosn) Alex
 parse :: BSL.ByteString -> Either (ParseError AlexPosn) (Dickinson Name AlexPosn)
 parse = fmap snd . parseWithMax
 
-parseExpressionWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Expression Name AlexPosn)
-parseExpressionWithCtx = parseWithInitSt parseExpression
+parseReplWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Either (Declaration Name AlexPosn) (Expression Name AlexPosn))
+parseReplWithCtx = parseWithInitSt parseRepl
 
 parseWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Dickinson Name AlexPosn)
 parseWithCtx = parseWithInitSt parseDickinson
