@@ -35,7 +35,7 @@ main =
                 , env multiParsed $ \p ->
                   bgroup "check"
                     [ bench "bench/data/multiple.dck" $ nf checkMultiple p
-                    , bench "bench/data/multiple.dck" $ nf checkDuplicates p
+                    , bench "bench/data/multiple.dck" $ nf checkDuplicates p -- TODO: better example
                     ]
                 , bgroup "result"
                     [ bench "test/eval/context.dck" $ nfIO (evalFile "test/eval/context.dck")

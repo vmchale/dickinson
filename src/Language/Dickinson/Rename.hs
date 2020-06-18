@@ -14,6 +14,7 @@ module Language.Dickinson.Rename ( renameDickinson
                                  ) where
 
 import           Control.Composition           (thread)
+import           Control.Monad                 ((<=<))
 import           Control.Monad.Ext             (zipWithM)
 import           Control.Monad.State           (MonadState, State, runState)
 import           Data.Bifunctor                (second)
@@ -76,17 +77,23 @@ renameDickinson :: Int -> Dickinson a -> (Dickinson a, Int)
 renameDickinson m ds = runRenameM m $ renameDickinsonM ds
 
 renameDickinsonM :: (MonadState s m, HasRenames s) => Dickinson a -> m (Dickinson a)
-renameDickinsonM = traverse renameDeclarationM
+renameDickinsonM = traverse renameDeclarationM <=< traverse insDeclM
 
-renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)
-renameDeclarationM i@(Import _ n) = do
+-- broadcast first...
+insDeclM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)
+insDeclM i@(Import _ n) = do
     (_, modR) <- withName n
     modifying rename modR
     pure i
-renameDeclarationM (Define p n e) = do
+insDeclM (Define p n e) = do
     (n', modR) <- withName n
     modifying rename modR
-    Define p n' <$> renameExpressionM e
+    pure $ Define p n' e
+
+renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)
+renameDeclarationM i@Import{} = pure i
+renameDeclarationM (Define p n e) = do
+    Define p n <$> renameExpressionM e
 
 withRenames :: (HasRenames s, MonadState s m) => (Renames -> Renames) -> m a -> m a
 withRenames modSt act = do

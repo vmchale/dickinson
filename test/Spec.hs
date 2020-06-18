@@ -6,7 +6,7 @@ import           Control.Exception    (throw)
 import qualified Data.ByteString.Lazy as BSL
 import           Data.Either          (isRight)
 import           Data.List.NonEmpty   (NonEmpty (..))
-import           Data.Maybe           (isJust)
+import           Data.Maybe           (isJust, isNothing)
 import           Golden
 import           Language.Dickinson
 import           Test.Tasty
@@ -36,6 +36,7 @@ parserTests =
         , parseNoError "examples/shakespeare.dck"
         , detectScopeError "test/demo/improbableScope.dck"
         , detectBadBranch "test/demo/sillyOption.dck"
+        , noScopeError "test/demo/circular.dck"
         , findPath
         ]
 
@@ -44,25 +45,31 @@ findPath = testCase "Finds import at correct path" $ do
     res <- resolveImport ["lib", "."] (Name ("color" :| []) dummyUnique undefined)
     res @?= Just "lib/color.dck"
 
+readNoFail :: FilePath -> IO (Dickinson AlexPosn)
+readNoFail = fmap (either throw id . parse) . BSL.readFile
+
 detectBadBranch :: FilePath -> TestTree
 detectBadBranch fp = testCase "Detects suspicious branch" $ do
-    contents <- BSL.readFile fp
-    let parsed = either throw id $ parse contents
+    parsed <- readNoFail fp
     assertBool fp $ isJust (checkDuplicates parsed)
 
 detectDuplicate :: FilePath -> TestTree
 detectDuplicate fp = testCase ("Detects duplicate name (" ++ fp ++ ")") $ do
-    contents <- BSL.readFile fp
-    let parsed = either throw id $ parse contents
+    parsed <- readNoFail fp
     assertBool fp $ isJust (checkMultiple parsed)
+
+parseRename :: FilePath -> IO (Dickinson AlexPosn)
+parseRename = fmap (fst . uncurry renameDickinson . either throw id . parseWithMax) . BSL.readFile
 
 detectScopeError :: FilePath -> TestTree
 detectScopeError fp = testCase "Finds scoping error" $ do
-    contents <- BSL.readFile fp
-    let parsed = either throw id $ parseWithMax contents
-    assertBool "Detects scope error" $ isJust (checkScope . fst $ uncurry renameDickinson parsed)
+    renamed <- parseRename fp
+    assertBool fp $ isJust (checkScope renamed)
 
--- golden tests?
+noScopeError :: FilePath -> TestTree
+noScopeError fp = testCase "Reports valid scoping" $ do
+    renamed <- parseRename fp
+    assertBool fp $ isNothing (checkScope renamed)
 
 parseNoError :: FilePath -> TestTree
 parseNoError fp = testCase ("Parsing doesn't fail (" ++ fp ++ ")") $ do
