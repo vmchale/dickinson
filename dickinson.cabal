@@ -44,6 +44,7 @@ library
         Language.Dickinson.Error
         Language.Dickinson.Pretty
         Language.Dickinson.Check
+        Language.Dickinson.Check.Pattern
         Language.Dickinson.ScopeCheck
         Language.Dickinson.DuplicateCheck
         Language.Dickinson.Unique

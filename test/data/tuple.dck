@@ -1,0 +1,9 @@
+(:def fst
+  (:lambda xy (text, text)
+    (:match (x, _)
+      x)))
+
+(:def dog
+  (:oneof
+    (| ("he", "boy"))
+    (| ("she", "girl"))))
