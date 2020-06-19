@@ -90,6 +90,7 @@ insDeclM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)
 insDeclM i@(Import _ n) = do
     (_, modR) <- withName n
     modifying rename modR
+    -- FIXME: take a MonadIO maybe?? do it all at once...
     pure i
 insDeclM (Define p n e) = do
     (n', modR) <- withName n
