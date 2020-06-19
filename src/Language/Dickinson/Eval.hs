@@ -114,10 +114,7 @@ deleteName :: (MonadState (EvalSt a) m) => Name a -> m ()
 deleteName (Name _ (Unique u) _) = modify (over boundExprLens (IM.delete u))
 
 lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression a)
-lookupName n@(Name _ u l) = do
-    -- TODO: rename transitively first? this may be slow...
-    (Unique u') <- replaceUnique u
-    go =<< gets (IM.lookup u'.boundExpr)
+lookupName n@(Name _ (Unique u) l) = go =<< gets (IM.lookup u.boundExpr)
     where go Nothing  = throwError (UnfoundName l n)
           go (Just x) = renameExpressionM x
 
