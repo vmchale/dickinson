@@ -16,20 +16,21 @@ module Language.Dickinson.Eval ( EvalM
                                , balanceMax
                                ) where
 
-import           Control.Monad                 ((<=<))
-import           Control.Monad.Except          (ExceptT, MonadError, runExceptT, throwError)
-import           Control.Monad.IO.Class        (MonadIO (..))
-import           Control.Monad.State.Lazy      (MonadState, StateT, evalStateT, gets, modify)
-import qualified Data.ByteString.Lazy          as BSL
-import           Data.Foldable                 (toList, traverse_)
-import           Data.Functor                  (($>))
-import qualified Data.IntMap                   as IM
-import           Data.List.NonEmpty            (NonEmpty ((:|)), (<|))
-import qualified Data.List.NonEmpty            as NE
-import qualified Data.Map                      as M
-import qualified Data.Text                     as T
-import           Data.Text.Prettyprint.Doc     (Doc, Pretty (..), vsep, (<+>))
+import           Control.Monad                         ((<=<))
+import           Control.Monad.Except                  (ExceptT, MonadError, runExceptT, throwError)
+import           Control.Monad.IO.Class                (MonadIO (..))
+import           Control.Monad.State.Lazy              (MonadState, StateT, evalStateT, get, gets, modify)
+import qualified Data.ByteString.Lazy                  as BSL
+import           Data.Foldable                         (toList, traverse_)
+import           Data.Functor                          (($>))
+import qualified Data.IntMap                           as IM
+import           Data.List.NonEmpty                    (NonEmpty ((:|)), (<|))
+import qualified Data.List.NonEmpty                    as NE
+import qualified Data.Map                              as M
+import qualified Data.Text                             as T
+import           Data.Text.Prettyprint.Doc             (Doc, Pretty (..), vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
+import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Language.Dickinson.Error
 import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
@@ -39,9 +40,9 @@ import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
-import           Lens.Micro                    (Lens', over, _1)
-import           Lens.Micro.Mtl                (use, (.=))
-import           System.Random                 (StdGen, newStdGen, randoms)
+import           Lens.Micro                            (Lens', over, _1)
+import           Lens.Micro.Mtl                        (use, (.=))
+import           System.Random                         (StdGen, newStdGen, randoms)
 
 -- | The state during evaluation
 data EvalSt a = EvalSt
@@ -117,7 +118,10 @@ deleteName :: (MonadState (EvalSt a) m) => Name a -> m ()
 deleteName (Name _ (Unique u) _) = modify (over boundExprLens (IM.delete u))
 
 lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression a)
-lookupName n@(Name _ (Unique u) l) = go =<< gets (IM.lookup u.boundExpr)
+lookupName n@(Name _ u l) = do
+    -- TODO: rename transitively first? this may be slow...
+    (Unique u') <- replaceUnique u
+    go =<< gets (IM.lookup u'.boundExpr)
     where go Nothing  = throwError (UnfoundName l n)
           go (Just x) = renameExpressionM x
 
@@ -171,6 +175,11 @@ balanceMax = do
     rename.maxLens .= m'
     lexerStateLens._1 .= m'
 
+debugSt :: (MonadIO m, MonadState (EvalSt a) m) => m ()
+debugSt = do
+    st <- get
+    liftIO $ putDoc (pretty st)
+
 -- TODO: MonadIO to addDecl so can import
 addDecl :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m) => Declaration AlexPosn -> m ()
 addDecl (Define _ n e) = bindName n e *> topLevelAdd n
@@ -183,7 +192,7 @@ addDecl (Import l n) = do
             loadDickinson =<< renameDickinsonM fileRead
             balanceMax
         Nothing -> throwError (ModuleNotFound l n)
-        -- FIXME: this doesn't handle transitive imports
+        -- FIXME: this doesn't hide transitive imports
 
 extrText :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 extrText (Literal _ t)  = pure t

@@ -8,6 +8,7 @@ module Language.Dickinson.Rename ( renameDickinson
                                  , renameExpressionM
                                  , initRenames
                                  , maxLens
+                                 , replaceUnique
                                  , RenameM
                                  , Renames (..)
                                  , HasRenames (..)
@@ -66,12 +67,17 @@ runRenameM :: UniqueCtx -> RenameM a x -> (x, UniqueCtx)
 runRenameM m x = second max_ (runState x (initRenames m))
 
 -- Make sure you don't have cycles in the renames map!
-replaceVar :: (MonadState s m, HasRenames s) => Name a -> m (Name a)
-replaceVar pre@(Name n (Unique i) l) = {-# SCC "replaceVar" #-} do
+replaceUnique :: (MonadState s m, HasRenames s) => Unique -> m Unique
+replaceUnique u@(Unique i) = do
     rSt <- use (rename.boundLens)
     case IM.lookup i rSt of
-        Just j  -> replaceVar $ Name n (Unique j) l
-        Nothing -> pure pre
+        Nothing -> pure u
+        Just j  -> replaceUnique (Unique j)
+
+replaceVar :: (MonadState s m, HasRenames s) => Name a -> m (Name a)
+replaceVar (Name n u l) = {-# SCC "replaceVar" #-} do
+    u' <- replaceUnique u
+    pure $ Name n u' l
 
 renameDickinson :: Int -> Dickinson a -> (Dickinson a, Int)
 renameDickinson m ds = runRenameM m $ renameDickinsonM ds

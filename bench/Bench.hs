@@ -9,12 +9,11 @@ import           Language.Dickinson
 
 main :: IO ()
 main =
-    defaultMain [ env parses $ \ ~(c, s, i) ->
+    defaultMain [ env parses $ \ ~(c, s) ->
                   bgroup "parse"
                     [ bench "lib/color.dck" $ nf parse c
                     , bench "lex lib/color.dck" $ nf lexDickinson c
                     , bench "examples/shakespeare.dck" $ nf parse s
-                    , bench "examples/insult.dck" $ nf parse i
                     ]
                 , env libParsed $ \p ->
                   bgroup "renamer"
@@ -40,14 +39,12 @@ main =
                 , bgroup "result"
                     [ bench "test/eval/context.dck" $ nfIO (evalFile "test/eval/context.dck")
                     , bench "examples/shakespeare.dck" $ nfIO (evalFile "examples/shakespeare.dck")
-                    , bench "examples/insult.dck" $ nfIO (evalFile "examples/insult.dck")
                     ]
                 ]
 
     where libFile = BSL.readFile "lib/color.dck"
           shakespeare = BSL.readFile "examples/shakespeare.dck"
-          insult = BSL.readFile "examples/insult.dck"
-          parses = (,,) <$> libFile <*> shakespeare <*> insult
+          parses = (,) <$> libFile <*> shakespeare
           libParsed = either throw id . parseWithMax <$> BSL.readFile "bench/data/nestLet.dck"
           multiParsed = either throw id . parse <$> BSL.readFile "bench/data/multiple.dck"
           encoded = encode . yeet <$> multiParsed
