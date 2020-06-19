@@ -1,5 +1,5 @@
 cabal-version:      2.0
-name:               language-dickinson
+name:               dickinson
 version:            0.1.0.0
 license:            BSD3
 license-file:       LICENSE
@@ -134,7 +134,7 @@ executable emd
     ghc-options:      -Wall -rtsopts -with-rtsopts=-A4M
     build-depends:
         base -any,
-        language-dickinson -any,
+        dickinson -any,
         optparse-applicative -any,
         bytestring -any,
         prettyprinter -any,
@@ -175,7 +175,7 @@ test-suite dickinson-test
     ghc-options:      -threaded -rtsopts -with-rtsopts=-N -Wall
     build-depends:
         base -any,
-        language-dickinson -any,
+        dickinson -any,
         tasty -any,
         tasty-hunit -any,
         bytestring -any,
@@ -206,7 +206,7 @@ benchmark dickinson-bench
     ghc-options:      -Wall -rtsopts -with-rtsopts=-A4M
     build-depends:
         base -any,
-        language-dickinson -any,
+        dickinson -any,
         binary -any,
         criterion -any,
         bytestring -any
