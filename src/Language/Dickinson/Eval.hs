@@ -47,6 +47,7 @@ data EvalSt a = EvalSt
     , boundExpr     :: IM.IntMap (Expression a)
     , renameCtx     :: Renames
     -- TODO: map to uniques or an expression?
+    -- TODO: module context for topLevel?
     , topLevel      :: M.Map T.Text Unique
     -- For imports & such.
     , lexerState    :: AlexUserState
