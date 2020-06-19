@@ -53,8 +53,8 @@ module Language.Dickinson ( -- * Parser
                           -- * Pretty-printing
                           , prettyDickinson
                           -- * Version info
-                          , languageDickinsonVersion
-                          , languageDickinsonVersionString
+                          , dickinsonVersion
+                          , dickinsonVersionString
                           ) where
 
 import           Control.Applicative               ((<|>))
@@ -78,7 +78,7 @@ import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
-import qualified Paths_language_dickinson          as P
+import qualified Paths_dickinson                   as P
 
 -- | Check scoping
 checkFile :: FilePath -> IO ()
@@ -109,8 +109,8 @@ evalFile = fmap yeet . uncurry evalIO . second evalDickinsonAsMain . yeet . flip
 yeet :: Exception e => Either e x -> x
 yeet = either throw id
 
-languageDickinsonVersion :: V.Version
-languageDickinsonVersion = P.version
+dickinsonVersion :: V.Version
+dickinsonVersion = P.version
 
-languageDickinsonVersionString :: String
-languageDickinsonVersionString = V.showVersion languageDickinsonVersion
+dickinsonVersionString :: String
+dickinsonVersionString = V.showVersion dickinsonVersion

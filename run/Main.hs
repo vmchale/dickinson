@@ -58,7 +58,7 @@ wrapper = info (helper <*> versionMod <*> act)
     <> header "Dickinson - a text-generation language")
 
 versionMod :: Parser (a -> a)
-versionMod = infoOption languageDickinsonVersionString (short 'V' <> long "version" <> help "Show version")
+versionMod = infoOption dickinsonVersionString (short 'V' <> long "version" <> help "Show version")
 
 run :: Act -> IO ()
 run (Run fp)      = TIO.putStrLn =<< evalFile fp
