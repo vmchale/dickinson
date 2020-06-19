@@ -20,9 +20,7 @@ import           Control.Monad                         ((<=<))
 import           Control.Monad.Except                  (ExceptT, MonadError, runExceptT, throwError)
 import           Control.Monad.IO.Class                (MonadIO (..))
 import           Control.Monad.State.Lazy              (MonadState, StateT, evalStateT, get, gets, modify)
-import qualified Data.ByteString.Lazy                  as BSL
 import           Data.Foldable                         (toList, traverse_)
-import           Data.Functor                          (($>))
 import qualified Data.IntMap                           as IM
 import           Data.List.NonEmpty                    (NonEmpty ((:|)), (<|))
 import qualified Data.List.NonEmpty                    as NE
@@ -32,10 +30,8 @@ import           Data.Text.Prettyprint.Doc             (Doc, Pretty (..), vsep, 
 import           Data.Text.Prettyprint.Doc.Ext
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Language.Dickinson.Error
-import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
-import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
@@ -150,21 +146,12 @@ findDecl t = do
 findMain :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => m (Expression a)
 findMain = findDecl "main"
 
--- parse declarations from an import
-parseEval :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m) => BSL.ByteString -> m (Dickinson AlexPosn)
-parseEval bsl = do
-    preSt <- gets lexerState
-    let res = parseWithCtx bsl preSt
-    case res of
-        Right (newSt, d) -> (lexerStateLens .= newSt) $> d
-        Left err         -> throwError (ParseErr err)
-
-evalDickinsonAsMain :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m) => Dickinson AlexPosn -> m T.Text
+evalDickinsonAsMain :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m) => Dickinson AlexPosn -> m T.Text
 evalDickinsonAsMain d =
     loadDickinson d *>
     (evalExpressionM =<< findMain)
 
-loadDickinson :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m) => Dickinson AlexPosn -> m ()
+loadDickinson :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m) => Dickinson AlexPosn -> m ()
 loadDickinson = traverse_ addDecl
 
 balanceMax :: MonadState (EvalSt a) m => m ()
@@ -181,18 +168,8 @@ debugSt = do
     liftIO $ putDoc (pretty st)
 
 -- TODO: MonadIO to addDecl so can import
-addDecl :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m) => Declaration AlexPosn -> m ()
+addDecl :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m) => Declaration AlexPosn -> m ()
 addDecl (Define _ n e) = bindName n e *> topLevelAdd n
-addDecl (Import l n) = do
-    -- TODO: make this relative to the file?
-    mFile <- resolveImport [".", "lib"] n -- FIXME: don't hardcode this
-    case mFile of
-        Just f -> do
-            fileRead <- parseEval =<< liftIO (BSL.readFile f)
-            loadDickinson =<< renameDickinsonM fileRead
-            balanceMax
-        Nothing -> throwError (ModuleNotFound l n)
-        -- FIXME: this doesn't hide transitive imports
 
 extrText :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 extrText (Literal _ t)  = pure t
