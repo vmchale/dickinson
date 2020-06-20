@@ -5,7 +5,13 @@ import           Control.Monad        (void)
 import           Criterion.Main
 import           Data.Binary          (decode, encode)
 import qualified Data.ByteString.Lazy as BSL
-import           Language.Dickinson
+import           Language.Dickinson.Parser
+import           Language.Dickinson.Lexer
+import           Language.Dickinson.File
+import           Language.Dickinson.Check
+import           Language.Dickinson.DuplicateCheck
+import           Language.Dickinson.ScopeCheck
+import           Language.Dickinson.Rename
 
 main :: IO ()
 main =
