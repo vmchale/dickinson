@@ -17,7 +17,11 @@ import qualified Data.Text.Lazy                        as TL
 import           Data.Text.Lazy.Encoding               (encodeUtf8)
 import           Data.Text.Prettyprint.Doc             (Pretty (pretty), hardline)
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
-import           Language.Dickinson
+import           Language.Dickinson.File
+import           Language.Dickinson.Parser
+import           Language.Dickinson.Lexer
+import           Language.Dickinson.Eval
+import           Language.Dickinson.Rename
 import           Lens.Micro                            (_1)
 import           Lens.Micro.Mtl                        (use, (.=))
 import           System.Console.Haskeline              (InputT, defaultSettings, getInputLine, historyFile, runInputT)

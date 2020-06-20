@@ -2,8 +2,9 @@ module Main (main) where
 
 import           Data.Semigroup
 import qualified Data.Text.IO        as TIO
-import           Language.Dickinson
 import           Options.Applicative
+import Language.Dickinson.File
+import Language.Dickinson
 import           REPL
 
 -- TODO debug/verbosity options...
