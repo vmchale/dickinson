@@ -26,6 +26,7 @@ data DickinsonError a = UnfoundName a (Name a)
                       | TypeMismatch (Expression a) DickinsonTy DickinsonTy -- TODO: location information
                       | ExpectedLambda (Expression a) DickinsonTy
                       | MultiBind a (Name a) (Pattern a) -- When a variable is bound more than once in a pattern...
+                      | MalformedTuple a
                       deriving (Generic, NFData)
 
 data DickinsonWarning a = MultipleNames a (Name a) -- TODO: throw both?
@@ -46,6 +47,8 @@ instance (Pretty a) => Pretty (DickinsonError a) where
     pretty (TypeMismatch e ty ty') = "Expected" <+> pretty e <+> "to have type" <+> squotes (pretty ty) <> ", found type" <+> squotes (pretty ty')
     pretty (ModuleNotFound l n)    = "Module" <+> pretty n <> ", referenced at" <+> pretty l <> ", not found"
     pretty (ExpectedLambda e ty)   = "Expected" <+> squotes (pretty e) <+> "to be of function type, found type" <+> pretty ty
+    pretty (MultiBind l n p)       = pretty l <+> "Name" <+> pretty n <+> "is bound more than once in" <+> pretty p
+    pretty (MalformedTuple l)      = pretty l <+> "Malformed tuple"
 
 instance (Pretty a, Typeable a) => Exception (DickinsonError a)
 

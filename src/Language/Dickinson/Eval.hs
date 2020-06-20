@@ -16,7 +16,7 @@ module Language.Dickinson.Eval ( EvalM
                                , balanceMax
                                ) where
 
-import           Control.Monad                         ((<=<))
+import           Control.Monad                         (zipWithM_, (<=<))
 import           Control.Monad.Except                  (ExceptT, MonadError, runExceptT, throwError)
 import           Control.Monad.IO.Class                (MonadIO (..))
 import           Control.Monad.State.Lazy              (MonadState, StateT, evalStateT, get, gets, modify)
@@ -174,6 +174,13 @@ extrText (Literal _ t)  = pure t
 extrText (StrChunk _ t) = pure t
 extrText e              = do { ty <- typeOf e ; throwError $ TypeMismatch e TyText ty }
 
+bindPattern :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m) => Pattern a -> Expression a -> m ()
+bindPattern (PatternVar _ n) e                       = bindName n e
+bindPattern Wildcard{} _                             = pure ()
+bindPattern (PatternTuple _ []) (Tuple _ [])         = pure ()
+bindPattern (PatternTuple _ (p:ps)) (Tuple _ (e:es)) = bindPattern p e *> zipWithM_ bindPattern ps es
+bindPattern (PatternTuple l _) _                     = throwError $ MalformedTuple l
+
 normalizeExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 normalizeExpressionM e@Literal{}    = pure e
 normalizeExpressionM e@StrChunk{}   = pure e
@@ -195,6 +202,9 @@ normalizeExpressionM (Apply _ e e') = do
             normalizeExpressionM e'''
         _ -> error "Ill-typed expression"
 normalizeExpressionM e@Lambda{} = pure e
+normalizeExpressionM (Match _ e p e') =
+    (bindPattern p =<< normalizeExpressionM e) *>
+    normalizeExpressionM e'
 
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)
 concatOrFail l = fmap (Literal l . mconcat) . traverse evalExpressionM
