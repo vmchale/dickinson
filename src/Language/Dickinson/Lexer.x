@@ -71,6 +71,7 @@ tokens :-
     <0> \]                         { mkSym RSqBracket }
     <0> \$                         { mkSym DollarSign }
     <0> \,                         { mkSym Comma }
+    <0> \_                         { mkSym Underscore }
     <0> "⟶"                        { mkSym Arrow }
     <0> "->"                       { mkSym Arrow }
 
@@ -82,6 +83,7 @@ tokens :-
     <0> ":import"                  { mkKeyword KwImport }
     <0> ":lambda"                  { mkKeyword KwLambda }
     <0> "text"                     { mkKeyword KwText }
+    <0> ":match"                   { mkKeyword KwMatch }
 
     <0> @name                      { tok (\p s -> TokIdent p <$> newIdentAlex p (mkText s)) }
 
@@ -165,6 +167,7 @@ data Sym = LParen
          | Arrow
          | DollarSign
          | Comma
+         | Underscore
          deriving (Eq, Generic, NFData)
 
 instance Pretty Sym where
@@ -181,6 +184,7 @@ instance Pretty Sym where
     pretty Arrow         = "⟶"
     pretty DollarSign    = "$"
     pretty Comma         = comma
+    pretty Underscore    = "_"
 
 data Keyword = KwDef
              | KwLet
@@ -189,6 +193,7 @@ data Keyword = KwDef
              | KwImport
              | KwLambda
              | KwText
+             | KwMatch
              deriving (Eq, Generic, NFData)
 
 instance Pretty Keyword where
@@ -199,6 +204,7 @@ instance Pretty Keyword where
     pretty KwImport = ":import"
     pretty KwLambda = ":lambda"
     pretty KwText   = "text"
+    pretty KwMatch  = ":match"
 
 instance Pretty AlexPosn where
     pretty (AlexPn _ line col) = pretty line <> colon <> pretty col

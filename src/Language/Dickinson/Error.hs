@@ -25,6 +25,7 @@ data DickinsonError a = UnfoundName a (Name a)
                       | ModuleNotFound a (Name a)
                       | TypeMismatch (Expression a) DickinsonTy DickinsonTy -- TODO: location information
                       | ExpectedLambda (Expression a) DickinsonTy
+                      | MultiBind a (Name a) (Pattern a) -- When a variable is bound more than once in a pattern...
                       deriving (Generic, NFData)
 
 data DickinsonWarning a = MultipleNames a (Name a) -- TODO: throw both?

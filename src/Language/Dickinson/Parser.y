@@ -53,6 +53,7 @@ import Language.Dickinson.Unique
     arrow { TokSym $$ Arrow }
     dollar { TokSym $$ DollarSign }
     comma { TokSym $$ Comma }
+    underscore { TokSym $$ Underscore }
 
     beginInterp { TokSym $$ BeginInterp }
     endInterp { TokSym $$ EndInterp }
@@ -63,6 +64,7 @@ import Language.Dickinson.Unique
     oneof { TokKeyword $$ KwOneof }
     import { TokKeyword $$ KwImport }
     lambda { TokKeyword $$ KwLambda }
+    match { TokKeyword $$ KwMatch }
 
     text { TokKeyword $$ KwText }
 
@@ -84,7 +86,7 @@ some(p)
 
 sepBy(p,q)
     : sepBy(p,q) q p { $3 : $1 }
-    | p { [$1] }
+    | p q p { [$3, $1] }
 
 parens(p)
     : lparen p rparen { $2 }
@@ -115,17 +117,23 @@ Interp :: { Expression AlexPosn }
 Interp : strChunk { StrChunk (loc $1) (str $1) }
        | beginInterp Expression endInterp { $2 }
 
+Pattern :: { Pattern AlexPosn }
+        : ident { PatternVar (loc $1) (ident $1) }
+        | lparen sepBy(Pattern,comma) rparen { PatternTuple $1 (reverse $2) }
+        | underscore { Wildcard $1 }
+
 Expression :: { Expression AlexPosn }
            : branch some(parens(WeightedLeaf)) { Choice $1 (NE.reverse $2) }
            | oneof some(parens(Leaf)) { Choice $1 (NE.reverse (weight $2)) }
            | let some(brackets(Bind)) Expression { Let $1 (NE.reverse $2) $3 }
-           | lambda Name parens(Type) Expression { Lambda $1 $2 $3 $4 }
+           | lambda Name Type Expression { Lambda $1 $2 $3 $4 }
            | ident { Var (loc $1) (ident $1) }
            | stringLiteral { Literal (loc $1) (str $1) }
            | strBegin some(Interp) strEnd { Interp $1 (toList $ NE.reverse $2) }
            | rbracket many(Expression) { Concat $1 (reverse $2) }
            | dollar Expression Expression { Apply $1 $2 $3 }
            | lparen sepBy(Expression,comma) rparen { Tuple $1 (reverse $2) }
+           | match Expression Pattern Expression { Match $1 $2 $3 $4 }
            | parens(Expression) { $1 }
 
 WeightedLeaf :: { (Double, Expression AlexPosn) }

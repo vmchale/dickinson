@@ -1,10 +1,11 @@
 module Language.Dickinson.ScopeCheck ( checkScope
                                      ) where
 
-import           Control.Applicative       (Alternative, (<|>))
-import           Control.Monad.State       (State, evalState, get, modify)
-import           Data.Foldable             (asum, traverse_)
-import qualified Data.IntSet               as IS
+import           Control.Applicative              (Alternative, (<|>))
+import           Control.Monad.State              (State, evalState, get, modify)
+import           Data.Foldable                    (asum, traverse_)
+import qualified Data.IntSet                      as IS
+import           Language.Dickinson.Check.Pattern
 import           Language.Dickinson.Error
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
@@ -58,6 +59,11 @@ checkExpr (Let _ bs e) = do
     traverse_ insertName ns
     (<|>) <$> checkExpr e <*> mapSumM checkExpr (snd <$> bs)
         <* traverse_ deleteName ns
+checkExpr (Match _ e p e') =
+    ((<|>) <$> checkExpr e) <*> do
+        let ns = traversePattern p
+        traverse_ insertName ns
+        checkExpr e' <* traverse_ deleteName ns
 
 mapSumM :: (Traversable t, Alternative f, Applicative m) => (a -> m (f b)) -> t a -> m (f b)
 mapSumM = (fmap asum .) . traverse

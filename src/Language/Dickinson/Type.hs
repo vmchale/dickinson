@@ -6,6 +6,7 @@
 module Language.Dickinson.Type ( Dickinson
                                , Declaration (..)
                                , Expression (..)
+                               , Pattern (..)
                                , DickinsonTy (..)
                                ) where
 
@@ -32,6 +33,11 @@ data Declaration a = Define { declAnn :: a
                             }
                    deriving (Generic, NFData, Binary, Functor)
 
+data Pattern a = PatternVar a (Name a)
+               | PatternTuple a [Pattern a]
+               | Wildcard a
+               deriving (Generic, NFData, Binary, Functor)
+
 data Expression a = Literal a !T.Text
                   | StrChunk a !T.Text
                   | Choice a !(NonEmpty (Double, Expression a))
@@ -42,6 +48,7 @@ data Expression a = Literal a !T.Text
                   | Apply a (Expression a) (Expression a)
                   | Concat a [Expression a]
                   | Tuple a [Expression a]
+                  | Match a (Expression a) (Pattern a) (Expression a)
                   deriving (Generic, NFData, Binary, Functor)
                   -- TODO: tuples &. such
                   -- concat back again?
@@ -68,6 +75,10 @@ prettyInterp :: Expression a -> Doc b
 prettyInterp (StrChunk _ t) = pretty t
 prettyInterp e              = "${" <> pretty e <> "}"
 
+instance Pretty (Pattern a) where
+    pretty (PatternVar _ n)    = pretty n
+    pretty (PatternTuple _ ps) = tupled (pretty <$> ps)
+
 -- figure out indentation
 instance Pretty (Expression a) where
     pretty (Var _ n)         = pretty n
@@ -82,6 +93,7 @@ instance Pretty (Expression a) where
     pretty (Concat _ es)     = parens (rangle <+> hsep (pretty <$> es))
     pretty StrChunk{}        = error "Internal error: naked StrChunk"
     pretty (Tuple _ es)      = tupled (pretty <$> es)
+    pretty (Match _ n p e)   = parens (":match" <+> pretty n <^> pretty p <^> pretty e)
 
 instance Pretty DickinsonTy where
     pretty TyText{}     = "text"

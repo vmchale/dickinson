@@ -1,9 +1,12 @@
 (:def fst
   (:lambda xy (text, text)
-    (:match (x, _)
+    (:match xy (x, _)
       x)))
 
 (:def dog
   (:oneof
     (| ("he", "boy"))
     (| ("she", "girl"))))
+
+(:def main
+  ($ fst dog))

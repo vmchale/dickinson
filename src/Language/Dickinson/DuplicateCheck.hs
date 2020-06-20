@@ -6,7 +6,7 @@ import           Data.Foldable            (toList)
 import           Data.Foldable.Ext        (foldMapAlternative)
 import           Data.Function            (on)
 import           Data.List                (groupBy, sortBy)
-import           Data.Maybe               (catMaybes)
+import           Data.Maybe               (mapMaybe)
 import qualified Data.Text                as T
 import           Language.Dickinson.Error
 import           Language.Dickinson.Type
@@ -28,7 +28,7 @@ extrText (Literal l t) = pure (l, t)
 extrText _             = Nothing
 
 collectText :: [(b, Expression a)] -> [(a, T.Text)]
-collectText = catMaybes . fmap extrText . fmap snd
+collectText = mapMaybe (extrText . snd)
 
 checkExprDuplicates :: Expression a -> Maybe (DickinsonWarning a)
 checkExprDuplicates Var{}            = Nothing

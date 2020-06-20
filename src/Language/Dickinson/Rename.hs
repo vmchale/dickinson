@@ -124,6 +124,17 @@ mapBound f (Renames m b) = Renames m (f b)
 setMax :: Int -> Renames -> Renames
 setMax i (Renames _ b) = Renames i b
 
+renamePatternM :: (MonadState s m, HasRenames s) => Pattern a -> m (Renames -> Renames, Pattern a)
+renamePatternM w@Wildcard{}        = pure (id, w)
+renamePatternM (PatternTuple l ps) = do
+    ps' <- traverse renamePatternM ps
+    let modR = thread (fst <$> ps')
+        ps'' = snd <$> ps'
+    pure (modR, PatternTuple l ps'')
+renamePatternM (PatternVar l n) = do
+    (n', modR) <- withName n
+    pure (modR, PatternVar l n')
+
 renameExpressionM :: (MonadState s m, HasRenames s) => Expression a -> m (Expression a)
 renameExpressionM e@Literal{} = pure e
 renameExpressionM e@StrChunk{} = pure e
@@ -140,6 +151,10 @@ renameExpressionM (Apply p e e') = Apply p <$> renameExpressionM e <*> renameExp
 renameExpressionM (Lambda p n ty e) = do
     (n', modR) <- withName n
     Lambda p n' ty <$> withRenames modR (renameExpressionM e)
+renameExpressionM (Match l e p e') = do
+    preE <- renameExpressionM e
+    (modP, p') <- renamePatternM p
+    Match l preE p' <$> withRenames modP (renameExpressionM e')
 renameExpressionM (Let p bs e) = do
     newBs <- traverse withName (fst <$> bs)
     let localRenames = snd <$> newBs
