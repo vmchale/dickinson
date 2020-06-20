@@ -41,3 +41,4 @@ checkExprDuplicates (Apply _ e e')   = checkExprDuplicates e <|> checkExprDuplic
 checkExprDuplicates (Choice _ brs)   = checkNames (collectText $ toList brs)
 checkExprDuplicates (Let _ brs es)   = foldMapAlternative checkExprDuplicates (snd <$> brs) <|> checkExprDuplicates es
 checkExprDuplicates (Lambda _ _ _ e) = checkExprDuplicates e
+checkExprDuplicates (Match _ e _ e') = checkExprDuplicates e <|> checkExprDuplicates e'
