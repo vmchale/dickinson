@@ -33,7 +33,8 @@
 - [ ] Tuples/multi-return & agreement.
   - [ ] Def need product types...
     - [ ] Dog example?
-- [ ] Lambdas?
+- [x] Lambdas?
+  - [ ] typechecker that works (with mutual recursion)
 - [ ] let-bindings are kind of painful to use
 - [x] Interpolated strings
 - [ ] Builtins
