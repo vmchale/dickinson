@@ -78,6 +78,7 @@ prettyInterp e              = "${" <> pretty e <> "}"
 instance Pretty (Pattern a) where
     pretty (PatternVar _ n)    = pretty n
     pretty (PatternTuple _ ps) = tupled (pretty <$> ps)
+    pretty Wildcard{}          = "_"
 
 -- figure out indentation
 instance Pretty (Expression a) where

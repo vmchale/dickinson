@@ -1,0 +1,6 @@
+(:def prolix
+  (:let
+    [xy "hello"]
+      (:lambda xy (text, text)
+        (:match xy (x, _)
+          x))))
