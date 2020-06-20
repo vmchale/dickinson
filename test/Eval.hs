@@ -3,7 +3,7 @@
 module Eval ( evalTests
             ) where
 
-import           Language.Dickinson
+import           Language.Dickinson.File
 import           Test.Tasty         (TestTree, testGroup)
 import           Test.Tasty.HUnit   (Assertion, testCase, (@?=))
 

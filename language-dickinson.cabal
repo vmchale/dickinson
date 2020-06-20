@@ -72,9 +72,9 @@ library dickinson
         Language.Dickinson.DuplicateCheck
         Language.Dickinson.Unique
         Language.Dickinson.File
+        Language.Dickinson.Import
     other-modules:
         Language.Dickinson.Check.Pattern
-        Language.Dickinson.Import
         Control.Monad.Ext
         Data.Foldable.Ext
 

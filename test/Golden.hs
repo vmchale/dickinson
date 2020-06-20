@@ -5,7 +5,10 @@ import           Control.Exception             (throw)
 import qualified Data.ByteString.Lazy          as BSL
 import           Data.Text.Lazy.Encoding       (encodeUtf8)
 import           Data.Text.Prettyprint.Doc.Ext
-import           Language.Dickinson
+import           Language.Dickinson.Rename
+import           Language.Dickinson.Parser
+import           Language.Dickinson.Pretty
+import           Language.Dickinson.Type
 import           System.FilePath               ((-<.>))
 import           Test.Tasty                    (TestTree, testGroup)
 import           Test.Tasty.Golden             (goldenVsString)
