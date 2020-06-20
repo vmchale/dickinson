@@ -9,6 +9,7 @@
 # Documentation
 - [x] manpages
 - [ ] Tutorial/walkthrough?
+  - [ ] Getting started?
 ## Examples
 - [ ] Magical realism bot
 # Editor Integration
@@ -29,7 +30,6 @@
     - [ ] Requires expression application + type checker pass?
   - [ ] Filter? (e.g. vowels...)
 - [ ] Import/module system
-- [ ] Multiline strings
 - [ ] Tuples/multi-return & agreement.
   - [ ] Def need product types...
     - [ ] Dog example?
@@ -50,6 +50,7 @@
 # Tests
 - [ ] Escpaed characters
 - [ ] Nested interpolated strings
+- [ ] Renamer + pattern matching
 # Libraries
 - [x] Colors
 - [ ] Animals
