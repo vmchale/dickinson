@@ -1,0 +1,10 @@
+(:def fst
+  (:lambda xy (text, text)
+    (:match xy (x, _)
+      x)))
+
+(:def snd
+  (:lambda xy (text, text)
+    (:match xy (_, y)
+      y)))
+
