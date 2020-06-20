@@ -11,7 +11,9 @@
 - [ ] Tutorial/walkthrough?
   - [ ] Getting started?
 ## Examples
-- [ ] Magical realism bot
+- [ ] Poetry bot...? Rumi?
+- [ ] Storytelling? RPG? idk
+- [ ] https://www.nadyaprimak.com/blog/programming/poetry-bot/
 # Editor Integration
 - [ ] Syntastic checker
 # Passes
