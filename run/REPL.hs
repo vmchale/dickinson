@@ -21,6 +21,7 @@ import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Data.Tuple.Ext                        (fst4)
 import           Language.Dickinson.Eval
 import           Language.Dickinson.Lexer              (AlexPosn, AlexUserState, alexInitUserState)
+import           Language.Dickinson.Lib
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Lens.Micro                            (_1)
@@ -92,7 +93,8 @@ printExpr str = do
                         lift balanceMax
                         putErr mErr (liftIO . TIO.putStrLn)
                     Left decl -> do
-                        mErr <- lift $ runExceptT $ addDecl ["."] =<< renameDeclarationM decl
+                        pathMod <- liftIO defaultLibPath
+                        mErr <- lift $ runExceptT $ addDecl (pathMod ["."]) =<< renameDeclarationM decl
                         lift balanceMax
                         putErr mErr (const $ pure ())
 
@@ -109,6 +111,7 @@ loadFile fp = do
         Left err     -> liftIO $ putDoc (pretty err)
         Right (newSt, p) -> do
             setSt newSt
-            mErr <- lift $ runExceptT $ loadDickinson ["."] =<< renameDickinsonM p
+            pathMod <- liftIO defaultLibPath
+            mErr <- lift $ runExceptT $ loadDickinson (pathMod ["."]) =<< renameDickinsonM p
             lift balanceMax
             putErr mErr (const $ pure ())

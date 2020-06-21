@@ -4,6 +4,7 @@ import           Data.Semigroup
 import qualified Data.Text.IO            as TIO
 import           Language.Dickinson
 import           Language.Dickinson.File
+import           Language.Dickinson.Lib
 import           Options.Applicative
 import           REPL
 
@@ -72,7 +73,7 @@ versionMod :: Parser (a -> a)
 versionMod = infoOption dickinsonVersionString (short 'V' <> long "version" <> help "Show version")
 
 run :: Act -> IO ()
-run (Run fp is)   = TIO.putStrLn =<< evalFile is fp
+run (Run fp is)   = do { pGo <- defaultLibPath ; TIO.putStrLn =<< evalFile (pGo is) fp }
 run (REPL _)      = dickinsonRepl
 run (Check f)     = checkFile f
 run (Lint f)      = warnFile f

@@ -9,4 +9,4 @@ tcTests :: TestTree
 tcTests = testCase "Works on :match" $ testMatchTc
 
 testMatchTc :: Assertion
-testMatchTc = tcFile "examples/doggo.dck"
+testMatchTc = tcFile "test/eval/match.dck"
