@@ -11,6 +11,7 @@ import qualified Data.ByteString.Lazy                  as BSL
 import           Data.Foldable                         (traverse_)
 import qualified Data.Map                              as M
 import           Data.Maybe                            (fromJust)
+import           Data.Semigroup                        ((<>))
 import qualified Data.Text                             as T
 import qualified Data.Text.IO                          as TIO
 import qualified Data.Text.Lazy                        as TL
