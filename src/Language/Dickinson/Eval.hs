@@ -175,11 +175,11 @@ extrText (StrChunk _ t) = pure t
 extrText e              = do { ty <- typeOf e ; throwError $ TypeMismatch e TyText ty }
 
 bindPattern :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m) => Pattern a -> Expression a -> m ()
-bindPattern (PatternVar _ n) e                       = bindName n e
-bindPattern Wildcard{} _                             = pure ()
-bindPattern (PatternTuple _ []) (Tuple _ [])         = pure ()
-bindPattern (PatternTuple _ (p:ps)) (Tuple _ (e:es)) = bindPattern p e *> zipWithM_ bindPattern ps es
-bindPattern (PatternTuple l _) _                     = throwError $ MalformedTuple l
+bindPattern (PatternVar _ n) e               = bindName n e
+bindPattern Wildcard{} _                     = pure ()
+bindPattern (PatternTuple _ []) (Tuple _ []) = pure ()
+bindPattern (PatternTuple _ ps) (Tuple _ es) = zipWithM_ bindPattern ps es -- FIXME: check lengths
+bindPattern (PatternTuple l _) _             = throwError $ MalformedTuple l
 
 normalizeExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 normalizeExpressionM e@Literal{}    = pure e
@@ -191,8 +191,11 @@ normalizeExpressionM (Interp l es)  = concatOrFail l es
 normalizeExpressionM (Concat l es)  = concatOrFail l es
 normalizeExpressionM (Tuple l es)   = Tuple l <$> traverse normalizeExpressionM es
 normalizeExpressionM (Let _ bs e) = do
-    traverse_ (uncurry bindName) bs
-    normalizeExpressionM e <* traverse_ deleteName (fst <$> bs)
+    es' <- traverse normalizeExpressionM (snd <$> bs)
+    let ns = fst <$> bs
+        newBs = NE.zip ns es'
+    traverse_ (uncurry bindName) newBs
+    normalizeExpressionM e <* traverse_ deleteName ns
     -- FIXME: assumes global uniqueness in renaming
 normalizeExpressionM (Apply _ e e') = do
     e'' <- normalizeExpressionM e
