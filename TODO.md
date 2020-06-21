@@ -29,12 +29,13 @@
 - [ ] Circular import checker
 - [ ] Save repl states
 - [ ] Formatter
-- [ ] Figure out mutual recursion? (or recursion)
 - [ ] User-defined functions on text?
   - [ ] "character map" approach?
     - [ ] Requires expression application + type checker pass?
   - [ ] Filter? (e.g. vowels...)
-- [ ] Import/module system
+- [x] Import/module system
+  - [ ] Checkers should work with the module system
+  - [ ] Modules don't give global uniqueness; fix scoping/deletions
 - [ ] Tuples/multi-return & agreement.
   - [ ] Def need product types...
     - [ ] Dog example?
