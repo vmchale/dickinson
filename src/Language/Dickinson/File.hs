@@ -10,6 +10,7 @@ import           Control.Exception                     (Exception, throw, throwI
 import           Control.Monad                         ((<=<))
 import           Data.Bifunctor                        (second)
 import qualified Data.ByteString.Lazy                  as BSL
+import           Data.Semigroup                        ((<>))
 import           Data.Text                             as T
 import           Data.Text.Prettyprint.Doc             (hardline)
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)

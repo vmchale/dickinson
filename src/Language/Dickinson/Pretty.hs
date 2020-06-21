@@ -1,6 +1,7 @@
 module Language.Dickinson.Pretty ( prettyDickinson
                                  ) where
 
+import           Data.Semigroup            ((<>))
 import           Data.Text.Prettyprint.Doc (Doc, Pretty (pretty), concatWith, hardline)
 import           Language.Dickinson.Type
 
