@@ -20,6 +20,7 @@ import           Data.Text.Prettyprint.Doc.Ext (intercalate)
 import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Unique
 
+-- | A (possibly qualified) name.
 data Name a = Name { name   :: NonEmpty T.Text
                    , unique :: !Unique
                    , loc    :: a

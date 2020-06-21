@@ -6,21 +6,17 @@ module Language.Dickinson ( -- * Parser
                           , lexDickinson
                           , AlexPosn
                           , Token
-                          -- * Checks/passes
-                          , checkMultiple
-                          , checkDuplicates
-                          , checkScope
-                          , checkFile
-                          , warnFile
                           -- * AST
                           , Dickinson
                           , Declaration (..)
                           , Expression (..)
+                          , Pattern (..)
                           , DickinsonTy (..)
-                          , Name (..)
-                          , Unique
+                          , Name
                           -- * Errors
                           , DickinsonError (..)
+                          -- * Imports
+                          , resolveImport
                           -- * Pretty-printing
                           , prettyDickinson
                           -- * Version info
@@ -28,22 +24,15 @@ module Language.Dickinson ( -- * Parser
                           , dickinsonVersionString
                           ) where
 
-import qualified Data.Version                      as V
-import           Language.Dickinson.Check
-import           Language.Dickinson.DuplicateCheck
+import qualified Data.Version              as V
 import           Language.Dickinson.Error
-import           Language.Dickinson.Eval
+import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Pretty
-import           Language.Dickinson.Rename
-import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
-import           Language.Dickinson.TypeCheck
-import           Language.Dickinson.Unique
-import           Language.Dickinson.File
-import qualified Paths_language_dickinson                   as P
+import qualified Paths_language_dickinson  as P
 
 dickinsonVersion :: V.Version
 dickinsonVersion = P.version
