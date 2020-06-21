@@ -10,8 +10,9 @@ module Language.Dickinson.TypeCheck ( typeOf
                                     ) where
 
 import           Control.Monad             (unless)
+import           Control.Monad             (zipWithM_)
 import           Control.Monad.Except      (ExceptT, MonadError, runExceptT, throwError)
-import           Control.Monad.Ext         (zipWithM_)
+import qualified Control.Monad.Ext         as Ext
 import           Control.Monad.State       (MonadState, State, evalState)
 import           Data.Foldable             (traverse_)
 import           Data.Functor              (($>))
@@ -57,6 +58,13 @@ tyTraverse = traverse_ tyAdd
 tyAdd :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Declaration a -> m ()
 tyAdd (Define _ n e) = tyInsert n =<< typeOf e
 
+bindPattern :: (MonadState s m, HasTyEnv s, MonadError (DickinsonError a) m) => Pattern a -> DickinsonTy -> m ()
+bindPattern (PatternVar _ n) ty               = tyInsert n ty
+bindPattern Wildcard{} _                      = pure ()
+bindPattern (PatternTuple _ []) (TyTuple [])  = pure ()
+bindPattern (PatternTuple _ ps) (TyTuple tys) = zipWithM_ bindPattern ps tys -- FIXME: length ps = length tys
+bindPattern (PatternTuple l _) _              = throwError $ MalformedTuple l
+
 -- run after global renamer
 typeOf :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Expression a -> m DickinsonTy
 typeOf Literal{}  = pure TyText
@@ -85,5 +93,9 @@ typeOf (Apply _ e e') = do
 typeOf (Let _ bs e) = do
     es' <- traverse typeOf (snd <$> bs)
     let ns = fst <$> bs
-    zipWithM_ tyInsert ns es'
+    Ext.zipWithM_ tyInsert ns es'
     typeOf e
+typeOf (Match _ e p e') = do
+    ty <- typeOf e
+    bindPattern p ty
+    typeOf e'
