@@ -1,0 +1,23 @@
+(:def fst
+  (:lambda xy (text, text)
+    (:match xy (x, _)
+      x)))
+
+(:def snd
+  (:lambda xy (text, text)
+    (:match xy (_, y)
+      y)))
+
+; TODO: simple sum types? then greeter would take a Boy | Girl ...
+(:def greeter
+  (:lambda dog (text, text)
+    (:let
+      [name ($fst dog)]
+      [pronoun ($snd dog)]
+        (:oneof
+          (| "${name} is a heckin' fine floofer")
+          (| "${name} is a good woofer")
+          (| "${name} eats toilet paper sometimes but ${pronoun} tries.")))))
+
+(:def main
+  ($ greeter ("Maxine", "she")))
