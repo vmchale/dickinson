@@ -16,22 +16,21 @@ module Language.Dickinson.Eval ( EvalM
                                , balanceMax
                                ) where
 
-import           Control.Monad                         (zipWithM_, (<=<))
-import           Control.Monad.Except                  (ExceptT, MonadError, runExceptT, throwError)
-import           Control.Monad.IO.Class                (MonadIO (..))
-import           Control.Monad.State.Lazy              (MonadState, StateT, evalStateT, get, gets, modify)
-import qualified Data.ByteString.Lazy                  as BSL
-import           Data.Foldable                         (toList, traverse_)
-import           Data.Functor                          (($>))
-import qualified Data.IntMap                           as IM
-import           Data.List.NonEmpty                    (NonEmpty, (<|))
-import qualified Data.List.NonEmpty                    as NE
-import qualified Data.Map                              as M
-import           Data.Semigroup                        ((<>))
-import qualified Data.Text                             as T
-import           Data.Text.Prettyprint.Doc             (Doc, Pretty (..), vsep, (<+>))
+import           Control.Monad                 (zipWithM_, (<=<))
+import           Control.Monad.Except          (ExceptT, MonadError, runExceptT, throwError)
+import           Control.Monad.IO.Class        (MonadIO (..))
+import           Control.Monad.State.Lazy      (MonadState, StateT, evalStateT, gets, modify)
+import qualified Data.ByteString.Lazy          as BSL
+import           Data.Foldable                 (toList, traverse_)
+import           Data.Functor                  (($>))
+import qualified Data.IntMap                   as IM
+import           Data.List.NonEmpty            (NonEmpty, (<|))
+import qualified Data.List.NonEmpty            as NE
+import qualified Data.Map                      as M
+import           Data.Semigroup                ((<>))
+import qualified Data.Text                     as T
+import           Data.Text.Prettyprint.Doc     (Doc, Pretty (..), vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
-import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Data.Tuple.Ext
 import           Language.Dickinson.Error
 import           Language.Dickinson.Import
@@ -42,9 +41,9 @@ import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
-import           Lens.Micro                            (Lens', over, set, _1, _4)
-import           Lens.Micro.Mtl                        (use, (.=))
-import           System.Random                         (StdGen, newStdGen, randoms)
+import           Lens.Micro                    (Lens', over, set, _1, _4)
+import           Lens.Micro.Mtl                (use, (.=))
+import           System.Random                 (StdGen, newStdGen, randoms)
 
 -- | The state during evaluation
 data EvalSt a = EvalSt
@@ -174,11 +173,6 @@ balanceMax = do
     let m' = max m0 m1
     rename.maxLens .= m'
     lexerStateLens._1 .= m'
-
--- debugSt :: (MonadIO m, MonadState (EvalSt a) m) => m ()
--- debugSt = do
-    -- st <- get
-    -- liftIO $ putDoc (pretty st)
 
 parseEvalM :: (MonadIO m, MonadState (EvalSt AlexPosn) m, MonadError (DickinsonError AlexPosn) m)
            => FilePath
