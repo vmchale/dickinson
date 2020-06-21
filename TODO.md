@@ -14,6 +14,7 @@
 - [ ] Poetry bot...? Rumi?
 - [ ] Storytelling? RPG? idk
 - [ ] https://www.nadyaprimak.com/blog/programming/poetry-bot/
+- [x] Dog greeter
 # Editor Integration
 - [ ] Syntastic checker
 # Passes
@@ -25,6 +26,7 @@
 # Library API
 - [ ] Maybe spin out internal library?
 # Features
+- [ ] Save repl states
 - [ ] Formatter
 - [ ] Figure out mutual recursion? (or recursion)
 - [ ] User-defined functions on text?
