@@ -2,24 +2,26 @@
 
 module Main (main) where
 
-import           Control.Exception    (throw)
-import qualified Data.ByteString.Lazy as BSL
-import           Data.Either          (isRight)
-import           Data.List.NonEmpty   (NonEmpty (..))
-import           Data.Maybe           (isJust, isNothing)
+import           Control.Exception                 (throw)
+import qualified Data.ByteString.Lazy              as BSL
+import           Data.Either                       (isRight)
+import           Data.List.NonEmpty                (NonEmpty (..))
+import           Data.Maybe                        (isJust, isNothing)
+import           Eval
 import           Golden
-import           Language.Dickinson.Parser
-import           Language.Dickinson.Type
-import           Language.Dickinson.Lexer
-import           Language.Dickinson.ScopeCheck
-import           Language.Dickinson.Rename
 import           Language.Dickinson.Check
 import           Language.Dickinson.DuplicateCheck
-import           Language.Dickinson.Unique
-import           Language.Dickinson.Name
 import           Language.Dickinson.Import
+import           Language.Dickinson.Lexer
+import           Language.Dickinson.Name
+import           Language.Dickinson.Parser
+import           Language.Dickinson.Rename
+import           Language.Dickinson.ScopeCheck
+import           Language.Dickinson.Type
+import           Language.Dickinson.Unique
 import           Test.Tasty
 import           Test.Tasty.HUnit
+import           TypeCheck
 
 main :: IO ()
 main =
@@ -27,6 +29,8 @@ main =
         testGroup "All tests"
             [ goldenTests
             , parserTests
+            , evalTests
+            , tcTests
             ]
 
 parserTests :: TestTree

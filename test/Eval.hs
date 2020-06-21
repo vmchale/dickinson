@@ -4,8 +4,8 @@ module Eval ( evalTests
             ) where
 
 import           Language.Dickinson.File
-import           Test.Tasty         (TestTree, testGroup)
-import           Test.Tasty.HUnit   (Assertion, testCase, (@?=))
+import           Test.Tasty              (TestTree, testGroup)
+import           Test.Tasty.HUnit        (Assertion, testCase, (@?=))
 
 evalTests :: TestTree
 evalTests = testGroup "Evalutation test"
