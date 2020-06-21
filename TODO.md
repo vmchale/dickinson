@@ -26,6 +26,7 @@
 # Library API
 - [ ] Maybe spin out internal library?
 # Features
+- [ ] Circular import checker
 - [ ] Save repl states
 - [ ] Formatter
 - [ ] Figure out mutual recursion? (or recursion)

@@ -12,6 +12,9 @@ import           System.FilePath         ((</>))
 
 -- TODO: dependency analysis
 
+-- | The canonical way of resolving imports from a name.
+--
+-- Returns 'Nothing' if no such file exists.
 resolveImport :: MonadIO m
               => [FilePath] -- ^ Places to look
               -> Name a
