@@ -15,6 +15,7 @@
                                     , Token (..)
                                     , Keyword (..)
                                     , Sym (..)
+                                    , ModCtx
                                     ) where
 
 import Control.Arrow ((&&&))
@@ -133,8 +134,10 @@ mkKeyword = constructor TokKeyword
 
 mkSym = constructor TokSym
 
+type ModCtx = [T.Text]
+
 -- "inside out - track ints by name!"
-type AlexUserState = (UniqueCtx, M.Map T.Text Int, NameEnv AlexPosn)
+type AlexUserState = (UniqueCtx, M.Map T.Text Int, NameEnv AlexPosn, ModCtx)
 
 newIdentAlex :: AlexPosn -> T.Text -> Alex (Name AlexPosn)
 newIdentAlex pos t = do
@@ -143,16 +146,19 @@ newIdentAlex pos t = do
     set_ust st' $> (n $> pos)
 
 newIdent :: AlexPosn -> T.Text -> AlexUserState -> (AlexUserState, Name AlexPosn)
-newIdent pos t pre@(max', names, uniqs) =
-    case M.lookup t names of
+newIdent pos t pre@(max', names, uniqs, modCtx) =
+    case M.lookup tRel names of
         Just i -> (pre, Name tQual (Unique i) pos)
         Nothing -> let i = max' + 1
             in let newName = Name tQual (Unique i) pos
-                in ((i, M.insert t i names, IM.insert i newName uniqs), newName)
-    where tQual = NE.fromList (T.splitOn "." t)
+                in ((i, M.insert tRel i names, IM.insert i newName uniqs, modCtx), newName)
+    where tQual = NE.fromList (modCtx <> T.splitOn "." t)
+          tRel = if null modCtx 
+            then t 
+            else T.intercalate "." modCtx <> "." <> t
 
 alexInitUserState :: AlexUserState
-alexInitUserState = (0, mempty, mempty)
+alexInitUserState = (0, mempty, mempty, [])
 
 data Sym = LParen
          | RParen

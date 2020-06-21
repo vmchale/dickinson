@@ -16,15 +16,15 @@ evalTests = testGroup "Evalutation test"
 
 constEval :: Assertion
 constEval = do
-    res <- evalFile "test/eval/context.dck"
+    res <- evalFile [] "test/eval/context.dck"
     res @?= "woman"
 
 scopeEval :: Assertion
 scopeEval = do
-    res <- evalFile "test/demo/circular.dck"
+    res <- evalFile [] "test/demo/circular.dck"
     res @?= "a"
 
 higherOrderEval :: Assertion
 higherOrderEval = do
-    res <- evalFile "test/data/higherOrder.dck"
+    res <- evalFile [] "test/data/higherOrder.dck"
     res @?= "It's me"

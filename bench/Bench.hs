@@ -45,9 +45,9 @@ main =
                     , bench "bench/data/multiple.dck" $ nf checkDuplicates p -- TODO: better example
                     ]
                 , bgroup "result"
-                    [ bench "test/eval/context.dck" $ nfIO (evalFile "test/eval/context.dck")
-                    , bench "examples/shakespeare.dck" $ nfIO (evalFile "examples/shakespeare.dck")
-                    , bench "examples/doggo.dck" $ nfIO (evalFile "examples/doggo.dck")
+                    [ bench "test/eval/context.dck" $ nfIO (evalFile [] "test/eval/context.dck")
+                    , bench "examples/shakespeare.dck" $ nfIO (evalFile [] "examples/shakespeare.dck")
+                    , bench "examples/doggo.dck" $ nfIO (evalFile ["prelude"] "examples/doggo.dck")
                     ]
                 ]
 

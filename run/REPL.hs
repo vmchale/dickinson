@@ -18,6 +18,7 @@ import qualified Data.Text.Lazy                        as TL
 import           Data.Text.Lazy.Encoding               (encodeUtf8)
 import           Data.Text.Prettyprint.Doc             (Pretty (pretty), hardline)
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
+import           Data.Tuple.Ext                        (fst4)
 import           Language.Dickinson.Eval
 import           Language.Dickinson.Lexer              (AlexPosn, AlexUserState, alexInitUserState)
 import           Language.Dickinson.Parser
@@ -72,12 +73,10 @@ names = lift $ gets (M.keys . topLevel)
 setSt :: AlexUserState -> Repl AlexPosn ()
 setSt newSt = lift $ do
     m' <- use (rename.maxLens)
-    let newM = 1 + max (fst3 newSt) m'
+    let newM = 1 + max (fst4 newSt) m'
     lexerStateLens .= newSt
     lexerStateLens._1 .= newM
     rename.maxLens .= newM
-
-    where fst3 (x, _, _) = x
 
 printExpr :: String -> Repl AlexPosn ()
 printExpr str = do
@@ -93,7 +92,7 @@ printExpr str = do
                         lift balanceMax
                         putErr mErr (liftIO . TIO.putStrLn)
                     Left decl -> do
-                        mErr <- lift $ runExceptT $ addDecl =<< renameDeclarationM decl
+                        mErr <- lift $ runExceptT $ addDecl ["."] =<< renameDeclarationM decl
                         lift balanceMax
                         putErr mErr (const $ pure ())
 
@@ -110,6 +109,6 @@ loadFile fp = do
         Left err     -> liftIO $ putDoc (pretty err)
         Right (newSt, p) -> do
             setSt newSt
-            mErr <- lift $ runExceptT $ loadDickinson =<< renameDickinsonM p
+            mErr <- lift $ runExceptT $ loadDickinson ["."] =<< renameDickinsonM p
             lift balanceMax
             putErr mErr (const $ pure ())

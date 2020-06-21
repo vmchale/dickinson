@@ -190,8 +190,8 @@ parseWithInitSt parser str st = liftErr $ withAlexSt str st (runExceptT parser)
           liftErr (Right (i, Right x))  = Right (i, x)
 
 parseWrapper :: Parse a -> BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, a)
-parseWrapper parser str = fmap (first fst3) $ liftErr $ runAlexSt str (runExceptT parser)
-    where fst3 (x, _, _) = x
+parseWrapper parser str = fmap (first fst4) $ liftErr $ runAlexSt str (runExceptT parser)
+    where fst4 (x, _, _, _) = x
 
 liftErr :: Either String (b, Either (ParseError a) c) -> Either (ParseError a) (b, c)
 liftErr (Left err)            = Left (LexErr err)

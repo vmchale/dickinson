@@ -20,23 +20,28 @@ import           Control.Monad                         (zipWithM_, (<=<))
 import           Control.Monad.Except                  (ExceptT, MonadError, runExceptT, throwError)
 import           Control.Monad.IO.Class                (MonadIO (..))
 import           Control.Monad.State.Lazy              (MonadState, StateT, evalStateT, get, gets, modify)
+import qualified Data.ByteString.Lazy                  as BSL
 import           Data.Foldable                         (toList, traverse_)
+import           Data.Functor                          (($>))
 import qualified Data.IntMap                           as IM
-import           Data.List.NonEmpty                    (NonEmpty ((:|)), (<|))
+import           Data.List.NonEmpty                    (NonEmpty, (<|))
 import qualified Data.List.NonEmpty                    as NE
 import qualified Data.Map                              as M
 import qualified Data.Text                             as T
 import           Data.Text.Prettyprint.Doc             (Doc, Pretty (..), vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
+import           Data.Tuple.Ext
 import           Language.Dickinson.Error
+import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
+import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
-import           Lens.Micro                            (Lens', over, _1)
+import           Lens.Micro                            (Lens', over, set, _1, _4)
 import           Lens.Micro.Mtl                        (use, (.=))
 import           System.Random                         (StdGen, newStdGen, randoms)
 
@@ -72,7 +77,10 @@ instance Pretty (EvalSt a) where
             <#> prettyAlexState st
 
 prettyAlexState :: AlexUserState -> Doc a
-prettyAlexState (m, _, nEnv) = "max:" <+> pretty m <#> prettyDumpBinds nEnv
+prettyAlexState (m, _, nEnv, modCtx) =
+      "module context" <+> intercalate "." (pretty <$> modCtx)
+    <#> "max:" <+> pretty m
+    <#> prettyDumpBinds nEnv
 
 instance HasRenames (EvalSt a) where
     rename f s = fmap (\x -> s { renameCtx = x }) (f (renameCtx s))
@@ -99,8 +107,7 @@ evalWithGen :: StdGen
             -> AlexUserState -- ^ Threaded through
             -> EvalM a x
             -> IO (Either (DickinsonError a) x)
-evalWithGen g u me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty (initRenames $ fst3 u) mempty u mempty)
-    where fst3 (x, _, _) = x
+evalWithGen g u me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty (initRenames $ fst4 u) mempty u mempty)
 
 -- TODO: temporary bindings
 bindName :: (MonadState (EvalSt a) m) => Name a -> Expression a -> m ()
@@ -108,14 +115,15 @@ bindName (Name _ (Unique u) _) e = modify (over boundExprLens (IM.insert u e))
 -- TODO: bind type information
 
 topLevelAdd :: (MonadState (EvalSt a) m) => Name a -> m ()
-topLevelAdd (Name (n :| []) u _) = modify (over topLevelLens (M.insert n u))
-topLevelAdd Name{}               = error "Top-level names cannot be qualified"
+topLevelAdd (Name n u _) = modify (over topLevelLens (M.insert (T.intercalate "." $ toList n) u))
 
 deleteName :: (MonadState (EvalSt a) m) => Name a -> m ()
 deleteName (Name _ (Unique u) _) = modify (over boundExprLens (IM.delete u))
 
 lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression a)
-lookupName n@(Name _ (Unique u) l) = go =<< gets (IM.lookup u.boundExpr)
+lookupName n@(Name _ u l) = do
+    (Unique u') <- replaceUnique u
+    go =<< gets (IM.lookup u'.boundExpr)
     where go Nothing  = throwError (UnfoundName l n)
           go (Just x) = renameExpressionM x
 
@@ -144,13 +152,19 @@ findDecl t = do
 findMain :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => m (Expression a)
 findMain = findDecl "main"
 
-evalDickinsonAsMain :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m) => Dickinson AlexPosn -> m T.Text
-evalDickinsonAsMain d =
-    loadDickinson d *>
+evalDickinsonAsMain :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m)
+                    => [FilePath]
+                    -> Dickinson AlexPosn
+                    -> m T.Text
+evalDickinsonAsMain is d =
+    loadDickinson is d *>
     (evalExpressionM =<< findMain)
 
-loadDickinson :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m) => Dickinson AlexPosn -> m ()
-loadDickinson = traverse_ addDecl
+loadDickinson :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m)
+              => [FilePath] -- ^ Include path
+              -> Dickinson AlexPosn
+              -> m ()
+loadDickinson is = traverse_ (addDecl is)
 
 balanceMax :: MonadState (EvalSt a) m => m ()
 balanceMax = do
@@ -160,14 +174,40 @@ balanceMax = do
     rename.maxLens .= m'
     lexerStateLens._1 .= m'
 
-debugSt :: (MonadIO m, MonadState (EvalSt a) m) => m ()
-debugSt = do
-    st <- get
-    liftIO $ putDoc (pretty st)
+-- debugSt :: (MonadIO m, MonadState (EvalSt a) m) => m ()
+-- debugSt = do
+    -- st <- get
+    -- liftIO $ putDoc (pretty st)
+
+parseEvalM :: (MonadIO m, MonadState (EvalSt AlexPosn) m, MonadError (DickinsonError AlexPosn) m)
+           => FilePath
+           -> ModCtx
+           -> m (Dickinson AlexPosn)
+parseEvalM fp ctx = do
+    preSt <- gets lexerState
+    bsl <- liftIO $ BSL.readFile fp
+    case parseWithCtx bsl (over _4 (ctx <>) preSt) of
+        Right (st, d) ->
+            let modPre = frth preSt in
+                (lexerStateLens .= (set _4 modPre st)) $> d
+        Left err ->
+            throwError (ParseErr err)
 
 -- TODO: MonadIO to addDecl so can import
-addDecl :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m) => Declaration AlexPosn -> m ()
-addDecl (Define _ n e) = bindName n e *> topLevelAdd n
+addDecl :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m)
+        => [FilePath] -- ^ Include path
+        -> Declaration AlexPosn
+        -> m ()
+addDecl _ (Define _ n e) = bindName n e *> topLevelAdd n
+addDecl is (Import l n)  = do
+    preFp <- resolveImport is n
+    case preFp of
+        Just fp -> do
+            parsed <- parseEvalM fp (toList $ name n)
+            balanceMax
+            renamed <- renameDickinsonM parsed
+            loadDickinson is renamed
+        Nothing -> throwError $ ModuleNotFound l n
 
 extrText :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 extrText (Literal _ t)  = pure t

@@ -50,8 +50,8 @@ tcFile = h . go <=< BSL.readFile
           h (Left err) = throwIO err
 
 -- TODO: runDeclarationM
-evalFile :: FilePath -> IO T.Text
-evalFile = fmap yeet . uncurry evalIO . second evalDickinsonAsMain . yeet . flip parseWithCtx alexInitUserState <=< BSL.readFile
+evalFile :: [FilePath] -> FilePath -> IO T.Text
+evalFile is = fmap yeet . uncurry evalIO . second (evalDickinsonAsMain is) . yeet . flip parseWithCtx alexInitUserState <=< BSL.readFile
 -- TODO: renameDickinson
 
 yeet :: Exception e => Either e x -> x

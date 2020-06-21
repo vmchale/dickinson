@@ -1,14 +1,14 @@
 module Main (main) where
 
 import           Data.Semigroup
-import qualified Data.Text.IO        as TIO
+import qualified Data.Text.IO            as TIO
+import           Language.Dickinson
+import           Language.Dickinson.File
 import           Options.Applicative
-import Language.Dickinson.File
-import Language.Dickinson
 import           REPL
 
 -- TODO debug/verbosity options...
-data Act = Run !FilePath
+data Act = Run !FilePath ![FilePath]
          | REPL ![FilePath]
          | Check !FilePath
          | Lint !FilePath
@@ -32,7 +32,7 @@ replP :: Parser Act
 replP = REPL <$> many dckFile
 
 runP :: Parser Act
-runP = Run <$> dckFile
+runP = Run <$> dckFile <*> includes
 
 checkP :: Parser Act
 checkP = Check <$> dckFile
@@ -49,8 +49,18 @@ dckFile = argument str
     <> help "Source file"
     <> dckCompletions)
 
+includes :: Parser [FilePath]
+includes = many $ strOption
+    (metavar "DIR"
+    <> long "include"
+    <> short 'I'
+    <> dirCompletions)
+
 dckCompletions :: HasCompleter f => Mod f a
 dckCompletions = completer . bashCompleter $ "file -X '!*.dck' -o plusdirs"
+
+dirCompletions :: HasCompleter f => Mod f a
+dirCompletions = completer . bashCompleter $ "directory"
 
 wrapper :: ParserInfo Act
 wrapper = info (helper <*> versionMod <*> act)
@@ -62,7 +72,7 @@ versionMod :: Parser (a -> a)
 versionMod = infoOption dickinsonVersionString (short 'V' <> long "version" <> help "Show version")
 
 run :: Act -> IO ()
-run (Run fp)      = TIO.putStrLn =<< evalFile fp
+run (Run fp is)   = TIO.putStrLn =<< evalFile is fp
 run (REPL _)      = dickinsonRepl
 run (Check f)     = checkFile f
 run (Lint f)      = warnFile f

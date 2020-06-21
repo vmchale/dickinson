@@ -73,6 +73,7 @@ library dickinson
         Language.Dickinson.Unique
         Language.Dickinson.File
         Language.Dickinson.Import
+        Data.Tuple.Ext
 
     hs-source-dirs:   src
     other-modules:
