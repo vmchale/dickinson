@@ -10,13 +10,15 @@ synopsis:           A language for generative literature
 description:        Dickinson is a language for generative (random) literature
 category:           Language, Text
 build-type:         Simple
-data-files:         man/emd.1
+data-files:
+    man/emd.1
+    lib/*.dck
+    prelude/*.dck
+
 extra-source-files:
     test/data/*.pretty
     test/data/*.dck
     test/data/*.rename
-    lib/*.dck
-    prelude/*.dck
     examples/*.dck
 
 extra-doc-files:

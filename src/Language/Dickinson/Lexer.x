@@ -145,6 +145,7 @@ newIdentAlex pos t = do
     let (st', n) = newIdent pos t st
     set_ust st' $> (n $> pos)
 
+-- TODO: only mod context if top-level? idk
 newIdent :: AlexPosn -> T.Text -> AlexUserState -> (AlexUserState, Name AlexPosn)
 newIdent pos t pre@(max', names, uniqs, modCtx) =
     case M.lookup tRel names of
