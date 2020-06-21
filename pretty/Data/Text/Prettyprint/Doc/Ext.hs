@@ -23,7 +23,7 @@ import qualified Data.Text.Lazy                        as TL
 import           Data.Text.Prettyprint.Doc             (Doc, LayoutOptions (LayoutOptions),
                                                         PageWidth (AvailablePerLine), Pretty (pretty), SimpleDocStream,
                                                         concatWith, defaultLayoutOptions, flatAlt, hardline, indent,
-                                                        layoutSmart, removeTrailingWhitespace, softline, vsep, (<+>))
+                                                        layoutSmart, softline, vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Render.Text (renderLazy, renderStrict)
 
 infixr 6 <#>
@@ -58,7 +58,7 @@ dickinsonLayoutOptions :: LayoutOptions
 dickinsonLayoutOptions = LayoutOptions (AvailablePerLine 160 0.8)
 
 smartDickinson :: Doc a -> SimpleDocStream a
-smartDickinson = removeTrailingWhitespace . layoutSmart dickinsonLayoutOptions
+smartDickinson = layoutSmart dickinsonLayoutOptions
 
 dickinsonText :: Doc a -> T.Text
 dickinsonText = renderStrict . smartDickinson
