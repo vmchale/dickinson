@@ -8,7 +8,9 @@
     (:match xy (_, y)
       y)))
 
-; TODO: simple sum types? then greeter would take a Boy | Girl ...
+; TODO tydecl sex = Boy | Girl
+
+; see https://github.com/vmchale/doggo-command-line/blob/master/src/main.rs
 (:def greeter
   (:lambda dog (text, text)
     (:let
