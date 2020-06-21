@@ -25,31 +25,31 @@ import           Language.Dickinson.Name
 type Dickinson a = [Declaration a]
 
 data Declaration a = Define { declAnn :: a
-                            , defName :: !(Name a)
+                            , defName :: (Name a)
                             , defExpr :: Expression a
                             }
                    | Import { declAnn :: a
-                            , declMod :: !(Name a)
+                            , declMod :: (Name a)
                             }
                    deriving (Generic, NFData, Binary, Functor)
 
-data Pattern a = PatternVar a !(Name a)
-               | PatternTuple a ![Pattern a]
+data Pattern a = PatternVar a (Name a)
+               | PatternTuple a [Pattern a]
                | Wildcard a
                deriving (Generic, NFData, Binary, Functor)
 
 -- TODO: figure out bang patterns?
-data Expression a = Literal a !T.Text
-                  | StrChunk a !T.Text
-                  | Choice a !(NonEmpty (Double, Expression a))
-                  | Let a !(NonEmpty (Name a, Expression a)) !(Expression a)
-                  | Var a !(Name a)
-                  | Interp a ![Expression a]
-                  | Lambda a !(Name a) DickinsonTy !(Expression a) -- TODO: application, type checker
-                  | Apply a !(Expression a) !(Expression a)
-                  | Concat a ![Expression a]
-                  | Tuple a ![Expression a]
-                  | Match a !(Expression a) !(Pattern a) !(Expression a)
+data Expression a = Literal a T.Text
+                  | StrChunk a T.Text
+                  | Choice a (NonEmpty (Double, Expression a))
+                  | Let a (NonEmpty (Name a, Expression a)) (Expression a)
+                  | Var a (Name a)
+                  | Interp a [Expression a]
+                  | Lambda a (Name a) DickinsonTy (Expression a) -- TODO: application, type checker
+                  | Apply a (Expression a) (Expression a)
+                  | Concat a [Expression a]
+                  | Tuple a [Expression a]
+                  | Match a (Expression a) (Pattern a) (Expression a)
                   deriving (Generic, NFData, Binary, Functor)
                   -- TODO: tuples &. such
                   -- concat back again?
@@ -57,8 +57,8 @@ data Expression a = Literal a !T.Text
                   -- TODO: builtins?
 
 data DickinsonTy = TyText
-                 | TyFun !DickinsonTy !DickinsonTy
-                 | TyTuple ![DickinsonTy]
+                 | TyFun DickinsonTy DickinsonTy
+                 | TyTuple [DickinsonTy]
                  deriving (Eq, Generic, NFData, Binary)
 
 instance Pretty (Declaration a) where
