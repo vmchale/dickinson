@@ -6,6 +6,10 @@ license-file:       LICENSE
 copyright:          Copyright: (c) 2020 Vanessa McHale
 maintainer:         vamchale@gmail.com
 author:             Vanessa McHale
+tested-with:
+    ghc ==8.0.2 ghc ==8.2.2 ghc ==8.4.4 ghc ==8.6.5 ghc ==8.8.3
+    ghc ==8.10.1
+
 synopsis:           A language for generative literature
 description:        Dickinson is a language for generative (random) literature
 category:           Language, Text
