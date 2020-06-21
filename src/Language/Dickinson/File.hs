@@ -2,22 +2,30 @@ module Language.Dickinson.File ( evalFile
                                , checkFile
                                , warnFile
                                , tcFile
+                               , fmtFile
                                ) where
 
-import Language.Dickinson.Parser
-import Language.Dickinson.Lexer
-import Language.Dickinson.Eval
-import Language.Dickinson.TypeCheck
-import Language.Dickinson.Check
-import Language.Dickinson.ScopeCheck
-import Language.Dickinson.DuplicateCheck
-import Language.Dickinson.Rename
-import Data.Bifunctor (second)
-import Control.Applicative ((<|>))
-import Control.Exception (Exception, throwIO, throw)
-import qualified Data.ByteString.Lazy as BSL
-import Control.Monad ((<=<))
-import Data.Text as T
+import           Control.Applicative                   ((<|>))
+import           Control.Exception                     (Exception, throw, throwIO)
+import           Control.Monad                         ((<=<))
+import           Data.Bifunctor                        (second)
+import qualified Data.ByteString.Lazy                  as BSL
+import           Data.Text                             as T
+import           Data.Text.Prettyprint.Doc             (hardline)
+import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
+import           Language.Dickinson.Check
+import           Language.Dickinson.DuplicateCheck
+import           Language.Dickinson.Eval
+import           Language.Dickinson.Lexer
+import           Language.Dickinson.Parser
+import           Language.Dickinson.Pretty
+import           Language.Dickinson.Rename
+import           Language.Dickinson.ScopeCheck
+import           Language.Dickinson.TypeCheck
+
+fmtFile :: FilePath -> IO ()
+fmtFile = putDoc . (<> hardline) . prettyDickinson . go <=< BSL.readFile
+    where go = fst . uncurry renameDickinson . yeet . parseWithMax
 
 -- | Check scoping
 checkFile :: FilePath -> IO ()
