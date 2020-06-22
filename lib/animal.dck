@@ -6,4 +6,5 @@
     (| "rhinoceros")
     (| "giraffe")
     (| "deer")
-    (| "zebra")))
+    (| "zebra")
+    (| bird)))
