@@ -6,12 +6,11 @@ module Language.Dickinson.Unique ( Unique (..)
                                  ) where
 
 import           Control.DeepSeq           (NFData)
-import           Data.Binary               (Binary (..))
 import           Data.Text.Prettyprint.Doc (Pretty)
 
 -- | For interning identifiers.
 newtype Unique = Unique { unUnique :: Int }
-    deriving (Eq, Ord, Pretty, NFData, Binary)
+    deriving (Eq, Ord, Pretty, NFData)
 
 -- | Dummy unique for sake of testing
 dummyUnique :: Unique

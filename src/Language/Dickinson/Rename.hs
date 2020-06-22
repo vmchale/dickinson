@@ -1,5 +1,3 @@
-{-# LANGUAGE DeriveAnyClass    #-}
-{-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Language.Dickinson.Rename ( renameDickinson
@@ -19,13 +17,11 @@ import           Control.Monad                 ((<=<))
 import           Control.Monad.Ext             (zipWithM)
 import           Control.Monad.State           (MonadState, State, runState)
 import           Data.Bifunctor                (second)
-import           Data.Binary                   (Binary)
 import qualified Data.IntMap                   as IM
 import qualified Data.List.NonEmpty            as NE
 import           Data.Semigroup                (Semigroup (..))
 import           Data.Text.Prettyprint.Doc     (Pretty (..), (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
-import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
@@ -34,7 +30,6 @@ import           Lens.Micro.Mtl                (modifying, use, (%=), (.=))
 
 -- | Renamer state passed between various stages of compilation
 data Renames = Renames { max_ :: Int, bound :: IM.IntMap Int }
-    deriving (Generic, Binary)
 
 instance Pretty Renames where
     pretty (Renames m b) = "max:" <+> pretty m <#> "renames:" <#*> prettyDumpBinds b
