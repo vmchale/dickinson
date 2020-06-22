@@ -113,6 +113,7 @@ library dickinson
         microlens -any,
         microlens-mtl -any,
         composition-prelude >=1.1.0.1,
+        binary >=0.8.4.0,
         filepath -any,
         directory -any
 
@@ -246,6 +247,7 @@ benchmark dickinson-bench
     build-depends:
         base -any,
         dickinson -any,
+        binary -any,
         criterion -any,
         bytestring -any
 

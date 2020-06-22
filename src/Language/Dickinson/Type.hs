@@ -11,6 +11,7 @@ module Language.Dickinson.Type ( Dickinson
                                ) where
 
 import           Control.DeepSeq               (NFData)
+import           Data.Binary                   (Binary)
 import           Data.Foldable                 (toList)
 import           Data.List.NonEmpty            (NonEmpty)
 import           Data.Semigroup                ((<>))
@@ -30,12 +31,12 @@ data Declaration a = Define { declAnn :: a
                    | Import { declAnn :: a
                             , declMod :: (Name a)
                             }
-                   deriving (Generic, NFData, Functor)
+                   deriving (Generic, NFData, Binary, Functor)
 
 data Pattern a = PatternVar a (Name a)
                | PatternTuple a [Pattern a]
                | Wildcard a
-               deriving (Generic, NFData, Functor)
+               deriving (Generic, NFData, Binary, Functor)
 
 -- TODO: figure out bang patterns?
 data Expression a = Literal a T.Text
@@ -49,7 +50,7 @@ data Expression a = Literal a T.Text
                   | Concat a [Expression a]
                   | Tuple a [Expression a]
                   | Match a (Expression a) (Pattern a) (Expression a)
-                  deriving (Generic, NFData, Functor)
+                  deriving (Generic, NFData, Binary, Functor)
                   -- TODO: tuples &. such
                   -- concat back again?
                   -- TODO: normalize subtree
@@ -58,7 +59,7 @@ data Expression a = Literal a T.Text
 data DickinsonTy = TyText
                  | TyFun DickinsonTy DickinsonTy
                  | TyTuple [DickinsonTy]
-                 deriving (Eq, Generic, NFData)
+                 deriving (Eq, Generic, NFData, Binary)
 
 instance Pretty (Declaration a) where
     pretty (Define _ n e) = parens (":def" <+> pretty n <#> indent 4 (pretty e))
