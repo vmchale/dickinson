@@ -11,9 +11,9 @@ import           REPL
 -- TODO debug/verbosity options...
 data Act = Run !FilePath ![FilePath]
          | REPL ![FilePath]
-         | Check !FilePath
-         | Lint !FilePath
-         | Typecheck !FilePath
+         | Check !FilePath ![FilePath]
+         | Lint !FilePath ![FilePath]
+         | Typecheck !FilePath ![FilePath]
 
 main :: IO ()
 main = run =<< execParser wrapper
@@ -36,13 +36,13 @@ runP :: Parser Act
 runP = Run <$> dckFile <*> includes
 
 checkP :: Parser Act
-checkP = Check <$> dckFile
+checkP = Check <$> dckFile <*> includes
 
 lintP :: Parser Act
-lintP = Lint <$> dckFile
+lintP = Lint <$> dckFile <*> includes
 
 typecheckP :: Parser Act
-typecheckP = Typecheck <$> dckFile
+typecheckP = Typecheck <$> dckFile <*> includes
 
 dckFile :: Parser FilePath
 dckFile = argument str
@@ -73,8 +73,8 @@ versionMod :: Parser (a -> a)
 versionMod = infoOption dickinsonVersionString (short 'V' <> long "version" <> help "Show version")
 
 run :: Act -> IO ()
-run (Run fp is)   = do { pGo <- defaultLibPath ; TIO.putStrLn =<< evalFile (pGo is) fp }
-run (REPL _)      = dickinsonRepl
-run (Check f)     = checkFile f
-run (Lint f)      = warnFile f
-run (Typecheck f) = tcFile f
+run (Run fp is)     = do { pGo <- defaultLibPath ; TIO.putStrLn =<< evalFile (pGo is) fp }
+run (REPL _)        = dickinsonRepl
+run (Check f _)     = checkFile f
+run (Lint f _)      = warnFile f
+run (Typecheck f _) = tcFile f
