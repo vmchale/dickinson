@@ -7,7 +7,7 @@ module Language.Dickinson.Eval ( EvalM
                                , loadDickinson
                                , evalDickinsonAsMain
                                , evalExpressionM
-                               , normalizeExpressionM
+                               , evalExpressionAsTextM
                                , evalWithGen
                                , evalIO
                                , findDecl
@@ -17,7 +17,7 @@ module Language.Dickinson.Eval ( EvalM
                                ) where
 
 import           Control.Composition           (thread)
-import           Control.Monad                 (zipWithM_, (<=<))
+import           Control.Monad                 (zipWithM, zipWithM_, (<=<))
 import           Control.Monad.Except          (ExceptT, MonadError, runExceptT, throwError)
 import           Control.Monad.IO.Class        (MonadIO (..))
 import           Control.Monad.State.Lazy      (MonadState, StateT, evalStateT, get, gets, modify, put)
@@ -156,7 +156,7 @@ evalDickinsonAsMain :: (MonadError (DickinsonError AlexPosn) m, MonadState (Eval
                     -> m T.Text
 evalDickinsonAsMain is d =
     loadDickinson is d *>
-    (evalExpressionM =<< findMain)
+    (evalExpressionAsTextM =<< findMain)
 
 loadDickinson :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m)
               => [FilePath] -- ^ Include path
@@ -211,44 +211,77 @@ withSt modSt act = do
     modify modSt
     act <* (put preSt)
 
-bindPattern :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m) => Pattern a -> Expression a -> m ()
-bindPattern (PatternVar _ n) e               = bindName n e
-bindPattern Wildcard{} _                     = pure ()
-bindPattern (PatternTuple _ []) (Tuple _ []) = pure ()
-bindPattern (PatternTuple _ ps) (Tuple _ es) = zipWithM_ bindPattern ps es -- FIXME: check lengths
+bindPattern :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m) => Pattern a -> Expression a -> m (EvalSt a -> EvalSt a)
+bindPattern (PatternVar _ n) e               = pure $ nameMod n e
+bindPattern Wildcard{} _                     = pure id
+bindPattern (PatternTuple _ ps) (Tuple _ es) = thread <$> zipWithM bindPattern ps es
 bindPattern (PatternTuple l _) _             = throwError $ MalformedTuple l
 
-normalizeExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
-normalizeExpressionM e@Literal{}    = pure e
-normalizeExpressionM e@StrChunk{}   = pure e
-normalizeExpressionM (Var _ n)      = normalizeExpressionM =<< lookupName n
-normalizeExpressionM (Choice _ pes) = normalizeExpressionM =<< pick pes
--- FIXME: this is overzealous I think...
-normalizeExpressionM (Interp l es)  = concatOrFail l es
-normalizeExpressionM (Concat l es)  = concatOrFail l es
-normalizeExpressionM (Tuple l es)   = Tuple l <$> traverse normalizeExpressionM es
-normalizeExpressionM (Let _ bs e) = do
-    es' <- traverse normalizeExpressionM (snd <$> bs)
+-- | Resolve let bindings and such; no not perform choices or concatenations.
+resolveExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
+resolveExpressionM e@Literal{}  = pure e
+resolveExpressionM e@StrChunk{} = pure e
+resolveExpressionM (Var _ n)    = resolveExpressionM =<< lookupName n
+resolveExpressionM (Choice l pes) = do
+    let ps = fst <$> pes
+    es <- traverse resolveExpressionM (snd <$> pes)
+    pure $ Choice l (NE.zip ps es)
+resolveExpressionM (Interp l es) = Interp l <$> traverse resolveExpressionM es
+resolveExpressionM (Concat l es) = Concat l <$> traverse resolveExpressionM es
+resolveExpressionM (Tuple l es) = Tuple l <$> traverse resolveExpressionM es
+resolveExpressionM (Let _ bs e) = do
+    es' <- traverse resolveExpressionM (snd <$> bs)
     let ns = fst <$> bs
         newBs = NE.zip ns es'
     traverse_ (uncurry bindName) newBs
     let stMod = thread $ fmap (uncurry nameMod) newBs
     withSt stMod $
-        normalizeExpressionM e
-normalizeExpressionM (Apply _ e e') = do
-    e'' <- normalizeExpressionM e
+        resolveExpressionM e
+resolveExpressionM (Apply _ e e') = do
+    e'' <- resolveExpressionM e
     case e'' of
         Lambda _ n _ e''' ->
             withSt (nameMod n e') $
-                normalizeExpressionM e'''
+                resolveExpressionM e'''
         _ -> error "Ill-typed expression"
-normalizeExpressionM e@Lambda{} = pure e
-normalizeExpressionM (Match _ e p e') =
-    (bindPattern p =<< normalizeExpressionM e) *> -- FIXME: this evaluates 'pick' too zealously in repls
-    normalizeExpressionM e'
+resolveExpressionM e@Lambda{} = pure e
+resolveExpressionM (Match _ e p e') =
+    (bindPattern p =<< resolveExpressionM e) *>
+    resolveExpressionM e'
+
+evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
+evalExpressionM e@Literal{}    = pure e
+evalExpressionM e@StrChunk{}   = pure e
+evalExpressionM (Var _ n)      = evalExpressionM =<< lookupName n
+evalExpressionM (Choice _ pes) = evalExpressionM =<< pick pes
+-- FIXME: this is overzealous I think...
+evalExpressionM (Interp l es)  = concatOrFail l es
+evalExpressionM (Concat l es)  = concatOrFail l es
+evalExpressionM (Tuple l es)   = Tuple l <$> traverse evalExpressionM es
+evalExpressionM (Let _ bs e) = do
+    es' <- traverse evalExpressionM (snd <$> bs)
+    let ns = fst <$> bs
+        newBs = NE.zip ns es'
+    traverse_ (uncurry bindName) newBs
+    let stMod = thread $ fmap (uncurry nameMod) newBs
+    withSt stMod $
+        evalExpressionM e
+evalExpressionM (Apply _ e e') = do
+    e'' <- evalExpressionM e
+    case e'' of
+        Lambda _ n _ e''' ->
+            withSt (nameMod n e') $
+                evalExpressionM e'''
+        _ -> error "Ill-typed expression"
+evalExpressionM e@Lambda{} = pure e
+evalExpressionM (Match _ e p e') = do
+    modSt <- (bindPattern p =<< resolveExpressionM e)
+    -- FIXME: this evaluates 'pick' too zealously in repls
+    withSt modSt $
+        evalExpressionM e'
 
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)
-concatOrFail l = fmap (Literal l . mconcat) . traverse evalExpressionM
+concatOrFail l = fmap (Literal l . mconcat) . traverse evalExpressionAsTextM
 
-evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
-evalExpressionM = extrText <=< normalizeExpressionM
+evalExpressionAsTextM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
+evalExpressionAsTextM = extrText <=< evalExpressionM

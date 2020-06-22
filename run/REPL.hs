@@ -89,7 +89,7 @@ printExpr str = do
                 setSt newSt
                 case p of
                     Right expr -> do
-                        mErr <- lift $ runExceptT $ evalExpressionM =<< renameExpressionM expr
+                        mErr <- lift $ runExceptT $ evalExpressionAsTextM =<< renameExpressionM expr
                         lift balanceMax
                         putErr mErr (liftIO . TIO.putStrLn)
                     Left decl -> do

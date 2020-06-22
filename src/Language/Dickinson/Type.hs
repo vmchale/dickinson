@@ -48,13 +48,10 @@ data Expression a = Literal a T.Text
                   | Lambda a (Name a) DickinsonTy (Expression a) -- TODO: application, type checker
                   | Apply a (Expression a) (Expression a)
                   | Concat a [Expression a]
-                  | Tuple a [Expression a]
+                  | Tuple a [Expression a] -- TODO: NonEmpty
                   | Match a (Expression a) (Pattern a) (Expression a)
                   | Flatten a (Expression a)
                   deriving (Generic, NFData, Binary, Functor)
-                  -- TODO: tuples &. such
-                  -- concat back again?
-                  -- TODO: normalize subtree
                   -- TODO: builtins?
 
 data DickinsonTy = TyText
