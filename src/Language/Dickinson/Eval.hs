@@ -21,6 +21,7 @@ import           Control.Monad                 (zipWithM_, (<=<))
 import           Control.Monad.Except          (ExceptT, MonadError, runExceptT, throwError)
 import           Control.Monad.IO.Class        (MonadIO (..))
 import           Control.Monad.State.Lazy      (MonadState, StateT, evalStateT, get, gets, modify, put)
+import           Data.Bifunctor                (second)
 import qualified Data.ByteString.Lazy          as BSL
 import           Data.Foldable                 (toList, traverse_)
 import           Data.Functor                  (($>))
@@ -235,10 +236,9 @@ normalizeExpressionM (Var _ n)      = normalizeExpressionM =<< lookupName n
 normalizeExpressionM (Choice l pes) = do
     let ps = fst <$> pes
     es <- traverse normalizeExpressionM (snd <$> pes)
-    pure $ Choice l (NE.zip ps es) -- anormalizeExpressionM =<< pick pes
--- FIXME: this is overzealous I think...
-normalizeExpressionM (Interp l es)  = concatOrFail l es
-normalizeExpressionM (Concat l es)  = concatOrFail l es
+    pure $ Choice l (NE.zip ps es)
+normalizeExpressionM (Interp l es)  = concatOrFail l =<< traverse normalizeExpressionM es
+normalizeExpressionM (Concat l es)  = concatOrFail l =<< traverse normalizeExpressionM es
 normalizeExpressionM (Tuple l es)   = Tuple l <$> traverse normalizeExpressionM es
 normalizeExpressionM (Let _ bs e) = do
     es' <- traverse normalizeExpressionM (snd <$> bs)
@@ -260,8 +260,27 @@ normalizeExpressionM (Match _ e p e') =
     (bindPattern p =<< normalizeExpressionM e) *>
     normalizeExpressionM e'
 
+combineBranch :: a -> NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a)
+combineBranch l brs brs' =
+    let newPs = (*) <$> (fmap fst brs) <*> (fmap fst brs')
+        in let newBranches = smoosh l <$> (fmap snd brs) <*> (fmap snd brs')
+            in NE.zip newPs newBranches
+
+-- FIXME: Choice (make sure we make as few choices as possible!)
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)
-concatOrFail l = fmap (Literal l . mconcat) . traverse evalExpressionM
+concatOrFail l = fmap specialConcat . traverse normalizeExpressionM
+    where specialConcat = foldr (smoosh l) (Literal l mempty)
+
+smoosh :: a -> Expression a -> Expression a -> Expression a
+smoosh l (Literal _ t) (Literal _ t')   = Literal l (t <> t')
+smoosh l (StrChunk _ t) (StrChunk _ t') = StrChunk l (t <> t')
+smoosh l (Literal _ t) (StrChunk _ t')  = StrChunk l (t <> t')
+smoosh l (StrChunk _ t) (Literal _ t')  = StrChunk l (t <> t')
+smoosh l e@Literal{} (Choice _ des)     = Choice l (fmap (second (smoosh l e)) des)
+smoosh l e@StrChunk{} (Choice _ des)    = Choice l (fmap (second (smoosh l e)) des)
+smoosh l (Choice _ des) e@Literal{}     = Choice l (fmap (second (\e' -> smoosh l e' e)) des)
+smoosh l (Choice _ des) e@StrChunk{}    = Choice l (fmap (second (\e' -> smoosh l e' e)) des)
+smoosh l (Choice _ des) (Choice _ des') = Choice l (combineBranch l des des')
 
 evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 evalExpressionM = extrText <=< randPickM <=< normalizeExpressionM
