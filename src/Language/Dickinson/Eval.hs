@@ -217,38 +217,6 @@ bindPattern Wildcard{} _                     = pure id
 bindPattern (PatternTuple _ ps) (Tuple _ es) = thread <$> zipWithM bindPattern ps es
 bindPattern (PatternTuple l _) _             = throwError $ MalformedTuple l
 
--- | Resolve let bindings and such; no not perform choices or concatenations.
-resolveExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
-resolveExpressionM e@Literal{}  = pure e
-resolveExpressionM e@StrChunk{} = pure e
-resolveExpressionM (Var _ n)    = resolveExpressionM =<< lookupName n
-resolveExpressionM (Choice l pes) = do
-    let ps = fst <$> pes
-    es <- traverse resolveExpressionM (snd <$> pes)
-    pure $ Choice l (NE.zip ps es)
-resolveExpressionM (Interp l es) = Interp l <$> traverse resolveExpressionM es
-resolveExpressionM (Concat l es) = Concat l <$> traverse resolveExpressionM es
-resolveExpressionM (Tuple l es) = Tuple l <$> traverse resolveExpressionM es
-resolveExpressionM (Let _ bs e) = do
-    es' <- traverse resolveExpressionM (snd <$> bs)
-    let ns = fst <$> bs
-        newBs = NE.zip ns es'
-    traverse_ (uncurry bindName) newBs
-    let stMod = thread $ fmap (uncurry nameMod) newBs
-    withSt stMod $
-        resolveExpressionM e
-resolveExpressionM (Apply _ e e') = do
-    e'' <- resolveExpressionM e
-    case e'' of
-        Lambda _ n _ e''' ->
-            withSt (nameMod n e') $
-                resolveExpressionM e'''
-        _ -> error "Ill-typed expression"
-resolveExpressionM e@Lambda{} = pure e
-resolveExpressionM (Match _ e p e') =
-    (bindPattern p =<< resolveExpressionM e) *>
-    resolveExpressionM e'
-
 evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 evalExpressionM e@Literal{}    = pure e
 evalExpressionM e@StrChunk{}   = pure e
@@ -275,8 +243,9 @@ evalExpressionM (Apply _ e e') = do
         _ -> error "Ill-typed expression"
 evalExpressionM e@Lambda{} = pure e
 evalExpressionM (Match _ e p e') = do
-    modSt <- (bindPattern p =<< resolveExpressionM e)
-    -- FIXME: this evaluates 'pick' too zealously in repls
+    modSt <- (bindPattern p =<< evalExpressionM e)
+    -- FIXME: this evaluates 'pick' too zealously in repls?
+    -- maybe has to do with global uniqueness lol
     withSt modSt $
         evalExpressionM e'
 
