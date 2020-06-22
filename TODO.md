@@ -26,7 +26,7 @@
 # Library API
 - [ ] Maybe spin out internal library?
 # Bugs
-- [ ] Bug in `test/demo/animal.dck` - overqualified names parsed with imports...
+- [ ] Bug in `test/demo/animal.dck` - doesn't ever produce a bird?
 # Features
 - [ ] Circular import checker
 - [ ] Save repl states
