@@ -16,10 +16,11 @@ module Language.Dickinson.Eval ( EvalM
                                , balanceMax
                                ) where
 
+import           Control.Composition           (thread)
 import           Control.Monad                 (zipWithM_, (<=<))
 import           Control.Monad.Except          (ExceptT, MonadError, runExceptT, throwError)
 import           Control.Monad.IO.Class        (MonadIO (..))
-import           Control.Monad.State.Lazy      (MonadState, StateT, evalStateT, gets, modify)
+import           Control.Monad.State.Lazy      (MonadState, StateT, evalStateT, get, gets, modify, put)
 import qualified Data.ByteString.Lazy          as BSL
 import           Data.Foldable                 (toList, traverse_)
 import           Data.Functor                  (($>))
@@ -109,16 +110,14 @@ evalWithGen :: StdGen
             -> IO (Either (DickinsonError a) x)
 evalWithGen g u me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty (initRenames $ fst4 u) mempty u mempty)
 
--- TODO: temporary bindings
+nameMod :: Name a -> Expression a -> EvalSt a -> EvalSt a
+nameMod (Name _ (Unique u) _) e = over boundExprLens (IM.insert u e)
+
 bindName :: (MonadState (EvalSt a) m) => Name a -> Expression a -> m ()
-bindName (Name _ (Unique u) _) e = modify (over boundExprLens (IM.insert u e))
--- TODO: bind type information
+bindName n e = modify (nameMod n e)
 
 topLevelAdd :: (MonadState (EvalSt a) m) => Name a -> m ()
 topLevelAdd (Name n u _) = modify (over topLevelLens (M.insert (T.intercalate "." $ toList n) u))
-
-deleteName :: (MonadState (EvalSt a) m) => Name a -> m ()
-deleteName (Name _ (Unique u) _) = modify (over boundExprLens (IM.delete u))
 
 lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression a)
 lookupName n@(Name _ u l) = do
@@ -209,6 +208,12 @@ extrText (Literal _ t)  = pure t
 extrText (StrChunk _ t) = pure t
 extrText e              = do { ty <- typeOf e ; throwError $ TypeMismatch e TyText ty }
 
+withSt :: (MonadState s m) => (s -> s) -> m b -> m b
+withSt modSt act = do
+    preSt <- get
+    modify modSt
+    act <* (put preSt)
+
 bindPattern :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m) => Pattern a -> Expression a -> m ()
 bindPattern (PatternVar _ n) e               = bindName n e
 bindPattern Wildcard{} _                     = pure ()
@@ -230,14 +235,16 @@ normalizeExpressionM (Let _ bs e) = do
     let ns = fst <$> bs
         newBs = NE.zip ns es'
     traverse_ (uncurry bindName) newBs
-    normalizeExpressionM e <* traverse_ deleteName ns
-    -- FIXME: assumes global uniqueness in renaming
+    let stMod = thread $ fmap (uncurry nameMod) newBs
+    withSt stMod $
+        normalizeExpressionM e
+    -- FIXME: use withSt
 normalizeExpressionM (Apply _ e e') = do
     e'' <- normalizeExpressionM e
     case e'' of
-        Lambda _ n _ e''' -> do
-            bindName n e'
-            normalizeExpressionM e'''
+        Lambda _ n _ e''' ->
+            withSt (nameMod n e') $
+                normalizeExpressionM e'''
         _ -> error "Ill-typed expression"
 normalizeExpressionM e@Lambda{} = pure e
 normalizeExpressionM (Match _ e p e') =
