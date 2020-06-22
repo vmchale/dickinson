@@ -218,11 +218,24 @@ bindPattern (PatternTuple _ []) (Tuple _ []) = pure ()
 bindPattern (PatternTuple _ ps) (Tuple _ es) = zipWithM_ bindPattern ps es -- FIXME: check lengths
 bindPattern (PatternTuple l _) _             = throwError $ MalformedTuple l
 
+randPickM :: (MonadState (EvalSt a) m) => Expression a -> m (Expression a)
+randPickM (Choice _ pes) = do
+    let ps = fst <$> pes
+    es <- traverse randPickM (snd <$> pes)
+    let pes' = NE.zip ps es
+    pick pes'
+randPickM e@Literal{}    = pure e
+randPickM e@StrChunk{}   = pure e
+-- TODO: finish this
+
 normalizeExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 normalizeExpressionM e@Literal{}    = pure e
 normalizeExpressionM e@StrChunk{}   = pure e
 normalizeExpressionM (Var _ n)      = normalizeExpressionM =<< lookupName n
-normalizeExpressionM (Choice _ pes) = normalizeExpressionM =<< pick pes
+normalizeExpressionM (Choice l pes) = do
+    let ps = fst <$> pes
+    es <- traverse normalizeExpressionM (snd <$> pes)
+    pure $ Choice l (NE.zip ps es) -- anormalizeExpressionM =<< pick pes
 -- FIXME: this is overzealous I think...
 normalizeExpressionM (Interp l es)  = concatOrFail l es
 normalizeExpressionM (Concat l es)  = concatOrFail l es
@@ -244,11 +257,11 @@ normalizeExpressionM (Apply _ e e') = do
         _ -> error "Ill-typed expression"
 normalizeExpressionM e@Lambda{} = pure e
 normalizeExpressionM (Match _ e p e') =
-    (bindPattern p =<< normalizeExpressionM e) *> -- FIXME: this evaluates 'pick' too zealously in repls
+    (bindPattern p =<< normalizeExpressionM e) *>
     normalizeExpressionM e'
 
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)
 concatOrFail l = fmap (Literal l . mconcat) . traverse evalExpressionM
 
 evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
-evalExpressionM = extrText <=< normalizeExpressionM
+evalExpressionM = extrText <=< randPickM <=< normalizeExpressionM
