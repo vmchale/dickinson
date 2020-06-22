@@ -7,13 +7,15 @@ emd - [Emily] Dickinson
 
 # DESCRIPTION
 
-**emd** is a text-generation language
+**Dickinson** is a text-generation language
 
 # SYNOPSIS
 
   emd repl
 
   emd run literature.dck
+
+  emd run project.dck -\-include lib
 
 # SUBCOMMANDS
 
