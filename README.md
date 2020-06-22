@@ -8,7 +8,7 @@ To install, first download [cabal-install](https://www.haskell.org/cabal/) and
 [GHC](https://www.haskell.org/ghc/download.html). Then:
 
 ```
-cabal install dickinson
+cabal install language-dickinson
 ```
 
 ### Editor Integration

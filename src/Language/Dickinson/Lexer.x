@@ -136,7 +136,6 @@ mkSym = constructor TokSym
 
 type ModCtx = [T.Text]
 
--- "inside out - track ints by name!"
 type AlexUserState = (UniqueCtx, M.Map T.Text Int, NameEnv AlexPosn, ModCtx)
 
 newIdentAlex :: AlexPosn -> T.Text -> Alex (Name AlexPosn)
