@@ -238,7 +238,6 @@ normalizeExpressionM (Let _ bs e) = do
     let stMod = thread $ fmap (uncurry nameMod) newBs
     withSt stMod $
         normalizeExpressionM e
-    -- FIXME: use withSt
 normalizeExpressionM (Apply _ e e') = do
     e'' <- normalizeExpressionM e
     case e'' of
