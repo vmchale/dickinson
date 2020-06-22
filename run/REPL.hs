@@ -18,7 +18,7 @@ import qualified Data.Text.Lazy                        as TL
 import           Data.Text.Lazy.Encoding               (encodeUtf8)
 import           Data.Text.Prettyprint.Doc             (Pretty (pretty), hardline)
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
-import           Data.Tuple.Ext                        (fst4)
+import           Data.Tuple.Ext                        (fst3)
 import           Language.Dickinson.Eval
 import           Language.Dickinson.Lexer              (AlexPosn, AlexUserState, alexInitUserState)
 import           Language.Dickinson.Lib
@@ -74,7 +74,7 @@ names = lift $ gets (M.keys . topLevel)
 setSt :: AlexUserState -> Repl AlexPosn ()
 setSt newSt = lift $ do
     m' <- use (rename.maxLens)
-    let newM = 1 + max (fst4 newSt) m'
+    let newM = 1 + max (fst3 newSt) m'
     lexerStateLens .= newSt
     lexerStateLens._1 .= newM
     rename.maxLens .= newM

@@ -42,7 +42,7 @@ import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
-import           Lens.Micro                    (Lens', over, set, _1, _4)
+import           Lens.Micro                    (Lens', over, _1)
 import           Lens.Micro.Mtl                (use, (.=))
 import           System.Random                 (StdGen, newStdGen, randoms)
 
@@ -78,9 +78,8 @@ instance Pretty (EvalSt a) where
             <#> prettyAlexState st
 
 prettyAlexState :: AlexUserState -> Doc a
-prettyAlexState (m, _, nEnv, modCtx) =
-      "module context" <+> intercalate "." (pretty <$> modCtx)
-    <#> "max:" <+> pretty m
+prettyAlexState (m, _, nEnv) =
+        "max:" <+> pretty m
     <#> prettyDumpBinds nEnv
 
 instance HasRenames (EvalSt a) where
@@ -108,7 +107,7 @@ evalWithGen :: StdGen
             -> AlexUserState -- ^ Threaded through
             -> EvalM a x
             -> IO (Either (DickinsonError a) x)
-evalWithGen g u me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty (initRenames $ fst4 u) mempty u mempty)
+evalWithGen g u me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty (initRenames $ fst3 u) mempty u mempty)
 
 nameMod :: Name a -> Expression a -> EvalSt a -> EvalSt a
 nameMod (Name _ (Unique u) _) e = over boundExprLens (IM.insert u e)
@@ -175,16 +174,13 @@ balanceMax = do
 
 parseEvalM :: (MonadIO m, MonadState (EvalSt AlexPosn) m, MonadError (DickinsonError AlexPosn) m)
            => FilePath
-           -> ModCtx
            -> m (Dickinson AlexPosn)
-parseEvalM fp ctx = do
+parseEvalM fp = do
     preSt <- gets lexerState
     bsl <- liftIO $ BSL.readFile fp
-    -- FIXME: parses (:import) s wrong...
-    case parseWithCtx bsl (over _4 (ctx <>) preSt) of
+    case parseWithCtx bsl preSt of
         Right (st, d) ->
-            let modPre = frth preSt in
-                (lexerStateLens .= (set _4 modPre st)) $> d
+            (lexerStateLens .= st) $> d
         Left err ->
             throwError (ParseErr err)
 
@@ -198,7 +194,7 @@ addDecl is (Import l n)  = do
     preFp <- resolveImport is n
     case preFp of
         Just fp -> do
-            parsed <- parseEvalM fp (toList $ name n)
+            parsed <- parseEvalM fp
             balanceMax
             renamed <- renameDickinsonM parsed
             loadDickinson is renamed

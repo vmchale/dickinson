@@ -2,12 +2,6 @@
 
 ; TODO tydecl sex = Boy | Girl
 
-(:def fst
-  tuple.fst)
-
-(:def snd
-  tuple.snd)
-
 ; see https://github.com/vmchale/doggo-command-line/blob/master/src/main.rs
 (:def greeter
   (:lambda dog (text, text)
