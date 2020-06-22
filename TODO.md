@@ -27,7 +27,7 @@
 - [ ] Maybe spin out internal library?
 # Bugs
 - [ ] Bug in `test/demo/animal.dck` - doesn't ever produce a bird?
-- [ ] Overzealous in evaluating in `:match` binds? -> leads to `pick` not
+- [x] Overzealous in evaluating in `:match` binds? -> leads to `pick` not
   happening in REPLs
 # Features
 - [ ] Circular import checker
@@ -54,6 +54,8 @@
 - [ ] docs? links...?
 - [ ] Normalization (for encoding, for one)
 - [ ] Remove duplicates (for regen adjectives...)
+- [ ] Only allow imports at the beginning so that stuff doesn't import
+  transitively
 # Tooling
 - [x] REPL
   - [x] Actually fix identifiers/threading state to the lexer
@@ -63,6 +65,7 @@
 - [ ] Escpaed characters
 - [ ] Nested interpolated strings
 - [ ] Renamer + pattern matching
+- [ ] `examples/shakespeare.dck`
 # Libraries
 - [x] Colors
 - [ ] Animals
