@@ -238,7 +238,6 @@ instance Pretty (Token a) where
     pretty (TokKeyword _ kw')   = pretty kw'
     pretty (TokSym _ sym')      = pretty sym'
 
--- for testing
 loop :: Alex [Token AlexPosn]
 loop = do
     tok' <- alexMonadScan
@@ -246,7 +245,6 @@ loop = do
         EOF{} -> pure []
         _ -> (tok' :) <$> loop
 
--- | N.B. for testing
 lexDickinson :: BSL.ByteString -> Either String [Token AlexPosn]
 lexDickinson = flip runAlex loop
 
