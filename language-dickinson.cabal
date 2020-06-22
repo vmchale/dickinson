@@ -23,7 +23,6 @@ extra-source-files:
     test/data/*.pretty
     test/data/*.dck
     test/data/*.rename
-    examples/*.dck
 
 extra-doc-files:
     README.md

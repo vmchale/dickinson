@@ -1,4 +1,4 @@
-; TODO: import bird
+(:import birds)
 
 (:def animal
   (:oneof

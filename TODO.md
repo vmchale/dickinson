@@ -25,6 +25,8 @@
 - [ ] Error on negative numbers? (useful error)
 # Library API
 - [ ] Maybe spin out internal library?
+# Bugs
+- [ ] Bug in `test/demo/animal.dck` - overqualified names parsed with imports...
 # Features
 - [ ] Circular import checker
 - [ ] Save repl states

@@ -11,6 +11,7 @@ syntax match dickinsonKeyword ":oneof"
 syntax match dickinsonKeyword ":let"
 syntax match dickinsonKeyword ":lambda"
 syntax match dickinsonKeyword ":match"
+syntax match dickinsonKeyword ":flatten"
 
 syntax match dickinsonNum "\v[0-9]+"
 syntax match dickinsonNum "\v[0-9]+\.[0-9]+"

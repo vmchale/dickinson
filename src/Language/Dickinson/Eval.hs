@@ -180,6 +180,7 @@ parseEvalM :: (MonadIO m, MonadState (EvalSt AlexPosn) m, MonadError (DickinsonE
 parseEvalM fp ctx = do
     preSt <- gets lexerState
     bsl <- liftIO $ BSL.readFile fp
+    -- FIXME: parses (:import) s wrong...
     case parseWithCtx bsl (over _4 (ctx <>) preSt) of
         Right (st, d) ->
             let modPre = frth preSt in

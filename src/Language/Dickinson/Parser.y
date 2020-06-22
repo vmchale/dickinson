@@ -65,6 +65,7 @@ import Language.Dickinson.Unique
     import { TokKeyword $$ KwImport }
     lambda { TokKeyword $$ KwLambda }
     match { TokKeyword $$ KwMatch }
+    flatten { TokKeyword $$ KwFlatten }
 
     text { TokKeyword $$ KwText }
 
@@ -134,6 +135,7 @@ Expression :: { Expression AlexPosn }
            | dollar Expression Expression { Apply $1 $2 $3 }
            | lparen sepBy(Expression,comma) rparen { Tuple $1 (reverse $2) }
            | match Expression Pattern Expression { Match $1 $2 $3 $4 }
+           | flatten Expression { Flatten $1 $2 }
            | parens(Expression) { $1 }
 
 WeightedLeaf :: { (Double, Expression AlexPosn) }
