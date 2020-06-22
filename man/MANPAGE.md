@@ -33,6 +33,15 @@ emd - [Emily] Dickinson
 **-V** **-\-version**
 :   Display version information
 
+**-I** **-\-include**
+:   Directory to search for libraries
+
+# EDITOR INTEGRATION
+
+A vim plugin is avaiable; see
+
+https://github.com/vmchale/dickinson/tree/master/vim
+
 # SHELL COMPLETIONS
 
 To get shell completions in your current session:
