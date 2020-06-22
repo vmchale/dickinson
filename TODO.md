@@ -27,6 +27,8 @@
 - [ ] Maybe spin out internal library?
 # Bugs
 - [ ] Bug in `test/demo/animal.dck` - doesn't ever produce a bird?
+- [ ] Overzealous in evaluating in `:match` binds? -> leads to `pick` not
+  happening in REPLs
 # Features
 - [ ] Circular import checker
 - [ ] Save repl states

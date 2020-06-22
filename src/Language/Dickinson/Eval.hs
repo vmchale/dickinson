@@ -244,7 +244,7 @@ normalizeExpressionM (Apply _ e e') = do
         _ -> error "Ill-typed expression"
 normalizeExpressionM e@Lambda{} = pure e
 normalizeExpressionM (Match _ e p e') =
-    (bindPattern p =<< normalizeExpressionM e) *>
+    (bindPattern p =<< normalizeExpressionM e) *> -- FIXME: this evaluates 'pick' too zealously in repls
     normalizeExpressionM e'
 
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)
