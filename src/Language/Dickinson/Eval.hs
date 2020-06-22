@@ -227,11 +227,7 @@ evalExpressionM (Interp l es)  = concatOrFail l es
 evalExpressionM (Concat l es)  = concatOrFail l es
 evalExpressionM (Tuple l es)   = Tuple l <$> traverse evalExpressionM es
 evalExpressionM (Let _ bs e) = do
-    es' <- traverse evalExpressionM (snd <$> bs)
-    let ns = fst <$> bs
-        newBs = NE.zip ns es'
-    traverse_ (uncurry bindName) newBs
-    let stMod = thread $ fmap (uncurry nameMod) newBs
+    let stMod = thread $ fmap (uncurry nameMod) bs
     withSt stMod $
         evalExpressionM e
 evalExpressionM (Apply _ e e') = do
@@ -245,7 +241,7 @@ evalExpressionM e@Lambda{} = pure e
 evalExpressionM (Match _ e p e') = do
     modSt <- (bindPattern p =<< evalExpressionM e)
     -- FIXME: this evaluates 'pick' too zealously in repls?
-    -- maybe has to do with global uniqueness lol
+    -- maybe has to do with global uniqueness... `greeter` fails in the REPL?
     withSt modSt $
         evalExpressionM e'
 
