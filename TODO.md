@@ -53,6 +53,7 @@
 # Tooling
 - [x] REPL
   - [x] Actually fix identifiers/threading state to the lexer
+  - [ ] `:t` thing?
   - [ ] Completions!
 # Tests
 - [ ] Escpaed characters

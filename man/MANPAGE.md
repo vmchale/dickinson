@@ -38,7 +38,7 @@ emd - [Emily] Dickinson
 
 # EDITOR INTEGRATION
 
-A vim plugin is avaiable; see
+A vim plugin is available; see
 
 https://github.com/vmchale/dickinson/tree/master/vim
 
