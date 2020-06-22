@@ -29,6 +29,7 @@
 - [ ] Bug in `test/demo/animal.dck` - doesn't ever produce a bird?
 - [x] Overzealous in evaluating in `:match` binds? -> leads to `pick` not
   happening in REPLs
+    - [ ] Maybe better to add record types + accessors...
 # Features
 - [ ] Circular import checker
 - [ ] Save repl states
