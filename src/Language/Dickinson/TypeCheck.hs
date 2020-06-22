@@ -99,3 +99,4 @@ typeOf (Match _ e p e') = do
     ty <- typeOf e
     bindPattern p ty
     typeOf e'
+typeOf (Flatten _ e) = typeOf e

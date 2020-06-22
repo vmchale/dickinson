@@ -37,6 +37,7 @@ checkMultipleExpr (Choice _ brs)   = foldMapAlternative (checkMultipleExpr . snd
 checkMultipleExpr (Concat _ es)    = foldMapAlternative checkMultipleExpr es
 checkMultipleExpr (Tuple _ es)     = foldMapAlternative checkMultipleExpr es
 checkMultipleExpr (Lambda _ _ _ e) = checkMultipleExpr e
+checkMultipleExpr (Flatten _ e)    = checkMultipleExpr e
 checkMultipleExpr (Let _ bs e)     =
         checkNames (toList $ fmap fst bs)
     <|> foldMapAlternative checkMultipleExpr (snd <$> bs)

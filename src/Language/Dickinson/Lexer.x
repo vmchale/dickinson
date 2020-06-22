@@ -85,6 +85,7 @@ tokens :-
     <0> ":lambda"                  { mkKeyword KwLambda }
     <0> "text"                     { mkKeyword KwText }
     <0> ":match"                   { mkKeyword KwMatch }
+    <0> ":flatten"                 { mkKeyword KwFlatten }
 
     <0> @name                      { tok (\p s -> TokIdent p <$> newIdentAlex p (mkText s)) }
 
@@ -200,17 +201,19 @@ data Keyword = KwDef
              | KwLambda
              | KwText
              | KwMatch
+             | KwFlatten
              deriving (Eq, Generic, NFData)
 
 instance Pretty Keyword where
-    pretty KwDef    = ":def"
-    pretty KwLet    = ":let"
-    pretty KwBranch = ":branch"
-    pretty KwOneof  = ":oneof"
-    pretty KwImport = ":import"
-    pretty KwLambda = ":lambda"
-    pretty KwText   = "text"
-    pretty KwMatch  = ":match"
+    pretty KwDef     = ":def"
+    pretty KwLet     = ":let"
+    pretty KwBranch  = ":branch"
+    pretty KwOneof   = ":oneof"
+    pretty KwImport  = ":import"
+    pretty KwLambda  = ":lambda"
+    pretty KwText    = "text"
+    pretty KwMatch   = ":match"
+    pretty KwFlatten = ":flatten"
 
 instance Pretty AlexPosn where
     pretty (AlexPn _ line col) = pretty line <> colon <> pretty col

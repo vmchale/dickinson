@@ -50,6 +50,7 @@ data Expression a = Literal a T.Text
                   | Concat a [Expression a]
                   | Tuple a [Expression a]
                   | Match a (Expression a) (Pattern a) (Expression a)
+                  | Flatten a (Expression a)
                   deriving (Generic, NFData, Binary, Functor)
                   -- TODO: tuples &. such
                   -- concat back again?
@@ -96,6 +97,7 @@ instance Pretty (Expression a) where
     pretty StrChunk{}        = error "Internal error: naked StrChunk"
     pretty (Tuple _ es)      = tupled (pretty <$> es)
     pretty (Match _ n p e)   = parens (":match" <+> pretty n <^> pretty p <^> pretty e)
+    pretty (Flatten _ e)     = parens (":flatten" <^> pretty e)
 
 instance Pretty DickinsonTy where
     pretty TyText{}     = "text"
