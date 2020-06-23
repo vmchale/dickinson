@@ -1,0 +1,23 @@
+(:def normalize
+  (:let 
+    [norm
+      (:oneof
+        (| "bidets")
+        (| "breastfeeding your boyfriend")
+        (| "DWIs"))]
+    "Normalize ${norm}"))
+
+(:def abolish
+  (:let 
+    [target
+      (:oneof
+        (| "credit scores")
+        (| "parking tickets"))]
+    "Abolish ${target}"))
+
+; unpopular opinion lol
+
+(:def main
+  (:oneof
+    (| normalize)
+    (| abolish)))
