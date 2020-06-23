@@ -15,9 +15,20 @@
         (| "parking tickets"))]
     "Abolish ${target}"))
 
+(:def toxic
+  (:let
+    [badThing
+      (:oneof
+        (| "brushing your teeth is")
+        (| "museums are"))]
+    "${badThing} toxic."))
+
 ; unpopular opinion lol
+; toxic
+; cancel _
 
 (:def main
   (:oneof
     (| normalize)
+    (| toxic)
     (| abolish)))
