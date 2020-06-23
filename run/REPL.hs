@@ -50,19 +50,18 @@ loop = do
     inp <- getInputLine "emd> "
     case words <$> inp of
         -- TODO: qualified imports?
-        Just []                -> loop
-        Just (":save":fp:_)    -> saveReplSt fp *> loop
-        Just (":l":fs)         -> traverse loadFile fs *> loop
-        Just (":load":fs)      -> traverse loadFile fs *> loop
-        Just (":r":fp:_)       -> loadReplSt fp *> loop
-        Just (":restore":fp:_) -> loadReplSt fp *> loop
-        Just [":q"]            -> pure ()
-        Just [":quit"]         -> pure ()
-        Just [":list"]         -> listNames *> loop
-        Just [":dump"]         -> dumpSt *> loop
+        Just []             -> loop
+        Just (":save":fp:_) -> saveReplSt fp *> loop
+        Just (":l":fs)      -> traverse loadFile fs *> loop
+        Just (":load":fs)   -> traverse loadFile fs *> loop
+        Just (":r":fp:_)    -> loadReplSt fp *> loop
+        Just [":q"]         -> pure ()
+        Just [":quit"]      -> pure ()
+        Just [":list"]      -> listNames *> loop
+        Just [":dump"]      -> dumpSt *> loop
         -- TODO: erase/delete names?
-        Just{}                 -> printExpr (fromJust inp) *> loop
-        Nothing                -> pure ()
+        Just{}              -> printExpr (fromJust inp) *> loop
+        Nothing             -> pure ()
 
 saveReplSt :: FilePath -> Repl AlexPosn ()
 saveReplSt fp = do

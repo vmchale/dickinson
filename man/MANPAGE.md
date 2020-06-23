@@ -27,6 +27,18 @@ emd - [Emily] Dickinson
 
 **lint** - Give suggestions for common mistakes
 
+## REPL COMMANDS
+
+**:save** - Save curent state in a file
+
+**:l** **:load** - Load a file
+
+**:r** - Restore a REPL state stored in some file
+
+**:q** **:quit* - Quit session
+
+**:list** - List all names that are in scope
+
 # OPTIONS
 
 **-h** **-\-help**
