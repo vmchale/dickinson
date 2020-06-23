@@ -7,6 +7,7 @@ import           Data.Binary                 (Binary, Get, Put, get, put)
 import           Data.Binary.Get             (runGet)
 import           Data.Binary.Put             (runPut)
 import qualified Data.ByteString.Lazy        as BSL
+import           Data.Semigroup              ((<>))
 import           Language.Dickinson.Eval
 
 getReplState :: Binary a => [Double] -> Get (EvalSt a)
