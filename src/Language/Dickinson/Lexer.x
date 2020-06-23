@@ -20,6 +20,7 @@
 import Control.Arrow ((&&&))
 import Control.DeepSeq (NFData)
 import Data.Bifunctor (first)
+import Data.Binary (Binary)
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.ByteString.Lazy.Char8 as ASCII
 import Data.Functor (($>))
@@ -215,6 +216,8 @@ instance Pretty AlexPosn where
 deriving instance Generic AlexPosn
 
 deriving instance NFData AlexPosn
+
+deriving instance Binary AlexPosn
 
 data Token a = EOF { loc :: a }
              | TokIdent { loc :: a, ident :: Name a }

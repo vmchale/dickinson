@@ -6,7 +6,7 @@ module REPL ( dickinsonRepl
 
 import           Control.Monad.Except                  (runExceptT)
 import           Control.Monad.IO.Class                (liftIO)
-import           Control.Monad.State.Lazy              (StateT, evalStateT, get, gets, lift)
+import           Control.Monad.State.Lazy              (StateT, evalStateT, get, gets, lift, put)
 import qualified Data.ByteString.Lazy                  as BSL
 import           Data.Foldable                         (traverse_)
 import qualified Data.Map                              as M
@@ -26,6 +26,7 @@ import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Lens.Micro                            (_1)
 import           Lens.Micro.Mtl                        (use, (.=))
+import           REPL.Save
 import           System.Console.Haskeline              (InputT, defaultSettings, getInputLine, historyFile, runInputT)
 import           System.Directory                      (getHomeDirectory)
 import           System.FilePath                       ((</>))
@@ -49,16 +50,29 @@ loop = do
     inp <- getInputLine "emd> "
     case words <$> inp of
         -- TODO: qualified imports?
-        Just []           -> loop
-        Just (":l":fs)    -> traverse loadFile fs *> loop
-        Just (":load":fs) -> traverse loadFile fs *> loop
-        Just [":q"]       -> pure ()
-        Just [":quit"]    -> pure ()
-        Just [":list"]    -> listNames *> loop
-        Just [":dump"]    -> dumpSt *> loop
+        Just []             -> loop
+        Just (":save":fp:_) -> saveReplSt fp *> loop
+        Just (":l":fs)      -> traverse loadFile fs *> loop
+        Just (":load":fs)   -> traverse loadFile fs *> loop
+        Just (":r":fp:_)    -> loadReplSt fp *> loop
+        Just [":q"]         -> pure ()
+        Just [":quit"]      -> pure ()
+        Just [":list"]      -> listNames *> loop
+        Just [":dump"]      -> dumpSt *> loop
         -- TODO: erase/delete names?
-        Just{}            -> printExpr (fromJust inp) *> loop
-        Nothing           -> pure ()
+        Just{}              -> printExpr (fromJust inp) *> loop
+        Nothing             -> pure ()
+
+saveReplSt :: FilePath -> Repl AlexPosn ()
+saveReplSt fp = do
+    eSt <- lift get
+    liftIO $ BSL.writeFile fp (encodeReplSt eSt)
+
+loadReplSt :: FilePath -> Repl AlexPosn ()
+loadReplSt fp = do
+    contents <- liftIO $ BSL.readFile fp
+    g <- liftIO newStdGen
+    lift $ put (decodeReplSt (randoms g) contents)
 
 dumpSt :: Repl AlexPosn ()
 dumpSt = do
