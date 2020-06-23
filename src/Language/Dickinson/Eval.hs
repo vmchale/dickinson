@@ -222,7 +222,6 @@ evalExpressionM e@Literal{}    = pure e
 evalExpressionM e@StrChunk{}   = pure e
 evalExpressionM (Var _ n)      = evalExpressionM =<< lookupName n
 evalExpressionM (Choice _ pes) = evalExpressionM =<< pick pes
--- FIXME: this is overzealous I think...
 evalExpressionM (Interp l es)  = concatOrFail l es
 evalExpressionM (Concat l es)  = concatOrFail l es
 evalExpressionM (Tuple l es)   = Tuple l <$> traverse evalExpressionM es
@@ -240,8 +239,6 @@ evalExpressionM (Apply _ e e') = do
 evalExpressionM e@Lambda{} = pure e
 evalExpressionM (Match _ e p e') = do
     modSt <- bindPattern p =<< evalExpressionM e
-    -- FIXME: this evaluates 'pick' too zealously in repls?
-    -- maybe has to do with global uniqueness... `greeter` fails in the REPL?
     withSt modSt $
         evalExpressionM e'
 
