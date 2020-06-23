@@ -6,7 +6,7 @@ import           Test.Tasty
 import           Test.Tasty.HUnit
 
 tcTests :: TestTree
-tcTests = testCase "Works on :match" $ testMatchTc
+tcTests = testCase "Works on :match" testMatchTc
 
 testMatchTc :: Assertion
 testMatchTc = tcFile "test/eval/match.dck"

@@ -209,7 +209,7 @@ withSt :: (MonadState s m) => (s -> s) -> m b -> m b
 withSt modSt act = do
     preSt <- get
     modify modSt
-    act <* (put preSt)
+    act <* put preSt
 
 bindPattern :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m) => Pattern a -> Expression a -> m (EvalSt a -> EvalSt a)
 bindPattern (PatternVar _ n) e               = pure $ nameMod n e
@@ -239,7 +239,7 @@ evalExpressionM (Apply _ e e') = do
         _ -> error "Ill-typed expression"
 evalExpressionM e@Lambda{} = pure e
 evalExpressionM (Match _ e p e') = do
-    modSt <- (bindPattern p =<< evalExpressionM e)
+    modSt <- bindPattern p =<< evalExpressionM e
     -- FIXME: this evaluates 'pick' too zealously in repls?
     -- maybe has to do with global uniqueness... `greeter` fails in the REPL?
     withSt modSt $

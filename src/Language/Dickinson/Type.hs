@@ -25,11 +25,11 @@ import           Language.Dickinson.Name
 type Dickinson a = [Declaration a]
 
 data Declaration a = Define { declAnn :: a
-                            , defName :: (Name a)
+                            , defName :: Name a
                             , defExpr :: Expression a
                             }
                    | Import { declAnn :: a
-                            , declMod :: (Name a)
+                            , declMod :: Name a
                             }
                    deriving (Generic, NFData, Binary, Functor)
 
