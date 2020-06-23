@@ -27,9 +27,8 @@
 - [ ] Maybe spin out internal library?
 # Bugs
 - [ ] Bug in `test/demo/animal.dck` - doesn't ever produce a bird?
-- [x] Overzealous in evaluating in `:match` binds? -> leads to `pick` not
-  happening in REPLs
-    - [ ] Maybe better to add record types + accessors...
+- [ ] Running `examples/doggo.dck` `main` - `pick` seems to be called by `probabilities` state doesn't seem to change?
+  - [ ] More vexingly, calling e.g. `color` in `lib/color.dck` un-sticks it!!
 # Features
 - [ ] Circular import checker
 - [ ] Save repl states
