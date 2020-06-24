@@ -67,6 +67,7 @@
 - [ ] Nested interpolated strings
 - [ ] Renamer + pattern matching
 - [ ] `examples/shakespeare.dck`
+- [ ] `test/eval/tyAnnot.dck` in the test suite
 # Libraries
 - [x] Colors
 - [ ] Animals

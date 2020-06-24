@@ -75,6 +75,7 @@ tokens :-
     <0> \_                         { mkSym Underscore }
     <0> "⟶"                        { mkSym Arrow }
     <0> "->"                       { mkSym Arrow }
+    <0> \:                         { mkSym Colon }
 
     -- keywords
     <0> ":let"                     { mkKeyword KwLet }
@@ -170,6 +171,7 @@ data Sym = LParen
          | DollarSign
          | Comma
          | Underscore
+         | Colon
          deriving (Eq, Generic, NFData)
 
 instance Pretty Sym where
@@ -187,6 +189,7 @@ instance Pretty Sym where
     pretty DollarSign    = "$"
     pretty Comma         = comma
     pretty Underscore    = "_"
+    pretty Colon         = colon
 
 data Keyword = KwDef
              | KwLet

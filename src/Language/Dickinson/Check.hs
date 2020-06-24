@@ -42,3 +42,4 @@ checkMultipleExpr (Let _ bs e)     =
         checkNames (toList $ fmap fst bs)
     <|> foldMapAlternative checkMultipleExpr (snd <$> bs)
     <|> checkMultipleExpr e
+checkMultipleExpr (Annot _ e _)    = checkMultipleExpr e

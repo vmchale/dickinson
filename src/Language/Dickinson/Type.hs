@@ -16,8 +16,8 @@ import           Data.Foldable                 (toList)
 import           Data.List.NonEmpty            (NonEmpty)
 import           Data.Semigroup                ((<>))
 import qualified Data.Text                     as T
-import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, dquotes, group, hsep, indent, parens,
-                                                pipe, rangle, tupled, vsep, (<+>))
+import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, colon, dquotes, group, hsep, indent,
+                                                parens, pipe, rangle, tupled, vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext (hardSep, (<#*>), (<#>), (<^>))
 import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Name
@@ -52,6 +52,7 @@ data Expression a = Literal a T.Text
                   | Tuple a (NonEmpty (Expression a))
                   | Match a (Expression a) (Pattern a) (Expression a)
                   | Flatten a (Expression a)
+                  | Annot a (Expression a) DickinsonTy
                   deriving (Generic, NFData, Binary, Functor)
                   -- TODO: builtins?
 
@@ -96,6 +97,7 @@ instance Pretty (Expression a) where
     pretty (Tuple _ es)      = tupled (toList (pretty <$> es))
     pretty (Match _ n p e)   = parens (":match" <+> pretty n <^> pretty p <^> pretty e)
     pretty (Flatten _ e)     = parens (":flatten" <^> pretty e)
+    pretty (Annot _ e ty)    = pretty e <+> colon <+> pretty ty
 
 instance Pretty DickinsonTy where
     pretty TyText{}     = "text"

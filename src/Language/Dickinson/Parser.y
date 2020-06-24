@@ -55,6 +55,7 @@ import Language.Dickinson.Unique
     dollar { TokSym $$ DollarSign }
     comma { TokSym $$ Comma }
     underscore { TokSym $$ Underscore }
+    colon { TokSym $$ Colon }
 
     beginInterp { TokSym $$ BeginInterp }
     endInterp { TokSym $$ EndInterp }
@@ -137,6 +138,7 @@ Expression :: { Expression AlexPosn }
            | lparen sepBy(Expression,comma) rparen { Tuple $1 (NE.reverse $2) }
            | match Expression Pattern Expression { Match $1 $2 $3 $4 }
            | flatten Expression { Flatten $1 $2 }
+           | Expression colon Type { Annot $2 $1 $3 }
            | parens(Expression) { $1 }
 
 WeightedLeaf :: { (Double, Expression AlexPosn) }

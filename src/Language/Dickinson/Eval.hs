@@ -245,6 +245,7 @@ evalExpressionM (Match _ e p e') = do
 evalExpressionM (Flatten _ e) = do
     e' <- resolveExpressionM e
     evalExpressionM (mapChoice setFrequency e')
+evalExpressionM (Annot _ e _) = evalExpressionM e
 
 mapChoice :: (NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a)) -> Expression a -> Expression a
 mapChoice f (Choice l pes) = Choice l (f pes)
@@ -294,3 +295,4 @@ resolveExpressionM (Match _ e p e') =
     resolveExpressionM e'
 resolveExpressionM (Flatten l e) =
     Flatten l <$> resolveExpressionM e
+resolveExpressionM (Annot _ e _) = resolveExpressionM e

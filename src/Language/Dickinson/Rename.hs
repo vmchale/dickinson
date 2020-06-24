@@ -167,3 +167,5 @@ renameExpressionM (Let p bs e) = do
         Let p (NE.zip newNames newBound) <$> renameExpressionM e
 renameExpressionM (Flatten l e) =
     Flatten l <$> renameExpressionM e
+renameExpressionM (Annot l e ty) =
+    Annot l <$> renameExpressionM e <*> pure ty

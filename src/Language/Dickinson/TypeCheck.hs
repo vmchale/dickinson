@@ -98,3 +98,5 @@ typeOf (Match _ e p e') = do
     bindPattern p ty
     typeOf e'
 typeOf (Flatten _ e) = typeOf e
+typeOf (Annot _ e ty) =
+    tyAssert ty e $> ty

@@ -44,3 +44,4 @@ checkExprDuplicates (Let _ brs es)   = foldMapAlternative checkExprDuplicates (s
 checkExprDuplicates (Lambda _ _ _ e) = checkExprDuplicates e
 checkExprDuplicates (Match _ e _ e') = checkExprDuplicates e <|> checkExprDuplicates e'
 checkExprDuplicates (Flatten _ e)    = checkExprDuplicates e
+checkExprDuplicates (Annot _ e _)    = checkExprDuplicates e

@@ -47,6 +47,7 @@ checkExpr (Choice _ brs) = mapSumM checkExpr (snd <$> brs)
 checkExpr (Concat _ es)  = mapSumM checkExpr es
 checkExpr (Tuple _ es)   = mapSumM checkExpr es
 checkExpr (Flatten _ e)  = checkExpr e
+checkExpr (Annot _ e _)  = checkExpr e
 checkExpr (Lambda _ n _ e) = do
     insertName n
     checkExpr e <* deleteName n
