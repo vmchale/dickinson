@@ -75,5 +75,5 @@
 - [ ] Normalization-by-evaluation? NbE
 - [ ] http://hackage.haskell.org/package/text-short
 - [x] Benchmark renamer
-- [ ] `+RTS -Ax`
+- [x] `+RTS -Ax`
 - [ ] https://github.com/AndrasKovacs/smalltt/blob/master/krakow-pres.pdf
