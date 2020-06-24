@@ -2,6 +2,7 @@ module Language.Dickinson.Check.Pattern ( checkNames
                                         , traversePattern
                                         ) where
 
+import           Data.Foldable            (toList)
 import           Data.Foldable.Ext        (foldMapAlternative)
 import           Data.List                (group, sort)
 import           Language.Dickinson.Error
@@ -10,7 +11,7 @@ import           Language.Dickinson.Type
 
 traversePattern :: Pattern a -> [Name a]
 traversePattern (PatternVar _ n)    = [n]
-traversePattern (PatternTuple _ ps) = traversePattern =<< ps
+traversePattern (PatternTuple _ ps) = traversePattern =<< toList ps
 traversePattern Wildcard{}          = []
 
 checkNames :: Pattern a -> Maybe (DickinsonError a)

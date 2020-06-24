@@ -60,8 +60,7 @@ tyAdd (Define _ n e) = tyInsert n =<< typeOf e
 bindPattern :: (MonadState s m, HasTyEnv s, MonadError (DickinsonError a) m) => Pattern a -> DickinsonTy -> m ()
 bindPattern (PatternVar _ n) ty               = tyInsert n ty
 bindPattern Wildcard{} _                      = pure ()
-bindPattern (PatternTuple _ []) (TyTuple [])  = pure ()
-bindPattern (PatternTuple _ ps) (TyTuple tys) = zipWithM_ bindPattern ps tys -- FIXME: length ps = length tys
+bindPattern (PatternTuple _ ps) (TyTuple tys) = Ext.zipWithM_ bindPattern ps tys -- FIXME: length ps = length tys
 bindPattern (PatternTuple l _) _              = throwError $ MalformedTuple l
 
 -- run after global renamer

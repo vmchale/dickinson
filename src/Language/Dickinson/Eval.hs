@@ -17,8 +17,9 @@ module Language.Dickinson.Eval ( EvalM
                                ) where
 
 import           Control.Composition           (thread)
-import           Control.Monad                 (zipWithM, zipWithM_, (<=<))
+import           Control.Monad                 ((<=<))
 import           Control.Monad.Except          (ExceptT, MonadError, runExceptT, throwError)
+import qualified Control.Monad.Ext             as Ext
 import           Control.Monad.IO.Class        (MonadIO (..))
 import           Control.Monad.State.Lazy      (MonadState, StateT, evalStateT, get, gets, modify, put)
 import qualified Data.ByteString.Lazy          as BSL
@@ -214,7 +215,7 @@ withSt modSt act = do
 bindPattern :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m) => Pattern a -> Expression a -> m (EvalSt a -> EvalSt a)
 bindPattern (PatternVar _ n) e               = pure $ nameMod n e
 bindPattern Wildcard{} _                     = pure id
-bindPattern (PatternTuple _ ps) (Tuple _ es) = thread <$> zipWithM bindPattern ps es
+bindPattern (PatternTuple _ ps) (Tuple _ es) = thread <$> Ext.zipWithM bindPattern ps es
 bindPattern (PatternTuple l _) _             = throwError $ MalformedTuple l
 
 evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)

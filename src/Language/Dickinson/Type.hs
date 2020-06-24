@@ -22,6 +22,7 @@ import           Data.Text.Prettyprint.Doc.Ext (hardSep, (<#*>), (<#>), (<^>))
 import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Name
 
+-- TODO: make imports a "section" at the beginning...
 type Dickinson a = [Declaration a]
 
 data Declaration a = Define { declAnn :: a
@@ -34,7 +35,7 @@ data Declaration a = Define { declAnn :: a
                    deriving (Generic, NFData, Binary, Functor)
 
 data Pattern a = PatternVar a (Name a)
-               | PatternTuple a [Pattern a]
+               | PatternTuple a (NonEmpty (Pattern a))
                | Wildcard a
                deriving (Generic, NFData, Binary, Functor)
 
@@ -48,7 +49,7 @@ data Expression a = Literal a T.Text
                   | Lambda a (Name a) DickinsonTy (Expression a) -- TODO: application, type checker
                   | Apply a (Expression a) (Expression a)
                   | Concat a [Expression a]
-                  | Tuple a [Expression a] -- TODO: NonEmpty
+                  | Tuple a (NonEmpty (Expression a))
                   | Match a (Expression a) (Pattern a) (Expression a)
                   | Flatten a (Expression a)
                   deriving (Generic, NFData, Binary, Functor)
@@ -56,7 +57,7 @@ data Expression a = Literal a T.Text
 
 data DickinsonTy = TyText
                  | TyFun DickinsonTy DickinsonTy
-                 | TyTuple [DickinsonTy]
+                 | TyTuple (NonEmpty DickinsonTy)
                  deriving (Eq, Generic, NFData, Binary)
 
 instance Pretty (Declaration a) where
@@ -76,7 +77,7 @@ prettyInterp e              = "${" <> pretty e <> "}"
 
 instance Pretty (Pattern a) where
     pretty (PatternVar _ n)    = pretty n
-    pretty (PatternTuple _ ps) = tupled (pretty <$> ps)
+    pretty (PatternTuple _ ps) = tupled (toList (pretty <$> ps))
     pretty Wildcard{}          = "_"
 
 -- figure out indentation
@@ -92,11 +93,11 @@ instance Pretty (Expression a) where
     pretty (Interp _ es)     = dquotes (foldMap prettyInterp es)
     pretty (Concat _ es)     = parens (rangle <+> hsep (pretty <$> es))
     pretty StrChunk{}        = error "Internal error: naked StrChunk"
-    pretty (Tuple _ es)      = tupled (pretty <$> es)
+    pretty (Tuple _ es)      = tupled (toList (pretty <$> es))
     pretty (Match _ n p e)   = parens (":match" <+> pretty n <^> pretty p <^> pretty e)
     pretty (Flatten _ e)     = parens (":flatten" <^> pretty e)
 
 instance Pretty DickinsonTy where
     pretty TyText{}     = "text"
     pretty (TyFun t t') = "⟶" <+> pretty t <+> pretty t'
-    pretty (TyTuple ts) = tupled (pretty <$> ts)
+    pretty (TyTuple ts) = tupled (toList (pretty <$> ts))

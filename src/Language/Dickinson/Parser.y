@@ -19,7 +19,7 @@ import Control.Monad.Trans.Class (lift)
 import qualified Data.ByteString.Lazy as BSL
 import Data.Foldable (toList)
 import qualified Data.List.NonEmpty as NE
-import Data.List.NonEmpty (NonEmpty ((:|)))
+import Data.List.NonEmpty (NonEmpty ((:|)), (<|))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Data.Text.Prettyprint.Doc (Pretty (pretty), (<+>))
@@ -87,8 +87,8 @@ some(p)
     : many(p) p { $2 :| $1 }
 
 sepBy(p,q)
-    : sepBy(p,q) q p { $3 : $1 }
-    | p q p { [$3, $1] }
+    : sepBy(p,q) q p { $3 <| $1 }
+    | p q p { $3 :| [$1] }
 
 parens(p)
     : lparen p rparen { $2 }
@@ -109,7 +109,7 @@ Name :: { Name AlexPosn }
 Type :: { DickinsonTy }
      : text { TyText }
      | arrow Type Type { TyFun $2 $3 }
-     | lparen sepBy(Type,comma) rparen { TyTuple (reverse $2) }
+     | lparen sepBy(Type,comma) rparen { TyTuple (NE.reverse $2) }
      | parens(Type) { $1 }
 
 Bind :: { (Name AlexPosn, Expression AlexPosn) }
@@ -121,7 +121,7 @@ Interp : strChunk { StrChunk (loc $1) (str $1) }
 
 Pattern :: { Pattern AlexPosn }
         : ident { PatternVar (loc $1) (ident $1) }
-        | lparen sepBy(Pattern,comma) rparen { PatternTuple $1 (reverse $2) }
+        | lparen sepBy(Pattern,comma) rparen { PatternTuple $1 (NE.reverse $2) }
         | underscore { Wildcard $1 }
 
 Expression :: { Expression AlexPosn }
@@ -134,7 +134,7 @@ Expression :: { Expression AlexPosn }
            | strBegin some(Interp) strEnd { Interp $1 (toList $ NE.reverse $2) }
            | rbracket many(Expression) { Concat $1 (reverse $2) }
            | dollar Expression Expression { Apply $1 $2 $3 }
-           | lparen sepBy(Expression,comma) rparen { Tuple $1 (reverse $2) }
+           | lparen sepBy(Expression,comma) rparen { Tuple $1 (NE.reverse $2) }
            | match Expression Pattern Expression { Match $1 $2 $3 $4 }
            | flatten Expression { Flatten $1 $2 }
            | parens(Expression) { $1 }
