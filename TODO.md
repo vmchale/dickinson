@@ -10,6 +10,7 @@
 - [x] manpages
 - [ ] Tutorial/walkthrough?
   - [ ] Getting started?
+- [ ] Library documentation
 ## Examples
 - [ ] Poetry bot...? Rumi?
 - [ ] Storytelling? RPG? idk
