@@ -4,6 +4,8 @@ if exists('b:current_syntax')
     finish
 endif
 
+syntax match dickinsonSymbol ":"
+
 syntax match dickinsonKeyword ":import"
 syntax match dickinsonKeyword ":def"
 syntax match dickinsonKeyword ":branch"
