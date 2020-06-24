@@ -40,6 +40,7 @@
 - [x] Import/module system
   - [ ] Checkers should work with the module system
   - [ ] Modules don't give global uniqueness; fix scoping/deletions
+- [ ] Sum types (`Boy | Girl`)
 - [ ] Tuples/multi-return & agreement.
   - [ ] Def need product types...
     - [ ] Dog example?
