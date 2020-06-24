@@ -242,9 +242,55 @@ evalExpressionM (Match _ e p e') = do
     modSt <- bindPattern p =<< evalExpressionM e
     withSt modSt $
         evalExpressionM e'
+evalExpressionM (Flatten _ e) = do
+    e' <- resolveExpressionM e
+    evalExpressionM (mapChoice setFrequency e')
+
+mapChoice :: (NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a)) -> Expression a -> Expression a
+mapChoice f (Choice l pes) = Choice l (f pes)
+mapChoice _ e@Literal{}    = e
+mapChoice _ e@StrChunk{}   = e
+
+setFrequency :: NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a)
+setFrequency = fmap (\(_, e) -> (fromIntegral $ countNodes e, e))
+
+countNodes :: (Expression a) -> Int
+countNodes e@Literal{}    = 1
+countNodes e@StrChunk{}   = 1
+countNodes (Choice _ pes) = sum (fmap (countNodes . snd) pes)
 
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)
 concatOrFail l = fmap (Literal l . mconcat) . traverse evalExpressionAsTextM
 
 evalExpressionAsTextM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 evalExpressionAsTextM = extrText <=< evalExpressionM
+
+-- | Resolve let bindings and such; no not perform choices or concatenations.
+resolveExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
+resolveExpressionM e@Literal{}  = pure e
+resolveExpressionM e@StrChunk{} = pure e
+resolveExpressionM (Var _ n)    = resolveExpressionM =<< lookupName n
+resolveExpressionM (Choice l pes) = do
+    let ps = fst <$> pes
+    es <- traverse resolveExpressionM (snd <$> pes)
+    pure $ Choice l (NE.zip ps es)
+resolveExpressionM (Interp l es) = Interp l <$> traverse resolveExpressionM es
+resolveExpressionM (Concat l es) = Concat l <$> traverse resolveExpressionM es
+resolveExpressionM (Tuple l es) = Tuple l <$> traverse resolveExpressionM es
+resolveExpressionM (Let _ bs e) = do
+    let stMod = thread $ fmap (uncurry nameMod) bs
+    withSt stMod $
+        resolveExpressionM e
+resolveExpressionM (Apply _ e e') = do
+    e'' <- resolveExpressionM e
+    case e'' of
+        Lambda _ n _ e''' ->
+            withSt (nameMod n e') $
+                resolveExpressionM e'''
+        _ -> error "Ill-typed expression"
+resolveExpressionM e@Lambda{} = pure e
+resolveExpressionM (Match _ e p e') =
+    (bindPattern p =<< resolveExpressionM e) *>
+    resolveExpressionM e'
+resolveExpressionM (Flatten l e) =
+    Flatten l <$> resolveExpressionM e

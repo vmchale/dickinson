@@ -1,10 +1,11 @@
 (:import birds)
 
 (:def animal
-  (:oneof
-    (| "hippopotamus")
-    (| "rhinoceros")
-    (| "giraffe")
-    (| "deer")
-    (| "zebra")
-    (| bird)))
+  (:flatten
+    (:oneof
+      (| "hippopotamus")
+      (| "rhinoceros")
+      (| "giraffe")
+      (| "deer")
+      (| "zebra")
+      (| bird))))
