@@ -1,14 +1,14 @@
 ; TODO: animals library
 
 (:def bird
-    (:oneof
-        (| "kite")
-        (| "swallow")
-        (| "sparrow")
-        (| "crow")
-        (| "raven")
-        (| "gull")
-        (| "rook")
-        (| "ibis")
-        (| "pelican")
-        (| "tern")))
+  (:oneof
+    (| "kite")
+    (| "swallow")
+    (| "sparrow")
+    (| "crow")
+    (| "raven")
+    (| "gull")
+    (| "rook")
+    (| "ibis")
+    (| "pelican")
+    (| "tern")))
