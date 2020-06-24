@@ -35,7 +35,7 @@ emd - [Emily] Dickinson
 
 **:r** - Restore a REPL state stored in some file
 
-**:q** **:quit* - Quit session
+**:q** **:quit** - Quit session
 
 **:list** - List all names that are in scope
 
