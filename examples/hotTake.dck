@@ -11,7 +11,7 @@
     "${badWord} is a slur"))
 
 (:def normalize
-  (:let 
+  (:let
     [norm
       (:oneof
         (| "bidets")
@@ -21,7 +21,7 @@
     "Normalize ${norm}"))
 
 (:def abolish
-  (:let 
+  (:let
     [target
       (:oneof
         (| "credit scores")
