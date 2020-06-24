@@ -13,4 +13,7 @@
     (| "apricot")
     (| "plum")
     (| "fig")
+    (| "durian")
+    (| "jackfruit")
+    (| "orange")
     (| "date")))
