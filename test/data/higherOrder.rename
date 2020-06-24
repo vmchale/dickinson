@@ -1,9 +1,9 @@
 (:def top_6
-    (:lambda f_8 (⟶ text text)
-        ($ f_8 "me")))
+  (:lambda f_8 (⟶ text text)
+    ($ f_8 "me")))
 
 (:def main_7
-    (:let
-        [fun_10 (:lambda a_11 (text)
-            "It's ${a_11}")]
-        ($ top_6 fun_10)))
+  (:let
+    [fun_10 (:lambda a_11 (text)
+      "It's ${a_11}")]
+    ($ top_6 fun_10)))

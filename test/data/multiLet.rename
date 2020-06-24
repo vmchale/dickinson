@@ -1,14 +1,14 @@
 (:def letBinding_5
-    (:let
-        [a_7 "man"]
-        [b_8 "woman"]
-        (:branch
-            (| 1.0 a_7)
-            (| 1.0 b_8))))
+  (:let
+    [a_7 "man"]
+    [b_8 "woman"]
+    (:branch
+      (| 1.0 a_7)
+      (| 1.0 b_8))))
 
 (:def main_6
-    (:let
-        [a_12 "non-binary"]
-        (:branch
-            (| 1.0 letBinding_5)
-            (| 1.0 a_12))))
+  (:let
+    [a_12 "non-binary"]
+    (:branch
+      (| 1.0 letBinding_5)
+      (| 1.0 a_12))))

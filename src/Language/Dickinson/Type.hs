@@ -61,7 +61,7 @@ data DickinsonTy = TyText
                  deriving (Eq, Generic, NFData, Binary)
 
 instance Pretty (Declaration a) where
-    pretty (Define _ n e) = parens (":def" <+> pretty n <#> indent 4 (pretty e))
+    pretty (Define _ n e) = parens (":def" <+> pretty n <#> indent 2 (pretty e))
     pretty (Import _ n)   = parens (":import" <+> pretty n)
 
 prettyLetLeaf :: (Name a, Expression a) -> Doc b
@@ -87,7 +87,7 @@ instance Pretty (Expression a) where
     pretty (Let _ ls e)      = group (parens (":let" <^> vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e])))
     -- TODO: if they're all equal, use :oneof
     -- also comments lol
-    pretty (Choice _ brs)    = parens (":branch" <#> indent 4 (hardSep (toList $ fmap prettyChoiceBranch brs)))
+    pretty (Choice _ brs)    = parens (":branch" <#> indent 2 (hardSep (toList $ fmap prettyChoiceBranch brs)))
     pretty (Lambda _ n ty e) = parens (":lambda" <+> pretty n <+> parens (pretty ty) <#*> pretty e)
     pretty (Apply _ e e')    = parens ("$" <+> pretty e <+> pretty e')
     pretty (Interp _ es)     = dquotes (foldMap prettyInterp es)

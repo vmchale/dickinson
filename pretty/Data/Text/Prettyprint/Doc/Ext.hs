@@ -37,10 +37,10 @@ infixr 6 <^>
 (<:>) x y = x <> softline <> y
 
 (<#*>) :: Doc a -> Doc a -> Doc a
-(<#*>) x y = x <> hardline <> indent 4 y
+(<#*>) x y = x <> hardline <> indent 2 y
 
 (<^>) :: Doc a -> Doc a -> Doc a
-(<^>) x y = flatAlt (x <> hardline <> indent 4 y) (x <+> y)
+(<^>) x y = flatAlt (x <> hardline <> indent 2 y) (x <+> y)
 
 prettyDumpBinds :: Pretty b => IM.IntMap b -> Doc a
 prettyDumpBinds b = vsep (prettyBind <$> IM.toList b)
