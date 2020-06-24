@@ -9,7 +9,7 @@ module Language.Dickinson.TypeCheck ( typeOf
                                     , HasTyEnv (..)
                                     ) where
 
-import           Control.Monad             (unless, zipWithM_)
+import           Control.Monad             (unless)
 import           Control.Monad.Except      (ExceptT, MonadError, runExceptT, throwError)
 import qualified Control.Monad.Ext         as Ext
 import           Control.Monad.State       (MonadState, State, evalState)

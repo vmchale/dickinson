@@ -255,8 +255,8 @@ setFrequency :: NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression 
 setFrequency = fmap (\(_, e) -> (fromIntegral $ countNodes e, e))
 
 countNodes :: (Expression a) -> Int
-countNodes e@Literal{}    = 1
-countNodes e@StrChunk{}   = 1
+countNodes Literal{}      = 1
+countNodes StrChunk{}     = 1
 countNodes (Choice _ pes) = sum (fmap (countNodes . snd) pes)
 
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)

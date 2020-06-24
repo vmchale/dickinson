@@ -28,6 +28,7 @@ data DickinsonError a = UnfoundName a (Name a)
                       | ExpectedLambda (Expression a) DickinsonTy
                       | MultiBind a (Name a) (Pattern a) -- When a variable is bound more than once in a pattern...
                       | MalformedTuple a
+                      | InternalError
                       deriving (Generic, NFData)
 
 data DickinsonWarning a = MultipleNames a (Name a) -- TODO: throw both?
@@ -50,6 +51,7 @@ instance (Pretty a) => Pretty (DickinsonError a) where
     pretty (ExpectedLambda e ty)   = "Expected" <+> squotes (pretty e) <+> "to be of function type, found type" <+> pretty ty
     pretty (MultiBind l n p)       = pretty l <+> "Name" <+> pretty n <+> "is bound more than once in" <+> pretty p
     pretty (MalformedTuple l)      = pretty l <+> "Malformed tuple"
+    pretty InternalError           = "Internal error. Please report this as a bug: https://github.com/vmchale/dickinson/issues"
 
 instance (Pretty a, Typeable a) => Exception (DickinsonError a)
 
