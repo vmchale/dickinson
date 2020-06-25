@@ -41,10 +41,12 @@
     "${badThing} toxic."))
 
 ; cancel _
+; flatten is expensive...
 
 (:def main
-  (:oneof
-    (| normalize)
-    (| toxic)
-    (| slur)
-    (| abolish)))
+  (:flatten
+    (:oneof
+      (| normalize)
+      (| toxic)
+      (| slur)
+      (| abolish))))

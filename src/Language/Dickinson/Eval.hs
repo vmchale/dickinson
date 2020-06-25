@@ -265,6 +265,8 @@ countNodes :: (Expression a) -> Int
 countNodes Literal{}      = 1
 countNodes StrChunk{}     = 1
 countNodes (Choice _ pes) = sum (fmap (countNodes . snd) pes)
+countNodes (Interp _ es)  = product (fmap countNodes es)
+countNodes (Concat _ es)  = product (fmap countNodes es)
 
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)
 concatOrFail l = fmap (Literal l . mconcat) . traverse evalExpressionAsTextM

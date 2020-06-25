@@ -49,6 +49,7 @@ main =
                     , bench "examples/shakespeare.dck" $ nfIO (evalFile [] "examples/shakespeare.dck")
                     , bench "examples/doggo.dck" $ nfIO (evalFile ["prelude"] "examples/doggo.dck")
                     , bench "test/demo/animal.dck" $ nfIO (evalFile ["lib"] "test/demo/animal.dck")
+                    , bench "examples/hotTake.dck" $ nfIO (evalFile [] "examples/hotTake.dck")
                     ]
                 ]
 
