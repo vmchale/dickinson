@@ -39,6 +39,8 @@ emd - [Emily] Dickinson
 
 **:list** - List all names that are in scope
 
+**:t** - Display the type of an expression
+
 # OPTIONS
 
 **-h** **-\-help**
