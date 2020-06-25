@@ -79,13 +79,13 @@ library dickinson
         Language.Dickinson.File
         Language.Dickinson.Import
         Language.Dickinson.Lib
-        Language.Dickinson.Lib.Get
         Data.Tuple.Ext
 
     hs-source-dirs:   src
     other-modules:
         Paths_language_dickinson
         Language.Dickinson.Check.Pattern
+        Language.Dickinson.Lib.Get
         Control.Monad.Ext
         Data.Foldable.Ext
 

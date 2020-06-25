@@ -51,6 +51,9 @@ main =
                     , bench "test/demo/animal.dck" $ nfIO (evalFile ["lib"] "test/demo/animal.dck")
                     , bench "examples/hotTake.dck" $ nfIO (evalFile [] "examples/hotTake.dck")
                     ]
+                , bgroup "tcFile"
+                    [ bench "examples/hotTake.dck" $ nfIO (tcFile "examples/hotTake.dck")
+                    ]
                 ]
 
     where libFile = BSL.readFile "lib/color.dck"

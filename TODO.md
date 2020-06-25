@@ -83,6 +83,7 @@
   - [x] Birds
 - [ ] builtins (capitalization &c.)
 # Performance
+- [ ] Bench typechecker
 - [ ] Normalization-by-evaluation? NbE
 - [ ] http://hackage.haskell.org/package/text-short
 - [x] Benchmark renamer

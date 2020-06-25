@@ -43,8 +43,8 @@ warnFile = h . go <=< BSL.readFile
           checks x = checkDuplicates x <|> checkMultiple x
 
 tcFile :: FilePath -> IO ()
-tcFile = h . go <=< BSL.readFile
-    where go = tyRun . fst . uncurry renameDickinson . yeet . parseWithMax
+tcFile = h <=< go <=< BSL.readFile
+    where go = uncurry tyRun . yeet . parseWithInitCtx
           h Right{}    = pure ()
           h (Left err) = throwIO err
 

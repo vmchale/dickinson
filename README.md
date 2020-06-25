@@ -1,6 +1,6 @@
 # Dickinson
 
-Dickinson is a toy text-generation language.
+Dickinson is a text-generation language.
 
 ## Installation
 
@@ -20,8 +20,3 @@ Using [vim-plug](https://github.com/junegunn/vim-plug):
 ```vimscript
 Plug 'vmchale/dickinson' , { 'rtp' : 'vim' }
 ```
-
-## Technical
-
-This uses a tree-walking interpreter as an experiment in environments and
-immutable data structures.

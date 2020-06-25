@@ -3,7 +3,6 @@
 module Eval ( evalTests
             ) where
 
-import qualified Data.Text               as T
 import           Language.Dickinson.File
 import           Test.Tasty              (TestTree, testGroup)
 import           Test.Tasty.HUnit        (Assertion, testCase, (@?=))

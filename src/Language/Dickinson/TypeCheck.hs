@@ -12,13 +12,15 @@ module Language.Dickinson.TypeCheck ( typeOf
 import           Control.Monad             (unless)
 import           Control.Monad.Except      (ExceptT, MonadError, runExceptT, throwError)
 import qualified Control.Monad.Ext         as Ext
-import           Control.Monad.State       (MonadState, State, evalState)
+import           Control.Monad.State       (MonadState, StateT, evalStateT)
 import           Data.Foldable             (traverse_)
 import           Data.Functor              (($>))
 import qualified Data.IntMap               as IM
 import           Data.List.NonEmpty        (NonEmpty ((:|)))
 import           Language.Dickinson.Error
+import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
+import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
 import           Lens.Micro                (Lens')
@@ -46,11 +48,26 @@ tyMatch (e :| es) = do
     ty <- typeOf e
     traverse_ (tyAssert TyText) es $> ty
 
-type TypeM a = ExceptT (DickinsonError a) (State TyEnv)
+data TcState = TcState { tcRename     :: Renames
+                       , tcEnv        :: TyEnv
+                       , tcLexerState :: AlexUserState
+                       }
 
-tyRun :: Dickinson a -> Either (DickinsonError a) ()
-tyRun = flip evalState mempty . runExceptT . (tyTraverse :: Dickinson a -> TypeM a ())
+instance HasTyEnv TcState where
+    tyEnvLens f s = fmap (\x -> s { tcEnv = x }) (f (tcEnv s))
 
+instance HasRenames TcState where
+    rename f s = fmap (\x -> s { tcRename = x }) (f (tcRename s))
+
+type TypeM a = ExceptT (DickinsonError a) (StateT TcState IO)
+
+initTcState :: AlexUserState -> TcState
+initTcState st@(u, _, _) = TcState (initRenames u) mempty st
+
+tyRun :: AlexUserState -> Dickinson a -> IO (Either (DickinsonError a) ())
+tyRun st = flip evalStateT (initTcState st) . runExceptT . (tyTraverse :: Dickinson a -> TypeM a ())
+
+-- TODO: rename??
 tyTraverse :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Dickinson a -> m ()
 tyTraverse (Dickinson _ ds) = traverse_ tyAdd ds
 
