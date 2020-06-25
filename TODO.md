@@ -30,6 +30,8 @@
 - [ ] Bug in `test/demo/animal.dck` - doesn't ever produce a bird?
 - [ ] Running `examples/doggo.dck` `main` - `pick` seems to be called by `probabilities` state doesn't seem to change?
   - [ ] More vexingly, calling e.g. `color` in `lib/color.dck` un-sticks it!!
+# Code Quality
+- [ ] Kick tires on `:t` feature
 # Features
 - [ ] Circular import checker
 - [ ] Save repl states
