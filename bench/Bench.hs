@@ -35,9 +35,10 @@ main =
                   bgroup "encoder"
                     [ bench "bench/data/multiple.dck" $ nf encode p
                     ]
-                , env encoded $ \e ->
+                , env encodeEnv $ \ ~(e, es) ->
                   bgroup "decoder"
                     [ bench "bench/data/multiple.dck" $ nf (decode :: BSL.ByteString -> Dickinson ()) e
+                    , bench "examples/shakespeare.dck" $ nf (decode :: BSL.ByteString -> Dickinson ()) es
                     ]
                 , env multiParsed $ \p ->
                   bgroup "check"
@@ -63,6 +64,8 @@ main =
           parsedRenamed = either throw id . parseWithInitCtx <$> BSL.readFile "bench/data/nestLet.dck"
           multiParsed = either throw id . parse <$> BSL.readFile "bench/data/multiple.dck"
           encoded = encode . void <$> multiParsed
+          encodeShakespeare = encode . void . either throw id . parse <$> shakespeare
+          encodeEnv = (,) <$> encoded <*> encodeShakespeare
 
 plainExpr :: (UniqueCtx, Dickinson a) -> Dickinson a
 plainExpr = fst . uncurry renameDickinson
