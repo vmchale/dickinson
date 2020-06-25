@@ -2,7 +2,7 @@ module Language.Dickinson.ScopeCheck ( checkScope
                                      ) where
 
 import           Control.Applicative              (Alternative, (<|>))
-import           Control.Monad.State              (StateT, evalStateT, get, gets, modify)
+import           Control.Monad.State              (StateT, evalStateT, gets, modify)
 import           Data.Foldable                    (asum, traverse_)
 import qualified Data.IntSet                      as IS
 import           Language.Dickinson.Check.Pattern
@@ -27,6 +27,9 @@ class HasIntSet a where
 
 instance HasIntSet ScopeSt where
     intSet f s = fmap (\x -> s { scopes = x }) (f (scopes s))
+
+instance HasRenames ScopeSt where
+    rename f s = fmap (\x -> s { scopeRenames = x }) (f (scopeRenames s))
 
 initScopeSt :: AlexUserState -> ScopeSt
 initScopeSt st@(u, _, _) = ScopeSt IS.empty (initRenames u) st
