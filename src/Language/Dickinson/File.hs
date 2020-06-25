@@ -30,7 +30,7 @@ fmtFile = putDoc . (<> hardline) . pretty . go <=< BSL.readFile
 -- | Check scoping
 checkFile :: FilePath -> IO ()
 checkFile = h <=< go <=< BSL.readFile
-    where go = checkScope . fst . uncurry renameDickinson . yeet . parseWithMax
+    where go = uncurry checkScope . yeet . parseWithInitCtx -- TODO: rename?
           h (Just err) = throwIO err
           h Nothing    = pure ()
 

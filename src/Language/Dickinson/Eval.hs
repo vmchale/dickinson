@@ -35,11 +35,9 @@ import           Data.Text.Prettyprint.Doc     (Doc, Pretty (..), vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
 import           Data.Tuple.Ext
 import           Language.Dickinson.Error
-import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Lib.Get
 import           Language.Dickinson.Name
-import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
