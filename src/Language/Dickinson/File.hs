@@ -44,7 +44,7 @@ warnFile = h . go <=< BSL.readFile
 
 tcFile :: FilePath -> IO ()
 tcFile = h <=< go <=< BSL.readFile
-    where go = tyRun . fst . uncurry renameDickinson . yeet . parseWithMax
+    where go = tyRun undefined . fst . uncurry renameDickinson . yeet . parseWithMax
           h Right{}    = pure ()
           h (Left err) = throwIO err
 
