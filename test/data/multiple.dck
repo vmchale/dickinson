@@ -1,12 +1,12 @@
 %-
 
-(:def main
+(:def letBinding
     (:let
         [a "man"]
         [a "woman"]
         (:branch
             (| 1.0 a)
-            (| 1.0 b))))
+            (| 1.0 a))))
 
 (:def main
     (:let

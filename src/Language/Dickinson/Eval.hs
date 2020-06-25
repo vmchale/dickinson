@@ -185,7 +185,7 @@ parseEvalM fp = do
         Right (st, d) ->
             (lexerStateLens .= st) $> d
         Left err ->
-            throwError (ParseErr err)
+            throwError (ParseErr fp err)
 
 addDecl :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m)
         => Declaration AlexPosn

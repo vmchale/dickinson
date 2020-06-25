@@ -22,7 +22,7 @@ import           Language.Dickinson.Type
 -- TODO: strictness annotations?
 data DickinsonError a = UnfoundName a (Name a)
                       | NoText T.Text -- separate from UnfoundName since there is no loc
-                      | ParseErr (ParseError a)
+                      | ParseErr FilePath (ParseError a)
                       | ModuleNotFound a (Name a)
                       | TypeMismatch (Expression a) DickinsonTy DickinsonTy -- TODO: location information
                       | ExpectedLambda (Expression a) DickinsonTy
@@ -45,7 +45,7 @@ instance (Pretty a) => Show (DickinsonError a) where
 instance (Pretty a) => Pretty (DickinsonError a) where
     pretty (UnfoundName l n)       = pretty l <+> pretty n <+> "is not in scope."
     pretty (NoText t)              = squotes (pretty t) <+> "not defined"
-    pretty (ParseErr e)            = pretty e
+    pretty (ParseErr _ e)          = pretty e
     pretty (TypeMismatch e ty ty') = "Expected" <+> pretty e <+> "to have type" <+> squotes (pretty ty) <> ", found type" <+> squotes (pretty ty')
     pretty (ModuleNotFound l n)    = pretty l <+> "Module" <+> pretty n <+> "not found"
     pretty (ExpectedLambda e ty)   = "Expected" <+> squotes (pretty e) <+> "to be of function type, found type" <+> pretty ty
