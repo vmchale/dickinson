@@ -4,6 +4,12 @@
   (:lambda opinion text
     "Unpopular opinion: ${opinion}"))
 
+(:def maybeUnpopularize
+  (:lambda opinion text
+    (:branch
+      (| 1.0 opinion)
+      (| 0.1 $unpopularize opinion))))
+
 (:def slur
   (:let
     [badWord
