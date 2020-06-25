@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-
-pandoc man/MANPAGE.md -s -t man -o man/emd.1
