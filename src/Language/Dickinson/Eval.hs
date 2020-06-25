@@ -37,6 +37,7 @@ import           Data.Tuple.Ext
 import           Language.Dickinson.Error
 import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
+import           Language.Dickinson.Lib.Get
 import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
@@ -116,8 +117,11 @@ nameMod (Name _ (Unique u) _) e = over boundExprLens (IM.insert u e)
 bindName :: (MonadState (EvalSt a) m) => Name a -> Expression a -> m ()
 bindName n e = modify (nameMod n e)
 
+topLevelMod :: Name a -> EvalSt a -> EvalSt a
+topLevelMod (Name n u _) = over topLevelLens (M.insert (T.intercalate "." $ toList n) u)
+
 topLevelAdd :: (MonadState (EvalSt a) m) => Name a -> m ()
-topLevelAdd (Name n u _) = modify (over topLevelLens (M.insert (T.intercalate "." $ toList n) u))
+topLevelAdd n = modify (topLevelMod n)
 
 lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression a)
 lookupName n@(Name _ u l) = do
@@ -175,20 +179,20 @@ balanceMax = do
     rename.maxLens .= m'
     lexerStateLens._1 .= m'
 
-parseEvalM :: (MonadIO m, MonadState (EvalSt AlexPosn) m, MonadError (DickinsonError AlexPosn) m)
-           => FilePath
-           -> m (Dickinson AlexPosn)
-parseEvalM fp = do
+parseImportM :: (MonadIO m, MonadState (EvalSt AlexPosn) m, MonadError (DickinsonError AlexPosn) m)
+             => [FilePath]
+             -> Import AlexPosn
+             -> m (Dickinson AlexPosn)
+parseImportM is i = do
     preSt <- gets lexerState
-    bsl <- liftIO $ BSL.readFile fp
-    case parseWithCtx bsl preSt of
-        Right (st, d) ->
-            (lexerStateLens .= st) $> d
-        Left err ->
-            throwError (ParseErr fp err)
+    (st, d) <- parseImport is i preSt
+    (lexerStateLens .= st) $> d
 
-addDecl :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m)
-        => Declaration AlexPosn
+declToStMod :: Declaration a -> EvalSt a -> EvalSt a
+declToStMod (Define _ n e) = topLevelMod n . nameMod n e
+
+addDecl :: (MonadState (EvalSt a) m)
+        => Declaration a
         -> m ()
 addDecl (Define _ n e) = bindName n e *> topLevelAdd n
 
@@ -196,15 +200,11 @@ addImport :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPos
           => [FilePath] -- ^ Include path
           -> Import AlexPosn
           -> m ()
-addImport is (Import l n)  = do
-    preFp <- resolveImport is n
-    case preFp of
-        Just fp -> do
-            parsed <- parseEvalM fp
-            balanceMax
-            renamed <- renameDickinsonM parsed
-            loadDickinson is renamed
-        Nothing -> throwError $ ModuleNotFound l n
+addImport is i = do
+    parsed <- parseImportM is i
+    balanceMax
+    renamed <- renameDickinsonM parsed
+    loadDickinson is renamed
 
 extrText :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 extrText (Literal _ t)  = pure t
@@ -249,7 +249,7 @@ evalExpressionM (Match _ e p e') = do
         evalExpressionM e'
 evalExpressionM (Flatten _ e) = do
     e' <- resolveExpressionM e
-    evalExpressionM (mapChoice setFrequency e')
+    evalExpressionM ({-# SCC "mapChoice.setFrequency" #-} mapChoice setFrequency e')
 evalExpressionM (Annot _ e _) = evalExpressionM e
 
 mapChoice :: (NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a)) -> Expression a -> Expression a

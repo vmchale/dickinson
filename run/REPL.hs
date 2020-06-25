@@ -4,7 +4,7 @@
 module REPL ( dickinsonRepl
             ) where
 
-import           Control.Monad.Except                  (runExceptT)
+import           Control.Monad.Except                  (ExceptT, runExceptT)
 import           Control.Monad.IO.Class                (liftIO)
 import           Control.Monad.State.Lazy              (StateT, evalStateT, get, gets, lift, put)
 import qualified Data.ByteString.Lazy                  as BSL
@@ -19,11 +19,13 @@ import           Data.Text.Lazy.Encoding               (encodeUtf8)
 import           Data.Text.Prettyprint.Doc             (Pretty (pretty), hardline)
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Data.Tuple.Ext                        (fst3)
+import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
 import           Language.Dickinson.Lexer              (AlexPosn, AlexUserState, alexInitUserState)
 import           Language.Dickinson.Lib
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
+import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Lens.Micro                            (_1)
 import           Lens.Micro.Mtl                        (use, (.=))
@@ -124,9 +126,13 @@ printExpr str = do
                         lift balanceMax
                         putErr mErr (liftIO . TIO.putStrLn)
                     Left decl -> do
-                        mErr <- lift $ runExceptT $ addDecl =<< renameDeclarationM decl
+                        mErr <- lift $ runExceptT $ addDecl' =<< renameDeclarationM decl
                         lift balanceMax
                         putErr mErr (const $ pure ())
+
+    where addDecl' :: Declaration AlexPosn -> ExceptT (DickinsonError AlexPosn) (StateT (EvalSt AlexPosn) IO) ()
+          addDecl' = addDecl
+
 
 putErr :: Pretty e => Either e b -> (b -> Repl a ()) -> Repl a ()
 putErr (Right x) f = f x

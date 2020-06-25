@@ -79,6 +79,7 @@ library dickinson
         Language.Dickinson.File
         Language.Dickinson.Import
         Language.Dickinson.Lib
+        Language.Dickinson.Lib.Get
         Data.Tuple.Ext
 
     hs-source-dirs:   src

@@ -14,6 +14,7 @@ traversePattern (PatternVar _ n)    = [n]
 traversePattern (PatternTuple _ ps) = traversePattern =<< toList ps
 traversePattern Wildcard{}          = []
 
+-- TODO: use this
 checkNames :: Pattern a -> Maybe (DickinsonError a)
 checkNames p = foldMapAlternative announce (group $ sort (traversePattern p))
     where announce (_:y:_) = Just $ MultiBind (loc y) y p
