@@ -56,6 +56,7 @@ import Language.Dickinson.Unique
     comma { TokSym $$ Comma }
     underscore { TokSym $$ Underscore }
     colon { TokSym $$ Colon }
+    declBreak { TokSym $$ DeclBreak }
 
     beginInterp { TokSym $$ BeginInterp }
     endInterp { TokSym $$ EndInterp }
@@ -98,11 +99,13 @@ brackets(p)
     : lsqbracket p rsqbracket { $2 }
 
 Dickinson :: { Dickinson AlexPosn }
-          : many(parens(Declaration)) { reverse $1 }
+          : many(parens(Import)) declBreak many(parens(Declaration)) { Dickinson (reverse $1) (reverse $3) }
 
 Declaration :: { Declaration AlexPosn }
             : def Name Expression { Define $1 $2 $3 }
-            | import Name { Import $1 $2 }
+
+Import :: { Import AlexPosn }
+       : import Name { Import $1 $2 }
 
 Name :: { Name AlexPosn }
      : ident { ident $1 }

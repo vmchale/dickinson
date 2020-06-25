@@ -18,13 +18,9 @@ checkNames ns = foldMapAlternative announce (group $ sort ns)
 -- runs after the renamer
 -- | Checks that there are not name clashes at the top level.
 checkMultiple :: Dickinson a -> Maybe (DickinsonWarning a)
-checkMultiple ds =
-        checkNames (mapMaybe extrName ds)
-    <|> foldMapAlternative checkMultipleExpr (mapMaybe extrExpr ds)
-    where extrName (Define _ n _) = Just n
-          extrName Import{}       = Nothing
-          extrExpr (Define _ _ e) = Just e
-          extrExpr Import{}       = Nothing
+checkMultiple (Dickinson _ ds) =
+        checkNames (fmap defName ds)
+    <|> foldMapAlternative checkMultipleExpr (fmap defExpr ds)
 
 checkMultipleExpr :: Expression a -> Maybe (DickinsonWarning a)
 checkMultipleExpr Var{}            = Nothing

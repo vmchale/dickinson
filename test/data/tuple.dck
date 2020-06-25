@@ -1,3 +1,5 @@
+%-
+
 (:def fst
   (:lambda xy (text, text)
     (:match xy (x, _)

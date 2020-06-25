@@ -76,6 +76,7 @@ tokens :-
     <0> "⟶"                        { mkSym Arrow }
     <0> "->"                       { mkSym Arrow }
     <0> \:                         { mkSym Colon }
+    <0> \%\-                       { mkSym DeclBreak }
 
     -- keywords
     <0> ":let"                     { mkKeyword KwLet }
@@ -172,6 +173,7 @@ data Sym = LParen
          | Comma
          | Underscore
          | Colon
+         | DeclBreak
          deriving (Eq, Generic, NFData)
 
 instance Pretty Sym where
@@ -190,6 +192,7 @@ instance Pretty Sym where
     pretty Comma         = comma
     pretty Underscore    = "_"
     pretty Colon         = colon
+    pretty DeclBreak     = "%-"
 
 data Keyword = KwDef
              | KwLet

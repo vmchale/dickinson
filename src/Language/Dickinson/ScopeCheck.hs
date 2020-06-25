@@ -28,14 +28,12 @@ checkScope :: Dickinson a -> Maybe (DickinsonError a)
 checkScope = runCheckM . checkDickinson
 
 checkDickinson :: Dickinson a -> CheckM (Maybe (DickinsonError a))
-checkDickinson d = traverse_ insDecl d *> mapSumM checkDecl d
+checkDickinson (Dickinson _ d) = traverse_ insDecl d *> mapSumM checkDecl d
 
 insDecl :: Declaration a -> CheckM ()
-insDecl Import{}       = pure () -- TODO: no
 insDecl (Define _ n _) = insertName n
 
 checkDecl :: Declaration a -> CheckM (Maybe (DickinsonError a))
-checkDecl Import{}       = pure Nothing -- TODO: check
 checkDecl (Define _ _ e) = checkExpr e
 
 checkExpr :: Expression a -> CheckM (Maybe (DickinsonError a))

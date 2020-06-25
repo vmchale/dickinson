@@ -1,4 +1,5 @@
 ; ported from the madlang color library
+%-
 
 (:def color
     (:oneof

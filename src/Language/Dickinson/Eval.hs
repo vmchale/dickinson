@@ -163,7 +163,9 @@ loadDickinson :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt Ale
               => [FilePath] -- ^ Include path
               -> Dickinson AlexPosn
               -> m ()
-loadDickinson is = traverse_ (addDecl is)
+loadDickinson fps (Dickinson is ds) =
+    traverse_ (addImport fps) is *>
+    traverse_ addDecl ds
 
 balanceMax :: MonadState (EvalSt a) m => m ()
 balanceMax = do
@@ -185,13 +187,16 @@ parseEvalM fp = do
         Left err ->
             throwError (ParseErr err)
 
--- TODO: MonadIO to addDecl so can import
-addDecl :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m)
-        => [FilePath] -- ^ Include path
-        -> Declaration AlexPosn
+addDecl :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m)
+        => Declaration AlexPosn
         -> m ()
-addDecl _ (Define _ n e) = bindName n e *> topLevelAdd n
-addDecl is (Import l n)  = do
+addDecl (Define _ n e) = bindName n e *> topLevelAdd n
+
+addImport :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m)
+          => [FilePath] -- ^ Include path
+          -> Import AlexPosn
+          -> m ()
+addImport is (Import l n)  = do
     preFp <- resolveImport is n
     case preFp of
         Just fp -> do

@@ -18,11 +18,10 @@ checkNames ns = foldMapAlternative announce (groupBy ((==) `on` snd) $ sortBy (c
 
 -- | Check that there are no duplicate names as the top-level
 checkDuplicates :: Dickinson a -> Maybe (DickinsonWarning a)
-checkDuplicates = foldMapAlternative checkDeclDuplicates
+checkDuplicates (Dickinson _ ds) = foldMapAlternative checkDeclDuplicates ds
 
 checkDeclDuplicates :: Declaration a -> Maybe (DickinsonWarning a)
 checkDeclDuplicates (Define _ _ e) = checkExprDuplicates e
-checkDeclDuplicates Import{}       = Nothing
 
 extrText :: Expression a -> Maybe (a, T.Text)
 extrText (Literal l t) = pure (l, t)

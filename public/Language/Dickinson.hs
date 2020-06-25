@@ -17,8 +17,6 @@ module Language.Dickinson ( -- * Parser
                           , DickinsonError (..)
                           -- * Imports
                           , resolveImport
-                          -- * Pretty-printing
-                          , prettyDickinson
                           -- * Version info
                           , dickinsonVersion
                           , dickinsonVersionString
@@ -30,7 +28,6 @@ import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
-import           Language.Dickinson.Pretty
 import           Language.Dickinson.Type
 import qualified Paths_language_dickinson  as P
 

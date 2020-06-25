@@ -1,4 +1,5 @@
 ; ported from madlang
+%-
 
 (:def adjective
   (:oneof

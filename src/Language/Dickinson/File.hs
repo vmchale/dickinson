@@ -12,20 +12,19 @@ import           Data.Bifunctor                        (second)
 import qualified Data.ByteString.Lazy                  as BSL
 import           Data.Semigroup                        ((<>))
 import           Data.Text                             as T
-import           Data.Text.Prettyprint.Doc             (hardline)
+import           Data.Text.Prettyprint.Doc             (hardline, pretty)
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Language.Dickinson.Check
 import           Language.Dickinson.DuplicateCheck
 import           Language.Dickinson.Eval
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Parser
-import           Language.Dickinson.Pretty
 import           Language.Dickinson.Rename
 import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.TypeCheck
 
 fmtFile :: FilePath -> IO ()
-fmtFile = putDoc . (<> hardline) . prettyDickinson . go <=< BSL.readFile
+fmtFile = putDoc . (<> hardline) . pretty . go <=< BSL.readFile
     where go = fst . uncurry renameDickinson . yeet . parseWithMax
 
 -- | Check scoping

@@ -52,7 +52,7 @@ tyRun :: Dickinson a -> Either (DickinsonError a) ()
 tyRun = flip evalState mempty . runExceptT . (tyTraverse :: Dickinson a -> TypeM a ())
 
 tyTraverse :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Dickinson a -> m ()
-tyTraverse = traverse_ tyAdd
+tyTraverse (Dickinson _ ds) = traverse_ tyAdd ds
 
 tyAdd :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Declaration a -> m ()
 tyAdd (Define _ n e) = tyInsert n =<< typeOf e

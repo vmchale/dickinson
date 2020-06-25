@@ -3,8 +3,9 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Language.Dickinson.Type ( Dickinson
+module Language.Dickinson.Type ( Dickinson (..)
                                , Declaration (..)
+                               , Import (..)
                                , Expression (..)
                                , Pattern (..)
                                , DickinsonTy (..)
@@ -16,23 +17,27 @@ import           Data.Foldable                 (toList)
 import           Data.List.NonEmpty            (NonEmpty)
 import           Data.Semigroup                ((<>))
 import qualified Data.Text                     as T
-import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, colon, dquotes, group, hsep, indent,
-                                                parens, pipe, rangle, tupled, vsep, (<+>))
+import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, colon, concatWith, dquotes, group,
+                                                hardline, hsep, indent, parens, pipe, rangle, tupled, vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext (hardSep, (<#*>), (<#>), (<^>))
 import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Name
 
 -- TODO: make imports a "section" at the beginning...
-type Dickinson a = [Declaration a]
+data Dickinson a = Dickinson { modImports :: [Import a]
+                             , modDefs    :: [Declaration a]
+                             } deriving (Generic, NFData, Binary, Functor)
 
 data Declaration a = Define { declAnn :: a
                             , defName :: Name a
                             , defExpr :: Expression a
                             }
-                   | Import { declAnn :: a
-                            , declMod :: Name a
-                            }
-                   deriving (Generic, NFData, Binary, Functor)
+                            deriving (Generic, NFData, Binary, Functor)
+
+data Import a = Import { importAnn :: a
+                       , declMod   :: Name a
+                       }
+                       deriving (Generic, NFData, Binary, Functor)
 
 data Pattern a = PatternVar a (Name a)
                | PatternTuple a (NonEmpty (Pattern a))
@@ -63,7 +68,12 @@ data DickinsonTy = TyText
 
 instance Pretty (Declaration a) where
     pretty (Define _ n e) = parens (":def" <+> pretty n <#> indent 2 (pretty e))
+
+instance Pretty (Import a) where
     pretty (Import _ n)   = parens (":import" <+> pretty n)
+
+instance Pretty (Dickinson a) where
+    pretty (Dickinson is ds) = concatWith (\x y -> x <> hardline <> hardline <> y) (fmap pretty is <> fmap pretty ds)
 
 prettyLetLeaf :: (Name a, Expression a) -> Doc b
 prettyLetLeaf (n, e) = group (brackets (pretty n <+> pretty e))

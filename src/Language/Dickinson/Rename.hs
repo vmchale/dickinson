@@ -15,11 +15,11 @@ module Language.Dickinson.Rename ( renameDickinson
                                  ) where
 
 import           Control.Composition           (thread)
-import           Control.Monad                 ((<=<))
 import           Control.Monad.Ext             (zipWithM)
 import           Control.Monad.State           (MonadState, State, runState)
 import           Data.Bifunctor                (second)
 import           Data.Binary                   (Binary)
+import           Data.Foldable                 (traverse_)
 import qualified Data.IntMap                   as IM
 import qualified Data.List.NonEmpty            as NE
 import           Data.Semigroup                (Semigroup (..))
@@ -83,22 +83,25 @@ renameDickinson :: Int -> Dickinson a -> (Dickinson a, Int)
 renameDickinson m ds = runRenameM m $ renameDickinsonM ds
 
 renameDickinsonM :: (MonadState s m, HasRenames s) => Dickinson a -> m (Dickinson a)
-renameDickinsonM = traverse renameDeclarationM <=< traverse insDeclM
+renameDickinsonM (Dickinson is ds) =
+    traverse_ insImportM is *>
+    (Dickinson is <$> (traverse renameDeclarationM =<< traverse insDeclM ds))
 
--- broadcast first...
-insDeclM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)
-insDeclM i@(Import _ n) = do
+insImportM :: (MonadState s m, HasRenames s) => Import a -> m (Import a)
+insImportM i@(Import _ n) = do
     (_, modR) <- withName n
     modifying rename modR
     -- FIXME: take a MonadIO maybe?? do it all at once...
     pure i
+
+-- broadcast first...
+insDeclM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)
 insDeclM (Define p n e) = do
     (n', modR) <- withName n
     modifying rename modR
     pure $ Define p n' e
 
 renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)
-renameDeclarationM i@Import{} = pure i
 renameDeclarationM (Define p n e) = do
     Define p n <$> renameExpressionM e
 

@@ -107,8 +107,7 @@ printExpr str = do
                         lift balanceMax
                         putErr mErr (liftIO . TIO.putStrLn)
                     Left decl -> do
-                        pathMod <- liftIO defaultLibPath
-                        mErr <- lift $ runExceptT $ addDecl (pathMod ["."]) =<< renameDeclarationM decl
+                        mErr <- lift $ runExceptT $ addDecl =<< renameDeclarationM decl
                         lift balanceMax
                         putErr mErr (const $ pure ())
 

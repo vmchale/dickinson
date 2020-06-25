@@ -4,9 +4,9 @@ module Golden ( goldenTests
 import           Control.Exception             (throw)
 import qualified Data.ByteString.Lazy          as BSL
 import           Data.Text.Lazy.Encoding       (encodeUtf8)
+import           Data.Text.Prettyprint.Doc     (pretty)
 import           Data.Text.Prettyprint.Doc.Ext
 import           Language.Dickinson.Parser
-import           Language.Dickinson.Pretty
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           System.FilePath               ((-<.>))
@@ -27,7 +27,7 @@ goldenTests =
         ]
 
 prettyBSL :: Dickinson a -> BSL.ByteString
-prettyBSL = encodeUtf8 . dickinsonLazyText . prettyDickinson
+prettyBSL = encodeUtf8 . dickinsonLazyText . pretty
 
 withDckFile :: FilePath -> TestTree
 withDckFile fp =

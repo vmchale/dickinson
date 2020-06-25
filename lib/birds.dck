@@ -1,4 +1,4 @@
-; TODO: animals library
+%-
 
 (:def bird
   (:oneof

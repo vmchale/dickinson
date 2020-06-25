@@ -72,7 +72,6 @@ library dickinson
         Language.Dickinson.Rename
         Language.Dickinson.Eval
         Language.Dickinson.Error
-        Language.Dickinson.Pretty
         Language.Dickinson.Check
         Language.Dickinson.ScopeCheck
         Language.Dickinson.DuplicateCheck
@@ -223,6 +222,7 @@ test-suite dickinson-test
         tasty -any,
         tasty-hunit -any,
         bytestring -any,
+        prettyprinter -any,
         text -any,
         filepath -any,
         tasty-golden -any,
