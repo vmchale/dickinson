@@ -33,6 +33,7 @@
 # Code Quality
 - [ ] Kick tires on `:t` feature
 # Features
+- [ ] "append" repl command
 - [ ] Circular import checker
 - [ ] Save repl states
 - [ ] Formatter
