@@ -6,6 +6,7 @@ module Language.Dickinson.Eval ( EvalM
                                , addDecl
                                , loadDickinson
                                , evalDickinsonAsMain
+                               , resolveExpressionM
                                , evalExpressionM
                                , evalExpressionAsTextM
                                , evalWithGen

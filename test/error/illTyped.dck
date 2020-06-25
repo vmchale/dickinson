@@ -1,3 +1,5 @@
+%-
+
 (:def silly
   (:lambda func (-> text text)
     ("Helo, ${func}")))

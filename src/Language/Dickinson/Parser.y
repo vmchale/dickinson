@@ -8,6 +8,7 @@
                                      , parseWithMax
                                      , parseWithCtx
                                      , parseReplWithCtx
+                                     , parseExpressionWithCtx
                                      , ParseError (..)
                                      ) where
 
@@ -184,6 +185,9 @@ parse = fmap snd . parseWithMax
 
 parseReplWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Either (Declaration AlexPosn) (Expression AlexPosn))
 parseReplWithCtx = parseWithInitSt parseRepl
+
+parseExpressionWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Expression AlexPosn)
+parseExpressionWithCtx = parseWithInitSt parseExpression
 
 parseWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Dickinson AlexPosn)
 parseWithCtx = parseWithInitSt parseDickinson

@@ -24,6 +24,7 @@ import           Language.Dickinson.Lexer              (AlexPosn, AlexUserState,
 import           Language.Dickinson.Lib
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
+import           Language.Dickinson.TypeCheck
 import           Lens.Micro                            (_1)
 import           Lens.Micro.Mtl                        (use, (.=))
 import           REPL.Save
@@ -55,6 +56,7 @@ loop = do
         Just (":l":fs)      -> traverse loadFile fs *> loop
         Just (":load":fs)   -> traverse loadFile fs *> loop
         Just (":r":fp:_)    -> loadReplSt fp *> loop
+        Just (":t":e:_)     -> typeExpr e *> loop
         Just [":q"]         -> pure ()
         Just [":quit"]      -> pure ()
         Just [":list"]      -> listNames *> loop
@@ -93,9 +95,24 @@ setSt newSt = lift $ do
     lexerStateLens._1 .= newM
     rename.maxLens .= newM
 
+strBytes :: String -> BSL.ByteString
+strBytes = encodeUtf8 . TL.pack
+
+typeExpr :: String -> Repl AlexPosn ()
+typeExpr str = do
+    let bsl = strBytes str
+    aSt <- lift $ gets lexerState
+    case parseExpressionWithCtx bsl aSt of
+        Left err -> liftIO $ putDoc (pretty err <> hardline)
+        Right (newSt, expr) -> do
+            setSt newSt
+            mErr <- lift $ runExceptT $ typeOf =<< resolveExpressionM =<< renameExpressionM expr
+            lift balanceMax
+            putErr mErr (liftIO . putDoc . (<> hardline) . pretty)
+
 printExpr :: String -> Repl AlexPosn ()
 printExpr str = do
-    let bsl = encodeUtf8 (TL.pack str)
+    let bsl = strBytes str
     aSt <- lift $ gets lexerState
     case parseReplWithCtx bsl aSt of
         Left err -> liftIO $ putDoc (pretty err <> hardline)
