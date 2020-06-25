@@ -125,7 +125,7 @@ lookupName n@(Name _ u l) = do
     (Unique u') <- replaceUnique u
     go =<< gets (IM.lookup u'.boundExpr)
     where go Nothing  = throwError (UnfoundName l n)
-          go (Just x) = renameExpressionM x
+          go (Just x) = {-# SCC "renameClone" #-} renameExpressionM x
 
 normalize :: (Foldable t, Functor t, Fractional a) => t a -> t a
 normalize xs = {-# SCC "normalize" #-} (/tot) <$> xs
