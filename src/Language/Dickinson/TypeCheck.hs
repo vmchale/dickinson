@@ -12,7 +12,7 @@ module Language.Dickinson.TypeCheck ( typeOf
 import           Control.Monad             (unless)
 import           Control.Monad.Except      (ExceptT, MonadError, runExceptT, throwError)
 import qualified Control.Monad.Ext         as Ext
-import           Control.Monad.State       (MonadState, State, evalState)
+import           Control.Monad.State       (MonadState, StateT, evalStateT)
 import           Data.Foldable             (traverse_)
 import           Data.Functor              (($>))
 import qualified Data.IntMap               as IM
@@ -46,10 +46,10 @@ tyMatch (e :| es) = do
     ty <- typeOf e
     traverse_ (tyAssert TyText) es $> ty
 
-type TypeM a = ExceptT (DickinsonError a) (State TyEnv)
+type TypeM a = ExceptT (DickinsonError a) (StateT TyEnv IO)
 
-tyRun :: Dickinson a -> Either (DickinsonError a) ()
-tyRun = flip evalState mempty . runExceptT . (tyTraverse :: Dickinson a -> TypeM a ())
+tyRun :: Dickinson a -> IO (Either (DickinsonError a) ())
+tyRun = flip evalStateT mempty . runExceptT . (tyTraverse :: Dickinson a -> TypeM a ())
 
 tyTraverse :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Dickinson a -> m ()
 tyTraverse (Dickinson _ ds) = traverse_ tyAdd ds
