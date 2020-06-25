@@ -258,7 +258,7 @@ mapChoice _ e@Literal{}    = e
 mapChoice _ e@StrChunk{}   = e
 
 setFrequency :: NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a)
-setFrequency = fmap (\(_, e) -> (fromIntegral $ countNodes e, e))
+setFrequency = fmap (\(_, e) -> (fromIntegral $ {-# SCC "countNodes" #-} countNodes e, e))
 
 countNodes :: Expression a -> Int
 countNodes Literal{}      = 1
