@@ -1,0 +1,24 @@
+(:def fst_11
+  (:lambda xy_15 (text, text)
+    (:match xy_15
+      (x_16, _)
+        x_16)))
+
+(:def snd_12
+  (:lambda xy_17 (text, text)
+    (:match xy_17
+      (_, y_18)
+        y_18)))
+
+(:def greeter_13
+  (:lambda dog_19 (text, text)
+    (:let
+      [name_20 ($ fst_11 dog_19)]
+      [pronoun_21 ($ snd_12 dog_19)]
+      (:branch
+        (| 0.3333333333333333 "${name_20} is a heckin' fine floofer")
+        (| 0.3333333333333333 "${name_20} is a good woofer")
+        (| 0.3333333333333333 "${name_20} eats toilet paper sometimes but ${pronoun_21} tries.")))))
+
+(:def main_14
+  ($ greeter_13 ("Maxine", "she")))

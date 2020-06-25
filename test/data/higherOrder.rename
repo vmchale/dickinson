@@ -4,6 +4,6 @@
 
 (:def main_7
   (:let
-    [fun_10 (:lambda a_11 (text)
+    [fun_10 (:lambda a_11 text
       "It's ${a_11}")]
     ($ top_6 fun_10)))

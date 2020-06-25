@@ -1,7 +1,7 @@
 (:def prolix_4
   (:let
     [xy_5 "hello"]
-    (:lambda xy_7 ((text, text))
+    (:lambda xy_7 (text, text)
       (:match xy_7
         (x_8, _)
           x_8))))
