@@ -23,7 +23,6 @@ import           Control.Monad.Except          (ExceptT, MonadError, runExceptT,
 import qualified Control.Monad.Ext             as Ext
 import           Control.Monad.IO.Class        (MonadIO (..))
 import           Control.Monad.State.Lazy      (MonadState, StateT, evalStateT, get, gets, modify, put)
-import qualified Data.ByteString.Lazy          as BSL
 import           Data.Foldable                 (toList, traverse_)
 import           Data.Functor                  (($>))
 import qualified Data.IntMap                   as IM

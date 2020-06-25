@@ -99,7 +99,7 @@ instance Pretty (Expression a) where
     -- TODO: if they're all equal, use :oneof
     -- also comments lol
     pretty (Choice _ brs)    = parens (":branch" <#> indent 2 (hardSep (toList $ fmap prettyChoiceBranch brs)))
-    pretty (Lambda _ n ty e) = parens (":lambda" <+> pretty n <+> parens (pretty ty) <#*> pretty e)
+    pretty (Lambda _ n ty e) = parens (":lambda" <+> pretty n <+> pretty ty <#*> pretty e)
     pretty (Apply _ e e')    = parens ("$" <+> pretty e <+> pretty e')
     pretty (Interp _ es)     = dquotes (foldMap prettyInterp es)
     pretty (Concat _ es)     = parens (rangle <+> hsep (pretty <$> es))
@@ -111,5 +111,5 @@ instance Pretty (Expression a) where
 
 instance Pretty DickinsonTy where
     pretty TyText{}     = "text"
-    pretty (TyFun t t') = "⟶" <+> pretty t <+> pretty t'
+    pretty (TyFun t t') = parens ("⟶" <+> pretty t <+> pretty t')
     pretty (TyTuple ts) = tupled (toList (pretty <$> ts))

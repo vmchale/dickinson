@@ -17,7 +17,6 @@ import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Language.Dickinson.Check
 import           Language.Dickinson.DuplicateCheck
 import           Language.Dickinson.Eval
-import           Language.Dickinson.Lexer
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Language.Dickinson.ScopeCheck
@@ -50,7 +49,7 @@ tcFile = h <=< go <=< BSL.readFile
 
 -- TODO: runDeclarationM
 evalFile :: [FilePath] -> FilePath -> IO T.Text
-evalFile is = fmap yeet . uncurry evalIO . second (evalDickinsonAsMain is) . yeet . flip parseWithCtx alexInitUserState <=< BSL.readFile
+evalFile is = fmap yeet . uncurry evalIO . second (evalDickinsonAsMain is) . yeet . parseWithInitCtx <=< BSL.readFile
 -- TODO: renameDickinson
 
 yeet :: Exception e => Either e x -> x
