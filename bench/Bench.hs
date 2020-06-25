@@ -57,10 +57,7 @@ main =
           parses = (,) <$> libFile <*> shakespeare
           libParsed = either throw id . parseWithMax <$> BSL.readFile "bench/data/nestLet.dck"
           multiParsed = either throw id . parse <$> BSL.readFile "bench/data/multiple.dck"
-          encoded = encode . yeet <$> multiParsed
-
-yeet :: Dickinson AlexPosn -> Dickinson ()
-yeet = fmap void
+          encoded = encode . void <$> multiParsed
 
 plainExpr :: (UniqueCtx, Dickinson a) -> Dickinson a
 plainExpr = fst . uncurry renameDickinson
