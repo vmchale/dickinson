@@ -15,6 +15,7 @@ evalTests = testGroup "Evalutation test"
     , testCase "Should allow higher-order functions" higherOrderEval
     , resultCase "test/demo/animal.dck"
     , resultCase "test/data/tuple.dck"
+    , resultCase "test/demo/tyAnnot.dck"
     ]
 
 forceText :: a -> Assertion
