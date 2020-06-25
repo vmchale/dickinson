@@ -2,7 +2,7 @@ module Language.Dickinson.ScopeCheck ( checkScope
                                      ) where
 
 import           Control.Applicative              (Alternative, (<|>))
-import           Control.Monad.State              (State, evalState, get, modify)
+import           Control.Monad.State              (StateT, evalStateT, get, modify)
 import           Data.Foldable                    (asum, traverse_)
 import qualified Data.IntSet                      as IS
 import           Language.Dickinson.Check.Pattern
@@ -11,10 +11,11 @@ import           Language.Dickinson.Name
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
 
-type CheckM = State IS.IntSet
+-- TODO: renames and alex state
+type CheckM = StateT IS.IntSet IO
 
-runCheckM :: CheckM a -> a
-runCheckM = flip evalState IS.empty
+runCheckM :: CheckM a -> IO a
+runCheckM = flip evalStateT IS.empty
 
 insertName :: Name a -> CheckM ()
 insertName (Name _ (Unique i) _) = modify (IS.insert i)
@@ -24,7 +25,7 @@ deleteName (Name _ (Unique i) _) = modify (IS.delete i)
 
 -- | Checks that there are not an identifiers that aren't in scope; needs to run
 -- after the renamer
-checkScope :: Dickinson a -> Maybe (DickinsonError a)
+checkScope :: Dickinson a -> IO (Maybe (DickinsonError a))
 checkScope = runCheckM . checkDickinson
 
 checkDickinson :: Dickinson a -> CheckM (Maybe (DickinsonError a))

@@ -77,12 +77,12 @@ parseRename = fmap (fst . uncurry renameDickinson . either throw id . parseWithM
 detectScopeError :: FilePath -> TestTree
 detectScopeError fp = testCase "Finds scoping error" $ do
     renamed <- parseRename fp
-    assertBool fp $ isJust (checkScope renamed)
+    assertBool fp =<< isJust <$> checkScope renamed
 
 noScopeError :: FilePath -> TestTree
 noScopeError fp = testCase "Reports valid scoping" $ do
     renamed <- parseRename fp
-    assertBool fp $ isNothing (checkScope renamed)
+    assertBool fp =<< isNothing <$> checkScope renamed
 
 parseNoError :: FilePath -> TestTree
 parseNoError fp = testCase ("Parsing doesn't fail (" ++ fp ++ ")") $ do

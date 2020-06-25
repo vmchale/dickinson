@@ -29,7 +29,7 @@ fmtFile = putDoc . (<> hardline) . pretty . go <=< BSL.readFile
 
 -- | Check scoping
 checkFile :: FilePath -> IO ()
-checkFile = h . go <=< BSL.readFile
+checkFile = h <=< go <=< BSL.readFile
     where go = checkScope . fst . uncurry renameDickinson . yeet . parseWithMax
           h (Just err) = throwIO err
           h Nothing    = pure ()

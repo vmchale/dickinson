@@ -29,7 +29,7 @@ main =
                     ]
                 , env (plainExpr <$> libParsed) $ \r ->
                   bgroup "scope checker"
-                    [ bench "bench/data/nestLet.dck" $ nf checkScope r
+                    [ bench "bench/data/nestLet.dck" $ nfIO (checkScope r)
                     ]
                 , env (void <$> multiParsed) $ \p ->
                   bgroup "encoder"
