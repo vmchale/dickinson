@@ -30,7 +30,6 @@ import qualified Data.IntMap                   as IM
 import           Data.List.NonEmpty            (NonEmpty, (<|))
 import qualified Data.List.NonEmpty            as NE
 import qualified Data.Map                      as M
-import           Data.Semigroup                ((<>))
 import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc     (Doc, Pretty (..), vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
