@@ -10,14 +10,17 @@
 - [x] manpages
 - [ ] Tutorial/walkthrough?
   - [ ] Getting started?
+- [ ] User guide (see happy?)
 - [ ] Library documentation
 ## Examples
 - [ ] Poetry bot...? Rumi?
 - [ ] Storytelling? RPG? idk
 - [ ] https://www.nadyaprimak.com/blog/programming/poetry-bot/
 - [x] Dog greeter
+- [ ] Fortune teller
+- [ ] Hot take generator
 # Editor Integration
-- [ ] Syntastic checker
+- [x] Syntastic checker
 # Passes
 - [ ] Typechecker?
 - [ ] Warn if a string is duplicate? (warn on duplicate branches)
@@ -25,9 +28,9 @@
 - [x] Scoping check (not lazy, like evaluation)
 - [ ] Error on negative numbers? (useful error)
 # Library API
-- [ ] Maybe spin out internal library?
+- [x] Maybe spin out internal library?
 # Bugs
-- [ ] Bug in `test/demo/animal.dck` - doesn't ever produce a bird?
+- [x] Bug in `test/demo/animal.dck` - doesn't ever produce a bird?
 - [ ] Running `examples/doggo.dck` `main` - `pick` seems to be called by `probabilities` state doesn't seem to change?
   - [ ] More vexingly, calling e.g. `color` in `lib/color.dck` un-sticks it!!
 # Code Quality
@@ -35,7 +38,7 @@
 # Features
 - [ ] "append" repl command
 - [ ] Circular import checker
-- [ ] Save repl states
+- [x] Save repl states
 - [ ] Formatter
 - [ ] User-defined functions on text?
   - [ ] "character map" approach?
@@ -45,9 +48,9 @@
   - [ ] Checkers should work with the module system
   - [ ] Modules don't give global uniqueness; fix scoping/deletions
 - [ ] Sum types (`Boy | Girl`)
-- [ ] Tuples/multi-return & agreement.
+- [x] Tuples/multi-return & agreement.
   - [ ] Def need product types...
-    - [ ] Dog example?
+    - [x] Dog example?
 - [x] Lambdas?
   - [ ] typechecker that works (with mutual recursion)
 - [ ] let-bindings are kind of painful to use
@@ -59,19 +62,19 @@
 - [ ] docs? links...?
 - [ ] Normalization (for encoding, for one)
 - [ ] Remove duplicates (for regen adjectives...)
-- [ ] Only allow imports at the beginning so that stuff doesn't import
-  transitively
+- [x] Only allow imports at the beginning
 # Tooling
 - [x] REPL
   - [x] Actually fix identifiers/threading state to the lexer
   - [ ] `:t` thing?
   - [ ] Completions!
 # Tests
-- [ ] Escpaed characters
 - [ ] Nested interpolated strings
 - [ ] Renamer + pattern matching
 - [ ] `examples/shakespeare.dck`
-- [ ] `test/eval/tyAnnot.dck` in the test suite
+## Test cases
+- [x] `test/eval/tyAnnot.dck` in the test suite
+- [ ] Escpaed characters
 # Libraries
 - [x] Colors
 - [ ] Animals
