@@ -3,6 +3,7 @@
 module Eval ( evalTests
             ) where
 
+import qualified Data.Text               as T
 import           Language.Dickinson.File
 import           Test.Tasty              (TestTree, testGroup)
 import           Test.Tasty.HUnit        (Assertion, testCase, (@?=))
@@ -12,7 +13,20 @@ evalTests = testGroup "Evalutation test"
     [ testCase "Should evalutate to a constant" constEval
     , testCase "Should allow declarations in other orders" scopeEval
     , testCase "Should allow higher-order functions" higherOrderEval
+    , resultCase "test/demo/animal.dck"
+    , resultCase "test/data/tuple.dck"
     ]
+
+forceText :: a -> Assertion
+forceText = (`seq` pure ())
+
+resultCase :: FilePath -> TestTree
+resultCase fp = testCase fp $ result fp
+
+result :: FilePath -> Assertion
+result fp = do
+    res <- evalFile ["lib"] fp
+    forceText res
 
 constEval :: Assertion
 constEval = do
