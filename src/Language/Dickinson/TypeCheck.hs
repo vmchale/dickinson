@@ -56,6 +56,9 @@ data TcState = TcState { tcRename     :: Renames
 instance HasTyEnv TcState where
     tyEnvLens f s = fmap (\x -> s { tcEnv = x }) (f (tcEnv s))
 
+instance HasRenames TcState where
+    rename f s = fmap (\x -> s { tcRename = x }) (f (tcRename s))
+
 type TypeM a = ExceptT (DickinsonError a) (StateT TcState IO)
 
 initTcState :: AlexUserState -> TcState
@@ -64,7 +67,8 @@ initTcState st@(u, _, _) = TcState (initRenames u) mempty st
 tyRun :: AlexUserState -> Dickinson a -> IO (Either (DickinsonError a) ())
 tyRun st = flip evalStateT (initTcState st) . runExceptT . (tyTraverse :: Dickinson a -> TypeM a ())
 
-tyTraverse :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Dickinson a -> m ()
+-- TODO: rename??
+tyTraverse :: (HasRenames s, HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Dickinson a -> m ()
 tyTraverse (Dickinson _ ds) = traverse_ tyAdd ds
 
 tyAdd :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Declaration a -> m ()
