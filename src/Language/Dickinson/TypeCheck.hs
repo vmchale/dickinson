@@ -68,7 +68,7 @@ tyRun :: AlexUserState -> Dickinson a -> IO (Either (DickinsonError a) ())
 tyRun st = flip evalStateT (initTcState st) . runExceptT . (tyTraverse :: Dickinson a -> TypeM a ())
 
 -- TODO: rename??
-tyTraverse :: (HasRenames s, HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Dickinson a -> m ()
+tyTraverse :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Dickinson a -> m ()
 tyTraverse (Dickinson _ ds) = traverse_ tyAdd ds
 
 tyAdd :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Declaration a -> m ()
