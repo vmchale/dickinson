@@ -17,6 +17,7 @@ import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
+import           Language.Dickinson.Rename
 import           Language.Dickinson.Unique
 import           Test.Tasty
 import           Test.Tasty.HUnit
@@ -70,20 +71,17 @@ detectDuplicate fp = testCase ("Detects duplicate name (" ++ fp ++ ")") $ do
     parsed <- readNoFail fp
     assertBool fp $ isJust (checkMultiple parsed)
 
-yeet :: Exception e => Either e x -> x
-yeet = either throw id
-
 -- FIXME: rename
 detectScopeError :: FilePath -> TestTree
 detectScopeError fp = testCase "Finds scoping error" $ do
-    (st, renamed) <- fmap yeet (parseWithInitCtx <$> BSL.readFile fp)
-    assertBool fp =<< isJust <$> checkScope st renamed
+    renamed <- parseRename fp
+    assertBool fp $ isJust (checkScope renamed)
 
 -- FIXME: rename
 noScopeError :: FilePath -> TestTree
 noScopeError fp = testCase "Reports valid scoping" $ do
-    (st, renamed) <- fmap yeet (parseWithInitCtx <$> BSL.readFile fp)
-    assertBool fp =<< isNothing <$> checkScope st renamed
+    renamed <- parseRename fp
+    assertBool fp $ isNothing (checkScope renamed)
 
 parseNoError :: FilePath -> TestTree
 parseNoError fp = testCase ("Parsing doesn't fail (" ++ fp ++ ")") $ do
@@ -94,3 +92,6 @@ lexNoError :: FilePath -> TestTree
 lexNoError fp = testCase ("Lexing doesn't fail (" ++ fp ++ ")") $ do
     contents <- BSL.readFile fp
     assertBool "Doesn't fail lexing" $ isRight (lexDickinson contents)
+
+parseRename :: FilePath -> IO (Dickinson AlexPosn)
+parseRename = fmap (fst . uncurry renameDickinson . either throw id . parseWithMax) . BSL.readFile
