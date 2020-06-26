@@ -27,9 +27,9 @@ main =
                   bgroup "renamer"
                     [ bench "bench/data/nestLet.dck" $ nf plainExpr p
                     ]
-                , env parsedRenamed $ \ ~(lSt, r) ->
+                , env (plainExpr <$> libParsed) $ \r ->
                   bgroup "scope checker"
-                    [ bench "bench/data/nestLet.dck" $ nfIO (checkScope lSt r)
+                    [ bench "bench/data/nestLet.dck" $ nf checkScope r
                     ]
                 , env (void <$> multiParsed) $ \p ->
                   bgroup "encoder"
@@ -61,7 +61,6 @@ main =
           shakespeare = BSL.readFile "examples/shakespeare.dck"
           parses = (,) <$> libFile <*> shakespeare
           libParsed = either throw id . parseWithMax <$> BSL.readFile "bench/data/nestLet.dck"
-          parsedRenamed = either throw id . parseWithInitCtx <$> BSL.readFile "bench/data/nestLet.dck"
           multiParsed = either throw id . parse <$> BSL.readFile "bench/data/multiple.dck"
           encoded = encode . void <$> multiParsed
           encodeShakespeare = encode . void . either throw id . parse <$> shakespeare
