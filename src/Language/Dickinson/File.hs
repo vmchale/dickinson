@@ -61,25 +61,26 @@ amalgamateRename is fp = flip evalStateT initAmalgamateSt $ fmap yeet $ runExcep
 
 -- | Check scoping
 checkFile :: FilePath -> IO ()
-checkFile = h . checkScope <=< amalgamateRename []
-    where h (Just err) = throwIO err
-          h Nothing    = pure ()
+checkFile = ioChecker checkScope
 
 -- | Run some lints
 warnFile :: FilePath -> IO ()
-warnFile = h . checks <=< amalgamateRename []
-    where h (Just err) = throwIO err
-          h Nothing    = pure ()
-          checks x = checkDuplicates x <|> checkMultiple x
+warnFile = ioChecker (\x -> checkDuplicates x <|> checkMultiple x)
 
-tcFile :: FilePath -> IO ()
-tcFile = h . tyRun <=< amalgamateRename []
-    where h Right{}    = pure ()
-          h (Left err) = throwIO err -- TODO: don't repeat myself
+ioChecker :: Exception e => ([Declaration AlexPosn] -> (Maybe e)) -> FilePath -> IO ()
+ioChecker checker = go . checker <=< amalgamateRename []
+    where go (Just err) = throwIO err
+          go Nothing    = pure ()
+
+tcFile :: FilePath -> IO () -- TODO: includes
+tcFile = yeetIO . tyRun <=< amalgamateRename []
 
 -- TODO: runDeclarationM
 evalFile :: [FilePath] -> FilePath -> IO T.Text
 evalFile is = fmap yeet . evalIO alexInitUserState . (evalDickinsonAsMain <=< amalgamateRenameM is)
+
+yeetIO :: Exception e => Either e x -> IO x
+yeetIO = either throwIO pure
 
 yeet :: Exception e => Either e x -> x
 yeet = either throw id
