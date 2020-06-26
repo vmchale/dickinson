@@ -60,8 +60,9 @@ data EvalSt a = EvalSt
     , tyEnv         :: TyEnv
     }
 
-lexerStateLens :: Lens' (EvalSt a) AlexUserState
-lexerStateLens f s = fmap (\x -> s { lexerState = x }) (f (lexerState s))
+
+instance HasLexerState (EvalSt a) where
+    lexerStateLens f s = fmap (\x -> s { lexerState = x }) (f (lexerState s))
 
 prettyBound :: (Int, Expression a) -> Doc b
 prettyBound (i, e) = pretty i <+> "←" <#*> pretty e

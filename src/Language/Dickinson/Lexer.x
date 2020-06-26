@@ -15,6 +15,7 @@
                                     , Token (..)
                                     , Keyword (..)
                                     , Sym (..)
+                                    , HasLexerState (..)
                                     ) where
 
 import Control.Arrow ((&&&))
@@ -34,6 +35,7 @@ import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, rbrace,
 import GHC.Generics (Generic)
 import Language.Dickinson.Name
 import Language.Dickinson.Unique
+import Lens.Micro (Lens')
 
 }
 
@@ -138,6 +140,9 @@ mkKeyword = constructor TokKeyword
 mkSym = constructor TokSym
 
 type AlexUserState = (UniqueCtx, M.Map T.Text Int, NameEnv AlexPosn)
+
+class HasLexerState a where
+    lexerStateLens :: Lens' a AlexUserState
 
 newIdentAlex :: AlexPosn -> T.Text -> Alex (Name AlexPosn)
 newIdentAlex pos t = do

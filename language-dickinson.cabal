@@ -70,6 +70,7 @@ library dickinson
         Language.Dickinson.TypeCheck
         Language.Dickinson.Parser
         Language.Dickinson.Rename
+        Language.Dickinson.Rename.Amalgamate
         Language.Dickinson.Eval
         Language.Dickinson.Error
         Language.Dickinson.Check
