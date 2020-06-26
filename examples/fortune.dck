@@ -4,8 +4,11 @@
 
 (:def fortune
   (:oneof
-    (| "« Le beau est ce qu'on désire sans vouloir le manger. »")))
+    (| "Fight god constantly.")
+    (| "You will be let down by someone close to you.")
+    (| "I'm not high-strung. I'm strung precisely as I am meant to be.")
+    (| "\"You're more likely to get cut with a dull tool than a sharper one.\"")
+    (| "Strive on all fronts")))
 
-; http://fortunes.cat-v.org/
 (:def main
   fortune)
