@@ -33,6 +33,7 @@
 - [x] Bug in `test/demo/animal.dck` - doesn't ever produce a bird?
 - [ ] Running `examples/doggo.dck` `main` - `pick` seems to be called by `probabilities` state doesn't seem to change?
   - [ ] More vexingly, calling e.g. `color` in `lib/color.dck` un-sticks it!!
+  - [ ] running `test/data/nestLet.dck` fucks up
 - [ ] Bug when running `test/demo/animal.dck` with renamer then eval
 # Code Quality
 - [ ] Kick tires on `:t` feature
