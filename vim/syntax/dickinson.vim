@@ -18,7 +18,7 @@ syntax match dickinsonKeyword ":flatten"
 syntax match dickinsonNum "\v[0-9]+"
 syntax match dickinsonNum "\v[0-9]+\.[0-9]+"
 
-syntax match dickinsonIdentifier "\v[a-zA-Z]+"
+syntax match dickinsonIdentifier "\v[a-zA-Z0-9]+"
 
 syntax match dickinsonEsc +\\["\\n]+
 
