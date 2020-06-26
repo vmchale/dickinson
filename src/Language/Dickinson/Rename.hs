@@ -8,6 +8,7 @@ module Language.Dickinson.Rename ( renameDickinsonM
                                  , initRenames
                                  , maxLens
                                  , replaceUnique
+                                 , RenameM
                                  , Renames (..)
                                  , HasRenames (..)
                                  ) where
@@ -15,7 +16,8 @@ module Language.Dickinson.Rename ( renameDickinsonM
 import           Control.Composition           (thread)
 import           Control.Monad                 ((<=<))
 import           Control.Monad.Ext             (zipWithM)
-import           Control.Monad.State           (MonadState)
+import           Control.Monad.State           (MonadState, State, runState)
+import           Data.Bifunctor                (second)
 import           Data.Binary                   (Binary)
 import qualified Data.IntMap                   as IM
 import qualified Data.List.NonEmpty            as NE
@@ -55,8 +57,13 @@ instance Monoid Renames where
     mempty = Renames 0 mempty
     mappend = (<>)
 
+type RenameM a = State Renames
+
 initRenames :: UniqueCtx -> Renames
 initRenames m = Renames m mempty
+
+runRenameM :: UniqueCtx -> RenameM a x -> (x, UniqueCtx)
+runRenameM m x = second max_ (runState x (initRenames m))
 
 -- Make sure you don't have cycles in the renames map!
 replaceUnique :: (MonadState s m, HasRenames s) => Unique -> m Unique

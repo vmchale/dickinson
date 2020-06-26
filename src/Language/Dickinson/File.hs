@@ -13,8 +13,6 @@ import           Control.Monad                         ((<=<))
 import           Control.Monad.Except                  (ExceptT, MonadError, runExceptT)
 import           Control.Monad.IO.Class                (MonadIO)
 import           Control.Monad.State                   (MonadState, StateT, evalStateT)
-import           Data.Bifunctor                        (second)
-import qualified Data.ByteString.Lazy                  as BSL
 import           Data.Semigroup                        ((<>))
 import           Data.Text                             as T
 import           Data.Text.Prettyprint.Doc             (hardline, pretty)
@@ -24,7 +22,6 @@ import           Language.Dickinson.DuplicateCheck
 import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
 import           Language.Dickinson.Lexer
-import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Rename.Amalgamate
 import           Language.Dickinson.ScopeCheck
