@@ -49,13 +49,15 @@ $latin = [a-zA-Z]
 
 $str_special = [\\\"\$]
 
-@escape_str = \\ $str_special
+@escape_str = \\ [$str_special \$n]
 
 -- single-line string
--- TODO: interpolations?
 @string = \" ([^ $str_special] | @escape_str)* \"
 
 $str_chunk = [^ \"\\\$]
+
+@escape_str_chunk = \\ [$str_chunk \$n]
+@str_interp_in = ([$str_chunk] | @escape_str_chunk)*
 
 @interp = \$\{
 
@@ -95,18 +97,24 @@ tokens :-
 
     -- strings
     <0> \"                         { mkSym StrBegin `andBegin` string }
-    <string> $str_chunk+           { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
+    <string> @str_interp_in        { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
     <string> @interp               { mkSym BeginInterp `andBegin` 0 }
     <0> \}                         { mkSym EndInterp `andBegin` string }
     <string> \"                    { mkSym StrEnd `andBegin` 0 }
 
     -- strings
-    <0> @string                    { tok (\p s -> alex $ TokString p (T.tail . T.init $ mkText s)) }
+    <0> @string                    { tok (\p s -> alex $ TokString p (escReplace . T.tail . T.init $ mkText s)) }
 
     -- numbers (as doubles)
     <0> @num                       { tok (\p s -> alex $ TokDouble p (read $ ASCII.unpack s)) } -- shouldn't cause any problems cuz digits
 
 {
+
+escReplace :: T.Text -> T.Text
+escReplace =
+      T.replace "\\\"" "\""
+    . T.replace "\\n" "\n"
+    . T.replace "\\$" "$"
 
 mkText :: BSL.ByteString -> T.Text
 mkText = decodeUtf8 . BSL.toStrict

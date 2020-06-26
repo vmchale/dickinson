@@ -42,5 +42,6 @@ highlight link dickinsonIdentifier Identifier
 highlight link dickinsonString String
 highlight link dickinsonType Type
 highlight link dickinsonSymbol Special
+highlight link dickinsonEsc Special
 
 let b:current_syntax = 'dickinson'
