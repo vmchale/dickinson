@@ -169,7 +169,7 @@ loadDickinson fps (Dickinson is ds) =
     traverse_ (addImport fps) is *>
     traverse_ addDecl ds
 
-balanceMax :: MonadState (EvalSt a) m => m ()
+balanceMax :: (HasRenames s, HasLexerState s) => MonadState s m => m ()
 balanceMax = do
     m0 <- use (rename.maxLens)
     m1 <- use (lexerStateLens._1)
