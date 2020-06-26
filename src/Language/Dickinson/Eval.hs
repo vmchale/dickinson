@@ -163,7 +163,7 @@ evalDickinsonAsMain d =
 loadDickinson :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m)
               => [Declaration a]
               -> m ()
-loadDickinson = traverse_ addDecl 
+loadDickinson = traverse_ addDecl
 
 balanceMax :: (HasRenames s, HasLexerState s) => MonadState s m => m ()
 balanceMax = do
