@@ -37,4 +37,3 @@ fileDecls :: (HasLexerState s, MonadIO m, MonadError (DickinsonError AlexPosn) m
           -> FilePath -- ^ Source file
           -> m [Declaration AlexPosn]
 fileDecls is = amalgamateM is <=< parseFpM
-

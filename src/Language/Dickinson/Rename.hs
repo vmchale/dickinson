@@ -15,11 +15,11 @@ module Language.Dickinson.Rename ( renameDickinson
                                  ) where
 
 import           Control.Composition           (thread)
+import           Control.Monad                 ((<=<))
 import           Control.Monad.Ext             (zipWithM)
 import           Control.Monad.State           (MonadState, State, runState)
 import           Data.Bifunctor                (second)
 import           Data.Binary                   (Binary)
-import           Data.Foldable                 (traverse_)
 import qualified Data.IntMap                   as IM
 import qualified Data.List.NonEmpty            as NE
 import           Data.Semigroup                (Semigroup (..))
@@ -79,20 +79,11 @@ replaceVar (Name n u l) = {-# SCC "replaceVar" #-} do
     u' <- replaceUnique u
     pure $ Name n u' l
 
-renameDickinson :: Int -> Dickinson a -> (Dickinson a, Int)
+renameDickinson :: Int -> [Declaration a] -> ([Declaration a], Int)
 renameDickinson m ds = runRenameM m $ renameDickinsonM ds
 
-renameDickinsonM :: (MonadState s m, HasRenames s) => Dickinson a -> m (Dickinson a)
-renameDickinsonM (Dickinson is ds) =
-    traverse_ insImportM is *>
-    (Dickinson is <$> (traverse renameDeclarationM =<< traverse insDeclM ds))
-
-insImportM :: (MonadState s m, HasRenames s) => Import a -> m (Import a)
-insImportM i@(Import _ n) = do
-    (_, modR) <- withName n
-    modifying rename modR
-    -- FIXME: take a MonadIO maybe?? do it all at once...
-    pure i
+renameDickinsonM :: (MonadState s m, HasRenames s) => [Declaration a] -> m [Declaration a]
+renameDickinsonM = traverse renameDeclarationM <=< traverse insDeclM
 
 -- broadcast first...
 insDeclM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)

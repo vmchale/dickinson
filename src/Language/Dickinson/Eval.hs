@@ -153,21 +153,17 @@ findDecl t = do
 findMain :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => m (Expression a)
 findMain = findDecl "main"
 
-evalDickinsonAsMain :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m)
-                    => [FilePath]
-                    -> Dickinson AlexPosn
+evalDickinsonAsMain :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m)
+                    => [Declaration a]
                     -> m T.Text
-evalDickinsonAsMain is d =
-    loadDickinson is d *>
+evalDickinsonAsMain d =
+    loadDickinson d *>
     (evalExpressionAsTextM =<< findMain)
 
-loadDickinson :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m)
-              => [FilePath] -- ^ Include path
-              -> Dickinson AlexPosn
+loadDickinson :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m)
+              => [Declaration a]
               -> m ()
-loadDickinson fps (Dickinson is ds) =
-    traverse_ (addImport fps) is *>
-    traverse_ addDecl ds
+loadDickinson = traverse_ addDecl 
 
 balanceMax :: (HasRenames s, HasLexerState s) => MonadState s m => m ()
 balanceMax = do
@@ -184,16 +180,6 @@ addDecl :: (MonadState (EvalSt a) m)
         => Declaration a
         -> m ()
 addDecl (Define _ n e) = bindName n e *> topLevelAdd n
-
-addImport :: (MonadError (DickinsonError AlexPosn) m, MonadState (EvalSt AlexPosn) m, MonadIO m)
-          => [FilePath] -- ^ Include path
-          -> Import AlexPosn
-          -> m ()
-addImport is i = do
-    parsed <- parseImportM is i
-    balanceMax
-    renamed <- renameDickinsonM parsed
-    loadDickinson is renamed
 
 extrText :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 extrText (Literal _ t)  = pure t
