@@ -1,0 +1,4 @@
+(:def quote_4
+  (:lambda qu_5 text
+    (:lambda name_6 text
+      "${qu_5}\n    — ${name_6}")))
