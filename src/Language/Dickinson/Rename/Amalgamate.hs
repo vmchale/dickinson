@@ -1,5 +1,5 @@
 {-# LANGUAGE FlexibleContexts #-}
- 
+
 module Language.Dickinson.Rename.Amalgamate ( amalgamateM
                                             ) where
 
@@ -9,8 +9,8 @@ import Language.Dickinson.Error
 import Control.Monad.Except (MonadError)
 
 -- difference list? sequence?
-amalgamateM :: (MonadIO m, MonadError (DickinsonError a) m) 
+amalgamateM :: (MonadIO m, MonadError (DickinsonError a) m)
             => [FilePath] -- ^ Includes
-            -> Dickinson a 
+            -> Dickinson a
             -> m [Declaration a]
 amalgamateM is (Dickinson _ ds) = pure ds

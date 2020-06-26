@@ -2,51 +2,30 @@ module Language.Dickinson.ScopeCheck ( checkScope
                                      ) where
 
 import           Control.Applicative              (Alternative, (<|>))
-import           Control.Monad.State              (StateT, evalStateT, gets, modify)
+import           Control.Monad.State              (State, evalState, get, modify)
 import           Data.Foldable                    (asum, traverse_)
 import qualified Data.IntSet                      as IS
 import           Language.Dickinson.Check.Pattern
 import           Language.Dickinson.Error
-import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
-import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
-import           Lens.Micro                       (Lens', over)
 
-data ScopeSt = ScopeSt { scopes       :: IS.IntSet
-                       , scopeRenames :: Renames
-                       , scopeLexSt   :: AlexUserState
-                       }
+type CheckM = State IS.IntSet
 
--- TODO: renames and alex state
-type CheckM = StateT ScopeSt IO
-
-class HasIntSet a where
-    intSet :: Lens' a IS.IntSet
-
-instance HasIntSet ScopeSt where
-    intSet f s = fmap (\x -> s { scopes = x }) (f (scopes s))
-
-instance HasRenames ScopeSt where
-    rename f s = fmap (\x -> s { scopeRenames = x }) (f (scopeRenames s))
-
-initScopeSt :: AlexUserState -> ScopeSt
-initScopeSt st@(u, _, _) = ScopeSt IS.empty (initRenames u) st
-
-runCheckM :: AlexUserState -> CheckM a -> IO a
-runCheckM lSt = flip evalStateT (initScopeSt lSt)
+runCheckM :: CheckM a -> a
+runCheckM = flip evalState IS.empty
 
 insertName :: Name a -> CheckM ()
-insertName (Name _ (Unique i) _) = modify (over intSet (IS.insert i))
+insertName (Name _ (Unique i) _) = modify (IS.insert i)
 
 deleteName :: Name a -> CheckM ()
-deleteName (Name _ (Unique i) _) = modify (over intSet (IS.delete i))
+deleteName (Name _ (Unique i) _) = modify (IS.delete i)
 
 -- | Checks that there are not an identifiers that aren't in scope; needs to run
 -- after the renamer
-checkScope :: AlexUserState -> Dickinson a -> IO (Maybe (DickinsonError a))
-checkScope lSt = runCheckM lSt . checkDickinson
+checkScope :: Dickinson a -> Maybe (DickinsonError a)
+checkScope = runCheckM . checkDickinson
 
 checkDickinson :: Dickinson a -> CheckM (Maybe (DickinsonError a))
 checkDickinson (Dickinson _ d) = traverse_ insDecl d *> mapSumM checkDecl d
@@ -71,7 +50,7 @@ checkExpr (Lambda _ n _ e) = do
     insertName n
     checkExpr e <* deleteName n
 checkExpr (Var _ n@(Name _ (Unique i) l)) = do
-    b <- gets scopes
+    b <- get
     if i `IS.member` b
         then pure Nothing
         else pure $ Just (UnfoundName l n)
