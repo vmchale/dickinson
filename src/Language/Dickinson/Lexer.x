@@ -93,12 +93,10 @@ tokens :-
 
     <0> @name                      { tok (\p s -> TokIdent p <$> newIdentAlex p (mkText s)) }
 
-    -- TODO: StrBegin token?
     -- strings
     <0> \"                         { mkSym StrBegin `andBegin` string }
     <string> $str_chunk+           { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
     <string> @interp               { mkSym BeginInterp `andBegin` 0 }
-    -- FIXME: doesn't distinguish strings/multiline strings
     <0> \}                         { mkSym EndInterp `andBegin` string }
     <string> \"                    { mkSym StrEnd `andBegin` 0 }
 
