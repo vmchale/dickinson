@@ -51,6 +51,7 @@ main =
                     , bench "examples/doggo.dck" $ nfIO (evalFile ["prelude"] "examples/doggo.dck")
                     , bench "test/demo/animal.dck" $ nfIO (evalFile ["lib"] "test/demo/animal.dck")
                     , bench "examples/hotTake.dck" $ nfIO (evalFile [] "examples/hotTake.dck")
+                    , bench "examples/fortune.dck" $ nfIO (evalFile [] "examples/fortune.dck")
                     ]
                 , bgroup "tcFile"
                     [ bench "examples/hotTake.dck" $ nfIO (tcFile "examples/hotTake.dck")
