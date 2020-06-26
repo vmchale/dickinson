@@ -10,4 +10,4 @@ man/emd.1: man/MANPAGE.md
 
 install:
 	cabal install exe:emd --overwrite-policy=always
-	cp man/emd.1 ${HOME}/.local/share/man/man1
+	cp man/emd.1 $(HOME)/.local/share/man/man1
