@@ -177,15 +177,6 @@ balanceMax = do
     rename.maxLens .= m'
     lexerStateLens._1 .= m'
 
-parseImportM :: (MonadIO m, MonadState (EvalSt AlexPosn) m, MonadError (DickinsonError AlexPosn) m)
-             => [FilePath]
-             -> Import AlexPosn
-             -> m (Dickinson AlexPosn)
-parseImportM is i = do
-    preSt <- gets lexerState
-    (st, d) <- parseImport is i preSt
-    (lexerStateLens .= st) $> d
-
 declToStMod :: Declaration a -> EvalSt a -> EvalSt a
 declToStMod (Define _ n e) = topLevelMod n . nameMod n e
 

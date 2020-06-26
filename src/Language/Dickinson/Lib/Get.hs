@@ -1,16 +1,29 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module Language.Dickinson.Lib.Get ( parseImport
+                                  , parseImportM
                                   ) where
 
 import           Control.Monad.Except      (MonadError, throwError)
 import           Control.Monad.IO.Class    (MonadIO (..))
+import           Control.Monad.State       (MonadState)
 import qualified Data.ByteString.Lazy      as BSL
+import           Data.Functor              (($>))
 import           Language.Dickinson.Error
 import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Type
+import           Lens.Micro.Mtl            (use, (.=))
+
+parseImportM :: (HasLexerState s, MonadState s m, MonadError (DickinsonError AlexPosn) m, MonadIO m)
+             => [FilePath] -- ^ Include path
+             -> Import AlexPosn
+             -> m (Dickinson AlexPosn)
+parseImportM is i = do
+    lSt <- use lexerStateLens
+    (st, d) <- parseImport is i lSt
+    (lexerStateLens .= st) $> d
 
 -- Parse an import. Does NOT perform renaming!
 parseImport :: (MonadError (DickinsonError AlexPosn) m, MonadIO m)
