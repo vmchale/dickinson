@@ -4,6 +4,7 @@ module Language.Dickinson.Lib.Get ( parseImportM
                                   , parseFpM
                                   ) where
 
+import           Control.Composition       ((.*))
 import           Control.Monad.Except      (MonadError, throwError)
 import           Control.Monad.IO.Class    (MonadIO (..))
 import           Control.Monad.State       (MonadState)
@@ -20,7 +21,7 @@ parseImportM :: (HasLexerState s, MonadState s m, MonadError (DickinsonError Ale
              => [FilePath] -- ^ Include path
              -> Import AlexPosn
              -> m (Dickinson AlexPosn)
-parseImportM is i = liftLexerState (parseImport is i)
+parseImportM = liftLexerState .* parseImport
 
 liftLexerState :: (HasLexerState s, MonadState s m)
                => (AlexUserState -> m (AlexUserState, a))
