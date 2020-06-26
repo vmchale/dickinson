@@ -22,6 +22,7 @@ import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Data.Tuple.Ext                        (fst3)
 import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
+import           Language.Dickinson.File
 import           Language.Dickinson.Lexer              (AlexPosn, AlexUserState, alexInitUserState)
 import           Language.Dickinson.Lib
 import           Language.Dickinson.Parser
@@ -157,13 +158,7 @@ putErr (Left y) _  = liftIO $ putDoc (pretty y <> hardline)
 -- TODO: check
 loadFile :: FilePath -> Repl AlexPosn ()
 loadFile fp = do
-    contents <- liftIO $ BSL.readFile fp
-    preSt <- lift $ gets lexerState
-    case parseWithCtx contents preSt of
-        Left err     -> liftIO $ putDoc (pretty err)
-        Right (newSt, p) -> do
-            setSt newSt
-            pathMod <- liftIO defaultLibPath
-            mErr <- lift $ runExceptT $ loadDickinson (pathMod ["."]) =<< renameDickinsonM p
-            lift balanceMax
-            putErr mErr (const $ pure ())
+    pathMod <- liftIO defaultLibPath
+    mErr <- lift $ runExceptT $ loadDickinson =<< amalgamateRenameM (pathMod ["."]) fp
+    lift balanceMax
+    putErr mErr (const $ pure ())

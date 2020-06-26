@@ -4,6 +4,7 @@ module Language.Dickinson.File ( evalFile
                                , checkFile
                                , warnFile
                                , tcFile
+                               , amalgamateRenameM
                                -- , fmtFile
                                ) where
 
@@ -47,7 +48,7 @@ amalgamateRenameM :: (HasRenames s, HasLexerState s, MonadIO m, MonadError (Dick
                   => [FilePath]
                   -> FilePath
                   -> m [Declaration AlexPosn]
-amalgamateRenameM is = renameDickinsonM <=< fileDecls is
+amalgamateRenameM is = (balanceMax *>) . renameDickinsonM <=< fileDecls is
 
 amalgamateRename :: [FilePath]
                  -> FilePath
