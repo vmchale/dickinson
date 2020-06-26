@@ -1,6 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module Language.Dickinson.Lib.Get ( parseImportM
+                                  , parseFpM
                                   ) where
 
 import           Control.Monad.Except      (MonadError, throwError)
@@ -19,10 +20,15 @@ parseImportM :: (HasLexerState s, MonadState s m, MonadError (DickinsonError Ale
              => [FilePath] -- ^ Include path
              -> Import AlexPosn
              -> m (Dickinson AlexPosn)
-parseImportM is i = do
+parseImportM is i = liftLexerState (parseImport is i)
+
+liftLexerState :: (HasLexerState s, MonadState s m)
+               => (AlexUserState -> m (AlexUserState, a))
+               -> m a
+liftLexerState fAct = do
     lSt <- use lexerStateLens
-    (st, d) <- parseImport is i lSt
-    (lexerStateLens .= st) $> d
+    (st, x) <- fAct lSt
+    (lexerStateLens .= st) $> x
 
 -- Parse an import. Does NOT perform renaming!
 parseImport :: (MonadError (DickinsonError AlexPosn) m, MonadIO m)
@@ -45,3 +51,8 @@ parseFp fp lSt = do
     case parseWithCtx bsl lSt of
         Right x  -> pure x
         Left err -> throwError (ParseErr fp err)
+
+parseFpM :: (HasLexerState s, MonadState s m, MonadError (DickinsonError AlexPosn) m, MonadIO m)
+        => FilePath -- ^ Source file
+        -> m (Dickinson AlexPosn)
+parseFpM fp = liftLexerState (parseFp fp)
