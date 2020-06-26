@@ -2,14 +2,12 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Language.Dickinson.Rename ( renameDickinson
-                                 , renameDickinsonM
+module Language.Dickinson.Rename ( renameDickinsonM
                                  , renameDeclarationM
                                  , renameExpressionM
                                  , initRenames
                                  , maxLens
                                  , replaceUnique
-                                 , RenameM
                                  , Renames (..)
                                  , HasRenames (..)
                                  ) where
@@ -17,8 +15,7 @@ module Language.Dickinson.Rename ( renameDickinson
 import           Control.Composition           (thread)
 import           Control.Monad                 ((<=<))
 import           Control.Monad.Ext             (zipWithM)
-import           Control.Monad.State           (MonadState, State, runState)
-import           Data.Bifunctor                (second)
+import           Control.Monad.State           (MonadState)
 import           Data.Binary                   (Binary)
 import qualified Data.IntMap                   as IM
 import qualified Data.List.NonEmpty            as NE
@@ -58,13 +55,8 @@ instance Monoid Renames where
     mempty = Renames 0 mempty
     mappend = (<>)
 
-type RenameM a = State Renames
-
 initRenames :: UniqueCtx -> Renames
 initRenames m = Renames m mempty
-
-runRenameM :: UniqueCtx -> RenameM a x -> (x, UniqueCtx)
-runRenameM m x = second max_ (runState x (initRenames m))
 
 -- Make sure you don't have cycles in the renames map!
 replaceUnique :: (MonadState s m, HasRenames s) => Unique -> m Unique
@@ -78,9 +70,6 @@ replaceVar :: (MonadState s m, HasRenames s) => Name a -> m (Name a)
 replaceVar (Name n u l) = {-# SCC "replaceVar" #-} do
     u' <- replaceUnique u
     pure $ Name n u' l
-
-renameDickinson :: Int -> [Declaration a] -> ([Declaration a], Int)
-renameDickinson m ds = runRenameM m $ renameDickinsonM ds
 
 renameDickinsonM :: (MonadState s m, HasRenames s) => [Declaration a] -> m [Declaration a]
 renameDickinsonM = traverse renameDeclarationM <=< traverse insDeclM

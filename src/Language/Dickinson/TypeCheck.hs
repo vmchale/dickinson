@@ -48,12 +48,12 @@ tyMatch (e :| es) = do
 
 type TypeM a = ExceptT (DickinsonError a) (State TyEnv)
 
-tyRun :: Dickinson a -> Either (DickinsonError a) ()
-tyRun = flip evalState IM.empty . runExceptT . (tyTraverse :: Dickinson a -> TypeM a ())
+tyRun :: [Declaration a] -> Either (DickinsonError a) ()
+tyRun = flip evalState IM.empty . runExceptT . (tyTraverse :: [Declaration a] -> TypeM a ())
 
 -- TODO: rename??
-tyTraverse :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Dickinson a -> m ()
-tyTraverse (Dickinson _ ds) = traverse_ tyAdd ds
+tyTraverse :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => [Declaration a] -> m ()
+tyTraverse = traverse_ tyAdd
 
 tyAdd :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Declaration a -> m ()
 tyAdd (Define _ n e) = tyInsert n =<< typeOf e

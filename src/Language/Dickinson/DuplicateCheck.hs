@@ -17,8 +17,8 @@ checkNames ns = foldMapAlternative announce (groupBy ((==) `on` snd) $ sortBy (c
           announce _            = Nothing
 
 -- | Check that there are no duplicate names as the top-level
-checkDuplicates :: Dickinson a -> Maybe (DickinsonWarning a)
-checkDuplicates (Dickinson _ ds) = foldMapAlternative checkDeclDuplicates ds
+checkDuplicates :: [Declaration a] -> Maybe (DickinsonWarning a)
+checkDuplicates = foldMapAlternative checkDeclDuplicates
 
 checkDeclDuplicates :: Declaration a -> Maybe (DickinsonWarning a)
 checkDeclDuplicates (Define _ _ e) = checkExprDuplicates e

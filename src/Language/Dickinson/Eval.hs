@@ -21,10 +21,8 @@ import           Control.Composition           (thread)
 import           Control.Monad                 ((<=<))
 import           Control.Monad.Except          (ExceptT, MonadError, runExceptT, throwError)
 import qualified Control.Monad.Ext             as Ext
-import           Control.Monad.IO.Class        (MonadIO (..))
 import           Control.Monad.State.Lazy      (MonadState, StateT, evalStateT, get, gets, modify, put)
 import           Data.Foldable                 (toList, traverse_)
-import           Data.Functor                  (($>))
 import qualified Data.IntMap                   as IM
 import           Data.List.NonEmpty            (NonEmpty, (<|))
 import qualified Data.List.NonEmpty            as NE
@@ -35,7 +33,6 @@ import           Data.Text.Prettyprint.Doc.Ext
 import           Data.Tuple.Ext
 import           Language.Dickinson.Error
 import           Language.Dickinson.Lexer
-import           Language.Dickinson.Lib.Get
 import           Language.Dickinson.Name
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
