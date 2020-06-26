@@ -2,12 +2,23 @@
 
 %-
 
+(:def quote
+  (:lambda qu text
+    (:lambda name text
+      "${qu}\n    — ${name}")))
+
 (:def fortune
   (:oneof
     (| "Fight god constantly.")
     (| "You will be let down by someone close to you.")
     (| "I'm not high-strung. I'm strung precisely as I am meant to be.")
-    (| "\"You're more likely to get cut with a dull tool than a sharper one.\"")
+    (| "Do not fail.")
+    (| "Trim the fat.")
+    (| "Excess is a sin")
+    (| "Obedience is a virtue.")
+    (| "« Le beau est ce qu'on désire sans vouloir le manger. »") ; Simone Weil
+    (| "\"You're more likely to get cut with a dull tool than a sharper one.\"") ; Fiona Apple
+    (| "Leisure is a sin")
     (| "Strive on all fronts")))
 
 (:def main

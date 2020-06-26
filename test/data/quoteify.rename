@@ -1,4 +1,7 @@
-(:def quote_4
-  (:lambda qu_5 text
-    (:lambda name_6 text
-      "${qu_5}\n    — ${name_6}")))
+(:def quote_5
+  (:lambda qu_7 text
+    (:lambda name_8 text
+      "${qu_7}\n    — ${name_8}")))
+
+(:def main_6
+  ($ ($ quote_5 "God created war so that Americans would learn geography.") "Mark Twain"))
