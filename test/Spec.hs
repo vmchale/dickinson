@@ -2,7 +2,7 @@
 
 module Main (main) where
 
-import           Control.Exception                 (Exception, throw)
+import           Control.Exception                 (throw)
 import qualified Data.ByteString.Lazy              as BSL
 import           Data.Either                       (isRight)
 import           Data.List.NonEmpty                (NonEmpty (..))
