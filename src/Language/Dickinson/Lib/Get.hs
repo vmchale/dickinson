@@ -34,9 +34,15 @@ parseImport :: (MonadError (DickinsonError AlexPosn) m, MonadIO m)
 parseImport is (Import l n) lSt = do
     preFp <- resolveImport is n
     case preFp of
-        Just fp -> do
-            bsl <- liftIO $ BSL.readFile fp
-            case parseWithCtx bsl lSt of
-                Right x  -> pure x
-                Left err -> throwError (ParseErr fp err)
+        Just fp -> parseFp fp lSt
         Nothing -> throwError $ ModuleNotFound l n
+
+parseFp :: (MonadError (DickinsonError AlexPosn) m, MonadIO m)
+        => FilePath -- ^ Source file
+        -> AlexUserState -- ^ Lexer state
+        -> m (AlexUserState, Dickinson AlexPosn)
+parseFp fp lSt = do
+    bsl <- liftIO $ BSL.readFile fp
+    case parseWithCtx bsl lSt of
+        Right x  -> pure x
+        Left err -> throwError (ParseErr fp err)
