@@ -17,8 +17,9 @@
 - [ ] Storytelling? RPG? idk
 - [ ] https://www.nadyaprimak.com/blog/programming/poetry-bot/
 - [x] Dog greeter
-- [ ] Fortune teller
+- [ ] Fortune teller/unix fortune
 - [ ] Hot take generator
+- [ ] Cowsay-as-a-function
 # Editor Integration
 - [x] Syntastic checker
 # Passes
@@ -86,6 +87,7 @@
   - [x] Birds
 - [ ] builtins (capitalization &c.)
 # Performance
+- [ ] Load modules in a sensible way?
 - [ ] Bench typechecker
 - [ ] Normalization-by-evaluation? NbE
 - [ ] http://hackage.haskell.org/package/text-short
