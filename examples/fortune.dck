@@ -1,6 +1,11 @@
 ; todo: cowsay? lol
+
+%-
+
 (:def fortune
   (:oneof
-    (| "eh")))
+    (| "«Le beau est ce qu'on désire sans vouloir le manger.»")))
 
 ; http://fortunes.cat-v.org/
+(:def main
+  fortune)
