@@ -15,6 +15,7 @@ evalTests = testGroup "Evalutation test"
     , resultCase "test/demo/animal.dck"
     , resultCase "test/data/tuple.dck"
     , resultCase "test/demo/tyAnnot.dck"
+    , resultCase "test/data/quoteify.dck"
     ]
 
 forceText :: a -> Assertion
