@@ -14,10 +14,13 @@
     (| "I'm not high-strung. I'm strung precisely as I am meant to be.")
     (| "Do not fail.")
     (| "Trim the fat.")
-    (| "Excess is a sin")
+    (| "Excess is a sin.")
+    (| "To err is immoral.")
+    (| $ $ quote "« Le beau est ce qu'on désire sans vouloir le manger. »" "Simone Weil")
+    (| $ $ quote "\"You're more likely to get cut with a dull tool than a sharper one.\"" "Fiona Apple")
+    (| $ $ quote "I don't believe in empirical science. I only believe in a priori truth." "Kurt Gödel")
     (| "Obedience is a virtue.")
-    (| "« Le beau est ce qu'on désire sans vouloir le manger. »") ; Simone Weil
-    (| "\"You're more likely to get cut with a dull tool than a sharper one.\"") ; Fiona Apple
+    (| "\"You have potential,\" is an insult.")
     (| "Leisure is a sin")
     (| "Strive on all fronts")))
 
