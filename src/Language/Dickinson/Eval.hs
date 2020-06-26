@@ -119,9 +119,8 @@ topLevelAdd :: (MonadState (EvalSt a) m) => Name a -> m ()
 topLevelAdd n = modify (topLevelMod n)
 
 lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression a)
-lookupName n@(Name _ u l) = do
-    (Unique u') <- replaceUnique u
-    go =<< gets (IM.lookup u'.boundExpr)
+lookupName n@(Name _ (Unique u) l) = do
+    go =<< gets (IM.lookup u.boundExpr)
     where go Nothing  = throwError (UnfoundName l n)
           go (Just x) = {-# SCC "renameClone" #-} renameExpressionM x
 
