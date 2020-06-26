@@ -18,9 +18,7 @@ import           Data.Functor              (($>))
 import qualified Data.IntMap               as IM
 import           Data.List.NonEmpty        (NonEmpty ((:|)))
 import           Language.Dickinson.Error
-import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
-import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
 import           Lens.Micro                (Lens')

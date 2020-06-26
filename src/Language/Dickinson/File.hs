@@ -28,8 +28,8 @@ fmtFile = putDoc . (<> hardline) . pretty . go <=< BSL.readFile
 
 -- | Check scoping
 checkFile :: FilePath -> IO ()
-checkFile = h <=< go <=< BSL.readFile
-    where go = uncurry checkScope . yeet . parseWithInitCtx -- TODO: rename?
+checkFile = h . go <=< BSL.readFile
+    where go = checkScope . fst . uncurry renameDickinson . yeet . parseWithMax
           h (Just err) = throwIO err
           h Nothing    = pure ()
 
@@ -42,8 +42,8 @@ warnFile = h . go <=< BSL.readFile
           checks x = checkDuplicates x <|> checkMultiple x
 
 tcFile :: FilePath -> IO ()
-tcFile = h <=< go <=< BSL.readFile
-    where go = uncurry tyRun . yeet . parseWithInitCtx
+tcFile = h . go <=< BSL.readFile
+    where go = tyRun . fst . uncurry renameDickinson . yeet . parseWithMax
           h Right{}    = pure ()
           h (Left err) = throwIO err
 
