@@ -24,11 +24,11 @@ deleteName (Name _ (Unique i) _) = modify (IS.delete i)
 
 -- | Checks that there are not an identifiers that aren't in scope; needs to run
 -- after the renamer
-checkScope :: Dickinson a -> Maybe (DickinsonError a)
+checkScope :: [Declaration a] -> Maybe (DickinsonError a)
 checkScope = runCheckM . checkDickinson
 
-checkDickinson :: Dickinson a -> CheckM (Maybe (DickinsonError a))
-checkDickinson (Dickinson _ d) = traverse_ insDecl d *> mapSumM checkDecl d
+checkDickinson :: [Declaration a] -> CheckM (Maybe (DickinsonError a))
+checkDickinson d = traverse_ insDecl d *> mapSumM checkDecl d
 
 insDecl :: Declaration a -> CheckM ()
 insDecl (Define _ n _) = insertName n
