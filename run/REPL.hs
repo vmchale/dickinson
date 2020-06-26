@@ -9,6 +9,7 @@ import           Control.Monad.IO.Class                (liftIO)
 import           Control.Monad.State.Lazy              (StateT, evalStateT, get, gets, lift, put)
 import qualified Data.ByteString.Lazy                  as BSL
 import           Data.Foldable                         (traverse_)
+import qualified Data.IntMap                           as IM
 import qualified Data.Map                              as M
 import           Data.Maybe                            (fromJust)
 import           Data.Semigroup                        ((<>))
@@ -27,6 +28,7 @@ import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
+import           Language.Dickinson.Unique
 import           Lens.Micro                            (_1)
 import           Lens.Micro.Mtl                        (use, (.=))
 import           REPL.Save
@@ -59,6 +61,8 @@ loop = do
         Just (":load":fs)   -> traverse loadFile fs *> loop
         Just (":r":fp:_)    -> loadReplSt fp *> loop
         Just (":t":e:_)     -> typeExpr e *> loop
+        Just (":v":n:_)     -> bindDisplay (T.pack n) *> loop
+        Just (":view":n:_)  -> bindDisplay (T.pack n) *> loop
         Just [":q"]         -> pure ()
         Just [":quit"]      -> pure ()
         Just [":list"]      -> listNames *> loop
@@ -88,6 +92,18 @@ listNames = liftIO . traverse_ TIO.putStrLn =<< names
 
 names :: Repl AlexPosn [T.Text]
 names = lift $ gets (M.keys . topLevel)
+
+bindDisplay :: T.Text -> Repl AlexPosn ()
+bindDisplay t = do
+    preBinds <- lift $ gets topLevel
+    let u = M.lookup t preBinds
+    case u of
+        Just (Unique i) -> do
+            exprs <- lift $ gets boundExpr
+            case IM.lookup i exprs of
+                Just e  -> liftIO $ putDoc (pretty e <> hardline)
+                Nothing -> error "Internal error."
+        Nothing -> pure () -- TODO: error
 
 setSt :: AlexUserState -> Repl AlexPosn ()
 setSt newSt = lift $ do

@@ -67,7 +67,7 @@
 # Tooling
 - [x] REPL
   - [x] Actually fix identifiers/threading state to the lexer
-  - [ ] `:t` thing?
+  - [x] `:t` thing?
   - [ ] Completions!
 # Tests
 - [ ] Nested interpolated strings

@@ -41,6 +41,8 @@ emd - [Emily] Dickinson
 
 **:t** - Display the type of an expression
 
+**:v** **:view** - Dump the definition of a name
+
 # OPTIONS
 
 **-h** **-\-help**
