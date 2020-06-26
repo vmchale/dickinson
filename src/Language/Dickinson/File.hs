@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 module Language.Dickinson.File ( evalFile
                                , checkFile
                                , warnFile
@@ -8,6 +10,9 @@ module Language.Dickinson.File ( evalFile
 import           Control.Applicative                   ((<|>))
 import           Control.Exception                     (Exception, throw, throwIO)
 import           Control.Monad                         ((<=<))
+import           Control.Monad.Except                  (MonadError)
+import           Control.Monad.IO.Class                (MonadIO)
+import           Control.Monad.State                   (MonadState)
 import           Data.Bifunctor                        (second)
 import qualified Data.ByteString.Lazy                  as BSL
 import           Data.Semigroup                        ((<>))
@@ -16,11 +21,21 @@ import           Data.Text.Prettyprint.Doc             (hardline, pretty)
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Language.Dickinson.Check
 import           Language.Dickinson.DuplicateCheck
+import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
+import           Language.Dickinson.Lexer
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Language.Dickinson.ScopeCheck
+import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
+
+-- TODO:
+amalgamateRenameM :: (HasRenames s, HasLexerState s, MonadIO m, MonadError (DickinsonError AlexPosn) m, MonadState s m)
+                  => [FilePath]
+                  -> FilePath
+                  -> m [Declaration AlexPosn]
+amalgamateRenameM is = renameDickinsonM <=< fileDecls is
 
 fmtFile :: FilePath -> IO ()
 fmtFile = putDoc . (<> hardline) . pretty . go <=< BSL.readFile
