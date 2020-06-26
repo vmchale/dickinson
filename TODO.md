@@ -38,6 +38,7 @@
 - [ ] Bug when running `test/demo/animal.dck` with renamer then eval
 # Code Quality
 - [ ] Kick tires on `:t` feature
+- [ ] Don't use the identifier `yeet`
 # Debugging
 - [ ] Verbosity
 # Features
@@ -73,6 +74,7 @@
   - [x] Actually fix identifiers/threading state to the lexer
   - [x] `:t` thing?
   - [ ] Completions!
+  - [ ] linting within the REPL?
 # Tests
 - [ ] Nested interpolated strings
 - [ ] Renamer + pattern matching
