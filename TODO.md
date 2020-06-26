@@ -37,6 +37,8 @@
 - [ ] Bug when running `test/demo/animal.dck` with renamer then eval
 # Code Quality
 - [ ] Kick tires on `:t` feature
+# Debugging
+- [ ] Verbosity
 # Features
 - [ ] "append" repl command
 - [ ] Circular import checker
