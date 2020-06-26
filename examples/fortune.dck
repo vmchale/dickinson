@@ -1,0 +1,6 @@
+; todo: cowsay? lol
+(:def fortune
+  (:oneof
+    (| "eh")))
+
+; http://fortunes.cat-v.org/
