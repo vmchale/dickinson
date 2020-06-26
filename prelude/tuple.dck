@@ -9,3 +9,8 @@
   (:lambda xy (text, text)
     (:match xy (_, y)
       y)))
+
+(:def fst3
+  (:lambda xyz (text, text, text)
+    (:match xyz (x, _, _)
+      x)))

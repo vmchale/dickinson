@@ -59,7 +59,7 @@ $str_chunk = [^ \"\\\$]
 
 @interp = \$\{
 
-@name = ($latin+ \.)* $latin+
+@name = ($latin+ \.)* [$latin $digit]+
 
 tokens :-
 
