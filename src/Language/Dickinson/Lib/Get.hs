@@ -1,7 +1,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 
-module Language.Dickinson.Lib.Get ( parseImport
-                                  , parseImportM
+module Language.Dickinson.Lib.Get ( parseImportM
                                   ) where
 
 import           Control.Monad.Except      (MonadError, throwError)
