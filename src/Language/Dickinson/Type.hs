@@ -44,14 +44,13 @@ data Pattern a = PatternVar a (Name a)
                | Wildcard a
                deriving (Generic, NFData, Binary, Functor, Show)
 
--- TODO: figure out bang patterns?
 data Expression a = Literal a T.Text
                   | StrChunk a T.Text
                   | Choice a (NonEmpty (Double, Expression a))
                   | Let a (NonEmpty (Name a, Expression a)) (Expression a)
                   | Var a (Name a)
                   | Interp a [Expression a]
-                  | Lambda a (Name a) DickinsonTy (Expression a) -- TODO: application, type checker
+                  | Lambda a (Name a) DickinsonTy (Expression a)
                   | Apply a (Expression a) (Expression a)
                   | Concat a [Expression a]
                   | Tuple a (NonEmpty (Expression a))
