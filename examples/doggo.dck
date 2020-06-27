@@ -7,9 +7,8 @@
 ; see https://github.com/vmchale/doggo-command-line/blob/master/src/main.rs
 (:def greeter
   (:lambda dog (text, text)
-    (:let
-      [name ($fst dog)]
-      [pronoun ($snd dog)]
+    (:match dog
+      (name, pronoun)
         (:oneof
           (| "${name} is a heckin' fine floofer")
           (| "${name} is a good woofer")
