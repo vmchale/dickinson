@@ -27,7 +27,7 @@ main =
                   bgroup "renamer"
                     [ bench "bench/data/nestLet.dck" $ nf plainExpr p
                     ]
-                , env (plainExpr <$> libParsed) $ \r ->
+                , env (plainExpr <$> libParsed) $ \ ~(Dickinson _ r) ->
                   bgroup "scope checker"
                     [ bench "bench/data/nestLet.dck" $ nf checkScope r
                     ]
@@ -40,7 +40,7 @@ main =
                     [ bench "bench/data/multiple.dck" $ nf (decode :: BSL.ByteString -> Dickinson ()) e
                     , bench "examples/shakespeare.dck" $ nf (decode :: BSL.ByteString -> Dickinson ()) es
                     ]
-                , env multiParsed $ \p ->
+                , env multiParsed $ \ ~(Dickinson _ p) ->
                   bgroup "check"
                     [ bench "bench/data/multiple.dck" $ nf checkMultiple p
                     , bench "bench/data/multiple.dck" $ nf checkDuplicates p -- TODO: better example
@@ -54,7 +54,7 @@ main =
                     , bench "examples/fortune.dck" $ nfIO (evalFile [] "examples/fortune.dck")
                     ]
                 , bgroup "tcFile"
-                    [ bench "examples/hotTake.dck" $ nfIO (tcFile "examples/hotTake.dck")
+                    [ bench "examples/hotTake.dck" $ nfIO (tcFile [] "examples/hotTake.dck")
                     ]
                 ]
 
