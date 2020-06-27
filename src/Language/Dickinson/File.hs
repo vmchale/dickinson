@@ -10,6 +10,7 @@ module Language.Dickinson.File ( evalFile
 
 import           Control.Applicative                   ((<|>))
 import           Control.Exception                     (Exception, throw, throwIO)
+import           Control.Exception.Value
 import           Control.Monad                         ((<=<))
 import           Control.Monad.Except                  (ExceptT, MonadError, runExceptT)
 import           Control.Monad.IO.Class                (MonadIO)
@@ -55,10 +56,10 @@ amalgamateRenameM is = (balanceMax *>) . renameDeclarationsM <=< fileDecls is
 amalgamateRename :: [FilePath]
                  -> FilePath
                  -> IO [Declaration AlexPosn]
-amalgamateRename is fp = flip evalStateT initAmalgamateSt $ fmap yeet $ runExceptT $ amalgamateRenameM is fp
+amalgamateRename is fp = flip evalStateT initAmalgamateSt $ fmap eitherThrow $ runExceptT $ amalgamateRenameM is fp
 
 fmtFile :: FilePath -> IO ()
-fmtFile = putDoc . (<> hardline) . pretty . yeet . parse <=< BSL.readFile
+fmtFile = putDoc . (<> hardline) . pretty . eitherThrow . parse <=< BSL.readFile
 
 -- | Check scoping
 checkFile :: [FilePath] -> FilePath -> IO ()
@@ -69,20 +70,11 @@ warnFile :: FilePath -> IO ()
 warnFile = ioChecker (\x -> checkDuplicates x <|> checkMultiple x) []
 
 ioChecker :: Exception e => ([Declaration AlexPosn] -> (Maybe e)) -> [FilePath] -> FilePath -> IO ()
-ioChecker checker is = go . checker <=< amalgamateRename is
-    where go (Just err) = throwIO err
-          go Nothing    = pure ()
+ioChecker checker is = maybeThrowIO . checker <=< amalgamateRename is
 
 tcFile :: [FilePath] -> FilePath -> IO ()
-tcFile is = yeetIO . tyRun <=< amalgamateRename is
+tcFile is = eitherThrowIO . tyRun <=< amalgamateRename is
 
 -- TODO: runDeclarationM
 evalFile :: [FilePath] -> FilePath -> IO T.Text
-evalFile is = fmap yeet . evalIO . (evalDickinsonAsMain <=< amalgamateRenameM is)
-
-yeetIO :: Exception e => Either e x -> IO x
-yeetIO = either throwIO pure
-
--- TODO: Control.Exception.Value module
-yeet :: Exception e => Either e x -> x
-yeet = either throw id
+evalFile is = fmap eitherThrow . evalIO . (evalDickinsonAsMain <=< amalgamateRenameM is)

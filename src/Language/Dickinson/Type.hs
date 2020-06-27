@@ -23,7 +23,6 @@ import           Data.Text.Prettyprint.Doc.Ext (hardSep, (<#*>), (<#>), (<^>))
 import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Name
 
--- TODO: make imports a "section" at the beginning...
 data Dickinson a = Dickinson { modImports :: [Import a]
                              , modDefs    :: [Declaration a]
                              } deriving (Generic, NFData, Binary, Functor, Show)

@@ -93,7 +93,7 @@ boundExprLens f s = fmap (\x -> s { boundExpr = x }) (f (boundExpr s))
 topLevelLens :: Lens' (EvalSt a) (M.Map T.Text Unique)
 topLevelLens f s = fmap (\x -> s { topLevel = x }) (f (topLevel s))
 
--- TODO: thread generator state instead?
+-- FIXME: remove IO
 type EvalM a = StateT (EvalSt a) (ExceptT (DickinsonError a) IO)
 
 evalIO :: EvalM a x -> IO (Either (DickinsonError a) x)
