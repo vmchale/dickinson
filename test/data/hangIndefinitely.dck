@@ -1,8 +1,15 @@
-(:import tuple)
-
 %-
 
 ; TODO tydecl sex = Boy | Girl
+(:def fst
+  (:lambda xy (text, text)
+    (:match xy (x, _)
+      x)))
+
+(:def snd
+  (:lambda xy (text, text)
+    (:match xy (_,x)
+      x)))
 
 ; see https://github.com/vmchale/doggo-command-line/blob/master/src/main.rs
 (:def greeter
