@@ -6,4 +6,5 @@
       "${qu}\n    — ${name}")))
 
 (:def main
-  ($ $ quote "God created war so that Americans would learn geography." "Mark Twain"))
+  (:oneof
+    (| ($ $ quote "God created war so that Americans would learn geography." "Mark Twain"))))

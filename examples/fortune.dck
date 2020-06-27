@@ -3,8 +3,8 @@
 %-
 
 (:def quote
-  (:lambda qu text
-    (:lambda name text
+  (:lambda q (text, text)
+    (:match q (qu, name)
       "${qu}\n    — ${name}")))
 
 (:def fortune
@@ -14,13 +14,13 @@
     (| "I'm not high-strung. I'm strung precisely as I am meant to be.")
     (| "Do not fail.")
     (| "Trim the fat.")
+    (| "Cleanliness is next to godliness.")
     (| "Excess is a sin.")
     (| "To err is immoral.")
-    (| $ $ quote "« Le beau est ce qu'on désire sans vouloir le manger. »" "Simone Weil")
-    (| $ $ quote "\"You're more likely to get cut with a dull tool than a sharper one.\"" "Fiona Apple")
-    (| $ $ quote "\"I don't believe in empirical science. I only believe in a priori truth.\"" "Kurt Gödel")
+    (| $ quote ("« Le beau est ce qu'on désire sans vouloir le manger. »", "Simone Weil"))
+    (| $ quote ("\"You're more likely to get cut with a dull tool than a sharper one.\"", "Fiona Apple"))
+    (| $ quote ("\"I don't believe in empirical science. I only believe in a priori truth.\"", "Kurt Gödel"))
     (| "Obedience is a virtue.")
-    (| "Failure is not an option.")
     (| "\"You have potential,\" is an insult.")
     (| "Leisure is a sin")
     (| "Strive on all fronts")))

@@ -97,7 +97,7 @@ tokens :-
 
     -- strings
     <0> \"                         { mkSym StrBegin `andBegin` string }
-    <string> @str_interp_in        { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
+    <string> @str_interp_in        { tok (\p s -> alex $ TokStrChunk p (escReplace $ mkText s)) }
     <string> @interp               { mkSym BeginInterp `andBegin` 0 }
     <0> \}                         { mkSym EndInterp `andBegin` string }
     <string> \"                    { mkSym StrEnd `andBegin` 0 }
