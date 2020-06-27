@@ -16,6 +16,7 @@ evalTests = testGroup "Evalutation test"
     , resultCase "test/data/tuple.dck"
     , resultCase "test/demo/tyAnnot.dck"
     , resultCase "test/data/quoteify.dck"
+    , resultCase "test/data/hangIndefinitely.dck"
     ]
 
 forceText :: a -> Assertion
@@ -26,7 +27,7 @@ resultCase fp = testCase fp $ result fp
 
 result :: FilePath -> Assertion
 result fp = do
-    res <- evalFile ["lib"] fp
+    res <- evalFile ["prelude", "lib"] fp
     forceText res
 
 constEval :: Assertion
