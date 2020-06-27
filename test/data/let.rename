@@ -2,49 +2,49 @@ Dickinson
   { modImports = []
   , modDefs =
     [ Define
-      { declAnn = AlexPn 5 3 2
+      { declAnn = ()
       , defName = Name
         { name = "letBinding" :| []
         , unique = Unique { unUnique = 4 }
-        , loc = AlexPn 10 3 7
+        , loc = ()
         }
-      , defExpr = Let ( AlexPn 26 4 6 )
+      , defExpr = Let ()
         (
           ( Name
             { name = "a" :| []
             , unique = Unique { unUnique = 5 }
-            , loc = AlexPn 40 5 10
+            , loc = ()
             }
-          , Literal ( AlexPn 42 5 12 ) "man"
+          , Literal () "man"
           ) :|
           [
             ( Name
               { name = "b" :| []
               , unique = Unique { unUnique = 6 }
-              , loc = AlexPn 58 6 10
+              , loc = ()
               }
-            , Literal ( AlexPn 60 6 12 ) "woman"
+            , Literal () "woman"
             )
           ]
         )
-        ( Choice ( AlexPn 78 7 10 )
+        ( Choice ()
           (
             ( 1.0
-            , Var ( AlexPn 105 8 20 )
+            , Var ()
               ( Name
                 { name = "a" :| []
                 , unique = Unique { unUnique = 5 }
-                , loc = AlexPn 105 8 20
+                , loc = ()
                 }
               )
             ) :|
             [
               ( 1.0
-              , Var ( AlexPn 127 9 20 )
+              , Var ()
                 ( Name
                   { name = "b" :| []
                   , unique = Unique { unUnique = 6 }
-                  , loc = AlexPn 127 9 20
+                  , loc = ()
                   }
                 )
               )

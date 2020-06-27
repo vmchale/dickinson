@@ -8,6 +8,7 @@ import           Data.Text.Prettyprint.Doc     (pretty)
 import           Data.Text.Prettyprint.Doc.Ext
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
+import Data.Functor (void)
 import           Language.Dickinson.Type
 import           System.FilePath               ((-<.>))
 import           Test.Tasty                    (TestTree, testGroup)
@@ -32,7 +33,7 @@ goldenTests =
 prettyBSL :: Dickinson a -> BSL.ByteString
 prettyBSL = encodeUtf8 . dickinsonLazyText . pretty
 
-debugBSL :: Show a => Dickinson a -> BSL.ByteString
+debugBSL :: Dickinson () -> BSL.ByteString
 debugBSL = encodeUtf8 . pShowOpt defaultOutputOptionsNoColor { outputOptionsIndentAmount = 2 }
 
 withDckFile :: FilePath -> TestTree
@@ -46,5 +47,5 @@ renameDckFile :: FilePath -> TestTree
 renameDckFile fp =
     goldenVsString ("Matches golden output " ++ fp) (fp -<.> "rename") act
 
-    where act = debugBSL . fst . uncurry renameDickinson . yeet . parseWithMax <$> BSL.readFile fp
+    where act = debugBSL . void . fst . uncurry renameDickinson . yeet . parseWithMax <$> BSL.readFile fp
           yeet = either throw id

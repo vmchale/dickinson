@@ -2,79 +2,78 @@ Dickinson
   { modImports = []
   , modDefs =
     [ Define
-      { declAnn = AlexPn 5 3 2
+      { declAnn = ()
       , defName = Name
         { name = "top" :| []
         , unique = Unique { unUnique = 6 }
-        , loc = AlexPn 10 3 7
+        , loc = ()
         }
-      , defExpr = Lambda ( AlexPn 17 4 4 )
+      , defExpr = Lambda ()
         ( Name
           { name = "f" :| []
           , unique = Unique { unUnique = 8 }
-          , loc = AlexPn 25 4 12
+          , loc = ()
           }
         ) ( TyFun TyText TyText )
-        ( Apply ( AlexPn 47 5 6 )
-          ( Var ( AlexPn 48 5 7 )
+        ( Apply ()
+          ( Var ()
             ( Name
               { name = "f" :| []
               , unique = Unique { unUnique = 8 }
-              , loc = AlexPn 48 5 7
+              , loc = ()
               }
             )
-          )
-          ( Literal ( AlexPn 50 5 9 ) "me" )
+          ) ( Literal () "me" )
         )
       }
     , Define
-      { declAnn = AlexPn 60 7 2
+      { declAnn = ()
       , defName = Name
         { name = "main" :| []
         , unique = Unique { unUnique = 7 }
-        , loc = AlexPn 65 7 7
+        , loc = ()
         }
-      , defExpr = Let ( AlexPn 73 8 4 )
+      , defExpr = Let ()
         (
           ( Name
             { name = "fun" :| []
             , unique = Unique { unUnique = 10 }
-            , loc = AlexPn 83 9 6
+            , loc = ()
             }
-          , Lambda ( AlexPn 88 9 11 )
+          , Lambda ()
             ( Name
               { name = "a" :| []
               , unique = Unique { unUnique = 11 }
-              , loc = AlexPn 96 9 19
+              , loc = ()
               }
             ) TyText
-            ( Interp ( AlexPn 105 9 28 )
-              [ StrChunk ( AlexPn 106 9 29 ) "It's "
-              , Var ( AlexPn 113 9 36 )
+            ( Interp ()
+              [ StrChunk () "It's "
+              , Var ()
                 ( Name
                   { name = "a" :| []
                   , unique = Unique { unUnique = 11 }
-                  , loc = AlexPn 113 9 36
+                  , loc = ()
                   }
                 )
               ]
             )
           ) :| []
         )
-        ( Apply ( AlexPn 124 10 6 )
-          ( Var ( AlexPn 126 10 8 )
+        ( Apply ()
+          ( Var ()
             ( Name
               { name = "top" :| []
               , unique = Unique { unUnique = 6 }
-              , loc = AlexPn 126 10 8
+              , loc = ()
               }
             )
           )
-          ( Var ( AlexPn 130 10 12 )
+          ( Var ()
             ( Name
               { name = "fun" :| []
               , unique = Unique { unUnique = 10 }
-              , loc = AlexPn 130 10 12
+              , loc = ()
               }
             )
           )
