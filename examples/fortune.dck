@@ -15,11 +15,12 @@
     (| "Do not fail.")
     (| "Trim the fat.")
     (| "Cleanliness is next to godliness.")
+    (| "Do not complain.")
     (| "Excess is a sin.")
     (| "To err is immoral.")
     (| $ quote ("« Le beau est ce qu'on désire sans vouloir le manger. »", "Simone Weil"))
     (| $ quote ("\"You're more likely to get cut with a dull tool than a sharper one.\"", "Fiona Apple"))
-    (| $ quote ("\"I don't believe in empirical science. I only believe in a priori truth.\"", "Kurt Gödel"))
+    (| $ quote ("\"I don't believe in empirical science. I only believe in a priori truth.\"", "Kurt Gödel")) ; german? hm
     (| "Obedience is a virtue.")
     (| "\"You have potential,\" is an insult.")
     (| "Leisure is a sin")
