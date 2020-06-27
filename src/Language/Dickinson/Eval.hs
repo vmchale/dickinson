@@ -120,7 +120,7 @@ lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name
 lookupName n@(Name _ (Unique u) l) =
     go =<< gets (IM.lookup u.boundExpr)
     where go Nothing  = throwError (UnfoundName l n)
-          go (Just x) = {-# SCC "renameClone" #-} renameExpressionM x
+          go (Just x) = {-# SCC "renameClone" #-} renameExpressionM x -- FIXME: hangs indefinitely here on $snd ...
 
 normalize :: (Foldable t, Functor t, Fractional a) => t a -> t a
 normalize xs = {-# SCC "normalize" #-} (/tot) <$> xs
