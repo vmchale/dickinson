@@ -97,14 +97,13 @@ topLevelLens f s = fmap (\x -> s { topLevel = x }) (f (topLevel s))
 -- TODO: thread generator state instead?
 type EvalM a = StateT (EvalSt a) (ExceptT (DickinsonError a) IO)
 
-evalIO :: AlexUserState -> EvalM a x -> IO (Either (DickinsonError a) x)
-evalIO rs me = (\g -> evalWithGen g rs me) =<< newStdGen
+evalIO :: EvalM a x -> IO (Either (DickinsonError a) x)
+evalIO me = (\g -> evalWithGen g me) =<< newStdGen
 
 evalWithGen :: StdGen
-            -> AlexUserState -- ^ Threaded through
             -> EvalM a x
             -> IO (Either (DickinsonError a) x)
-evalWithGen g u me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty (initRenames $ fst3 u) mempty u mempty)
+evalWithGen g me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty initRenames mempty alexInitUserState mempty)
 
 nameMod :: Name a -> Expression a -> EvalSt a -> EvalSt a
 nameMod (Name _ (Unique u) _) e = over boundExprLens (IM.insert u e)
@@ -148,6 +147,11 @@ findDecl t = do
 
 findMain :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => m (Expression a)
 findMain = findDecl "main"
+
+-- debugSt :: (MonadIO m, MonadState (EvalSt a) m) => m ()
+-- debugSt = do
+    -- st <- get
+    -- liftIO $ putDoc (pretty st)
 
 evalDickinsonAsMain :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m)
                     => [Declaration a]

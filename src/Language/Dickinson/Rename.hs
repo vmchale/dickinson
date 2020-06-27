@@ -59,11 +59,11 @@ instance Monoid Renames where
 
 type RenameM a = State Renames
 
-initRenames :: UniqueCtx -> Renames
-initRenames m = Renames m mempty
+initRenames :: Renames
+initRenames = Renames 0 mempty
 
-runRenameM :: UniqueCtx -> RenameM a x -> (x, UniqueCtx)
-runRenameM m x = second max_ (runState x (initRenames m))
+runRenameM :: RenameM a x -> (x, UniqueCtx)
+runRenameM x = second max_ (runState x initRenames)
 
 -- Make sure you don't have cycles in the renames map!
 replaceUnique :: (MonadState s m, HasRenames s) => Unique -> m Unique

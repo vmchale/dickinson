@@ -18,7 +18,7 @@
     (| "To err is immoral.")
     (| $ $ quote "« Le beau est ce qu'on désire sans vouloir le manger. »" "Simone Weil")
     (| $ $ quote "\"You're more likely to get cut with a dull tool than a sharper one.\"" "Fiona Apple")
-    (| $ $ quote "I don't believe in empirical science. I only believe in a priori truth." "Kurt Gödel")
+    (| $ $ quote "\"I don't believe in empirical science. I only believe in a priori truth.\"" "Kurt Gödel")
     (| "Obedience is a virtue.")
     (| "Failure is not an option.")
     (| "\"You have potential,\" is an insult.")

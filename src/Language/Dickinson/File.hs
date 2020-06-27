@@ -36,7 +36,7 @@ data AmalgamateSt = AmalgamateSt { amalgamateRenames    :: Renames
 type AmalgamateM = ExceptT (DickinsonError AlexPosn) (StateT AmalgamateSt IO)
 
 initAmalgamateSt :: AmalgamateSt
-initAmalgamateSt = AmalgamateSt (initRenames 0) alexInitUserState
+initAmalgamateSt = AmalgamateSt initRenames alexInitUserState
 
 instance HasLexerState AmalgamateSt where
     lexerStateLens f s = fmap (\x -> s { amalgamateLexerState = x }) (f (amalgamateLexerState s))
@@ -77,7 +77,7 @@ tcFile = yeetIO . tyRun <=< amalgamateRename []
 
 -- TODO: runDeclarationM
 evalFile :: [FilePath] -> FilePath -> IO T.Text
-evalFile is = fmap yeet . evalIO alexInitUserState . (evalDickinsonAsMain <=< amalgamateRenameM is)
+evalFile is = fmap yeet . evalIO . (evalDickinsonAsMain <=< amalgamateRenameM is)
 
 yeetIO :: Exception e => Either e x -> IO x
 yeetIO = either throwIO pure
