@@ -63,22 +63,22 @@ readNoFail = fmap (either throw id . parse) . BSL.readFile
 
 detectBadBranch :: FilePath -> TestTree
 detectBadBranch fp = testCase "Detects suspicious branch" $ do
-    parsed <- readNoFail fp
+    (Dickinson _ parsed) <- readNoFail fp
     assertBool fp $ isJust (checkDuplicates parsed)
 
 detectDuplicate :: FilePath -> TestTree
 detectDuplicate fp = testCase ("Detects duplicate name (" ++ fp ++ ")") $ do
-    parsed <- readNoFail fp
+    (Dickinson _ parsed) <- readNoFail fp
     assertBool fp $ isJust (checkMultiple parsed)
 
 detectScopeError :: FilePath -> TestTree
 detectScopeError fp = testCase "Finds scoping error" $ do
-    renamed <- parseRename fp
+    (Dickinson _ renamed) <- parseRename fp
     assertBool fp $ isJust (checkScope renamed)
 
 noScopeError :: FilePath -> TestTree
 noScopeError fp = testCase "Reports valid scoping" $ do
-    renamed <- parseRename fp
+    (Dickinson _ renamed) <- parseRename fp
     assertBool fp $ isNothing (checkScope renamed)
 
 parseNoError :: FilePath -> TestTree

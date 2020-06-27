@@ -2,7 +2,9 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Language.Dickinson.Rename ( renameDickinsonM
+module Language.Dickinson.Rename ( renameDickinson
+                                 , renameDickinsonM
+                                 , renameDeclarationsM
                                  , renameDeclarationM
                                  , renameExpressionM
                                  , initRenames
@@ -62,8 +64,8 @@ type RenameM a = State Renames
 initRenames :: Renames
 initRenames = Renames 0 mempty
 
-runRenameM :: RenameM a x -> (x, UniqueCtx)
-runRenameM x = second max_ (runState x initRenames)
+runRenameM :: Int -> RenameM a x -> (x, UniqueCtx)
+runRenameM i x = second max_ (runState x (Renames i mempty))
 
 -- Make sure you don't have cycles in the renames map!
 replaceUnique :: (MonadState s m, HasRenames s) => Unique -> m Unique
@@ -78,8 +80,14 @@ replaceVar (Name n u l) = {-# SCC "replaceVar" #-} do
     u' <- replaceUnique u
     pure $ Name n u' l
 
-renameDickinsonM :: (MonadState s m, HasRenames s) => [Declaration a] -> m [Declaration a]
-renameDickinsonM = traverse renameDeclarationM <=< traverse insDeclM
+renameDickinson :: Int -> Dickinson a -> (Dickinson a, Int)
+renameDickinson m ds = runRenameM m $ renameDickinsonM ds
+
+renameDickinsonM :: (MonadState s m, HasRenames s) => Dickinson a -> m (Dickinson a)
+renameDickinsonM (Dickinson i d) = Dickinson i <$> renameDeclarationsM d
+
+renameDeclarationsM :: (MonadState s m, HasRenames s) => [Declaration a] -> m [Declaration a]
+renameDeclarationsM = traverse renameDeclarationM <=< traverse insDeclM
 
 -- broadcast first...
 insDeclM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)

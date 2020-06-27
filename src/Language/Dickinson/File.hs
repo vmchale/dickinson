@@ -48,7 +48,7 @@ amalgamateRenameM :: (HasRenames s, HasLexerState s, MonadIO m, MonadError (Dick
                   => [FilePath]
                   -> FilePath
                   -> m [Declaration AlexPosn]
-amalgamateRenameM is = (balanceMax *>) . renameDickinsonM <=< fileDecls is
+amalgamateRenameM is = (balanceMax *>) . renameDeclarationsM <=< fileDecls is
 
 amalgamateRename :: [FilePath]
                  -> FilePath
