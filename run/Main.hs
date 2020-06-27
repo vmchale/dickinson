@@ -12,8 +12,9 @@ import           REPL
 data Act = Run !FilePath ![FilePath]
          | REPL ![FilePath]
          | Check !FilePath ![FilePath]
-         | Lint !FilePath ![FilePath]
+         | Lint !FilePath
          | Typecheck !FilePath ![FilePath]
+         | Format !FilePath
 
 main :: IO ()
 main = run =<< execParser wrapper
@@ -27,7 +28,11 @@ act = hsubparser
     <> command "check" (info checkP (progDesc "Check that some code is valid."))
     <> command "lint" (info lintP (progDesc "Examine a file for common errors."))
     <> command "typecheck" (info typecheckP (progDesc "Type information for a program (for debugging)"))
+    <> command "fmt" (info formatP (progDesc "Format Dickinson code"))
     )
+
+formatP :: Parser Act
+formatP = Format <$> dckFile
 
 replP :: Parser Act
 replP = REPL <$> many dckFile
@@ -39,7 +44,7 @@ checkP :: Parser Act
 checkP = Check <$> dckFile <*> includes
 
 lintP :: Parser Act
-lintP = Lint <$> dckFile <*> includes
+lintP = Lint <$> dckFile
 
 typecheckP :: Parser Act
 typecheckP = Typecheck <$> dckFile <*> includes
@@ -75,6 +80,7 @@ versionMod = infoOption dickinsonVersionString (short 'V' <> long "version" <> h
 run :: Act -> IO ()
 run (Run fp is)     = do { pGo <- defaultLibPath ; TIO.putStrLn =<< evalFile (pGo is) fp }
 run (REPL _)        = dickinsonRepl
-run (Check f _)     = checkFile f
-run (Lint f _)      = warnFile f
-run (Typecheck f _) = tcFile f
+run (Check f i)     = checkFile i f
+run (Lint f)        = warnFile f
+run (Typecheck f i) = tcFile i f
+run (Format fp)     = fmtFile fp

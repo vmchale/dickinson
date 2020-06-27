@@ -5,7 +5,7 @@ module Language.Dickinson.File ( evalFile
                                , warnFile
                                , tcFile
                                , amalgamateRenameM
-                               -- , fmtFile
+                               , fmtFile
                                ) where
 
 import           Control.Applicative                   ((<|>))
@@ -14,6 +14,7 @@ import           Control.Monad                         ((<=<))
 import           Control.Monad.Except                  (ExceptT, MonadError, runExceptT)
 import           Control.Monad.IO.Class                (MonadIO)
 import           Control.Monad.State                   (MonadState, StateT, evalStateT)
+import qualified Data.ByteString.Lazy                  as BSL
 import           Data.Semigroup                        ((<>))
 import           Data.Text                             as T
 import           Data.Text.Prettyprint.Doc             (hardline, pretty)
@@ -23,6 +24,7 @@ import           Language.Dickinson.DuplicateCheck
 import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
 import           Language.Dickinson.Lexer
+import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Rename.Amalgamate
 import           Language.Dickinson.ScopeCheck
@@ -55,25 +57,24 @@ amalgamateRename :: [FilePath]
                  -> IO [Declaration AlexPosn]
 amalgamateRename is fp = flip evalStateT initAmalgamateSt $ fmap yeet $ runExceptT $ amalgamateRenameM is fp
 
--- fmtFile :: FilePath -> IO ()
--- fmtFile = putDoc . (<> hardline) . pretty . go <=< BSL.readFile
-    -- where go = fst . uncurry renameDickinson . yeet . parseWithMax
+fmtFile :: FilePath -> IO ()
+fmtFile = putDoc . (<> hardline) . pretty . yeet . parse <=< BSL.readFile
 
 -- | Check scoping
-checkFile :: FilePath -> IO ()
+checkFile :: [FilePath] -> FilePath -> IO ()
 checkFile = ioChecker checkScope
 
 -- | Run some lints
 warnFile :: FilePath -> IO ()
-warnFile = ioChecker (\x -> checkDuplicates x <|> checkMultiple x)
+warnFile = ioChecker (\x -> checkDuplicates x <|> checkMultiple x) []
 
-ioChecker :: Exception e => ([Declaration AlexPosn] -> (Maybe e)) -> FilePath -> IO ()
-ioChecker checker = go . checker <=< amalgamateRename []
+ioChecker :: Exception e => ([Declaration AlexPosn] -> (Maybe e)) -> [FilePath] -> FilePath -> IO ()
+ioChecker checker is = go . checker <=< amalgamateRename is
     where go (Just err) = throwIO err
           go Nothing    = pure ()
 
-tcFile :: FilePath -> IO () -- TODO: includes
-tcFile = yeetIO . tyRun <=< amalgamateRename []
+tcFile :: [FilePath] -> FilePath -> IO ()
+tcFile is = yeetIO . tyRun <=< amalgamateRename is
 
 -- TODO: runDeclarationM
 evalFile :: [FilePath] -> FilePath -> IO T.Text

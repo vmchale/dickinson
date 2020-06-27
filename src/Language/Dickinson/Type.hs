@@ -101,7 +101,7 @@ instance Pretty (Expression a) where
     pretty (Choice _ brs)    = parens (":branch" <#> indent 2 (hardSep (toList $ fmap prettyChoiceBranch brs)))
     pretty (Lambda _ n ty e) = parens (":lambda" <+> pretty n <+> pretty ty <#*> pretty e)
     pretty (Apply _ e e')    = parens ("$" <+> pretty e <+> pretty e')
-    pretty (Interp _ es)     = dquotes (foldMap prettyInterp es)
+    pretty (Interp _ es)     = group (dquotes (foldMap prettyInterp es))
     pretty (Concat _ es)     = parens (rangle <+> hsep (pretty <$> es))
     pretty StrChunk{}        = error "Internal error: naked StrChunk"
     pretty (Tuple _ es)      = tupled (toList (pretty <$> es))
