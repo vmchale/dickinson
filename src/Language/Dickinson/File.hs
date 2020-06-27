@@ -83,5 +83,6 @@ evalFile is = fmap yeet . evalIO . (evalDickinsonAsMain <=< amalgamateRenameM is
 yeetIO :: Exception e => Either e x -> IO x
 yeetIO = either throwIO pure
 
+-- TODO: Control.Exception.Value module
 yeet :: Exception e => Either e x -> x
 yeet = either throw id
