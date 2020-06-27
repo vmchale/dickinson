@@ -1,14 +1,98 @@
-(:def letBinding_5
-  (:let
-    [a_7 "man"]
-    [b_8 "woman"]
-    (:branch
-      (| 1.0 a_7)
-      (| 1.0 b_8))))
-
-(:def main_6
-  (:let
-    [a_12 "non-binary"]
-    (:branch
-      (| 1.0 letBinding_5)
-      (| 1.0 a_12))))
+Dickinson
+  { modImports = []
+  , modDefs =
+    [ Define
+      { declAnn = AlexPn 5 3 2
+      , defName = Name
+        { name = "letBinding" :| []
+        , unique = Unique { unUnique = 5 }
+        , loc = AlexPn 10 3 7
+        }
+      , defExpr = Let ( AlexPn 26 4 6 )
+        (
+          ( Name
+            { name = "a" :| []
+            , unique = Unique { unUnique = 7 }
+            , loc = AlexPn 40 5 10
+            }
+          , Literal ( AlexPn 42 5 12 ) "man"
+          ) :|
+          [
+            ( Name
+              { name = "b" :| []
+              , unique = Unique { unUnique = 8 }
+              , loc = AlexPn 58 6 10
+              }
+            , Literal ( AlexPn 60 6 12 ) "woman"
+            )
+          ]
+        )
+        ( Choice ( AlexPn 78 7 10 )
+          (
+            ( 1.0
+            , Var ( AlexPn 105 8 20 )
+              ( Name
+                { name = "a" :| []
+                , unique = Unique { unUnique = 7 }
+                , loc = AlexPn 105 8 20
+                }
+              )
+            ) :|
+            [
+              ( 1.0
+              , Var ( AlexPn 127 9 20 )
+                ( Name
+                  { name = "b" :| []
+                  , unique = Unique { unUnique = 8 }
+                  , loc = AlexPn 127 9 20
+                  }
+                )
+              )
+            ]
+          )
+        )
+      }
+    , Define
+      { declAnn = AlexPn 135 11 2
+      , defName = Name
+        { name = "main" :| []
+        , unique = Unique { unUnique = 6 }
+        , loc = AlexPn 140 11 7
+        }
+      , defExpr = Let ( AlexPn 150 12 6 )
+        (
+          ( Name
+            { name = "a" :| []
+            , unique = Unique { unUnique = 12 }
+            , loc = AlexPn 164 13 10
+            }
+          , Literal ( AlexPn 166 13 12 ) "non-binary"
+          ) :| []
+        )
+        ( Choice ( AlexPn 189 14 10 )
+          (
+            ( 1.0
+            , Var ( AlexPn 216 15 20 )
+              ( Name
+                { name = "letBinding" :| []
+                , unique = Unique { unUnique = 5 }
+                , loc = AlexPn 216 15 20
+                }
+              )
+            ) :|
+            [
+              ( 1.0
+              , Var ( AlexPn 247 16 20 )
+                ( Name
+                  { name = "a" :| []
+                  , unique = Unique { unUnique = 12 }
+                  , loc = AlexPn 247 16 20
+                  }
+                )
+              )
+            ]
+          )
+        )
+      }
+    ]
+  }

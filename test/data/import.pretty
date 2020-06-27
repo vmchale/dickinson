@@ -1,4 +1,6 @@
-(:import color_1)
+(:import color)
 
-(:def main_2
-  color.color_3)
+%-
+
+(:def main
+  color.color)

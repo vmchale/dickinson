@@ -228,7 +228,8 @@ test-suite dickinson-test
         text -any,
         filepath -any,
         tasty-golden -any,
-        pretty-ext -any
+        pretty-ext -any,
+        pretty-simple -any
 
     if impl(ghc >=8.0)
         ghc-options:

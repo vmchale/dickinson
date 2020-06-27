@@ -1,8 +1,10 @@
-(:def letBinding_1
+%-
+
+(:def letBinding
   (:let
-    [a_2 (:let [a_2 "man"] a_2)]
-    [b_3 (:let [a_2 "woman"] a_2)]
-    [c_4 (:let [a_2 "non-binary"] a_2)]
+    [a (:let [a "man"] a)]
+    [b (:let [a "woman"] a)]
+    [c (:let [a "non-binary"] a)]
     (:branch
-      (| 1.0 (:let [b_3 a_2] b_3))
-      (| 1.0 b_3))))
+      (| 1.0 (:let [b a] b))
+      (| 1.0 b))))

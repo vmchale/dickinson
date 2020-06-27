@@ -1,24 +1,243 @@
-(:def fst_11
-  (:lambda xy_15 (text, text)
-    (:match xy_15
-      (x_16, _)
-        x_16)))
-
-(:def snd_12
-  (:lambda xy_17 (text, text)
-    (:match xy_17
-      (_, y_18)
-        y_18)))
-
-(:def greeter_13
-  (:lambda dog_19 (text, text)
-    (:let
-      [name_20 ($ fst_11 dog_19)]
-      [pronoun_21 ($ snd_12 dog_19)]
-      (:branch
-        (| 0.3333333333333333 "${name_20} is a heckin' fine floofer")
-        (| 0.3333333333333333 "${name_20} is a good woofer")
-        (| 0.3333333333333333 "${name_20} eats toilet paper sometimes but ${pronoun_21} tries.")))))
-
-(:def main_14
-  ($ greeter_13 ("Maxine", "she")))
+Dickinson
+  { modImports = []
+  , modDefs =
+    [ Define
+      { declAnn = AlexPn 5 3 2
+      , defName = Name
+        { name = "fst" :| []
+        , unique = Unique { unUnique = 11 }
+        , loc = AlexPn 10 3 7
+        }
+      , defExpr = Lambda ( AlexPn 17 4 4 )
+        ( Name
+          { name = "xy" :| []
+          , unique = Unique { unUnique = 15 }
+          , loc = AlexPn 25 4 12
+          }
+        )
+        ( TyTuple
+          ( TyText :| [ TyText ] )
+        )
+        ( Match ( AlexPn 46 5 6 )
+          ( Var ( AlexPn 53 5 13 )
+            ( Name
+              { name = "xy" :| []
+              , unique = Unique { unUnique = 15 }
+              , loc = AlexPn 53 5 13
+              }
+            )
+          )
+          ( PatternTuple ( AlexPn 56 5 16 )
+            ( PatternVar ( AlexPn 57 5 17 )
+              ( Name
+                { name = "x" :| []
+                , unique = Unique { unUnique = 16 }
+                , loc = AlexPn 57 5 17
+                }
+              ) :|
+              [ Wildcard ( AlexPn 60 5 20 ) ]
+            )
+          )
+          ( Var ( AlexPn 69 6 7 )
+            ( Name
+              { name = "x" :| []
+              , unique = Unique { unUnique = 16 }
+              , loc = AlexPn 69 6 7
+              }
+            )
+          )
+        )
+      }
+    , Define
+      { declAnn = AlexPn 76 8 2
+      , defName = Name
+        { name = "snd" :| []
+        , unique = Unique { unUnique = 12 }
+        , loc = AlexPn 81 8 7
+        }
+      , defExpr = Lambda ( AlexPn 88 9 4 )
+        ( Name
+          { name = "xy" :| []
+          , unique = Unique { unUnique = 17 }
+          , loc = AlexPn 96 9 12
+          }
+        )
+        ( TyTuple
+          ( TyText :| [ TyText ] )
+        )
+        ( Match ( AlexPn 117 10 6 )
+          ( Var ( AlexPn 124 10 13 )
+            ( Name
+              { name = "xy" :| []
+              , unique = Unique { unUnique = 17 }
+              , loc = AlexPn 124 10 13
+              }
+            )
+          )
+          ( PatternTuple ( AlexPn 127 10 16 )
+            ( Wildcard ( AlexPn 128 10 17 ) :|
+              [ PatternVar ( AlexPn 131 10 20 )
+                ( Name
+                  { name = "y" :| []
+                  , unique = Unique { unUnique = 18 }
+                  , loc = AlexPn 131 10 20
+                  }
+                )
+              ]
+            )
+          )
+          ( Var ( AlexPn 140 11 7 )
+            ( Name
+              { name = "y" :| []
+              , unique = Unique { unUnique = 18 }
+              , loc = AlexPn 140 11 7
+              }
+            )
+          )
+        )
+      }
+    , Define
+      { declAnn = AlexPn 255 16 2
+      , defName = Name
+        { name = "greeter" :| []
+        , unique = Unique { unUnique = 13 }
+        , loc = AlexPn 260 16 7
+        }
+      , defExpr = Lambda ( AlexPn 271 17 4 )
+        ( Name
+          { name = "dog" :| []
+          , unique = Unique { unUnique = 19 }
+          , loc = AlexPn 279 17 12
+          }
+        )
+        ( TyTuple
+          ( TyText :| [ TyText ] )
+        )
+        ( Let ( AlexPn 301 18 6 )
+          (
+            ( Name
+              { name = "name" :| []
+              , unique = Unique { unUnique = 20 }
+              , loc = AlexPn 313 19 8
+              }
+            , Apply ( AlexPn 319 19 14 )
+              ( Var ( AlexPn 320 19 15 )
+                ( Name
+                  { name = "fst" :| []
+                  , unique = Unique { unUnique = 11 }
+                  , loc = AlexPn 320 19 15
+                  }
+                )
+              )
+              ( Var ( AlexPn 324 19 19 )
+                ( Name
+                  { name = "dog" :| []
+                  , unique = Unique { unUnique = 19 }
+                  , loc = AlexPn 324 19 19
+                  }
+                )
+              )
+            ) :|
+            [
+              ( Name
+                { name = "pronoun" :| []
+                , unique = Unique { unUnique = 21 }
+                , loc = AlexPn 337 20 8
+                }
+              , Apply ( AlexPn 346 20 17 )
+                ( Var ( AlexPn 347 20 18 )
+                  ( Name
+                    { name = "snd" :| []
+                    , unique = Unique { unUnique = 12 }
+                    , loc = AlexPn 347 20 18
+                    }
+                  )
+                )
+                ( Var ( AlexPn 351 20 22 )
+                  ( Name
+                    { name = "dog" :| []
+                    , unique = Unique { unUnique = 19 }
+                    , loc = AlexPn 351 20 22
+                    }
+                  )
+                )
+              )
+            ]
+          )
+          ( Choice ( AlexPn 366 21 10 )
+            (
+              ( 0.3333333333333333
+              , Interp ( AlexPn 386 22 14 )
+                [ Var ( AlexPn 389 22 17 )
+                  ( Name
+                    { name = "name" :| []
+                    , unique = Unique { unUnique = 20 }
+                    , loc = AlexPn 389 22 17
+                    }
+                  )
+                , StrChunk ( AlexPn 394 22 22 ) " is a heckin' fine floofer"
+                ]
+              ) :|
+              [
+                ( 0.3333333333333333
+                , Interp ( AlexPn 436 23 14 )
+                  [ Var ( AlexPn 439 23 17 )
+                    ( Name
+                      { name = "name" :| []
+                      , unique = Unique { unUnique = 20 }
+                      , loc = AlexPn 439 23 17
+                      }
+                    )
+                  , StrChunk ( AlexPn 444 23 22 ) " is a good woofer"
+                  ]
+                )
+              ,
+                ( 0.3333333333333333
+                , Interp ( AlexPn 477 24 14 )
+                  [ Var ( AlexPn 480 24 17 )
+                    ( Name
+                      { name = "name" :| []
+                      , unique = Unique { unUnique = 20 }
+                      , loc = AlexPn 480 24 17
+                      }
+                    )
+                  , StrChunk ( AlexPn 485 24 22 ) " eats toilet paper sometimes but "
+                  , Var ( AlexPn 520 24 57 )
+                    ( Name
+                      { name = "pronoun" :| []
+                      , unique = Unique { unUnique = 21 }
+                      , loc = AlexPn 520 24 57
+                      }
+                    )
+                  , StrChunk ( AlexPn 528 24 65 ) " tries."
+                  ]
+                )
+              ]
+            )
+          )
+        )
+      }
+    , Define
+      { declAnn = AlexPn 544 26 2
+      , defName = Name
+        { name = "main" :| []
+        , unique = Unique { unUnique = 14 }
+        , loc = AlexPn 549 26 7
+        }
+      , defExpr = Apply ( AlexPn 557 27 4 )
+        ( Var ( AlexPn 559 27 6 )
+          ( Name
+            { name = "greeter" :| []
+            , unique = Unique { unUnique = 13 }
+            , loc = AlexPn 559 27 6
+            }
+          )
+        )
+        ( Tuple ( AlexPn 567 27 14 )
+          ( Literal ( AlexPn 568 27 15 ) "Maxine" :|
+            [ Literal ( AlexPn 578 27 25 ) "she" ]
+          )
+        )
+      }
+    ]
+  }

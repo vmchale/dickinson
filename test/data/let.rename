@@ -1,7 +1,56 @@
-(:def letBinding_4
-  (:let
-    [a_5 "man"]
-    [b_6 "woman"]
-    (:branch
-      (| 1.0 a_5)
-      (| 1.0 b_6))))
+Dickinson
+  { modImports = []
+  , modDefs =
+    [ Define
+      { declAnn = AlexPn 5 3 2
+      , defName = Name
+        { name = "letBinding" :| []
+        , unique = Unique { unUnique = 4 }
+        , loc = AlexPn 10 3 7
+        }
+      , defExpr = Let ( AlexPn 26 4 6 )
+        (
+          ( Name
+            { name = "a" :| []
+            , unique = Unique { unUnique = 5 }
+            , loc = AlexPn 40 5 10
+            }
+          , Literal ( AlexPn 42 5 12 ) "man"
+          ) :|
+          [
+            ( Name
+              { name = "b" :| []
+              , unique = Unique { unUnique = 6 }
+              , loc = AlexPn 58 6 10
+              }
+            , Literal ( AlexPn 60 6 12 ) "woman"
+            )
+          ]
+        )
+        ( Choice ( AlexPn 78 7 10 )
+          (
+            ( 1.0
+            , Var ( AlexPn 105 8 20 )
+              ( Name
+                { name = "a" :| []
+                , unique = Unique { unUnique = 5 }
+                , loc = AlexPn 105 8 20
+                }
+              )
+            ) :|
+            [
+              ( 1.0
+              , Var ( AlexPn 127 9 20 )
+                ( Name
+                  { name = "b" :| []
+                  , unique = Unique { unUnique = 6 }
+                  , loc = AlexPn 127 9 20
+                  }
+                )
+              )
+            ]
+          )
+        )
+      }
+    ]
+  }

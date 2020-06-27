@@ -24,7 +24,7 @@ import           Language.Dickinson.Unique
 data Name a = Name { name   :: NonEmpty T.Text
                    , unique :: !Unique
                    , loc    :: a
-                   } deriving (Functor, Generic, Binary)
+                   } deriving (Functor, Generic, Binary, Show)
 
 instance NFData a => NFData (Name a) where
     rnf (Name _ u x) = rnf x `seq` u `seq` ()
@@ -39,6 +39,6 @@ instance Ord (Name a) where
     compare (Name _ u _) (Name _ u' _) = compare u u'
 
 instance Pretty (Name a) where
-    pretty (Name t u _) = intercalate "." (toList (pretty <$> t)) <> "_" <> pretty u
+    pretty (Name t _ _) = intercalate "." (toList (pretty <$> t))
 
 type NameEnv a = IM.IntMap (Name a)

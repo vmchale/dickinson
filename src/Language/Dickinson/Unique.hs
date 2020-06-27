@@ -11,7 +11,7 @@ import           Data.Text.Prettyprint.Doc (Pretty)
 
 -- | For interning identifiers.
 newtype Unique = Unique { unUnique :: Int }
-    deriving (Eq, Ord, Pretty, NFData, Binary)
+    deriving (Eq, Ord, Pretty, NFData, Binary, Show)
 
 -- | Dummy unique for sake of testing
 dummyUnique :: Unique

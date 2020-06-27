@@ -1,8 +1,132 @@
-(:def letBinding_5
-  (:let
-    [a_6 (:let [a_9 "man"] a_9)]
-    [b_7 (:let [a_10 "woman"] a_10)]
-    [c_8 (:let [a_11 "non-binary"] a_11)]
-    (:branch
-      (| 1.0 (:let [b_12 a_6] b_12))
-      (| 1.0 b_7))))
+Dickinson
+  { modImports = []
+  , modDefs =
+    [ Define
+      { declAnn = AlexPn 5 3 2
+      , defName = Name
+        { name = "letBinding" :| []
+        , unique = Unique { unUnique = 5 }
+        , loc = AlexPn 10 3 7
+        }
+      , defExpr = Let ( AlexPn 26 4 6 )
+        (
+          ( Name
+            { name = "a" :| []
+            , unique = Unique { unUnique = 6 }
+            , loc = AlexPn 40 5 10
+            }
+          , Let ( AlexPn 43 5 13 )
+            (
+              ( Name
+                { name = "a" :| []
+                , unique = Unique { unUnique = 9 }
+                , loc = AlexPn 49 5 19
+                }
+              , Literal ( AlexPn 51 5 21 ) "man"
+              ) :| []
+            )
+            ( Var ( AlexPn 58 5 28 )
+              ( Name
+                { name = "a" :| []
+                , unique = Unique { unUnique = 9 }
+                , loc = AlexPn 58 5 28
+                }
+              )
+            )
+          ) :|
+          [
+            ( Name
+              { name = "b" :| []
+              , unique = Unique { unUnique = 7 }
+              , loc = AlexPn 71 6 10
+              }
+            , Let ( AlexPn 74 6 13 )
+              (
+                ( Name
+                  { name = "a" :| []
+                  , unique = Unique { unUnique = 10 }
+                  , loc = AlexPn 80 6 19
+                  }
+                , Literal ( AlexPn 82 6 21 ) "woman"
+                ) :| []
+              )
+              ( Var ( AlexPn 91 6 30 )
+                ( Name
+                  { name = "a" :| []
+                  , unique = Unique { unUnique = 10 }
+                  , loc = AlexPn 91 6 30
+                  }
+                )
+              )
+            )
+          ,
+            ( Name
+              { name = "c" :| []
+              , unique = Unique { unUnique = 8 }
+              , loc = AlexPn 104 7 10
+              }
+            , Let ( AlexPn 107 7 13 )
+              (
+                ( Name
+                  { name = "a" :| []
+                  , unique = Unique { unUnique = 11 }
+                  , loc = AlexPn 113 7 19
+                  }
+                , Literal ( AlexPn 115 7 21 ) "non-binary"
+                ) :| []
+              )
+              ( Var ( AlexPn 129 7 35 )
+                ( Name
+                  { name = "a" :| []
+                  , unique = Unique { unUnique = 11 }
+                  , loc = AlexPn 129 7 35
+                  }
+                )
+              )
+            )
+          ]
+        )
+        ( Choice ( AlexPn 142 8 10 )
+          (
+            ( 1.0
+            , Let ( AlexPn 170 9 21 )
+              (
+                ( Name
+                  { name = "b" :| []
+                  , unique = Unique { unUnique = 12 }
+                  , loc = AlexPn 176 9 27
+                  }
+                , Var ( AlexPn 178 9 29 )
+                  ( Name
+                    { name = "a" :| []
+                    , unique = Unique { unUnique = 6 }
+                    , loc = AlexPn 178 9 29
+                    }
+                  )
+                ) :| []
+              )
+              ( Var ( AlexPn 181 9 32 )
+                ( Name
+                  { name = "b" :| []
+                  , unique = Unique { unUnique = 12 }
+                  , loc = AlexPn 181 9 32
+                  }
+                )
+              )
+            ) :|
+            [
+              ( 1.0
+              , Var ( AlexPn 204 10 20 )
+                ( Name
+                  { name = "b" :| []
+                  , unique = Unique { unUnique = 7 }
+                  , loc = AlexPn 204 10 20
+                  }
+                )
+              )
+            ]
+          )
+        )
+      }
+    ]
+  }

@@ -26,23 +26,23 @@ import           Language.Dickinson.Name
 -- TODO: make imports a "section" at the beginning...
 data Dickinson a = Dickinson { modImports :: [Import a]
                              , modDefs    :: [Declaration a]
-                             } deriving (Generic, NFData, Binary, Functor)
+                             } deriving (Generic, NFData, Binary, Functor, Show)
 
 data Declaration a = Define { declAnn :: a
                             , defName :: Name a
                             , defExpr :: Expression a
                             }
-                            deriving (Generic, NFData, Binary, Functor)
+                            deriving (Generic, NFData, Binary, Functor, Show)
 
 data Import a = Import { importAnn :: a
                        , declMod   :: Name a
                        }
-                       deriving (Generic, NFData, Binary, Functor)
+                       deriving (Generic, NFData, Binary, Functor, Show)
 
 data Pattern a = PatternVar a (Name a)
                | PatternTuple a (NonEmpty (Pattern a))
                | Wildcard a
-               deriving (Generic, NFData, Binary, Functor)
+               deriving (Generic, NFData, Binary, Functor, Show)
 
 -- TODO: figure out bang patterns?
 data Expression a = Literal a T.Text
@@ -58,13 +58,13 @@ data Expression a = Literal a T.Text
                   | Match a (Expression a) (Pattern a) (Expression a)
                   | Flatten a (Expression a)
                   | Annot a (Expression a) DickinsonTy
-                  deriving (Generic, NFData, Binary, Functor)
+                  deriving (Generic, NFData, Binary, Functor, Show)
                   -- TODO: builtins?
 
 data DickinsonTy = TyText
                  | TyFun DickinsonTy DickinsonTy
                  | TyTuple (NonEmpty DickinsonTy)
-                 deriving (Eq, Generic, NFData, Binary)
+                 deriving (Eq, Generic, NFData, Binary, Show)
 
 instance Pretty (Declaration a) where
     pretty (Define _ n e) = parens (":def" <+> pretty n <#> indent 2 (pretty e))
@@ -73,7 +73,7 @@ instance Pretty (Import a) where
     pretty (Import _ n)   = parens (":import" <+> pretty n)
 
 instance Pretty (Dickinson a) where
-    pretty (Dickinson is ds) = concatWith (\x y -> x <> hardline <> hardline <> y) (fmap pretty is <> fmap pretty ds)
+    pretty (Dickinson is ds) = concatWith (\x y -> x <> hardline <> hardline <> y) (fmap pretty is <> ["%-"] <> fmap pretty ds)
 
 prettyLetLeaf :: (Name a, Expression a) -> Doc b
 prettyLetLeaf (n, e) = group (brackets (pretty n <+> pretty e))

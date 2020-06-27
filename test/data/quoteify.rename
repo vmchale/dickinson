@@ -1,7 +1,73 @@
-(:def quote_5
-  (:lambda qu_7 text
-    (:lambda name_8 text
-      "${qu_7}\n    — ${name_8}")))
-
-(:def main_6
-  ($ ($ quote_5 "God created war so that Americans would learn geography.") "Mark Twain"))
+Dickinson
+  { modImports = []
+  , modDefs =
+    [ Define
+      { declAnn = AlexPn 5 3 2
+      , defName = Name
+        { name = "quote" :| []
+        , unique = Unique { unUnique = 5 }
+        , loc = AlexPn 10 3 7
+        }
+      , defExpr = Lambda ( AlexPn 19 4 4 )
+        ( Name
+          { name = "qu" :| []
+          , unique = Unique { unUnique = 7 }
+          , loc = AlexPn 27 4 12
+          }
+        ) TyText
+        ( Lambda ( AlexPn 40 5 6 )
+          ( Name
+            { name = "name" :| []
+            , unique = Unique { unUnique = 8 }
+            , loc = AlexPn 48 5 14
+            }
+          ) TyText
+          ( Interp ( AlexPn 64 6 7 )
+            [ Var ( AlexPn 67 6 10 )
+              ( Name
+                { name = "qu" :| []
+                , unique = Unique { unUnique = 7 }
+                , loc = AlexPn 67 6 10
+                }
+              )
+            , StrChunk ( AlexPn 70 6 13 ) "
+        — "
+            , Var ( AlexPn 82 6 25 )
+              ( Name
+                { name = "name" :| []
+                , unique = Unique { unUnique = 8 }
+                , loc = AlexPn 82 6 25
+                }
+              )
+            ]
+          )
+        )
+      }
+    , Define
+      { declAnn = AlexPn 94 8 2
+      , defName = Name
+        { name = "main" :| []
+        , unique = Unique { unUnique = 6 }
+        , loc = AlexPn 99 8 7
+        }
+      , defExpr = Choice ( AlexPn 107 9 4 )
+        (
+          ( 1.0
+          , Apply ( AlexPn 122 10 9 )
+            ( Apply ( AlexPn 124 10 11 )
+              ( Var ( AlexPn 126 10 13 )
+                ( Name
+                  { name = "quote" :| []
+                  , unique = Unique { unUnique = 5 }
+                  , loc = AlexPn 126 10 13
+                  }
+                )
+              )
+              ( Literal ( AlexPn 132 10 19 ) "God created war so that Americans would learn geography." )
+            )
+            ( Literal ( AlexPn 191 10 78 ) "Mark Twain" )
+          ) :| []
+        )
+      }
+    ]
+  }

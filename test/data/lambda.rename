@@ -1,10 +1,78 @@
-(:def greeter_5
-  (:lambda name_7 text
-    "Hello, ${name_7}!"))
-
-(:def main_6
-  (:let
-    [boy_9 (:branch
-      (| 0.5 "tom")
-      (| 0.5 "harry"))]
-    ($ greeter_5 boy_9)))
+Dickinson
+  { modImports = []
+  , modDefs =
+    [ Define
+      { declAnn = AlexPn 5 3 2
+      , defName = Name
+        { name = "greeter" :| []
+        , unique = Unique { unUnique = 5 }
+        , loc = AlexPn 10 3 7
+        }
+      , defExpr = Lambda ( AlexPn 21 4 4 )
+        ( Name
+          { name = "name" :| []
+          , unique = Unique { unUnique = 7 }
+          , loc = AlexPn 29 4 12
+          }
+        ) TyText
+        ( Interp ( AlexPn 46 5 6 )
+          [ StrChunk ( AlexPn 47 5 7 ) "Hello, "
+          , Var ( AlexPn 56 5 16 )
+            ( Name
+              { name = "name" :| []
+              , unique = Unique { unUnique = 7 }
+              , loc = AlexPn 56 5 16
+              }
+            )
+          , StrChunk ( AlexPn 61 5 21 ) "!"
+          ]
+        )
+      }
+    , Define
+      { declAnn = AlexPn 69 7 2
+      , defName = Name
+        { name = "main" :| []
+        , unique = Unique { unUnique = 6 }
+        , loc = AlexPn 74 7 7
+        }
+      , defExpr = Let ( AlexPn 82 8 4 )
+        (
+          ( Name
+            { name = "boy" :| []
+            , unique = Unique { unUnique = 9 }
+            , loc = AlexPn 93 9 6
+            }
+          , Choice ( AlexPn 98 9 11 )
+            (
+              ( 0.5
+              , Literal ( AlexPn 108 9 21 ) "tom"
+              ) :|
+              [
+                ( 0.5
+                , Literal ( AlexPn 118 9 31 ) "harry"
+                )
+              ]
+            )
+          ) :| []
+        )
+        ( Apply ( AlexPn 134 10 6 )
+          ( Var ( AlexPn 136 10 8 )
+            ( Name
+              { name = "greeter" :| []
+              , unique = Unique { unUnique = 5 }
+              , loc = AlexPn 136 10 8
+              }
+            )
+          )
+          ( Var ( AlexPn 144 10 16 )
+            ( Name
+              { name = "boy" :| []
+              , unique = Unique { unUnique = 9 }
+              , loc = AlexPn 144 10 16
+              }
+            )
+          )
+        )
+      }
+    ]
+  }
