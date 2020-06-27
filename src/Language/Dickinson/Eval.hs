@@ -30,7 +30,6 @@ import qualified Data.Map                      as M
 import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc     (Doc, Pretty (..), vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
-import           Data.Tuple.Ext
 import           Language.Dickinson.Error
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
@@ -118,7 +117,7 @@ topLevelAdd :: (MonadState (EvalSt a) m) => Name a -> m ()
 topLevelAdd n = modify (topLevelMod n)
 
 lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression a)
-lookupName n@(Name _ (Unique u) l) = do
+lookupName n@(Name _ (Unique u) l) =
     go =<< gets (IM.lookup u.boundExpr)
     where go Nothing  = throwError (UnfoundName l n)
           go (Just x) = {-# SCC "renameClone" #-} renameExpressionM x
@@ -147,11 +146,6 @@ findDecl t = do
 
 findMain :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => m (Expression a)
 findMain = findDecl "main"
-
--- debugSt :: (MonadIO m, MonadState (EvalSt a) m) => m ()
--- debugSt = do
-    -- st <- get
-    -- liftIO $ putDoc (pretty st)
 
 evalDickinsonAsMain :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m)
                     => [Declaration a]
@@ -211,7 +205,7 @@ evalExpressionM (Let _ bs e) = do
     withSt stMod $
         evalExpressionM e
 evalExpressionM (Apply _ e e') = do
-    e'' <- evalExpressionM e
+    e'' <- evalExpressionM e -- TODO: go as far as we can
     case e'' of
         Lambda _ n _ e''' ->
             withSt (nameMod n e') $
