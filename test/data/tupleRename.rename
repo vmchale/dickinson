@@ -1,0 +1,62 @@
+Dickinson
+  { modImports = []
+  , modDefs =
+    [ Define
+      { declAnn = ()
+      , defName = Name
+        { name = "prolix" :| []
+        , unique = Unique { unUnique = 4 }
+        , loc = ()
+        }
+      , defExpr = Let ()
+        (
+          ( Name
+            { name = "xy" :| []
+            , unique = Unique { unUnique = 5 }
+            , loc = ()
+            }
+          , Literal () "hello"
+          ) :| []
+        )
+        ( Lambda ()
+          ( Name
+            { name = "xy" :| []
+            , unique = Unique { unUnique = 7 }
+            , loc = ()
+            }
+          )
+          ( TyTuple
+            ( TyText :| [ TyText ] )
+          )
+          ( Match ()
+            ( Var ()
+              ( Name
+                { name = "xy" :| []
+                , unique = Unique { unUnique = 7 }
+                , loc = ()
+                }
+              )
+            )
+            ( PatternTuple ()
+              ( PatternVar ()
+                ( Name
+                  { name = "x" :| []
+                  , unique = Unique { unUnique = 8 }
+                  , loc = ()
+                  }
+                ) :| [ Wildcard () ]
+              )
+            )
+            ( Var ()
+              ( Name
+                { name = "x" :| []
+                , unique = Unique { unUnique = 8 }
+                , loc = ()
+                }
+              )
+            )
+          )
+        )
+      }
+    ]
+  }
