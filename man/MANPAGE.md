@@ -27,6 +27,8 @@ emd - [Emily] Dickinson
 
 **lint** - Give suggestions for common mistakes
 
+**fmt** - Format Dickinson code
+
 ## REPL COMMANDS
 
 **:save** - Save curent state in a file
