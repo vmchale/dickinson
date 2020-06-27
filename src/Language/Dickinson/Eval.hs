@@ -205,7 +205,7 @@ evalExpressionM (Let _ bs e) = do
     withSt stMod $
         evalExpressionM e
 evalExpressionM (Apply _ e e') = do
-    e'' <- evalExpressionM e -- TODO: go as far as we can
+    e'' <- evalExpressionM e -- TODO: go as far as we can -- TODO: go as far as we can
     case e'' of
         Lambda _ n _ e''' ->
             withSt (nameMod n e') $

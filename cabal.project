@@ -5,4 +5,3 @@ program-options
   happy-options: -gcsa
 
 haddock-internal: true
-benchmarks: true
