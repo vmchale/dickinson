@@ -116,11 +116,14 @@ topLevelMod (Name n u _) = over topLevelLens (M.insert (T.intercalate "." $ toLi
 topLevelAdd :: (MonadState (EvalSt a) m) => Name a -> m ()
 topLevelAdd n = modify (topLevelMod n)
 
+tryLookupName :: (MonadState (EvalSt a) m) => Name a -> m (Maybe (Expression a))
+tryLookupName (Name _ (Unique u) _) = go =<< gets (IM.lookup u.boundExpr)
+    where go (Just x) = Just <$> {-# SCC "renameClone" #-} renameExpressionM x
+          go Nothing  = pure Nothing
+
 lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name a -> m (Expression a)
-lookupName n@(Name _ (Unique u) l) =
-    go =<< gets (IM.lookup u.boundExpr)
-    where go Nothing  = throwError (UnfoundName l n)
-          go (Just x) = {-# SCC "renameClone" #-} renameExpressionM x -- FIXME: hangs indefinitely here on $snd ... xy?
+lookupName n@(Name _ _ l) = maybe err pure =<< tryLookupName n
+    where err = throwError (UnfoundName l n)
 
 normalize :: (Foldable t, Functor t, Fractional a) => t a -> t a
 normalize xs = {-# SCC "normalize" #-} (/tot) <$> xs
@@ -192,6 +195,16 @@ bindPattern Wildcard{} _                     = pure id
 bindPattern (PatternTuple _ ps) (Tuple _ es) = thread <$> Ext.zipWithM bindPattern ps es
 bindPattern (PatternTuple l _) _             = throwError $ MalformedTuple l
 
+tryEvalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
+tryEvalExpressionM e@Literal{}    = pure e
+tryEvalExpressionM e@StrChunk{}   = pure e
+tryEvalExpressionM v@(Var _ n)    = maybe (pure v) tryEvalExpressionM =<< tryLookupName n
+tryEvalExpressionM (Choice _ pes) = tryEvalExpressionM =<< pick pes
+tryEvalExpressionM (Tuple l es)   = Tuple l <$> traverse tryEvalExpressionM es
+tryEvalExpressionM e@Lambda{}     = pure e
+tryEvalExpressionM (Annot l e ty) = Annot l <$> tryEvalExpressionM e <*> pure ty
+tryEvalExpressionM (Flatten l e)  = Flatten l <$> tryEvalExpressionM e
+
 evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 evalExpressionM e@Literal{}    = pure e
 evalExpressionM e@StrChunk{}   = pure e
@@ -205,7 +218,7 @@ evalExpressionM (Let _ bs e) = do
     withSt stMod $
         evalExpressionM e
 evalExpressionM (Apply _ e e') = do
-    e'' <- evalExpressionM e -- TODO: go as far as we can -- TODO: go as far as we can
+    e'' <- tryEvalExpressionM e -- TODO: go as far as we can
     case e'' of
         Lambda _ n _ e''' ->
             withSt (nameMod n e') $
