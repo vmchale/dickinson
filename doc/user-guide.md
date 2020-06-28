@@ -33,6 +33,25 @@ which will display either `heads` or `tails`.
 
 In general, when you `emd run` code, `emd` will display the result of evaluating `main`.
 
+### Interpolation
+
+We can reference and recombine past definitions via string interpolation.
+
+```
+(:def adjective
+  (:oneof
+    (| "beautiful")
+    (| "auspicious")
+    (| "cold")))
+
+(:def main
+  "What a ${adjective}, ${adjective} day!")
+```
+
 ## REPL
+
+## Libraries
+
+Dickinson allows
 
 ## Examples

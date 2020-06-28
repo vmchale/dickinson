@@ -37,6 +37,7 @@
   - [ ] running `test/data/nestLet.dck` fucks up
 - [ ] Bug when running `test/demo/animal.dck` with renamer then eval
 - [x] `examples/doggo.dck` hangs indefinitely lol
+- [ ] Hangs indefinitely when lexing incomplete string
 # Code Quality
 - [ ] Kick tires on `:t` feature
 - [ ] Don't use the identifier `yeet`
