@@ -31,7 +31,7 @@ emd run gambling.dck
 
 which will display either `heads` or `tails`.
 
-In general, when you `emd run` code, `emd` will display the results of evaluating `main`.
+In general, when you `emd run` code, `emd` will display the result of evaluating `main`.
 
 ## REPL
 
