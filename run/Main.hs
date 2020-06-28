@@ -2,7 +2,7 @@ module Main (main) where
 
 import           Data.Semigroup
 import qualified Data.Text.IO            as TIO
-import           Language.Dickinson
+import           Language.Dickinson      (dickinsonVersionString)
 import           Language.Dickinson.File
 import           Language.Dickinson.Lib
 import           Options.Applicative
