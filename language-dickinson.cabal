@@ -88,6 +88,7 @@ library dickinson
     other-modules:
         Paths_language_dickinson
         Language.Dickinson.Check.Pattern
+        Language.Dickinson.Check.Internal
         Language.Dickinson.Lib.Get
         Control.Monad.Ext
         Data.Foldable.Ext
