@@ -57,7 +57,7 @@ $str_special = [\\\"\$]
 $str_chunk = [^ \"\\\$]
 
 @escape_str_chunk = \\ [$str_chunk \$n]
-@str_interp_in = ([$str_chunk] | @escape_str_chunk)*
+@str_interp_in = ([$str_chunk] | @escape_str_chunk)+
 
 @interp = \$\{
 
