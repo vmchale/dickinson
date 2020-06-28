@@ -5,6 +5,9 @@ clean:
 
 docs: man/emd.1 doc/user-guide.pdf
 
+doc/%.html: doc/%.md
+	pandoc $< -s -o $@
+
 doc/%.pdf: doc/%.md
 	pandoc $< -s -o $@
 
