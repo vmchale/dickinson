@@ -6,10 +6,10 @@ clean:
 	rm -rf dist-newstyle .stack-work *.svg stack.yaml.lock doc/user-guide.html
 
 doc/%.html: doc/%.md
-	pandoc $< -s -o $@
-
+	pandoc $< -s -o $@ --toc
+ 
 doc/%.pdf: doc/%.md
-	pandoc $< -s -o $@
+	pandoc $< -s -o $@ --toc
 
 man/emd.1: man/MANPAGE.md
 	pandoc $< -s -t man -o $@

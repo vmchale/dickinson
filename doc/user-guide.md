@@ -1,16 +1,16 @@
-# Dickinson User Guide
+% Dickinson User Guide
+% Vanessa McHale
 
-## Introduction
+# Introduction
 
 Dickinson is a text-generation language for generative literature. Each time you run your
-code, you get back text. The text is chosen randomly based on your code and can
-return something different each time.
+code, you get back text. The text is chosen randomly based on your code.
 
-## Program Structure
+# Program Structure
 
-Dickinson programs begin with `%-`, followed by definitions.
+Dickinson files begin with `%-`, followed by definitions.
 
-### Example
+## Example
 
 Here is a simple Dickinson program:
 
@@ -29,13 +29,32 @@ Save this as `gambling.dck`. Then:
 emd run gambling.dck
 ```
 
-which will display either `heads` or `tails`.
+which will display either `heads` or `tails`. The `:oneof` construct selects one
+of its branches with equal probability.
 
 In general, when you `emd run` code, `emd` will display the result of evaluating `main`.
 
-### Interpolation
+## Definitions + Names
 
-We can reference and recombine past definitions via string interpolation.
+We can define names and reference them later:
+
+```
+%-
+
+(:def gambling
+  (:oneof
+    (| "heads")
+    (| "tails")))
+
+(:def main
+  gambling)
+```
+
+We can `emd run` this to the same results.
+
+## Interpolation
+
+We can reference and recombine past definitions via string interpolation:
 
 ```
 (:def adjective
@@ -48,10 +67,43 @@ We can reference and recombine past definitions via string interpolation.
   "What a ${adjective}, ${adjective} day!")
 ```
 
-## REPL
+# REPL
 
-## Libraries
+# Libraries
 
-Dickinson allows
+Dickinson allows pulling in definitions from other files with `:include`. 
 
-## Examples
+## Using Libraries
+
+### Example
+
+The `color` module is bundled by default:
+
+```
+(:include color)
+
+%-
+
+(:def main
+  "Today's mood is ${color}")
+```
+
+The `:include` must come before the `%-`; definitions come after the
+`%-` as above.
+
+`color.dck` contains:
+
+```
+%-
+
+(:def color
+    (:oneof
+        (| "aubergine")
+        (| "cerulean")
+        (| "azure")
+        ...
+```
+
+## Writing Libraries
+
+# Examples

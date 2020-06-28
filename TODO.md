@@ -72,6 +72,7 @@
 - [ ] Normalization (for encoding, for one)
 - [ ] Remove duplicates (for regen adjectives...)
 - [x] Only allow imports at the beginning
+- [ ] Install files globally?
 # Tooling
 - [x] REPL
   - [x] Actually fix identifiers/threading state to the lexer
