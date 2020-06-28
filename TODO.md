@@ -85,6 +85,8 @@
 - [ ] golden tests via pretty-simple packages (debug output?)
 ## Test cases
 - [x] `test/eval/tyAnnot.dck` in the test suite
+- [ ] Lexer (fail) tests
+  - [ ] Capital type names...
 - [ ] Escpaed characters
   - [ ] Pretty-print
 - [ ] name shadowing & such
@@ -94,6 +96,7 @@
 - [ ] Animals
   - [x] Birds
 - [ ] builtins (capitalization &c.)
+- [ ] Currying?
 # Performance
 - [ ] Load modules in a sensible way?
 - [ ] Bench typechecker
