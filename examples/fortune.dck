@@ -17,6 +17,7 @@
     (| "Cleanliness is next to godliness.")
     (| "Do not complain.")
     (| "Excess is a sin.")
+    (| "We are all damned by our own personalities.")
     (| "To err is immoral.")
     (| $ quote ("« Le beau est ce qu'on désire sans vouloir le manger. »", "Simone Weil"))
     (| $ quote ("\"You're more likely to get cut with a dull tool than a sharper one.\"", "Fiona Apple"))
