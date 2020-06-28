@@ -14,6 +14,8 @@
         (| "'Privileged'"))]
     "${badWord} is a slur"))
 
+; queering/ _ is queer
+
 (:def normalize
   (:let
     [norm
