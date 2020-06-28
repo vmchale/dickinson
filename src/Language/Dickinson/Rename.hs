@@ -96,10 +96,15 @@ insDeclM (Define p n e) = do
     (n', modR) <- withName n
     modifying rename modR
     pure $ Define p n' e
+insDeclM (TyDecl p tn cs) = do
+    (tn', modR) <- withName tn
+    modifying rename modR
+    pure $ TyDecl p tn' cs
 
 renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)
 renameDeclarationM (Define p n e) =
     Define p n <$> renameExpressionM e
+renameDeclarationM d@TyDecl{} = pure d
 
 withRenames :: (HasRenames s, MonadState s m) => (Renames -> Renames) -> m a -> m a
 withRenames modSt act = do
