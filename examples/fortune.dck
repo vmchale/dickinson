@@ -1,4 +1,5 @@
-; todo: cowsay? lol
+; This is a riff on the Unix fortune program.
+; See https://en.wikipedia.org/wiki/Fortune_%28Unix%29 for more context
 
 %-
 

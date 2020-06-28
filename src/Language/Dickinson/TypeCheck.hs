@@ -58,12 +58,18 @@ tyRun = flip evalState emptyTyEnv . runExceptT . (tyTraverse :: [Declaration a] 
 emptyTyEnv :: TyEnv a
 emptyTyEnv = TyEnv IM.empty
 
--- TODO: rename??
 tyTraverse :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m) => [Declaration a] -> m ()
-tyTraverse = traverse_ tyAdd
+tyTraverse ds =
+    traverse_ tyAddDecl ds *>
+    traverse_ tyAdd ds
 
 tyAdd :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m) => Declaration a -> m ()
 tyAdd (Define _ n e) = tyInsert n =<< typeOf e
+tyAdd TyDecl{}       = pure ()
+
+tyAddDecl :: (HasTyEnv s, MonadState (s a) m) => Declaration a -> m ()
+tyAddDecl Define{}         = pure ()
+tyAddDecl (TyDecl l tn cs) = traverse_ (\c -> tyInsert c (TyNamed l tn)) cs
 
 bindPattern :: (MonadState (s a) m, HasTyEnv s, MonadError (DickinsonError a) m) => Pattern a -> (DickinsonTy a) -> m ()
 bindPattern (PatternVar _ n) ty                 = tyInsert n ty
@@ -108,3 +114,8 @@ typeOf (Match _ e p e') = do
 typeOf (Flatten _ e) = typeOf e
 typeOf (Annot _ e ty) =
     tyAssert ty e $> ty
+typeOf (Constructor l tn@(Name _ (Unique k) _)) = do
+    tyEnv <- use tyEnvLens
+    case IM.lookup k tyEnv of
+        Just ty -> pure ty
+        Nothing -> throwError $ UnfoundConstructor l tn

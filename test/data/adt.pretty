@@ -2,5 +2,8 @@
 
 tydecl sex = Boy | Girl
 
+(:def boy
+  Boy : sex)
+
 (:def main
   "Hello, World!")

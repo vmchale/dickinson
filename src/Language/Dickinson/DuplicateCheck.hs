@@ -30,6 +30,8 @@ extrText _             = Nothing
 collectText :: [(b, Expression a)] -> [(a, T.Text)]
 collectText = mapMaybe (extrText . snd)
 
+-- TODO: check duplicate tydecl names!!
+
 checkExprDuplicates :: Expression a -> Maybe (DickinsonWarning a)
 checkExprDuplicates Var{}            = Nothing
 checkExprDuplicates Literal{}        = Nothing

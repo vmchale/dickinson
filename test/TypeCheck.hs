@@ -9,6 +9,7 @@ tcTests :: TestTree
 tcTests = testGroup "Typecheck test"
     [ testCase "Works on :match" testMatchTc
     , testCase "Currying" testCurry
+    , testCase "See ADTs" testAdtTc
     ]
 
 testCurry :: Assertion
@@ -16,3 +17,6 @@ testCurry = tcFile [] "test/data/quoteify.dck"
 
 testMatchTc :: Assertion
 testMatchTc = tcFile [] "test/eval/match.dck"
+
+testAdtTc :: Assertion
+testAdtTc = tcFile [] "test/data/adt.dck"

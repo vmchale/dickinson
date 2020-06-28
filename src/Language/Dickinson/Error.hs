@@ -29,6 +29,7 @@ data DickinsonError a = UnfoundName a (Name a)
                       | MultiBind a (Name a) (Pattern a) -- When a variable is bound more than once in a pattern...
                       | MalformedTuple a
                       | InternalError
+                      | UnfoundConstructor a (TyName a)
                       deriving (Generic, NFData)
 
 data DickinsonWarning a = MultipleNames a (Name a) -- TODO: throw both?
@@ -43,15 +44,16 @@ instance (Pretty a) => Show (DickinsonError a) where
     show = show . pretty
 
 instance (Pretty a) => Pretty (DickinsonError a) where
-    pretty (UnfoundName l n)       = pretty l <+> pretty n <+> "is not in scope."
-    pretty (NoText t)              = squotes (pretty t) <+> "not defined"
-    pretty (ParseErr _ e)          = pretty e
-    pretty (TypeMismatch e ty ty') = "Expected" <+> pretty e <+> "to have type" <+> squotes (pretty ty) <> ", found type" <+> squotes (pretty ty')
-    pretty (ModuleNotFound l n)    = pretty l <+> "Module" <+> pretty n <+> "not found"
-    pretty (ExpectedLambda e ty)   = "Expected" <+> squotes (pretty e) <+> "to be of function type, found type" <+> pretty ty
-    pretty (MultiBind l n p)       = pretty l <+> "Name" <+> pretty n <+> "is bound more than once in" <+> pretty p
-    pretty (MalformedTuple l)      = pretty l <+> "Malformed tuple"
-    pretty InternalError           = "Internal error. Please report this as a bug: https://github.com/vmchale/dickinson/issues"
+    pretty (UnfoundName l n)         = pretty l <+> pretty n <+> "is not in scope."
+    pretty (NoText t)                = squotes (pretty t) <+> "not defined"
+    pretty (ParseErr _ e)            = pretty e
+    pretty (TypeMismatch e ty ty')   = "Expected" <+> pretty e <+> "to have type" <+> squotes (pretty ty) <> ", found type" <+> squotes (pretty ty')
+    pretty (ModuleNotFound l n)      = pretty l <+> "Module" <+> pretty n <+> "not found"
+    pretty (ExpectedLambda e ty)     = "Expected" <+> squotes (pretty e) <+> "to be of function type, found type" <+> pretty ty
+    pretty (MultiBind l n p)         = pretty l <+> "Name" <+> pretty n <+> "is bound more than once in" <+> pretty p
+    pretty (MalformedTuple l)        = pretty l <+> "Malformed tuple"
+    pretty InternalError             = "Internal error. Please report this as a bug: https://github.com/vmchale/dickinson/issues"
+    pretty (UnfoundConstructor l tn) = pretty l <+> "Constructor" <+> pretty tn <+> "not found"
 
 instance (Pretty a, Typeable a) => Exception (DickinsonError a)
 

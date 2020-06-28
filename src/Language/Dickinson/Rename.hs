@@ -96,10 +96,7 @@ insDeclM (Define p n e) = do
     (n', modR) <- withName n
     modifying rename modR
     pure $ Define p n' e
-insDeclM (TyDecl p tn cs) = do
-    (tn', modR) <- withName tn
-    modifying rename modR
-    pure $ TyDecl p tn' cs
+insDeclM d@TyDecl{} = pure d -- FIXME: scoping!! (two type decls should be illegal?)
 
 renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)
 renameDeclarationM (Define p n e) =
@@ -173,3 +170,4 @@ renameExpressionM (Flatten l e) =
     Flatten l <$> renameExpressionM e
 renameExpressionM (Annot l e ty) =
     Annot l <$> renameExpressionM e <*> pure ty
+renameExpressionM c@Constructor{} = pure c

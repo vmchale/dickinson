@@ -126,21 +126,22 @@ instance Pretty (Pattern a) where
 
 -- figure out indentation
 instance Pretty (Expression a) where
-    pretty (Var _ n)         = pretty n
-    pretty (Literal _ l)     = dquotes $ pretty l
-    pretty (Let _ ls e)      = group (parens (":let" <^> vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e])))
+    pretty (Var _ n)          = pretty n
+    pretty (Literal _ l)      = dquotes $ pretty l
+    pretty (Let _ ls e)       = group (parens (":let" <^> vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e])))
     -- TODO: if they're all equal, use :oneof
     -- also comments lol
-    pretty (Choice _ brs)    = parens (":branch" <#> indent 2 (hardSep (toList $ fmap prettyChoiceBranch brs)))
-    pretty (Lambda _ n ty e) = parens (":lambda" <+> pretty n <+> pretty ty <#*> pretty e)
-    pretty (Apply _ e e')    = parens ("$" <+> pretty e <+> pretty e')
-    pretty (Interp _ es)     = group (dquotes (foldMap prettyInterp es))
-    pretty (Concat _ es)     = parens (rangle <+> hsep (pretty <$> es))
-    pretty StrChunk{}        = error "Internal error: naked StrChunk"
-    pretty (Tuple _ es)      = tupled (toList (pretty <$> es))
-    pretty (Match _ n p e)   = parens (":match" <+> pretty n <^> pretty p <^> pretty e)
-    pretty (Flatten _ e)     = parens (":flatten" <^> pretty e)
-    pretty (Annot _ e ty)    = pretty e <+> colon <+> pretty ty
+    pretty (Choice _ brs)     = parens (":branch" <#> indent 2 (hardSep (toList $ fmap prettyChoiceBranch brs)))
+    pretty (Lambda _ n ty e)  = parens (":lambda" <+> pretty n <+> pretty ty <#*> pretty e)
+    pretty (Apply _ e e')     = parens ("$" <+> pretty e <+> pretty e')
+    pretty (Interp _ es)      = group (dquotes (foldMap prettyInterp es))
+    pretty (Concat _ es)      = parens (rangle <+> hsep (pretty <$> es))
+    pretty StrChunk{}         = error "Internal error: naked StrChunk"
+    pretty (Tuple _ es)       = tupled (toList (pretty <$> es))
+    pretty (Match _ n p e)    = parens (":match" <+> pretty n <^> pretty p <^> pretty e)
+    pretty (Flatten _ e)      = parens (":flatten" <^> pretty e)
+    pretty (Annot _ e ty)     = pretty e <+> colon <+> pretty ty
+    pretty (Constructor _ tn) = pretty tn
 
 instance Pretty (DickinsonTy a) where
     pretty TyText{}       = "text"

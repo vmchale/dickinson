@@ -68,7 +68,9 @@ checkFile = ioChecker checkScope
 
 -- | Run some lints
 warnFile :: FilePath -> IO ()
-warnFile = ioChecker (\x -> checkDuplicates x <|> checkMultiple x) []
+warnFile = maybeThrowIO . (\x -> checkDuplicates x <|> checkMultiple x) . (\(Dickinson _ d) -> d)
+    <=< eitherThrowIO . parse
+    <=< BSL.readFile
 
 ioChecker :: Exception e => ([Declaration AlexPosn] -> Maybe e) -> [FilePath] -> FilePath -> IO ()
 ioChecker checker is = maybeThrowIO . checker <=< amalgamateRename is

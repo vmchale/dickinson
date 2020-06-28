@@ -45,7 +45,6 @@
       (| "goat") ; TODO livestock
       (| "horse")
       (| "lion")
-      (| "zebra")
       (| "tuatara")
       (| "lizard")
       (| "snake")

@@ -152,6 +152,7 @@ Expression :: { Expression AlexPosn }
            | match Expression Pattern Expression { Match $1 $2 $3 $4 }
            | flatten Expression { Flatten $1 $2 }
            | Expression colon Type { Annot $2 $1 $3 }
+           | tyIdent { Constructor (loc $1) (tyIdent $1) }
            | parens(Expression) { $1 }
 
 WeightedLeaf :: { (Double, Expression AlexPosn) }
