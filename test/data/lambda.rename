@@ -39,7 +39,7 @@ Dickinson
         (
           ( Name
             { name = "boy" :| []
-            , unique = Unique { unUnique = 9 }
+            , unique = Unique { unUnique = 8 }
             , loc = ()
             }
           , Choice ()
@@ -67,7 +67,7 @@ Dickinson
           ( Var ()
             ( Name
               { name = "boy" :| []
-              , unique = Unique { unUnique = 9 }
+              , unique = Unique { unUnique = 8 }
               , loc = ()
               }
             )

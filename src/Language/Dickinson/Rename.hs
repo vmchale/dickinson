@@ -9,6 +9,7 @@ module Language.Dickinson.Rename ( renameDickinson
                                  , renameExpressionM
                                  , initRenames
                                  , maxLens
+                                 , boundLens
                                  , replaceUnique
                                  , RenameM
                                  , Renames (..)
@@ -97,18 +98,18 @@ insDeclM (Define p n e) = do
     pure $ Define p n' e
 
 renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)
-renameDeclarationM (Define p n e) = do
+renameDeclarationM (Define p n e) =
     Define p n <$> renameExpressionM e
 
 withRenames :: (HasRenames s, MonadState s m) => (Renames -> Renames) -> m a -> m a
 withRenames modSt act = do
     preSt <- use rename
     rename %= modSt
-    -- idk
+    res <- act
     postMax <- use (rename.maxLens)
-    act <* (rename .= setMax (postMax + 1) preSt)
+    (rename .= setMax postMax preSt)
+    pure res
 
--- TODO: slow?
 withName :: (HasRenames s, MonadState s m) => Name a -> m (Name a, Renames -> Renames)
 withName (Name t (Unique i) l) = do
     m <- use (rename.maxLens)

@@ -63,7 +63,7 @@ Dickinson
         (
           ( Name
             { name = "a" :| []
-            , unique = Unique { unUnique = 12 }
+            , unique = Unique { unUnique = 9 }
             , loc = ()
             }
           , Literal () "non-binary"
@@ -85,7 +85,7 @@ Dickinson
               , Var ()
                 ( Name
                   { name = "a" :| []
-                  , unique = Unique { unUnique = 12 }
+                  , unique = Unique { unUnique = 9 }
                   , loc = ()
                   }
                 )

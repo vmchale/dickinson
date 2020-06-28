@@ -37,13 +37,13 @@ Dickinson
         (
           ( Name
             { name = "fun" :| []
-            , unique = Unique { unUnique = 10 }
+            , unique = Unique { unUnique = 9 }
             , loc = ()
             }
           , Lambda ()
             ( Name
               { name = "a" :| []
-              , unique = Unique { unUnique = 11 }
+              , unique = Unique { unUnique = 10 }
               , loc = ()
               }
             ) TyText
@@ -52,7 +52,7 @@ Dickinson
               , Var ()
                 ( Name
                   { name = "a" :| []
-                  , unique = Unique { unUnique = 11 }
+                  , unique = Unique { unUnique = 10 }
                   , loc = ()
                   }
                 )
@@ -72,7 +72,7 @@ Dickinson
           ( Var ()
             ( Name
               { name = "fun" :| []
-              , unique = Unique { unUnique = 10 }
+              , unique = Unique { unUnique = 9 }
               , loc = ()
               }
             )

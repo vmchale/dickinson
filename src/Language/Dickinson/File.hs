@@ -4,12 +4,13 @@ module Language.Dickinson.File ( evalFile
                                , checkFile
                                , warnFile
                                , tcFile
+                               , amalgamateRename
                                , amalgamateRenameM
                                , fmtFile
                                ) where
 
 import           Control.Applicative                   ((<|>))
-import           Control.Exception                     (Exception, throw, throwIO)
+import           Control.Exception                     (Exception)
 import           Control.Exception.Value
 import           Control.Monad                         ((<=<))
 import           Control.Monad.Except                  (ExceptT, MonadError, runExceptT)
@@ -69,7 +70,7 @@ checkFile = ioChecker checkScope
 warnFile :: FilePath -> IO ()
 warnFile = ioChecker (\x -> checkDuplicates x <|> checkMultiple x) []
 
-ioChecker :: Exception e => ([Declaration AlexPosn] -> (Maybe e)) -> [FilePath] -> FilePath -> IO ()
+ioChecker :: Exception e => ([Declaration AlexPosn] -> Maybe e) -> [FilePath] -> FilePath -> IO ()
 ioChecker checker is = maybeThrowIO . checker <=< amalgamateRename is
 
 tcFile :: [FilePath] -> FilePath -> IO ()
