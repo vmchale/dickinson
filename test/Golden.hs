@@ -34,8 +34,10 @@ goldenTests =
 prettyBSL :: Dickinson a -> BSL.ByteString
 prettyBSL = encodeUtf8 . dickinsonLazyText . pretty
 
-debugBSL :: Dickinson () -> BSL.ByteString
+debugBSL :: Show a => a -> BSL.ByteString
 debugBSL = encodeUtf8 . pShowOpt defaultOutputOptionsNoColor { outputOptionsIndentAmount = 2 }
+
+-- TODO: sanity check?
 
 withDckFile :: FilePath -> TestTree
 withDckFile fp =
