@@ -9,6 +9,12 @@
       (| "rhinoceros")
       (| "giraffe")
       (| "deer")
+      (| "toad")
+      (| "frog")
+      (| "amphisbaenians")
+      (| "caecilian")
+      (| "alligator")
+      (| "reptile")
       (| "zebra")
       (| "shrew")
       (| "mouse")
@@ -27,7 +33,7 @@
       (| "stoat")
       (| "ermine")
       (| "sheep")
-      (| "goat") ; TODO lifestock
+      (| "goat") ; TODO livestock
       (| "horse")
       (| "lion")
       (| "zebra")
