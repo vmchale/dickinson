@@ -3,6 +3,7 @@ module Language.Dickinson.Check.Internal ( sanityCheck
 
 import           Control.Monad             (when)
 import           Control.Monad.State       (MonadState)
+import           Data.List.NonEmpty        ((<|))
 import           Language.Dickinson.Name
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
@@ -18,7 +19,15 @@ sanityCheck d = do
         error "Sanity check failed!"
 
 maxUniqueDeclaration :: Declaration a -> Int
-maxUniqueDeclaration (Define _ (Name _ (Unique i) _) e) = max i (maxUniqueExpression e)
+maxUniqueDeclaration (Define _ (Name _ (Unique i) _) e)   = max i (maxUniqueExpression e)
+maxUniqueDeclaration (TyDecl _ (Name _ (Unique i) _) tns) =
+    maximum ( i <| fmap (unUnique . unique) tns)
+
+maxUniqueType :: DickinsonTy a -> Int
+maxUniqueType TyText{}                          = 0
+maxUniqueType (TyFun _ ty ty')                  = max (maxUniqueType ty) (maxUniqueType ty')
+maxUniqueType (TyTuple _ ts)                    = maximum (fmap maxUniqueType ts)
+maxUniqueType (TyNamed _ (Name _ (Unique k) _)) = k
 
 maxUniqueExpression :: Expression a -> Int
 maxUniqueExpression Literal{}                             = 0
@@ -29,10 +38,14 @@ maxUniqueExpression (Choice _ pes)                        = maximum (maxUniqueEx
 maxUniqueExpression (Interp _ es)                         = maximum (fmap maxUniqueExpression es)
 maxUniqueExpression (Concat _ es)                         = maximum (fmap maxUniqueExpression es)
 maxUniqueExpression (Apply _ e e')                        = max (maxUniqueExpression e) (maxUniqueExpression e')
-maxUniqueExpression (Annot _ e _)                         = maxUniqueExpression e
+maxUniqueExpression (Annot _ e ty)                        = max (maxUniqueExpression e) (maxUniqueType ty)
 maxUniqueExpression (Flatten _ e)                         = maxUniqueExpression e
 maxUniqueExpression (Tuple _ es)                          = maximum (fmap maxUniqueExpression es)
-maxUniqueExpression (Lambda _ (Name _ (Unique i) _) _ e)  = max i (maxUniqueExpression e)
+maxUniqueExpression (Lambda _ (Name _ (Unique i) _) ty e) =
+    maximum [ i
+            , maxUniqueExpression e
+            , maxUniqueType ty
+            ]
 maxUniqueExpression (Match _ e p e')                      =
     maximum
         [ maxUniqueExpression e
