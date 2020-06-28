@@ -6,10 +6,10 @@ endif
 
 syntax match dickinsonSymbol ":"
 
+syntax match dickinsonIdentifier "\v[a-zA-Z0-9]+"
+
 syntax match dickinsonNum "\v[0-9]+"
 syntax match dickinsonNum "\v[0-9]+\.[0-9]+"
-
-syntax match dickinsonIdentifier "\v[a-zA-Z0-9]+"
 
 syntax match dickinsonKeyword ":include"
 syntax match dickinsonKeyword ":def"
