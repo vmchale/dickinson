@@ -43,6 +43,7 @@
 # Debugging
 - [ ] Verbosity
 # Features
+- [ ] Change `:import` to `:include`!
 - [ ] "append" repl command
 - [ ] Circular import checker
 - [x] Save repl states
