@@ -35,13 +35,13 @@ emd - [Emily] Dickinson
 
 **:l** **:load** - Load a file
 
-**:r** - Restore a REPL state stored in some file
+**:r** - Restore a REPL state stored in a file
 
 **:q** **:quit** - Quit session
 
 **:list** - List all names that are in scope
 
-**:t** - Display the type of an expression
+**:t** **:type** - Display the type of an expression
 
 **:v** **:view** - Show the definition of a name
 
