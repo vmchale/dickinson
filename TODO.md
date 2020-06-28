@@ -85,6 +85,7 @@
 ## Test cases
 - [x] `test/eval/tyAnnot.dck` in the test suite
 - [ ] Escpaed characters
+  - [ ] Pretty-print
 - [ ] name shadowing & such
 - [ ] property test -> generate, pretty-print, parse
 # Libraries
