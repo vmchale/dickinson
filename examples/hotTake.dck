@@ -41,7 +41,6 @@
     "${badThing} toxic."))
 
 ; cancel _
-; flatten is expensive...
 
 (:def main
   (:flatten

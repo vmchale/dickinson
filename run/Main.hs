@@ -80,7 +80,7 @@ versionMod = infoOption dickinsonVersionString (short 'V' <> long "version" <> h
 run :: Act -> IO ()
 run (Run fp is)     = do { pGo <- defaultLibPath ; TIO.putStrLn =<< evalFile (pGo is) fp }
 run (REPL _)        = dickinsonRepl
-run (Check f i)     = checkFile i f
+run (Check f i)     = do { pathMod <- defaultLibPath ; checkFile (pathMod i) f }
 run (Lint f)        = warnFile f
-run (Typecheck f i) = tcFile i f
+run (Typecheck f i) = do { pathMod <- defaultLibPath ; tcFile (pathMod i) f }
 run (Format fp)     = fmtFile fp

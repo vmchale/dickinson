@@ -20,6 +20,12 @@
       (| "mouse")
       (| "rat")
       (| "capybara")
+      (| "wolf")
+      (| "coyote")
+      (| "whale") ; whale generator
+      (| "beluga")
+      (| "orca")
+      (| "narwhal")
       (| "guinea pig")
       (| "hamster")
       (| "fisher")
