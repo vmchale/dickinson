@@ -22,3 +22,8 @@ Plug 'vmchale/dickinson' , { 'rtp' : 'vim' }
 ```
 
 ## Documentation
+
+A user guide is available in
+[markdown](https://github.com/vmchale/dickinson/blob/master/doc/user-guide.md)
+and as
+a [pdf](https://github.com/vmchale/dickinson/blob/master/doc/user-guide.pdf).
