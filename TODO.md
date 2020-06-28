@@ -36,7 +36,7 @@
   - [ ] More vexingly, calling e.g. `color` in `lib/color.dck` un-sticks it!!
   - [ ] running `test/data/nestLet.dck` fucks up
 - [ ] Bug when running `test/demo/animal.dck` with renamer then eval
-- [ ] `examples/doggo.dck` hangs indefinitely lol
+- [x] `examples/doggo.dck` hangs indefinitely lol
 # Code Quality
 - [ ] Kick tires on `:t` feature
 - [ ] Don't use the identifier `yeet`
