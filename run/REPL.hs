@@ -61,6 +61,7 @@ loop = do
         Just (":l":fs)      -> traverse loadFile fs *> loop
         Just (":load":fs)   -> traverse loadFile fs *> loop
         Just (":r":fp:_)    -> loadReplSt fp *> loop
+        Just (":type":e:_)  -> typeExpr e *> loop
         Just (":t":e:_)     -> typeExpr e *> loop
         Just (":v":n:_)     -> bindDisplay (T.pack n) *> loop
         Just (":view":n:_)  -> bindDisplay (T.pack n) *> loop
