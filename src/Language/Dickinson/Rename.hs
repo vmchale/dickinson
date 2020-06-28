@@ -107,7 +107,7 @@ withRenames modSt act = do
     rename %= modSt
     res <- act
     postMax <- use (rename.maxLens)
-    (rename .= setMax postMax preSt)
+    rename .= setMax postMax preSt
     pure res
 
 withName :: (HasRenames s, MonadState s m) => Name a -> m (Name a, Renames -> Renames)
