@@ -104,21 +104,20 @@ brackets(p)
     : lsqbracket p rsqbracket { $2 }
 
 Dickinson :: { Dickinson AlexPosn }
-          : many(parens(Import)) declBreak many(parens(Declaration)) { Dickinson (reverse $1) (reverse $3) }
+          : many(parens(Import)) declBreak many(Declaration) { Dickinson (reverse $1) (reverse $3) }
+
+TyCons :: { NonEmpty (TyName AlexPosn) }
+       : sepBy(tyIdent,vbar) { fmap tyIdent $1 }
 
 Declaration :: { Declaration AlexPosn }
-            : def Name Expression { Define $1 $2 $3 }
-            | tydecl Name eq TyCons { TyDecl $1 $2 $4 }
+            : lparen def Name Expression rparen { Define $2 $3 $4 }
+            | tydecl Name eq TyCons { TyDecl $1 $2 (NE.reverse $4) }
 
 Import :: { Import AlexPosn }
        : include Name { Import $1 $2 }
 
 Name :: { Name AlexPosn }
      : ident { ident $1 }
-
--- TODO: only parses >= 2 constructors lol
-TyCons :: { NonEmpty (TyName AlexPosn) }
-       : sepBy(tyIdent,vbar) { fmap tyIdent $1 }
 
 Type :: { DickinsonTy AlexPosn }
      : text { TyText $1 }

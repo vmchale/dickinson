@@ -99,7 +99,8 @@ instance Eq (DickinsonTy a) where
     (==) _ _                                   = False
 
 instance Pretty (Declaration a) where
-    pretty (Define _ n e) = parens (":def" <+> pretty n <#> indent 2 (pretty e))
+    pretty (Define _ n e)  = parens (":def" <+> pretty n <#> indent 2 (pretty e))
+    pretty (TyDecl _ n cs) = "tydecl" <+> pretty n <+> "=" <+> (concatWith (\x y -> x <+> pipe <+> y)) (toList (pretty <$> cs))
 
 instance Pretty (Import a) where
     pretty (Import _ n)   = parens (":include" <+> pretty n)

@@ -63,8 +63,9 @@ $str_chunk = [^ \"\\\$]
 
 @follow_char = [$latin $digit]
 
-@name = ([a-z] @follow_char* \.)* @follow_char+
-@tyname = ([A-Z] @follow_char* \.)* @follow_char+
+@lower_name = [a-z] @follow_char*
+@name = (@lower_name \.)* @lower_name
+@tyname = [A-Z] @follow_char*
 
 tokens :-
 
