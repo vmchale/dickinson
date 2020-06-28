@@ -112,10 +112,11 @@ Import :: { Import AlexPosn }
 Name :: { Name AlexPosn }
      : ident { ident $1 }
 
-Type :: { DickinsonTy }
-     : text { TyText }
-     | arrow Type Type { TyFun $2 $3 }
-     | lparen sepBy(Type,comma) rparen { TyTuple (NE.reverse $2) }
+Type :: { DickinsonTy AlexPosn }
+     : text { TyText $1 }
+     | arrow Type Type { TyFun $1 $2 $3 }
+     | lparen sepBy(Type,comma) rparen { TyTuple $1 (NE.reverse $2) }
+     | ident { TyNamed (loc $1) (ident $1) }
      | parens(Type) { $1 }
 
 Bind :: { (Name AlexPosn, Expression AlexPosn) }

@@ -53,7 +53,7 @@ data EvalSt a = EvalSt
     -- For imports & such.
     , lexerState    :: AlexUserState
     -- For error messages
-    , tyEnv         :: TyEnv
+    , tyEnv         :: (TyEnv a)
     }
 
 
@@ -81,8 +81,8 @@ prettyAlexState (m, _, nEnv) =
 instance HasRenames (EvalSt a) where
     rename f s = fmap (\x -> s { renameCtx = x }) (f (renameCtx s))
 
-instance HasTyEnv (EvalSt a) where
-    tyEnvLens f s = fmap (\x -> s { tyEnv = x }) (f (tyEnv s))
+instance HasTyEnv EvalSt where
+    tyEnvLens = (\f s -> fmap (\x -> s { tyEnv = x }) (f (tyEnv s))) . tyEnvLens
 
 probabilitiesLens :: Lens' (EvalSt a) [Double]
 probabilitiesLens f s = fmap (\x -> s { probabilities = x }) (f (probabilities s))
@@ -102,7 +102,7 @@ evalIO me = (\g -> evalWithGen g me) =<< newStdGen
 evalWithGen :: StdGen
             -> EvalM a x
             -> IO (Either (DickinsonError a) x)
-evalWithGen g me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty initRenames mempty alexInitUserState mempty)
+evalWithGen g me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty initRenames mempty alexInitUserState emptyTyEnv)
 
 nameMod :: Name a -> Expression a -> EvalSt a -> EvalSt a
 nameMod (Name _ (Unique u) _) e = over boundExprLens (IM.insert u e)
@@ -175,10 +175,10 @@ addDecl :: (MonadState (EvalSt a) m)
         -> m ()
 addDecl (Define _ n e) = bindName n e *> topLevelAdd n
 
-extrText :: (HasTyEnv s, MonadState s m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
+extrText :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 extrText (Literal _ t)  = pure t
 extrText (StrChunk _ t) = pure t
-extrText e              = do { ty <- typeOf e ; throwError $ TypeMismatch e TyText ty }
+extrText e              = do { ty <- typeOf e ; throwError $ TypeMismatch e (TyText $ exprAnn e) ty }
 
 withSt :: (HasRenames s, MonadState s m) => (s -> s) -> m b -> m b
 withSt modSt act = do

@@ -47,7 +47,7 @@ runRepl :: Repl a x -> IO x
 runRepl x = do
     g <- newStdGen
     emdDir <- (</> ".emd_history") <$> getHomeDirectory
-    let initSt = EvalSt (randoms g) mempty initRenames mempty alexInitUserState mempty
+    let initSt = EvalSt (randoms g) mempty initRenames mempty alexInitUserState emptyTyEnv
     let emdSettings = defaultSettings { historyFile = Just emdDir }
     flip evalStateT initSt $ runInputT emdSettings x
 
@@ -124,9 +124,9 @@ typeExpr str = do
     aSt <- lift $ gets lexerState
     case parseExpressionWithCtx bsl aSt of
         Left err -> liftIO $ putDoc (pretty err <> hardline)
-        Right (newSt, expr) -> do
+        Right (newSt, e) -> do
             setSt newSt
-            mErr <- lift $ runExceptT $ typeOf =<< resolveExpressionM =<< renameExpressionM expr
+            mErr <- lift $ runExceptT $ typeOf =<< resolveExpressionM =<< renameExpressionM e
             lift balanceMax
             putErr mErr (liftIO . putDoc . (<> hardline) . pretty)
 
@@ -139,8 +139,8 @@ printExpr str = do
         Right (newSt, p) -> do
                 setSt newSt
                 case p of
-                    Right expr -> do
-                        mErr <- lift $ runExceptT $ evalExpressionAsTextM =<< renameExpressionM expr
+                    Right e -> do
+                        mErr <- lift $ runExceptT $ evalExpressionAsTextM =<< renameExpressionM e
                         lift balanceMax
                         putErr mErr (liftIO . TIO.putStrLn)
                     Left decl -> do

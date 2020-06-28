@@ -24,8 +24,8 @@ data DickinsonError a = UnfoundName a (Name a)
                       | NoText T.Text -- separate from UnfoundName since there is no loc
                       | ParseErr FilePath (ParseError a)
                       | ModuleNotFound a (Name a)
-                      | TypeMismatch (Expression a) DickinsonTy DickinsonTy -- TODO: location information
-                      | ExpectedLambda (Expression a) DickinsonTy
+                      | TypeMismatch (Expression a) (DickinsonTy a) (DickinsonTy a)
+                      | ExpectedLambda (Expression a) (DickinsonTy a)
                       | MultiBind a (Name a) (Pattern a) -- When a variable is bound more than once in a pattern...
                       | MalformedTuple a
                       | InternalError

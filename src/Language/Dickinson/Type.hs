@@ -15,6 +15,7 @@ import           Control.DeepSeq               (NFData)
 import           Data.Binary                   (Binary)
 import           Data.Foldable                 (toList)
 import           Data.List.NonEmpty            (NonEmpty)
+import qualified Data.List.NonEmpty            as NE
 import           Data.Semigroup                ((<>))
 import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, colon, concatWith, dquotes, group,
@@ -43,26 +44,53 @@ data Pattern a = PatternVar a (Name a)
                | Wildcard a
                deriving (Generic, NFData, Binary, Functor, Show)
 
-data Expression a = Literal a T.Text
-                  | StrChunk a T.Text
-                  | Choice a (NonEmpty (Double, Expression a))
-                  | Let a (NonEmpty (Name a, Expression a)) (Expression a)
-                  | Var a (Name a)
-                  | Interp a [Expression a]
-                  | Lambda a (Name a) DickinsonTy (Expression a)
-                  | Apply a (Expression a) (Expression a)
-                  | Concat a [Expression a]
-                  | Tuple a (NonEmpty (Expression a))
-                  | Match a (Expression a) (Pattern a) (Expression a)
-                  | Flatten a (Expression a)
-                  | Annot a (Expression a) DickinsonTy
+data Expression a = Literal { exprAnn :: a, litText :: T.Text }
+                  | StrChunk { exprAnn :: a, chunkText :: T.Text }
+                  | Choice { exprAnn :: a
+                           , choices :: (NonEmpty (Double, Expression a))
+                           }
+                  | Let { exprAnn  :: a
+                        , letBinds :: (NonEmpty (Name a, Expression a))
+                        , letExpr  :: (Expression a)
+                        }
+                  | Var { exprAnn :: a, exprVar :: (Name a) }
+                  | Interp { exprAnn :: a, exprInterp :: [Expression a] }
+                  | Lambda { exprAnn    :: a
+                           , lambdaVar  :: (Name a)
+                           , lambdaTy   :: (DickinsonTy a)
+                           , lambdaExpr :: (Expression a)
+                           }
+                  | Apply { exprAnn :: a
+                          , exprFun :: (Expression a)
+                          , exprArg :: (Expression a)
+                          }
+                  | Concat { exprAnn :: a, exprConcats :: [Expression a] }
+                  | Tuple { exprAnn :: a, exprTup :: (NonEmpty (Expression a)) }
+                  | Match { exprAnn   :: a
+                          , exprMatch :: (Expression a)
+                          , exprPat   :: (Pattern a)
+                          , exprIn    :: (Expression a)
+                          }
+                  | Flatten { exprAnn :: a, exprFlat :: (Expression a) }
+                  | Annot { exprAnn :: a
+                          , expr    :: (Expression a)
+                          , exprTy  :: (DickinsonTy a)
+                          }
                   deriving (Generic, NFData, Binary, Functor, Show)
                   -- TODO: builtins?
 
-data DickinsonTy = TyText
-                 | TyFun DickinsonTy DickinsonTy
-                 | TyTuple (NonEmpty DickinsonTy)
-                 deriving (Eq, Generic, NFData, Binary, Show)
+data DickinsonTy a = TyText a
+                   | TyFun a (DickinsonTy a) (DickinsonTy a)
+                   | TyTuple a (NonEmpty (DickinsonTy a))
+                   | TyNamed a (Name a)
+                   deriving (Generic, NFData, Binary, Show, Functor)
+
+instance Eq (DickinsonTy a) where
+    (==) TyText{} TyText{}                     = True
+    (==) (TyFun _ ty ty') (TyFun _ ty'' ty''') = (ty == ty'') && (ty' == ty''')
+    (==) (TyTuple _ tys) (TyTuple _ tys')      = and (NE.zipWith (==) tys tys')
+    (==) (TyNamed _ n) (TyNamed _ n')          = n == n'
+    (==) _ _                                   = False
 
 instance Pretty (Declaration a) where
     pretty (Define _ n e) = parens (":def" <+> pretty n <#> indent 2 (pretty e))
@@ -107,7 +135,8 @@ instance Pretty (Expression a) where
     pretty (Flatten _ e)     = parens (":flatten" <^> pretty e)
     pretty (Annot _ e ty)    = pretty e <+> colon <+> pretty ty
 
-instance Pretty DickinsonTy where
-    pretty TyText{}     = "text"
-    pretty (TyFun t t') = parens ("⟶" <+> pretty t <+> pretty t')
-    pretty (TyTuple ts) = tupled (toList (pretty <$> ts))
+instance Pretty (DickinsonTy a) where
+    pretty TyText{}       = "text"
+    pretty (TyFun _ t t') = parens ("⟶" <+> pretty t <+> pretty t')
+    pretty (TyTuple _ ts) = tupled (toList (pretty <$> ts))
+    pretty (TyNamed _ n)  = pretty n
