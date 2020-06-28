@@ -204,6 +204,13 @@ tryEvalExpressionM (Tuple l es)   = Tuple l <$> traverse tryEvalExpressionM es
 tryEvalExpressionM e@Lambda{}     = pure e
 tryEvalExpressionM (Annot l e ty) = Annot l <$> tryEvalExpressionM e <*> pure ty
 tryEvalExpressionM (Flatten l e)  = Flatten l <$> tryEvalExpressionM e
+tryEvalExpressionM (Apply _ e e') = do
+    e'' <- tryEvalExpressionM e
+    case e'' of
+        Lambda _ n _ e''' ->
+            withSt (nameMod n e') $
+                tryEvalExpressionM e'''
+        _ -> error "Ill-type expression?"
 
 evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 evalExpressionM e@Literal{}    = pure e
