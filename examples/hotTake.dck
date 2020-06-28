@@ -2,7 +2,9 @@
 
 (:def unpopularize
   (:lambda opinion text
-    "Unpopular opinion: ${opinion}"))
+    (:branch
+      (| 0.9 opinion)
+      (| 0.1 "Unpopular opinion: ${opinion}"))))
 
 (:def slur
   (:let
@@ -19,6 +21,7 @@
         (| "bidets")
         (| "breastfeeding your boyfriend")
         (| "not wearing deodorant")
+        (| "being a virgin")
         (| "DWIs"))]
     "Normalize ${norm}"))
 
@@ -30,6 +33,15 @@
         (| "the stock market")
         (| "parking tickets"))]
     "Abolish ${target}"))
+
+(:def problematic
+  (:let
+    [bad
+      (:oneof
+        (| "Grades are")
+        (| "The GRE is")
+        (| "Masks are"))]
+      "${bad} problematic"))
 
 (:def toxic
   (:let
@@ -43,9 +55,11 @@
 ; cancel _
 
 (:def main
-  (:flatten
-    (:oneof
-      (| normalize)
-      (| toxic)
-      (| slur)
-      (| abolish))))
+  $ unpopularize
+    (:flatten
+      (:oneof
+        (| normalize)
+        (| toxic)
+        (| problematic)
+        (| slur)
+        (| abolish))))
