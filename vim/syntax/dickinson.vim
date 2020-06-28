@@ -6,7 +6,7 @@ endif
 
 syntax match dickinsonSymbol ":"
 
-syntax match dickinsonKeyword ":import"
+syntax match dickinsonKeyword ":include"
 syntax match dickinsonKeyword ":def"
 syntax match dickinsonKeyword ":branch"
 syntax match dickinsonKeyword ":oneof"

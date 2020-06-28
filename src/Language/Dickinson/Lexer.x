@@ -87,7 +87,7 @@ tokens :-
     <0> ":branch"                  { mkKeyword KwBranch }
     <0> ":oneof"                   { mkKeyword KwOneof }
     <0> ":def"                     { mkKeyword KwDef }
-    <0> ":import"                  { mkKeyword KwImport }
+    <0> ":include"                 { mkKeyword KwInclude }
     <0> ":lambda"                  { mkKeyword KwLambda }
     <0> "text"                     { mkKeyword KwText }
     <0> ":match"                   { mkKeyword KwMatch }
@@ -209,7 +209,7 @@ data Keyword = KwDef
              | KwLet
              | KwBranch
              | KwOneof
-             | KwImport
+             | KwInclude
              | KwLambda
              | KwText
              | KwMatch
@@ -221,7 +221,7 @@ instance Pretty Keyword where
     pretty KwLet     = ":let"
     pretty KwBranch  = ":branch"
     pretty KwOneof   = ":oneof"
-    pretty KwImport  = ":import"
+    pretty KwInclude = ":include"
     pretty KwLambda  = ":lambda"
     pretty KwText    = "text"
     pretty KwMatch   = ":match"

@@ -1,4 +1,4 @@
-(:import color)
+(:include color)
 
 %-
 

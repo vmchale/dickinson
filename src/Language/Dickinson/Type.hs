@@ -68,7 +68,7 @@ instance Pretty (Declaration a) where
     pretty (Define _ n e) = parens (":def" <+> pretty n <#> indent 2 (pretty e))
 
 instance Pretty (Import a) where
-    pretty (Import _ n)   = parens (":import" <+> pretty n)
+    pretty (Import _ n)   = parens (":include" <+> pretty n)
 
 instance Pretty (Dickinson a) where
     pretty (Dickinson is ds) = concatWith (\x y -> x <> hardline <> hardline <> y) (fmap pretty is <> ["%-"] <> fmap pretty ds)

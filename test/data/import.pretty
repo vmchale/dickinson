@@ -1,6 +1,6 @@
-(:import color)
+(:include color)
 
 %-
 
 (:def main
-  color.color)
+  color)

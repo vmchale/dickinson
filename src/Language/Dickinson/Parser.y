@@ -67,7 +67,7 @@ import Language.Dickinson.Unique
     let { TokKeyword $$ KwLet }
     branch { TokKeyword $$ KwBranch }
     oneof { TokKeyword $$ KwOneof }
-    import { TokKeyword $$ KwImport }
+    include { TokKeyword $$ KwInclude }
     lambda { TokKeyword $$ KwLambda }
     match { TokKeyword $$ KwMatch }
     flatten { TokKeyword $$ KwFlatten }
@@ -107,7 +107,7 @@ Declaration :: { Declaration AlexPosn }
             : def Name Expression { Define $1 $2 $3 }
 
 Import :: { Import AlexPosn }
-       : import Name { Import $1 $2 }
+       : include Name { Import $1 $2 }
 
 Name :: { Name AlexPosn }
      : ident { ident $1 }
