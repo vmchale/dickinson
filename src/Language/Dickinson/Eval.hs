@@ -37,7 +37,7 @@ import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
-import           Lens.Micro                    (Lens', over, _1)
+import           Lens.Micro                    (Lens', over, set, _1)
 import           Lens.Micro.Mtl                (use, (.=))
 import           System.Random                 (StdGen, newStdGen, randoms)
 
@@ -120,7 +120,7 @@ lookupName :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Name
 lookupName n@(Name _ (Unique u) l) =
     go =<< gets (IM.lookup u.boundExpr)
     where go Nothing  = throwError (UnfoundName l n)
-          go (Just x) = {-# SCC "renameClone" #-} renameExpressionM x -- FIXME: hangs indefinitely here on $snd ...
+          go (Just x) = {-# SCC "renameClone" #-} renameExpressionM x -- FIXME: hangs indefinitely here on $snd ... xy?
 
 normalize :: (Foldable t, Functor t, Fractional a) => t a -> t a
 normalize xs = {-# SCC "normalize" #-} (/tot) <$> xs
@@ -180,11 +180,14 @@ extrText (Literal _ t)  = pure t
 extrText (StrChunk _ t) = pure t
 extrText e              = do { ty <- typeOf e ; throwError $ TypeMismatch e TyText ty }
 
-withSt :: (MonadState s m) => (s -> s) -> m b -> m b
+withSt :: (HasRenames s, MonadState s m) => (s -> s) -> m b -> m b
 withSt modSt act = do
     preSt <- get
     modify modSt
-    act <* put preSt
+    res <- act
+    postMax <- use (rename.maxLens)
+    put (set (rename.maxLens) postMax preSt)
+    pure res
 
 bindPattern :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m) => Pattern a -> Expression a -> m (EvalSt a -> EvalSt a)
 bindPattern (PatternVar _ n) e               = pure $ nameMod n e
