@@ -86,6 +86,7 @@
 - [x] `test/eval/tyAnnot.dck` in the test suite
 - [ ] Escpaed characters
 - [ ] name shadowing & such
+- [ ] property test -> generate, pretty-print, parse
 # Libraries
 - [x] Colors
 - [ ] Animals
