@@ -61,7 +61,10 @@ $str_chunk = [^ \"\\\$]
 
 @interp = \$\{
 
-@name = ($latin+ \.)* [$latin $digit]+
+@follow_char = [$latin $digit]
+
+@name = ([a-z] @follow_char* \.)* @follow_char+
+@tyname = ([A-Z] @follow_char* \.)* @follow_char+
 
 tokens :-
 
@@ -81,6 +84,7 @@ tokens :-
     <0> "->"                       { mkSym Arrow }
     <0> \:                         { mkSym Colon }
     <0> \%\-                       { mkSym DeclBreak }
+    <0> "="                        { mkSym Eq }
 
     -- keywords
     <0> ":let"                     { mkKeyword KwLet }
@@ -92,8 +96,10 @@ tokens :-
     <0> "text"                     { mkKeyword KwText }
     <0> ":match"                   { mkKeyword KwMatch }
     <0> ":flatten"                 { mkKeyword KwFlatten }
+    <0> "tydecl"                   { mkKeyword KwTyDecl }
 
     <0> @name                      { tok (\p s -> TokIdent p <$> newIdentAlex p (mkText s)) }
+    <0> @tyname                    { tok (\p s -> TokTyCons p <$> newIdentAlex p (mkText s)) }
 
     -- strings
     <0> \"                         { mkSym StrBegin `andBegin` string }
@@ -156,7 +162,6 @@ newIdentAlex pos t = do
     let (st', n) = newIdent pos t st
     set_ust st' $> (n $> pos)
 
--- TODO: only mod context if top-level? idk
 newIdent :: AlexPosn -> T.Text -> AlexUserState -> (AlexUserState, Name AlexPosn)
 newIdent pos t pre@(max', names, uniqs) =
     case M.lookup t names of
@@ -185,6 +190,7 @@ data Sym = LParen
          | Underscore
          | Colon
          | DeclBreak
+         | Eq
          deriving (Eq, Generic, NFData)
 
 instance Pretty Sym where
@@ -204,6 +210,7 @@ instance Pretty Sym where
     pretty Underscore    = "_"
     pretty Colon         = colon
     pretty DeclBreak     = "%-"
+    pretty Eq            = "="
 
 data Keyword = KwDef
              | KwLet
@@ -214,6 +221,7 @@ data Keyword = KwDef
              | KwText
              | KwMatch
              | KwFlatten
+             | KwTyDecl
              deriving (Eq, Generic, NFData)
 
 instance Pretty Keyword where
@@ -226,6 +234,7 @@ instance Pretty Keyword where
     pretty KwText    = "text"
     pretty KwMatch   = ":match"
     pretty KwFlatten = ":flatten"
+    pretty KwTyDecl  = "tydecl"
 
 instance Pretty AlexPosn where
     pretty (AlexPn _ line col) = pretty line <> colon <> pretty col
@@ -238,6 +247,7 @@ deriving instance Binary AlexPosn
 
 data Token a = EOF { loc :: a }
              | TokIdent { loc :: a, ident :: Name a }
+             | TokTyCons { loc :: a, tyIdent :: TyName a }
              | TokDouble { loc :: a, double :: Double }
              -- separate tok for full strings for sake of speed
              | TokString { loc :: a, str :: T.Text }
@@ -249,6 +259,7 @@ data Token a = EOF { loc :: a }
 instance Pretty (Token a) where
     pretty EOF{}                = mempty
     pretty (TokIdent _ n)       = pretty n
+    pretty (TokTyCons _ tn)     = pretty tn
     pretty (TokDouble _ d)      = pretty d
     pretty (TokString _ str')   = dquotes (pretty str')
     pretty (TokStrChunk _ str') = pretty str'

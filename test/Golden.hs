@@ -1,7 +1,6 @@
 module Golden ( goldenTests
               ) where
 
-import           Control.Exception             (throw)
 import           Control.Exception.Value       (eitherThrow)
 import qualified Data.ByteString.Lazy          as BSL
 import           Data.Functor                  (void)
@@ -21,6 +20,7 @@ goldenTests =
     testGroup "Golden tests"
         [ withDckFile "test/data/nestLet.dck"
         , withDckFile "test/data/import.dck"
+        , withDckFile "test/data/adt.dck"
         , renameDckFile "test/data/nestLet.dck"
         , renameDckFile "test/data/let.dck"
         , renameDckFile "test/data/multiLet.dck"

@@ -32,7 +32,11 @@ data Declaration a = Define { declAnn :: a
                             , defName :: Name a
                             , defExpr :: Expression a
                             }
-                            deriving (Generic, NFData, Binary, Functor, Show)
+                   | TyDecl { declAnn :: a
+                            , tyName  :: Name a
+                            , tyCons  :: NonEmpty (TyName a)
+                            }
+                   deriving (Generic, NFData, Binary, Functor, Show)
 
 data Import a = Import { importAnn :: a
                        , declMod   :: Name a
@@ -41,6 +45,7 @@ data Import a = Import { importAnn :: a
 
 data Pattern a = PatternVar a (Name a)
                | PatternTuple a (NonEmpty (Pattern a))
+               | PatternCons a (TyName a)
                | Wildcard a
                deriving (Generic, NFData, Binary, Functor, Show)
 
@@ -76,6 +81,7 @@ data Expression a = Literal { exprAnn :: a, litText :: T.Text }
                           , expr    :: (Expression a)
                           , exprTy  :: (DickinsonTy a)
                           }
+                  | Constructor { exprAnn :: a, constructorName :: TyName a }
                   deriving (Generic, NFData, Binary, Functor, Show)
                   -- TODO: builtins?
 

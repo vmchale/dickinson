@@ -8,31 +8,36 @@ Dickinson
         , unique = Unique { unUnique = 5 }
         , loc = ()
         }
-      , defExpr = Let ()
-        (
+      , defExpr = Let
+        { exprAnn = ()
+        , letBinds =
           ( Name
             { name = "a" :| []
             , unique = Unique { unUnique = 6 }
             , loc = ()
             }
-          , Let ()
-            (
+          , Let
+            { exprAnn = ()
+            , letBinds =
               ( Name
                 { name = "a" :| []
                 , unique = Unique { unUnique = 9 }
                 , loc = ()
                 }
-              , Literal () "man"
+              , Literal
+                { exprAnn = ()
+                , litText = "man"
+                }
               ) :| []
-            )
-            ( Var ()
-              ( Name
+            , letExpr = Var
+              { exprAnn = ()
+              , exprVar = Name
                 { name = "a" :| []
                 , unique = Unique { unUnique = 9 }
                 , loc = ()
                 }
-              )
-            )
+              }
+            }
           ) :|
           [
             ( Name
@@ -40,24 +45,28 @@ Dickinson
               , unique = Unique { unUnique = 7 }
               , loc = ()
               }
-            , Let ()
-              (
+            , Let
+              { exprAnn = ()
+              , letBinds =
                 ( Name
                   { name = "a" :| []
                   , unique = Unique { unUnique = 10 }
                   , loc = ()
                   }
-                , Literal () "woman"
+                , Literal
+                  { exprAnn = ()
+                  , litText = "woman"
+                  }
                 ) :| []
-              )
-              ( Var ()
-                ( Name
+              , letExpr = Var
+                { exprAnn = ()
+                , exprVar = Name
                   { name = "a" :| []
                   , unique = Unique { unUnique = 10 }
                   , loc = ()
                   }
-                )
-              )
+                }
+              }
             )
           ,
             ( Name
@@ -65,68 +74,75 @@ Dickinson
               , unique = Unique { unUnique = 8 }
               , loc = ()
               }
-            , Let ()
-              (
+            , Let
+              { exprAnn = ()
+              , letBinds =
                 ( Name
                   { name = "a" :| []
                   , unique = Unique { unUnique = 11 }
                   , loc = ()
                   }
-                , Literal () "non-binary"
+                , Literal
+                  { exprAnn = ()
+                  , litText = "non-binary"
+                  }
                 ) :| []
-              )
-              ( Var ()
-                ( Name
+              , letExpr = Var
+                { exprAnn = ()
+                , exprVar = Name
                   { name = "a" :| []
                   , unique = Unique { unUnique = 11 }
                   , loc = ()
                   }
-                )
-              )
+                }
+              }
             )
           ]
-        )
-        ( Choice ()
-          (
+        , letExpr = Choice
+          { exprAnn = ()
+          , choices =
             ( 1.0
-            , Let ()
-              (
+            , Let
+              { exprAnn = ()
+              , letBinds =
                 ( Name
                   { name = "b" :| []
                   , unique = Unique { unUnique = 12 }
                   , loc = ()
                   }
-                , Var ()
-                  ( Name
+                , Var
+                  { exprAnn = ()
+                  , exprVar = Name
                     { name = "a" :| []
                     , unique = Unique { unUnique = 6 }
                     , loc = ()
                     }
-                  )
+                  }
                 ) :| []
-              )
-              ( Var ()
-                ( Name
+              , letExpr = Var
+                { exprAnn = ()
+                , exprVar = Name
                   { name = "b" :| []
                   , unique = Unique { unUnique = 12 }
                   , loc = ()
                   }
-                )
-              )
+                }
+              }
             ) :|
             [
               ( 1.0
-              , Var ()
-                ( Name
+              , Var
+                { exprAnn = ()
+                , exprVar = Name
                   { name = "b" :| []
                   , unique = Unique { unUnique = 7 }
                   , loc = ()
                   }
-                )
+                }
               )
             ]
-          )
-        )
+          }
+        }
       }
     ]
   }

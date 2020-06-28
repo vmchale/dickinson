@@ -1,0 +1,6 @@
+%-
+
+tydecl sex = Boy | Girl
+
+(:def main
+  "Hello, World!")

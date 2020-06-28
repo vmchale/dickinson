@@ -8,40 +8,50 @@ Dickinson
         , unique = Unique { unUnique = 5 }
         , loc = ()
         }
-      , defExpr = Lambda ()
-        ( Name
+      , defExpr = Lambda
+        { exprAnn = ()
+        , lambdaVar = Name
           { name = "qu" :| []
           , unique = Unique { unUnique = 7 }
           , loc = ()
           }
-        ) TyText
-        ( Lambda ()
-          ( Name
+        , lambdaTy = TyText ()
+        , lambdaExpr = Lambda
+          { exprAnn = ()
+          , lambdaVar = Name
             { name = "name" :| []
             , unique = Unique { unUnique = 8 }
             , loc = ()
             }
-          ) TyText
-          ( Interp ()
-            [ Var ()
-              ( Name
-                { name = "qu" :| []
-                , unique = Unique { unUnique = 7 }
-                , loc = ()
+          , lambdaTy = TyText ()
+          , lambdaExpr = Interp
+            { exprAnn = ()
+            , exprInterp =
+              [ Var
+                { exprAnn = ()
+                , exprVar = Name
+                  { name = "qu" :| []
+                  , unique = Unique { unUnique = 7 }
+                  , loc = ()
+                  }
                 }
-              )
-            , StrChunk () "
+              , StrChunk
+                { exprAnn = ()
+                , chunkText = "
         — "
-            , Var ()
-              ( Name
-                { name = "name" :| []
-                , unique = Unique { unUnique = 8 }
-                , loc = ()
                 }
-              )
-            ]
-          )
-        )
+              , Var
+                { exprAnn = ()
+                , exprVar = Name
+                  { name = "name" :| []
+                  , unique = Unique { unUnique = 8 }
+                  , loc = ()
+                  }
+                }
+              ]
+            }
+          }
+        }
       }
     , Define
       { declAnn = ()
@@ -50,22 +60,34 @@ Dickinson
         , unique = Unique { unUnique = 6 }
         , loc = ()
         }
-      , defExpr = Choice ()
-        (
+      , defExpr = Choice
+        { exprAnn = ()
+        , choices =
           ( 1.0
-          , Apply ()
-            ( Apply ()
-              ( Var ()
-                ( Name
+          , Apply
+            { exprAnn = ()
+            , exprFun = Apply
+              { exprAnn = ()
+              , exprFun = Var
+                { exprAnn = ()
+                , exprVar = Name
                   { name = "quote" :| []
                   , unique = Unique { unUnique = 5 }
                   , loc = ()
                   }
-                )
-              ) ( Literal () "God created war so that Americans would learn geography." )
-            ) ( Literal () "Mark Twain" )
+                }
+              , exprArg = Literal
+                { exprAnn = ()
+                , litText = "God created war so that Americans would learn geography."
+                }
+              }
+            , exprArg = Literal
+              { exprAnn = ()
+              , litText = "Mark Twain"
+              }
+            }
           ) :| []
-        )
+        }
       }
     ]
   }

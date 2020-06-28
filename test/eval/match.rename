@@ -8,26 +8,26 @@ Dickinson
         , unique = Unique { unUnique = 11 }
         , loc = ()
         }
-      , defExpr = Lambda ()
-        ( Name
+      , defExpr = Lambda
+        { exprAnn = ()
+        , lambdaVar = Name
           { name = "xy" :| []
           , unique = Unique { unUnique = 15 }
           , loc = ()
           }
-        )
-        ( TyTuple
-          ( TyText :| [ TyText ] )
-        )
-        ( Match ()
-          ( Var ()
-            ( Name
+        , lambdaTy = TyTuple ()
+          ( TyText () :| [ TyText () ] )
+        , lambdaExpr = Match
+          { exprAnn = ()
+          , exprMatch = Var
+            { exprAnn = ()
+            , exprVar = Name
               { name = "xy" :| []
               , unique = Unique { unUnique = 15 }
               , loc = ()
               }
-            )
-          )
-          ( PatternTuple ()
+            }
+          , exprPat = PatternTuple ()
             ( PatternVar ()
               ( Name
                 { name = "x" :| []
@@ -36,16 +36,16 @@ Dickinson
                 }
               ) :| [ Wildcard () ]
             )
-          )
-          ( Var ()
-            ( Name
+          , exprIn = Var
+            { exprAnn = ()
+            , exprVar = Name
               { name = "x" :| []
               , unique = Unique { unUnique = 16 }
               , loc = ()
               }
-            )
-          )
-        )
+            }
+          }
+        }
       }
     , Define
       { declAnn = ()
@@ -54,26 +54,26 @@ Dickinson
         , unique = Unique { unUnique = 12 }
         , loc = ()
         }
-      , defExpr = Lambda ()
-        ( Name
+      , defExpr = Lambda
+        { exprAnn = ()
+        , lambdaVar = Name
           { name = "xy" :| []
           , unique = Unique { unUnique = 17 }
           , loc = ()
           }
-        )
-        ( TyTuple
-          ( TyText :| [ TyText ] )
-        )
-        ( Match ()
-          ( Var ()
-            ( Name
+        , lambdaTy = TyTuple ()
+          ( TyText () :| [ TyText () ] )
+        , lambdaExpr = Match
+          { exprAnn = ()
+          , exprMatch = Var
+            { exprAnn = ()
+            , exprVar = Name
               { name = "xy" :| []
               , unique = Unique { unUnique = 17 }
               , loc = ()
               }
-            )
-          )
-          ( PatternTuple ()
+            }
+          , exprPat = PatternTuple ()
             ( Wildcard () :|
               [ PatternVar ()
                 ( Name
@@ -84,16 +84,16 @@ Dickinson
                 )
               ]
             )
-          )
-          ( Var ()
-            ( Name
+          , exprIn = Var
+            { exprAnn = ()
+            , exprVar = Name
               { name = "y" :| []
               , unique = Unique { unUnique = 18 }
               , loc = ()
               }
-            )
-          )
-        )
+            }
+          }
+        }
       }
     , Define
       { declAnn = ()
@@ -102,40 +102,42 @@ Dickinson
         , unique = Unique { unUnique = 13 }
         , loc = ()
         }
-      , defExpr = Lambda ()
-        ( Name
+      , defExpr = Lambda
+        { exprAnn = ()
+        , lambdaVar = Name
           { name = "dog" :| []
           , unique = Unique { unUnique = 19 }
           , loc = ()
           }
-        )
-        ( TyTuple
-          ( TyText :| [ TyText ] )
-        )
-        ( Let ()
-          (
+        , lambdaTy = TyTuple ()
+          ( TyText () :| [ TyText () ] )
+        , lambdaExpr = Let
+          { exprAnn = ()
+          , letBinds =
             ( Name
               { name = "name" :| []
               , unique = Unique { unUnique = 20 }
               , loc = ()
               }
-            , Apply ()
-              ( Var ()
-                ( Name
+            , Apply
+              { exprAnn = ()
+              , exprFun = Var
+                { exprAnn = ()
+                , exprVar = Name
                   { name = "fst" :| []
                   , unique = Unique { unUnique = 11 }
                   , loc = ()
                   }
-                )
-              )
-              ( Var ()
-                ( Name
+                }
+              , exprArg = Var
+                { exprAnn = ()
+                , exprVar = Name
                   { name = "dog" :| []
                   , unique = Unique { unUnique = 19 }
                   , loc = ()
                   }
-                )
-              )
+                }
+              }
             ) :|
             [
               ( Name
@@ -143,78 +145,105 @@ Dickinson
                 , unique = Unique { unUnique = 21 }
                 , loc = ()
                 }
-              , Apply ()
-                ( Var ()
-                  ( Name
+              , Apply
+                { exprAnn = ()
+                , exprFun = Var
+                  { exprAnn = ()
+                  , exprVar = Name
                     { name = "snd" :| []
                     , unique = Unique { unUnique = 12 }
                     , loc = ()
                     }
-                  )
-                )
-                ( Var ()
-                  ( Name
+                  }
+                , exprArg = Var
+                  { exprAnn = ()
+                  , exprVar = Name
                     { name = "dog" :| []
                     , unique = Unique { unUnique = 19 }
                     , loc = ()
                     }
-                  )
-                )
+                  }
+                }
               )
             ]
-          )
-          ( Choice ()
-            (
+          , letExpr = Choice
+            { exprAnn = ()
+            , choices =
               ( 0.3333333333333333
-              , Interp ()
-                [ Var ()
-                  ( Name
-                    { name = "name" :| []
-                    , unique = Unique { unUnique = 20 }
-                    , loc = ()
+              , Interp
+                { exprAnn = ()
+                , exprInterp =
+                  [ Var
+                    { exprAnn = ()
+                    , exprVar = Name
+                      { name = "name" :| []
+                      , unique = Unique { unUnique = 20 }
+                      , loc = ()
+                      }
                     }
-                  )
-                , StrChunk () " is a heckin' fine floofer"
-                ]
+                  , StrChunk
+                    { exprAnn = ()
+                    , chunkText = " is a heckin' fine floofer"
+                    }
+                  ]
+                }
               ) :|
               [
                 ( 0.3333333333333333
-                , Interp ()
-                  [ Var ()
-                    ( Name
-                      { name = "name" :| []
-                      , unique = Unique { unUnique = 20 }
-                      , loc = ()
+                , Interp
+                  { exprAnn = ()
+                  , exprInterp =
+                    [ Var
+                      { exprAnn = ()
+                      , exprVar = Name
+                        { name = "name" :| []
+                        , unique = Unique { unUnique = 20 }
+                        , loc = ()
+                        }
                       }
-                    )
-                  , StrChunk () " is a good woofer"
-                  ]
+                    , StrChunk
+                      { exprAnn = ()
+                      , chunkText = " is a good woofer"
+                      }
+                    ]
+                  }
                 )
               ,
                 ( 0.3333333333333333
-                , Interp ()
-                  [ Var ()
-                    ( Name
-                      { name = "name" :| []
-                      , unique = Unique { unUnique = 20 }
-                      , loc = ()
+                , Interp
+                  { exprAnn = ()
+                  , exprInterp =
+                    [ Var
+                      { exprAnn = ()
+                      , exprVar = Name
+                        { name = "name" :| []
+                        , unique = Unique { unUnique = 20 }
+                        , loc = ()
+                        }
                       }
-                    )
-                  , StrChunk () " eats toilet paper sometimes but "
-                  , Var ()
-                    ( Name
-                      { name = "pronoun" :| []
-                      , unique = Unique { unUnique = 21 }
-                      , loc = ()
+                    , StrChunk
+                      { exprAnn = ()
+                      , chunkText = " eats toilet paper sometimes but "
                       }
-                    )
-                  , StrChunk () " tries."
-                  ]
+                    , Var
+                      { exprAnn = ()
+                      , exprVar = Name
+                        { name = "pronoun" :| []
+                        , unique = Unique { unUnique = 21 }
+                        , loc = ()
+                        }
+                      }
+                    , StrChunk
+                      { exprAnn = ()
+                      , chunkText = " tries."
+                      }
+                    ]
+                  }
                 )
               ]
-            )
-          )
-        )
+            }
+          }
+        }
       }
     , Define
       { declAnn = ()
@@ -223,18 +252,29 @@ Dickinson
         , unique = Unique { unUnique = 14 }
         , loc = ()
         }
-      , defExpr = Apply ()
-        ( Var ()
-          ( Name
+      , defExpr = Apply
+        { exprAnn = ()
+        , exprFun = Var
+          { exprAnn = ()
+          , exprVar = Name
             { name = "greeter" :| []
             , unique = Unique { unUnique = 13 }
             , loc = ()
             }
-          )
-        )
-        ( Tuple ()
-          ( Literal () "Maxine" :| [ Literal () "she" ] )
-        )
+          }
+        , exprArg = Tuple
+          { exprAnn = ()
+          , exprTup = Literal
+            { exprAnn = ()
+            , litText = "Maxine"
+            } :|
+            [ Literal
+              { exprAnn = ()
+              , litText = "she"
+              }
+            ]
+          }
+        }
       }
     ]
   }

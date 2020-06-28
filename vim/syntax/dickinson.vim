@@ -6,6 +6,11 @@ endif
 
 syntax match dickinsonSymbol ":"
 
+syntax match dickinsonNum "\v[0-9]+"
+syntax match dickinsonNum "\v[0-9]+\.[0-9]+"
+
+syntax match dickinsonIdentifier "\v[a-zA-Z0-9]+"
+
 syntax match dickinsonKeyword ":include"
 syntax match dickinsonKeyword ":def"
 syntax match dickinsonKeyword ":branch"
@@ -14,11 +19,7 @@ syntax match dickinsonKeyword ":let"
 syntax match dickinsonKeyword ":lambda"
 syntax match dickinsonKeyword ":match"
 syntax match dickinsonKeyword ":flatten"
-
-syntax match dickinsonNum "\v[0-9]+"
-syntax match dickinsonNum "\v[0-9]+\.[0-9]+"
-
-syntax match dickinsonIdentifier "\v[a-zA-Z0-9]+"
+syntax match dickinsonKeyword "tydecl"
 
 syntax match dickinsonEsc +\\["\\n]+
 

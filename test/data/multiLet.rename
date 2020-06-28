@@ -8,14 +8,18 @@ Dickinson
         , unique = Unique { unUnique = 5 }
         , loc = ()
         }
-      , defExpr = Let ()
-        (
+      , defExpr = Let
+        { exprAnn = ()
+        , letBinds =
           ( Name
             { name = "a" :| []
             , unique = Unique { unUnique = 7 }
             , loc = ()
             }
-          , Literal () "man"
+          , Literal
+            { exprAnn = ()
+            , litText = "man"
+            }
           ) :|
           [
             ( Name
@@ -23,34 +27,39 @@ Dickinson
               , unique = Unique { unUnique = 8 }
               , loc = ()
               }
-            , Literal () "woman"
+            , Literal
+              { exprAnn = ()
+              , litText = "woman"
+              }
             )
           ]
-        )
-        ( Choice ()
-          (
+        , letExpr = Choice
+          { exprAnn = ()
+          , choices =
             ( 1.0
-            , Var ()
-              ( Name
+            , Var
+              { exprAnn = ()
+              , exprVar = Name
                 { name = "a" :| []
                 , unique = Unique { unUnique = 7 }
                 , loc = ()
                 }
-              )
+              }
             ) :|
             [
               ( 1.0
-              , Var ()
-                ( Name
+              , Var
+                { exprAnn = ()
+                , exprVar = Name
                   { name = "b" :| []
                   , unique = Unique { unUnique = 8 }
                   , loc = ()
                   }
-                )
+                }
               )
             ]
-          )
-        )
+          }
+        }
       }
     , Define
       { declAnn = ()
@@ -59,40 +68,46 @@ Dickinson
         , unique = Unique { unUnique = 6 }
         , loc = ()
         }
-      , defExpr = Let ()
-        (
+      , defExpr = Let
+        { exprAnn = ()
+        , letBinds =
           ( Name
             { name = "a" :| []
             , unique = Unique { unUnique = 9 }
             , loc = ()
             }
-          , Literal () "non-binary"
+          , Literal
+            { exprAnn = ()
+            , litText = "non-binary"
+            }
           ) :| []
-        )
-        ( Choice ()
-          (
+        , letExpr = Choice
+          { exprAnn = ()
+          , choices =
             ( 1.0
-            , Var ()
-              ( Name
+            , Var
+              { exprAnn = ()
+              , exprVar = Name
                 { name = "letBinding" :| []
                 , unique = Unique { unUnique = 5 }
                 , loc = ()
                 }
-              )
+              }
             ) :|
             [
               ( 1.0
-              , Var ()
-                ( Name
+              , Var
+                { exprAnn = ()
+                , exprVar = Name
                   { name = "a" :| []
                   , unique = Unique { unUnique = 9 }
                   , loc = ()
                   }
-                )
+                }
               )
             ]
-          )
-        )
+          }
+        }
       }
     ]
   }

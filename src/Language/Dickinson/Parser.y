@@ -59,6 +59,7 @@ import Language.Dickinson.Unique
     underscore { TokSym $$ Underscore }
     colon { TokSym $$ Colon }
     declBreak { TokSym $$ DeclBreak }
+    eq { TokSym $$ Eq }
 
     beginInterp { TokSym $$ BeginInterp }
     endInterp { TokSym $$ EndInterp }
@@ -71,10 +72,12 @@ import Language.Dickinson.Unique
     lambda { TokKeyword $$ KwLambda }
     match { TokKeyword $$ KwMatch }
     flatten { TokKeyword $$ KwFlatten }
+    tydecl { TokKeyword $$ KwTyDecl }
 
     text { TokKeyword $$ KwText }
 
     ident { $$@(TokIdent _ _) }
+    tyIdent { $$@(TokTyCons _ _) }
 
     strChunk { $$@(TokStrChunk _ _) }
     stringLiteral { $$@(TokString _ _) }
@@ -105,12 +108,17 @@ Dickinson :: { Dickinson AlexPosn }
 
 Declaration :: { Declaration AlexPosn }
             : def Name Expression { Define $1 $2 $3 }
+            | tydecl Name eq TyCons { TyDecl $1 $2 $4 }
 
 Import :: { Import AlexPosn }
        : include Name { Import $1 $2 }
 
 Name :: { Name AlexPosn }
      : ident { ident $1 }
+
+-- TODO: only parses >= 2 constructors lol
+TyCons :: { NonEmpty (TyName AlexPosn) }
+       : sepBy(tyIdent,vbar) { fmap tyIdent $1 }
 
 Type :: { DickinsonTy AlexPosn }
      : text { TyText $1 }

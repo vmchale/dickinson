@@ -8,36 +8,39 @@ Dickinson
         , unique = Unique { unUnique = 4 }
         , loc = ()
         }
-      , defExpr = Let ()
-        (
+      , defExpr = Let
+        { exprAnn = ()
+        , letBinds =
           ( Name
             { name = "xy" :| []
             , unique = Unique { unUnique = 5 }
             , loc = ()
             }
-          , Literal () "hello"
+          , Literal
+            { exprAnn = ()
+            , litText = "hello"
+            }
           ) :| []
-        )
-        ( Lambda ()
-          ( Name
+        , letExpr = Lambda
+          { exprAnn = ()
+          , lambdaVar = Name
             { name = "xy" :| []
             , unique = Unique { unUnique = 6 }
             , loc = ()
             }
-          )
-          ( TyTuple
-            ( TyText :| [ TyText ] )
-          )
-          ( Match ()
-            ( Var ()
-              ( Name
+          , lambdaTy = TyTuple ()
+            ( TyText () :| [ TyText () ] )
+          , lambdaExpr = Match
+            { exprAnn = ()
+            , exprMatch = Var
+              { exprAnn = ()
+              , exprVar = Name
                 { name = "xy" :| []
                 , unique = Unique { unUnique = 6 }
                 , loc = ()
                 }
-              )
-            )
-            ( PatternTuple ()
+              }
+            , exprPat = PatternTuple ()
               ( PatternVar ()
                 ( Name
                   { name = "x" :| []
@@ -46,17 +49,17 @@ Dickinson
                   }
                 ) :| [ Wildcard () ]
               )
-            )
-            ( Var ()
-              ( Name
+            , exprIn = Var
+              { exprAnn = ()
+              , exprVar = Name
                 { name = "x" :| []
                 , unique = Unique { unUnique = 7 }
                 , loc = ()
                 }
-              )
-            )
-          )
-        )
+              }
+            }
+          }
+        }
       }
     ]
   }

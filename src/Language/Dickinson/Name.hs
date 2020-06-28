@@ -3,7 +3,8 @@
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Language.Dickinson.Name ( Name (..)
+module Language.Dickinson.Name ( TyName
+                               , Name (..)
                                , NameEnv
                                , isMain
                                ) where
@@ -19,6 +20,8 @@ import           Data.Text.Prettyprint.Doc     (Pretty (pretty))
 import           Data.Text.Prettyprint.Doc.Ext (intercalate)
 import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Unique
+
+type TyName a = Name a
 
 -- | A (possibly qualified) name.
 data Name a = Name { name   :: NonEmpty T.Text

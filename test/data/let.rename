@@ -8,14 +8,18 @@ Dickinson
         , unique = Unique { unUnique = 4 }
         , loc = ()
         }
-      , defExpr = Let ()
-        (
+      , defExpr = Let
+        { exprAnn = ()
+        , letBinds =
           ( Name
             { name = "a" :| []
             , unique = Unique { unUnique = 5 }
             , loc = ()
             }
-          , Literal () "man"
+          , Literal
+            { exprAnn = ()
+            , litText = "man"
+            }
           ) :|
           [
             ( Name
@@ -23,34 +27,39 @@ Dickinson
               , unique = Unique { unUnique = 6 }
               , loc = ()
               }
-            , Literal () "woman"
+            , Literal
+              { exprAnn = ()
+              , litText = "woman"
+              }
             )
           ]
-        )
-        ( Choice ()
-          (
+        , letExpr = Choice
+          { exprAnn = ()
+          , choices =
             ( 1.0
-            , Var ()
-              ( Name
+            , Var
+              { exprAnn = ()
+              , exprVar = Name
                 { name = "a" :| []
                 , unique = Unique { unUnique = 5 }
                 , loc = ()
                 }
-              )
+              }
             ) :|
             [
               ( 1.0
-              , Var ()
-                ( Name
+              , Var
+                { exprAnn = ()
+                , exprVar = Name
                   { name = "b" :| []
                   , unique = Unique { unUnique = 6 }
                   , loc = ()
                   }
-                )
+                }
               )
             ]
-          )
-        )
+          }
+        }
       }
     ]
   }

@@ -8,25 +8,36 @@ Dickinson
         , unique = Unique { unUnique = 5 }
         , loc = ()
         }
-      , defExpr = Lambda ()
-        ( Name
+      , defExpr = Lambda
+        { exprAnn = ()
+        , lambdaVar = Name
           { name = "name" :| []
           , unique = Unique { unUnique = 7 }
           , loc = ()
           }
-        ) TyText
-        ( Interp ()
-          [ StrChunk () "Hello, "
-          , Var ()
-            ( Name
-              { name = "name" :| []
-              , unique = Unique { unUnique = 7 }
-              , loc = ()
+        , lambdaTy = TyText ()
+        , lambdaExpr = Interp
+          { exprAnn = ()
+          , exprInterp =
+            [ StrChunk
+              { exprAnn = ()
+              , chunkText = "Hello, "
               }
-            )
-          , StrChunk () "!"
-          ]
-        )
+            , Var
+              { exprAnn = ()
+              , exprVar = Name
+                { name = "name" :| []
+                , unique = Unique { unUnique = 7 }
+                , loc = ()
+                }
+              }
+            , StrChunk
+              { exprAnn = ()
+              , chunkText = "!"
+              }
+            ]
+          }
+        }
       }
     , Define
       { declAnn = ()
@@ -35,44 +46,53 @@ Dickinson
         , unique = Unique { unUnique = 6 }
         , loc = ()
         }
-      , defExpr = Let ()
-        (
+      , defExpr = Let
+        { exprAnn = ()
+        , letBinds =
           ( Name
             { name = "boy" :| []
             , unique = Unique { unUnique = 8 }
             , loc = ()
             }
-          , Choice ()
-            (
+          , Choice
+            { exprAnn = ()
+            , choices =
               ( 0.5
-              , Literal () "tom"
+              , Literal
+                { exprAnn = ()
+                , litText = "tom"
+                }
               ) :|
               [
                 ( 0.5
-                , Literal () "harry"
+                , Literal
+                  { exprAnn = ()
+                  , litText = "harry"
+                  }
                 )
               ]
-            )
+            }
           ) :| []
-        )
-        ( Apply ()
-          ( Var ()
-            ( Name
+        , letExpr = Apply
+          { exprAnn = ()
+          , exprFun = Var
+            { exprAnn = ()
+            , exprVar = Name
               { name = "greeter" :| []
               , unique = Unique { unUnique = 5 }
               , loc = ()
               }
-            )
-          )
-          ( Var ()
-            ( Name
+            }
+          , exprArg = Var
+            { exprAnn = ()
+            , exprVar = Name
               { name = "boy" :| []
               , unique = Unique { unUnique = 8 }
               , loc = ()
               }
-            )
-          )
-        )
+            }
+          }
+        }
       }
     ]
   }
