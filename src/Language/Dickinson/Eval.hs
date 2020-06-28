@@ -167,9 +167,6 @@ balanceMax = do
     rename.maxLens .= m'
     lexerStateLens._1 .= m'
 
-declToStMod :: Declaration a -> EvalSt a -> EvalSt a
-declToStMod (Define _ n e) = topLevelMod n . nameMod n e
-
 addDecl :: (MonadState (EvalSt a) m)
         => Declaration a
         -> m ()
