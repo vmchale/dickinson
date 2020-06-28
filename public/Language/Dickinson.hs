@@ -5,7 +5,7 @@ module Language.Dickinson ( -- * Parser
                           -- * Lexer
                           , lexDickinson
                           , AlexPosn
-                          , Token
+                          , Token (..)
                           -- * AST
                           , Dickinson
                           , Declaration (..)
@@ -13,8 +13,6 @@ module Language.Dickinson ( -- * Parser
                           , Pattern (..)
                           , DickinsonTy (..)
                           , Name
-                          -- * Errors
-                          , DickinsonError (..)
                           -- * Imports
                           , resolveImport
                           -- * Version info
@@ -23,7 +21,6 @@ module Language.Dickinson ( -- * Parser
                           ) where
 
 import qualified Data.Version              as V
-import           Language.Dickinson.Error
 import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name

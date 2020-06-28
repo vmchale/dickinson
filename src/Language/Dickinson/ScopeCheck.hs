@@ -22,7 +22,7 @@ insertName (Name _ (Unique i) _) = modify (IS.insert i)
 deleteName :: Name a -> CheckM ()
 deleteName (Name _ (Unique i) _) = modify (IS.delete i)
 
--- | Checks that there are not an identifiers that aren't in scope; needs to run
+-- | Checks that there are not any identifiers that aren't in scope; needs to run
 -- after the renamer
 checkScope :: [Declaration a] -> Maybe (DickinsonError a)
 checkScope = runCheckM . checkDickinson
