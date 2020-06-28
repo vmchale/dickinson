@@ -3,7 +3,6 @@ module Language.Dickinson.Check.Internal ( sanityCheck
 
 import           Control.Monad             (when)
 import           Control.Monad.State       (MonadState)
-import           Data.Text.Prettyprint.Doc (pretty)
 import           Language.Dickinson.Name
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
