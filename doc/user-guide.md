@@ -6,6 +6,13 @@
 Dickinson is a text-generation language for generative literature. Each time you run your
 code, you get back text. The text is chosen randomly based on your code.
 
+# Installing Dickinson
+
+## Editor Integration
+
+A [vim plugin](https://github.com/vmchale/dickinson/tree/master/vim) is
+available.
+
 # Program Structure
 
 Dickinson files begin with `%-`, followed by definitions.

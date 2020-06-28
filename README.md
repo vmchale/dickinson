@@ -29,3 +29,13 @@ and as
 a [pdf](https://github.com/vmchale/dickinson/blob/master/doc/user-guide.pdf).
 
 The source distribution ships with man pages.
+
+### Examples
+
+An riff on the Unix fortune program is available
+[here](https://github.com/vmchale/dickinson/blob/master/examples/fortune.dck).
+Try
+
+```
+emd run examples/fortune.dck
+```
