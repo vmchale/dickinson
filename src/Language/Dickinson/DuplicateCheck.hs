@@ -22,6 +22,7 @@ checkDuplicates = foldMapAlternative checkDeclDuplicates
 
 checkDeclDuplicates :: Declaration a -> Maybe (DickinsonWarning a)
 checkDeclDuplicates (Define _ _ e) = checkExprDuplicates e
+checkDeclDuplicates TyDecl{}       = Nothing
 
 extrText :: Expression a -> Maybe (a, T.Text)
 extrText (Literal l t) = pure (l, t)
@@ -46,3 +47,4 @@ checkExprDuplicates (Lambda _ _ _ e) = checkExprDuplicates e
 checkExprDuplicates (Match _ e _ e') = checkExprDuplicates e <|> checkExprDuplicates e'
 checkExprDuplicates (Flatten _ e)    = checkExprDuplicates e
 checkExprDuplicates (Annot _ e _)    = checkExprDuplicates e
+checkExprDuplicates Constructor{}    = Nothing

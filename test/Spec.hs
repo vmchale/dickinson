@@ -46,6 +46,8 @@ parserTests =
         , parseNoError "test/data/import.dck"
         , detectDuplicate "test/data/multiple.dck"
         , detectDuplicate "test/error/double.dck"
+        , detectDuplicate "test/error/tyDouble.dck"
+        , detectDuplicate "test/error/tyConsDouble.dck"
         , lexNoError "examples/shakespeare.dck"
         , parseNoError "examples/shakespeare.dck"
         , detectScopeError "test/demo/improbableScope.dck"

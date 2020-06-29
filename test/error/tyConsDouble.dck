@@ -1,0 +1,5 @@
+%-
+
+tydecl sex = Boy | Girl
+
+tydecl gender = Boy | Girl | NonBinary

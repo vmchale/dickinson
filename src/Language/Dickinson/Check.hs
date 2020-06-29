@@ -19,8 +19,20 @@ checkNames ns = foldMapAlternative announce (group $ sort ns)
 -- | Checks that there are not name clashes at the top level.
 checkMultiple :: [Declaration a] -> Maybe (DickinsonWarning a)
 checkMultiple ds =
-        checkNames (fmap defName ds)
-    <|> foldMapAlternative checkMultipleExpr (fmap defExpr ds)
+        checkNames (mapMaybe defNameM ds)
+    <|> checkNames (mapMaybe tyDeclNameM ds)
+    <|> foldMapAlternative checkMultipleExpr (mapMaybe defExprM ds)
+    <|> checkNames (concatMap collectConstructors ds)
+    where defNameM (Define _ n _) = Just n
+          defNameM TyDecl{}       = Nothing
+          defExprM (Define _ _ e) = Just e
+          defExprM TyDecl{}       = Nothing
+          tyDeclNameM Define{}       = Nothing
+          tyDeclNameM (TyDecl _ n _) = Just n
+
+collectConstructors :: Declaration a -> [TyName a]
+collectConstructors Define{}        = []
+collectConstructors (TyDecl _ _ cs) = toList cs
 
 checkMultipleExpr :: Expression a -> Maybe (DickinsonWarning a)
 checkMultipleExpr Var{}            = Nothing
