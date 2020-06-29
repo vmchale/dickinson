@@ -56,7 +56,6 @@ loop :: Repl AlexPosn ()
 loop = do
     inp <- getInputLine "emd> "
     case words <$> inp of
-        -- TODO: qualified imports?
         Just []             -> loop
         Just (":h":_)       -> showHelp *> loop
         Just (":help":_)    -> showHelp *> loop
@@ -162,11 +161,17 @@ printExpr str = do
                 setSt newSt
                 case p of
                     Right e -> do
-                        mErr <- lift $ runExceptT $ evalExpressionAsTextM =<< renameExpressionM e
+                        mErr <- lift $ runExceptT $ do
+                            e' <- renameExpressionM e
+                            checkScopeExpr e'
+                            evalExpressionAsTextM e'
                         lift balanceMax
                         putErr mErr (liftIO . TIO.putStrLn)
                     Left decl -> do
-                        mErr <- lift $ runExceptT $ addDecl' =<< renameDeclarationM decl
+                        mErr <- lift $ runExceptT $ do
+                            d <- renameDeclarationM decl
+                            checkScopeDecl d
+                            addDecl' d
                         lift balanceMax
                         putErr mErr (const $ pure ())
 

@@ -1,7 +1,12 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 module Language.Dickinson.ScopeCheck ( checkScope
+                                     , checkScopeExpr
+                                     , checkScopeDecl
                                      ) where
 
 import           Control.Applicative              (Alternative, (<|>))
+import           Control.Monad.Except             (MonadError)
 import           Control.Monad.State              (State, evalState, get, modify)
 import           Data.Foldable                    (asum, traverse_)
 import qualified Data.IntSet                      as IS
@@ -26,6 +31,12 @@ deleteName (Name _ (Unique i) _) = modify (IS.delete i)
 -- after the renamer
 checkScope :: [Declaration a] -> Maybe (DickinsonError a)
 checkScope = runCheckM . checkDickinson
+
+checkScopeExpr :: MonadError (DickinsonError a) m => Expression a -> m ()
+checkScopeExpr = maybeThrow . runCheckM . checkExpr
+
+checkScopeDecl :: MonadError (DickinsonError a) m => Declaration a -> m ()
+checkScopeDecl = maybeThrow . runCheckM . checkDecl
 
 checkDickinson :: [Declaration a] -> CheckM (Maybe (DickinsonError a))
 checkDickinson d = traverse_ insDecl d *> mapSumM checkDecl d
