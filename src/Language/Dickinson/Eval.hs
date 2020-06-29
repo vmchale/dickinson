@@ -289,7 +289,7 @@ resolveExpressionM (Apply _ e e') = do
             withSt (nameMod n e') $
                 resolveExpressionM e''' -- TODO: is this right?
         _ -> error "Ill-typed expression"
-resolveExpressionM e@Lambda{} = pure e -- TODO: is this right?
+resolveExpressionM e@Lambda{} = pure e -- TODO: is this right? need tryResolveExpressionM..?
 resolveExpressionM (Match _ e p e') =
     (bindPattern p =<< resolveExpressionM e) *>
     resolveExpressionM e'
