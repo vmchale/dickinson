@@ -59,6 +59,7 @@ amalgamateRename :: [FilePath]
                  -> IO [Declaration AlexPosn]
 amalgamateRename is fp = flip evalStateT initAmalgamateSt $ fmap eitherThrow $ runExceptT $ amalgamateRenameM is fp
 
+-- TODO: smart formatter
 fmtFile :: FilePath -> IO ()
 fmtFile = putDoc . (<> hardline) . pretty . eitherThrow . parse <=< BSL.readFile
 
@@ -78,6 +79,5 @@ ioChecker checker is = maybeThrowIO . checker <=< amalgamateRename is
 tcFile :: [FilePath] -> FilePath -> IO ()
 tcFile is = eitherThrowIO . tyRun <=< amalgamateRename is
 
--- TODO: runDeclarationM
 evalFile :: [FilePath] -> FilePath -> IO T.Text
 evalFile is = fmap eitherThrow . evalIO . (evalDickinsonAsMain <=< amalgamateRenameM is)
