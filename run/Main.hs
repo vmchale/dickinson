@@ -19,7 +19,7 @@ data Act = Run !FilePath ![FilePath]
 main :: IO ()
 main = run =<< execParser wrapper
 
--- TODO: cache/"compile" &c.
+-- TODO: cache/"compile"?
 
 act :: Parser Act
 act = hsubparser
@@ -71,7 +71,7 @@ dirCompletions = completer . bashCompleter $ "directory"
 wrapper :: ParserInfo Act
 wrapper = info (helper <*> versionMod <*> act)
     (fullDesc
-    <> progDesc "Dickinson text-generation language"
+    <> progDesc "Dickinson text-generation language. See also 'man emd'"
     <> header "Dickinson - a text-generation language")
 
 versionMod :: Parser (a -> a)
