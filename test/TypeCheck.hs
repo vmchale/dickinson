@@ -10,6 +10,7 @@ tcTests = testGroup "Typecheck test"
     [ testCase "Works on :match" testMatchTc
     , testCase "Currying" testCurry
     , testCase "See ADTs" testAdtTc
+    , testCase "Currying (prelude functions)" testCurryPrelude
     ]
 
 testCurry :: Assertion
@@ -20,3 +21,6 @@ testMatchTc = tcFile [] "test/eval/match.dck"
 
 testAdtTc :: Assertion
 testAdtTc = tcFile [] "test/data/adt.dck"
+
+testCurryPrelude :: Assertion
+testCurryPrelude = tcFile [] "prelude/curry.dck"
