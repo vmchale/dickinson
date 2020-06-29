@@ -1,0 +1,4 @@
+%-
+
+(:def main
+  "Nested ${(> "interpolated ${again}" string)} string")

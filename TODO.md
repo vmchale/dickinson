@@ -70,7 +70,7 @@
 - [ ] Builtins
   - [ ] Alliteration
   - [ ] Capitalization lol
-- [ ] Escapes
+- [x] Escapes
 - [ ] docs? links...?
 - [ ] Normalization (for encoding, for one)
 - [ ] Remove duplicates (for regen adjectives...)
