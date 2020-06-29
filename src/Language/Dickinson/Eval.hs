@@ -19,7 +19,7 @@ import           Control.Composition           (thread)
 import           Control.Monad                 ((<=<))
 import           Control.Monad.Except          (MonadError, throwError)
 import qualified Control.Monad.Ext             as Ext
-import           Control.Monad.State.Lazy      (MonadState,get, gets, modify, put)
+import           Control.Monad.State.Lazy      (MonadState, get, gets, modify, put)
 import           Data.Foldable                 (toList, traverse_)
 import qualified Data.IntMap                   as IM
 import           Data.List.NonEmpty            (NonEmpty, (<|))
