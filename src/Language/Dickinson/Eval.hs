@@ -260,6 +260,9 @@ mapChoice :: (NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a)
 mapChoice f (Choice l pes) = Choice l (f pes)
 mapChoice _ e@Literal{}    = e
 mapChoice _ e@StrChunk{}   = e
+mapChoice f (Interp l es)  = Interp l (mapChoice f <$> es)
+mapChoice f (Concat l es)  = Concat l (mapChoice f <$> es)
+mapChoice f (Annot l e ty) = Annot l (mapChoice f e) ty
 
 setFrequency :: NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a)
 setFrequency = fmap (\(_, e) -> (fromIntegral $ {-# SCC "countNodes" #-} countNodes e, e))
@@ -270,6 +273,7 @@ countNodes StrChunk{}     = 1
 countNodes (Choice _ pes) = sum (fmap (countNodes . snd) pes)
 countNodes (Interp _ es)  = product (fmap countNodes es)
 countNodes (Concat _ es)  = product (fmap countNodes es)
+countNodes (Annot _ e _)  = countNodes e
 
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)
 concatOrFail l = fmap (Literal l . mconcat) . traverse evalExpressionAsTextM
@@ -294,7 +298,7 @@ resolveExpressionM (Let _ bs e) = do
     withSt stMod $
         resolveExpressionM e
 resolveExpressionM (Apply _ e e') = do
-    e'' <- tryEvalExpressionM e
+    e'' <- resolveExpressionM e
     case e'' of
         Lambda _ n _ e''' ->
             withSt (nameMod n e') $
