@@ -233,7 +233,7 @@ evalExpressionM (Match _ e p e') = do
     withSt modSt $
         evalExpressionM e'
 evalExpressionM (Flatten _ e) = do
-    e' <- resolveExpressionM e
+    e' <- resolveFlattenM e
     evalExpressionM ({-# SCC "mapChoice.setFrequency" #-} mapChoice setFrequency e')
 evalExpressionM (Annot _ e _) = evalExpressionM e
 
@@ -266,11 +266,43 @@ resolveDeclarationM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m
 resolveDeclarationM (Define l n e) = Define l n <$> resolveExpressionM e
 
 -- | Resolve let bindings and such; no not perform choices or concatenations.
+resolveFlattenM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
+resolveFlattenM e@Literal{}     = pure e
+resolveFlattenM e@StrChunk{}    = pure e
+resolveFlattenM e@Constructor{} = pure e
+resolveFlattenM (Var _ n)       = lookupName n
+resolveFlattenM (Choice l pes) = do
+    let ps = fst <$> pes
+    es <- traverse resolveFlattenM (snd <$> pes)
+    pure $ Choice l (NE.zip ps es)
+resolveFlattenM (Interp l es) = Interp l <$> traverse resolveFlattenM es
+resolveFlattenM (Concat l es) = Concat l <$> traverse resolveFlattenM es
+resolveFlattenM (Tuple l es) = Tuple l <$> traverse resolveFlattenM es
+resolveFlattenM (Let _ bs e) = do
+    let stMod = thread $ fmap (uncurry nameMod) bs
+    withSt stMod $
+        resolveFlattenM e
+resolveFlattenM (Apply _ e e') = do
+    e'' <- resolveFlattenM e
+    case e'' of
+        Lambda _ n _ e''' ->
+            withSt (nameMod n e') $
+                resolveFlattenM e'''
+        _ -> error "Ill-typed expression"
+resolveFlattenM e@Lambda{} = pure e
+resolveFlattenM (Match _ e p e') =
+    (bindPattern p =<< resolveFlattenM e) *>
+    resolveFlattenM e'
+resolveFlattenM (Flatten l e) =
+    Flatten l <$> resolveFlattenM e
+resolveFlattenM (Annot _ e _) = resolveFlattenM e
+
+-- | Resolve let bindings and such; no not perform choices or concatenations.
 resolveExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 resolveExpressionM e@Literal{}     = pure e
 resolveExpressionM e@StrChunk{}    = pure e
 resolveExpressionM e@Constructor{} = pure e
-resolveExpressionM v@(Var _ n)     = maybe (pure v) resolveExpressionM =<< tryLookupName n -- FIXME: not right in case of :flatten
+resolveExpressionM v@(Var _ n)     = maybe (pure v) resolveExpressionM =<< tryLookupName n
 resolveExpressionM (Choice l pes) = do
     let ps = fst <$> pes
     es <- traverse resolveExpressionM (snd <$> pes)
@@ -287,12 +319,11 @@ resolveExpressionM (Apply l e e') = do
     case e'' of
         Lambda _ n _ e''' ->
             withSt (nameMod n e') $
-                resolveExpressionM e''' -- TODO: is this right?
-        _ -> Apply l e'' <$> resolveExpressionM e' -- FIXME: this causes problems with flatten
-resolveExpressionM e@Lambda{} = pure e -- TODO: is this right? need tryResolveExpressionM..?
-resolveExpressionM (Match _ e p e') =
-    (bindPattern p =<< resolveExpressionM e) *>
-    resolveExpressionM e'
+                resolveExpressionM e'''
+        _ -> Apply l e'' <$> resolveExpressionM e'
+resolveExpressionM (Lambda l n ty e) = Lambda l n ty <$> resolveExpressionM e
+resolveExpressionM (Match l e p e') =
+    Match l <$> resolveExpressionM e <*> pure p <*> resolveExpressionM e'
 resolveExpressionM (Flatten l e) =
     Flatten l <$> resolveExpressionM e
 resolveExpressionM (Annot _ e _) = resolveExpressionM e
