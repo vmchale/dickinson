@@ -2,7 +2,7 @@
 
 %-
 
-tydecl sex = Boy | Girl
+; tydecl sex = Boy | Girl
 
 ; see https://github.com/vmchale/doggo-command-line/blob/master/src/main.rs
 (:def greeter
