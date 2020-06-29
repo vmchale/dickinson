@@ -60,6 +60,7 @@
   - [ ] Checkers should work with the module system
   - [ ] Modules don't give global uniqueness; fix scoping/deletions
 - [ ] Sum types (`Boy | Girl`)
+  - [ ] Exhaustiveness checker
 - [x] Tuples/multi-return & agreement.
   - [ ] Def need product types...
     - [x] Dog example?
