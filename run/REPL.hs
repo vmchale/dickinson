@@ -27,6 +27,7 @@ import           Language.Dickinson.Lexer              (AlexPosn, AlexUserState,
 import           Language.Dickinson.Lib
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
+import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
@@ -181,6 +182,9 @@ putErr (Left y) _  = liftIO $ putDoc (pretty y <> hardline)
 loadFile :: FilePath -> Repl AlexPosn ()
 loadFile fp = do
     pathMod <- liftIO defaultLibPath
-    mErr <- lift $ runExceptT $ loadDickinson =<< amalgamateRenameM (pathMod ["."]) fp
+    mErr <- lift $ runExceptT $ do
+        d <- amalgamateRenameM (pathMod ["."]) fp
+        maybeThrow $ checkScope d
+        loadDickinson d
     lift balanceMax
     putErr mErr (const $ pure ())
