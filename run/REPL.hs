@@ -57,6 +57,8 @@ loop = do
     case words <$> inp of
         -- TODO: qualified imports?
         Just []             -> loop
+        Just (":h":_)       -> showHelp *> loop
+        Just (":help":_)    -> showHelp *> loop
         Just (":save":fp:_) -> saveReplSt fp *> loop
         Just (":l":fs)      -> traverse loadFile fs *> loop
         Just (":load":fs)   -> traverse loadFile fs *> loop
@@ -72,6 +74,25 @@ loop = do
         -- TODO: erase/delete names?
         Just{}              -> printExpr (fromJust inp) *> loop
         Nothing             -> pure ()
+
+rightPad :: Int -> String -> String
+rightPad n str = take n $ str ++ repeat ' '
+
+showHelp :: Repl AlexPosn ()
+showHelp = liftIO $ putStr $ concat
+    [ helpOption ":h, :help" "" "Show this help"
+    , helpOption ":save" "<file>" "Save current state"
+    , helpOption ":load, :l" "<file>" "Load file contents"
+    , helpOption ":r" "<file>" "Restore REPL state from a file"
+    , helpOption ":type, :t" "<expression>" "Display the type of an expression"
+    , helpOption ":view, :v" "<name>" "Show the value of a name"
+    , helpOption ":quite, :q" "" "Quit REPL"
+    , helpOption ":list" "" "List all names that are in scope"
+    ]
+
+helpOption :: String -> String -> String -> String
+helpOption cmd args desc =
+    rightPad 15 cmd ++ rightPad 14 args ++ desc ++ "\n"
 
 saveReplSt :: FilePath -> Repl AlexPosn ()
 saveReplSt fp = do
