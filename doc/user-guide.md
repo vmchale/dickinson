@@ -4,7 +4,7 @@
 # Introduction
 
 Dickinson is a text-generation language for generative literature. Each time you run your
-code, you get back text. The text is generated randomly.
+code, you get back randomly generated text.
 
 # Installing Dickinson
 
@@ -15,7 +15,9 @@ First, install [cabal](https://www.haskell.org/cabal/download.html) and
 cabal install language-dickinson
 ```
 
-You may also want to install manpages for reference information about `emd`.
+This provides `emd`, the command-line interface to the Dickinson language.
+
+You may also wish to install manpages for reference information about `emd`.
 
 ## Editor Integration
 
@@ -45,10 +47,12 @@ Save this as `gambling.dck`. Then:
 emd run gambling.dck
 ```
 
-which will display either `heads` or `tails`. The `:oneof` construct selects one
+which will display either `heads` or `tails`.
+
+The `:oneof` construct selects one
 of its branches with equal probability.
 
-In general, when you `emd run` code, `emd` will display the result of evaluating `main`.
+In general, when you `emd run` code, you'll see the result of evaluating `main`.
 
 ## Definitions & Names
 
@@ -66,11 +70,30 @@ We can define names and reference them later:
   gambling)
 ```
 
-We can `emd run` this to the same results.
+We can `emd run` this and it will give the same results as above.
+
+## Branching
+
+When you use `:oneof`, Dickinson picks one of the branches with equal
+probability. If this is not what you want, you can use `:branch`:
+
+```
+%-
+
+(:def unfairCoin
+  (:branch
+    (| 1.0 "heads")
+    (| 1.1 "tails")))
+
+(:def main
+  unfairCoin)
+```
+
+This will scale things so that picking `"tails"` is a little more likely.
 
 ## Interpolation
 
-We can reference and recombine past definitions via string interpolation:
+We can recombine past definitions via string interpolation:
 
 ```
 (:def adjective
@@ -82,6 +105,30 @@ We can reference and recombine past definitions via string interpolation:
 (:def main
   "What a ${adjective}, ${adjective} day!")
 ```
+
+## Expressions
+
+Branches, strings, and interpolations are all expressions. A `:def` can attach
+any expression to a name.
+
+```
+(:def color
+  (:oneof
+    (| "yellow")
+    (| "blue")))
+
+(:def adjective
+  (:oneof
+    (| "beautiful")
+    (| "auspicious")
+    (| color)))
+
+(:def main
+  "What a ${adjective}, ${adjective} day!")
+```
+
+Branches can contain any expression, including names that have been defined
+previously (such as `color` in the example above).
 
 # REPL
 
@@ -120,7 +167,7 @@ We can then evaluate `gambling` if we like
 emd> gambling
 ```
 
-or manipulate names that are in scope, viz.
+or manipulate names that are in scope like so:
 
 ```
 emd> "The result of the coin toss is: ${gambling}"
@@ -135,7 +182,7 @@ emd> announcer
 
 ## Saving & Restoring States
 
-We can save the REPL state, including any defintions we've declared during the
+We can save the REPL state, including any definitions we've declared during the
 session.
 
 ```
@@ -157,7 +204,7 @@ For reference information about the Dickinson REPL:
 
 # Libraries
 
-Dickinson allows pulling in definitions from other files with `:include`. 
+Dickinson allows pulling in definitions from other files with `:include`.
 
 ## Using Libraries
 
