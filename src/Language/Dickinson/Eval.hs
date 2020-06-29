@@ -6,6 +6,7 @@ module Language.Dickinson.Eval ( EvalSt (..)
                                , loadDickinson
                                , evalDickinsonAsMain
                                , resolveExpressionM
+                               , resolveDeclarationM
                                , evalExpressionM
                                , evalExpressionAsTextM
                                , findDecl
@@ -260,6 +261,9 @@ concatOrFail l = fmap (Literal l . mconcat) . traverse evalExpressionAsTextM
 
 evalExpressionAsTextM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 evalExpressionAsTextM = extrText <=< evalExpressionM
+
+resolveDeclarationM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Declaration a -> m (Declaration a)
+resolveDeclarationM (Define l n e) = Define l n <$> resolveExpressionM e
 
 -- | Resolve let bindings and such; no not perform choices or concatenations.
 resolveExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)

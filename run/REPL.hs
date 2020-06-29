@@ -162,7 +162,7 @@ printExpr str = do
                 case p of
                     Right e -> do
                         mErr <- lift $ runExceptT $ do
-                            e' <- renameExpressionM e
+                            e' <- resolveExpressionM =<< renameExpressionM e
                             checkScopeExpr e'
                             evalExpressionAsTextM e'
                         lift balanceMax
@@ -170,7 +170,7 @@ printExpr str = do
                     Left decl -> do
                         mErr <- lift $ runExceptT $ do
                             d <- renameDeclarationM decl
-                            checkScopeDecl d
+                            checkScopeDecl =<< resolveDeclarationM d
                             addDecl' d
                         lift balanceMax
                         putErr mErr (const $ pure ())
