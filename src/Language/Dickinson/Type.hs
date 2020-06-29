@@ -123,6 +123,7 @@ instance Pretty (Pattern a) where
     pretty (PatternVar _ n)    = pretty n
     pretty (PatternTuple _ ps) = tupled (toList (pretty <$> ps))
     pretty Wildcard{}          = "_"
+    pretty (PatternCons _ c)   = pretty c
 
 escReplace :: T.Text -> T.Text
 escReplace =
