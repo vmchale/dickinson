@@ -42,10 +42,22 @@ checkDickinson :: [Declaration a] -> CheckM (Maybe (DickinsonError a))
 checkDickinson d = traverse_ insDecl d *> mapSumM checkDecl d
 
 insDecl :: Declaration a -> CheckM ()
-insDecl (Define _ n _) = insertName n
+insDecl (Define _ n _)   = insertName n
+insDecl (TyDecl _ n tys) = insertName n *> traverse_ insertName tys
 
 checkDecl :: Declaration a -> CheckM (Maybe (DickinsonError a))
 checkDecl (Define _ _ e) = checkExpr e
+checkDecl TyDecl{}       = pure Nothing
+
+checkType :: DickinsonTy a -> CheckM (Maybe (DickinsonError a))
+checkType TyText{}         = pure Nothing
+checkType (TyFun _ ty ty') = (<|>) <$> checkType ty <*> checkType ty'
+checkType (TyTuple _ tys)  = mapSumM checkType tys
+checkType (TyNamed l n@(Name _ (Unique k) _)) = do
+    b <- get
+    if k `IS.member` b
+        then pure Nothing
+        else pure $ Just (UnfoundType l n)
 
 checkExpr :: Expression a -> CheckM (Maybe (DickinsonError a))
 checkExpr Literal{}      = pure Nothing
@@ -56,10 +68,15 @@ checkExpr (Choice _ brs) = mapSumM checkExpr (snd <$> brs)
 checkExpr (Concat _ es)  = mapSumM checkExpr es
 checkExpr (Tuple _ es)   = mapSumM checkExpr es
 checkExpr (Flatten _ e)  = checkExpr e
-checkExpr (Annot _ e _)  = checkExpr e
+checkExpr (Annot _ e ty) = (<|>) <$> checkExpr e <*> checkType ty
 checkExpr (Lambda _ n _ e) = do
     insertName n
     checkExpr e <* deleteName n
+checkExpr (Constructor _ n@(Name _ (Unique i) l)) = do
+    b <- get
+    if i `IS.member` b
+        then pure Nothing
+        else pure $ Just (UnfoundConstructor l n)
 checkExpr (Var _ n@(Name _ (Unique i) l)) = do
     b <- get
     if i `IS.member` b

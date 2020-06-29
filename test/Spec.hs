@@ -53,6 +53,9 @@ parserTests =
         , detectScopeError "test/demo/improbableScope.dck"
         , detectBadBranch "test/demo/sillyOption.dck"
         , noScopeError "test/demo/circular.dck"
+        , noScopeError "test/data/adt.dck"
+        , detectScopeError "test/error/tyScope.dck"
+        , detectScopeError "test/error/constructorScope.dck"
         , findPath
         ]
 

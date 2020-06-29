@@ -29,6 +29,7 @@ data DickinsonError a = UnfoundName a (Name a)
                       | MalformedTuple a
                       | InternalError
                       | UnfoundConstructor a (TyName a)
+                      | UnfoundType a (Name a)
                       deriving (Generic, NFData)
 
 data DickinsonWarning a = MultipleNames a (Name a) -- TODO: throw both?
@@ -53,6 +54,7 @@ instance (Pretty a) => Pretty (DickinsonError a) where
     pretty (MalformedTuple l)        = pretty l <+> "Malformed tuple"
     pretty InternalError             = "Internal error. Please report this as a bug: https://github.com/vmchale/dickinson/issues"
     pretty (UnfoundConstructor l tn) = pretty l <+> "Constructor" <+> pretty tn <+> "not found"
+    pretty (UnfoundType l ty)        = pretty l <+> "Type" <+> pretty ty <+> "not found"
 
 instance (Pretty a, Typeable a) => Exception (DickinsonError a)
 

@@ -1,0 +1,6 @@
+%-
+
+tydecl sex = Boy | Girl
+
+(:def boy   
+  Boy : gender)
