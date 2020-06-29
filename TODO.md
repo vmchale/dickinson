@@ -7,6 +7,7 @@
 - [ ] Normalization
 # Documentation
 - [x] manpages
+- [ ] `:flatten`
 - [ ] Tutorial/walkthrough?
   - [ ] Getting started?
 - [x] User guide (see happy?)

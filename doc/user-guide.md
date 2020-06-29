@@ -108,8 +108,8 @@ We can recombine past definitions via string interpolation:
 
 ## Expressions
 
-Branches, strings, and interpolations are all expressions. A `:def` can attach
-any expression to a name.
+Branches, strings, and interpolations are expressions. A `:def` can attach
+an expression to a name.
 
 ```
 (:def color
