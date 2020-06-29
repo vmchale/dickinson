@@ -17,18 +17,27 @@ evalTests = testGroup "Evaluation test"
     , resultCase "test/demo/tyAnnot.dck"
     , resultCase "test/data/quoteify.dck"
     , resultCase "test/data/hangIndefinitely.dck"
+    , resolveCase "test/data/hangIndefinitely.dck"
     ]
 
-forceText :: a -> Assertion
-forceText = (`seq` pure ())
+forceResult :: a -> Assertion
+forceResult = (`seq` pure ())
 
 resultCase :: FilePath -> TestTree
 resultCase fp = testCase fp $ result fp
 
+resolveCase :: FilePath -> TestTree
+resolveCase fp = testCase fp $ resolve fp
+
+resolve :: FilePath -> Assertion
+resolve fp = do
+    res <- resolveFile ["prelude", "lib"] fp
+    forceResult res
+
 result :: FilePath -> Assertion
 result fp = do
     res <- evalFile ["prelude", "lib"] fp
-    forceText res
+    forceResult res
 
 constEval :: Assertion
 constEval = do

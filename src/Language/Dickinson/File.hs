@@ -8,6 +8,7 @@ module Language.Dickinson.File ( evalFile
                                , amalgamateRenameM
                                , fmtFile
                                , pipeline
+                               , resolveFile
                                ) where
 
 import           Control.Applicative                   ((<|>))
@@ -91,6 +92,9 @@ tcFile is = eitherThrowIO . tyRun <=< amalgamateRename is
 
 evalFile :: [FilePath] -> FilePath -> IO T.Text
 evalFile is = fmap eitherThrow . evalIO . (evalDickinsonAsMain <=< amalgamateRenameM is)
+
+resolveFile :: [FilePath] -> FilePath -> IO [Declaration AlexPosn]
+resolveFile is = fmap eitherThrow . evalIO . (traverse resolveDeclarationM <=< amalgamateRenameM is)
 
 pipeline :: [FilePath] -> FilePath -> IO T.Text
 pipeline is fp = fmap eitherThrow $ evalIO $ do
