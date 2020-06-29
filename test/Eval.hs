@@ -8,7 +8,7 @@ import           Test.Tasty              (TestTree, testGroup)
 import           Test.Tasty.HUnit        (Assertion, testCase, (@?=))
 
 evalTests :: TestTree
-evalTests = testGroup "Evalutation test"
+evalTests = testGroup "Evaluation test"
     [ testCase "Should evalutate to a constant" constEval
     , testCase "Should allow declarations in other orders" scopeEval
     , testCase "Should allow higher-order functions" higherOrderEval
