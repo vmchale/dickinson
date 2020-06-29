@@ -30,7 +30,6 @@ import qualified Data.Map                      as M
 import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc     (Doc, Pretty (..), vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
-import           Debug.Trace
 import           Language.Dickinson.Error
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
@@ -49,7 +48,6 @@ data EvalSt a = EvalSt
     , boundExpr     :: IM.IntMap (Expression a)
     , renameCtx     :: Renames
     -- TODO: map to uniques or an expression?
-    -- TODO: module context for topLevel?
     , topLevel      :: M.Map T.Text Unique
     -- For imports & such.
     , lexerState    :: AlexUserState
@@ -196,10 +194,6 @@ bindPattern Wildcard{} _                     = pure id
 bindPattern (PatternTuple _ ps) (Tuple _ es) = thread <$> Ext.zipWithM bindPattern ps es
 bindPattern (PatternTuple l _) _             = throwError $ MalformedTuple l
 
-noVars :: Expression a -> Bool
-noVars StrChunk{} = True
-noVars _          = False
-
 -- To partially apply lambdas
 tryEvalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 tryEvalExpressionM e@Literal{}    = pure e
@@ -228,18 +222,19 @@ tryEvalExpressionM (Match l e p e') =
     Match l <$> tryEvalExpressionM e <*> pure p <*> tryEvalExpressionM e'
 
 evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
-evalExpressionM e@Literal{}    = pure e
-evalExpressionM e@StrChunk{}   = pure e
-evalExpressionM (Var _ n)      = evalExpressionM =<< lookupName n
-evalExpressionM (Choice _ pes) = evalExpressionM =<< pick pes
-evalExpressionM (Interp l es)  = concatOrFail l es
-evalExpressionM (Concat l es)  = concatOrFail l es
-evalExpressionM (Tuple l es)   = Tuple l <$> traverse evalExpressionM es
+evalExpressionM e@Literal{}     = pure e
+evalExpressionM e@StrChunk{}    = pure e
+evalExpressionM e@Constructor{} = pure e
+evalExpressionM (Var _ n)       = evalExpressionM =<< lookupName n
+evalExpressionM (Choice _ pes)  = evalExpressionM =<< pick pes
+evalExpressionM (Interp l es)   = concatOrFail l es
+evalExpressionM (Concat l es)   = concatOrFail l es
+evalExpressionM (Tuple l es)    = Tuple l <$> traverse evalExpressionM es
 evalExpressionM (Let _ bs e) = do
     let stMod = thread $ fmap (uncurry nameMod) bs
     withSt stMod $
         evalExpressionM e
-evalExpressionM f@(Apply _ e e') = do
+evalExpressionM (Apply _ e e') = do
     e'' <- evalExpressionM e
     case e'' of
         Lambda _ n _ e''' ->
@@ -283,9 +278,10 @@ evalExpressionAsTextM = extrText <=< evalExpressionM
 
 -- | Resolve let bindings and such; no not perform choices or concatenations.
 resolveExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
-resolveExpressionM e@Literal{}  = pure e
-resolveExpressionM e@StrChunk{} = pure e
-resolveExpressionM (Var _ n)    = resolveExpressionM =<< lookupName n
+resolveExpressionM e@Literal{}     = pure e
+resolveExpressionM e@StrChunk{}    = pure e
+resolveExpressionM e@Constructor{} = pure e
+resolveExpressionM (Var _ n)       = resolveExpressionM =<< lookupName n
 resolveExpressionM (Choice l pes) = do
     let ps = fst <$> pes
     es <- traverse resolveExpressionM (snd <$> pes)

@@ -19,7 +19,6 @@ import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Type
 
--- TODO: strictness annotations?
 data DickinsonError a = UnfoundName a (Name a)
                       | NoText T.Text -- separate from UnfoundName since there is no loc
                       | ParseErr FilePath (ParseError a)
