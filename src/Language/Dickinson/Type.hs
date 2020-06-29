@@ -52,34 +52,34 @@ data Pattern a = PatternVar a (Name a)
 data Expression a = Literal { exprAnn :: a, litText :: T.Text }
                   | StrChunk { exprAnn :: a, chunkText :: T.Text }
                   | Choice { exprAnn :: a
-                           , choices :: (NonEmpty (Double, Expression a))
+                           , choices :: NonEmpty (Double, Expression a)
                            }
                   | Let { exprAnn  :: a
-                        , letBinds :: (NonEmpty (Name a, Expression a))
-                        , letExpr  :: (Expression a)
+                        , letBinds :: NonEmpty (Name a, Expression a)
+                        , letExpr  :: Expression a
                         }
-                  | Var { exprAnn :: a, exprVar :: (Name a) }
+                  | Var { exprAnn :: a, exprVar :: Name a }
                   | Interp { exprAnn :: a, exprInterp :: [Expression a] }
                   | Lambda { exprAnn    :: a
-                           , lambdaVar  :: (Name a)
-                           , lambdaTy   :: (DickinsonTy a)
-                           , lambdaExpr :: (Expression a)
+                           , lambdaVar  :: Name a
+                           , lambdaTy   :: DickinsonTy a
+                           , lambdaExpr :: Expression a
                            }
                   | Apply { exprAnn :: a
-                          , exprFun :: (Expression a)
-                          , exprArg :: (Expression a)
+                          , exprFun :: Expression a
+                          , exprArg :: Expression a
                           }
                   | Concat { exprAnn :: a, exprConcats :: [Expression a] }
-                  | Tuple { exprAnn :: a, exprTup :: (NonEmpty (Expression a)) }
+                  | Tuple { exprAnn :: a, exprTup :: NonEmpty (Expression a) }
                   | Match { exprAnn   :: a
-                          , exprMatch :: (Expression a)
-                          , exprPat   :: (Pattern a)
-                          , exprIn    :: (Expression a)
+                          , exprMatch :: Expression a
+                          , exprPat   :: Pattern a
+                          , exprIn    :: Expression a
                           }
-                  | Flatten { exprAnn :: a, exprFlat :: (Expression a) }
+                  | Flatten { exprAnn :: a, exprFlat :: Expression a }
                   | Annot { exprAnn :: a
-                          , expr    :: (Expression a)
-                          , exprTy  :: (DickinsonTy a)
+                          , expr    :: Expression a
+                          , exprTy  :: DickinsonTy a
                           }
                   | Constructor { exprAnn :: a, constructorName :: TyName a }
                   deriving (Generic, NFData, Binary, Functor, Show)
@@ -100,7 +100,7 @@ instance Eq (DickinsonTy a) where
 
 instance Pretty (Declaration a) where
     pretty (Define _ n e)  = parens (":def" <+> pretty n <#> indent 2 (pretty e))
-    pretty (TyDecl _ n cs) = "tydecl" <+> pretty n <+> "=" <+> (concatWith (\x y -> x <+> pipe <+> y)) (toList (pretty <$> cs))
+    pretty (TyDecl _ n cs) = "tydecl" <+> pretty n <+> "=" <+> concatWith (\x y -> x <+> pipe <+> y) (toList (pretty <$> cs))
 
 instance Pretty (Import a) where
     pretty (Import _ n)   = parens (":include" <+> pretty n)

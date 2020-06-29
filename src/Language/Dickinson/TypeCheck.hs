@@ -33,7 +33,7 @@ tyAssert ty e = do
     unless (ty' == ty) $
         throwError (TypeMismatch e ty ty')
 
-newtype TyEnv a = TyEnv { unTyEnv :: (IM.IntMap (DickinsonTy a)) }
+newtype TyEnv a = TyEnv { unTyEnv :: IM.IntMap (DickinsonTy a) }
     deriving (Binary)
 
 class HasTyEnv f where
@@ -71,7 +71,7 @@ tyAddDecl :: (HasTyEnv s, MonadState (s a) m) => Declaration a -> m ()
 tyAddDecl Define{}         = pure ()
 tyAddDecl (TyDecl l tn cs) = traverse_ (\c -> tyInsert c (TyNamed l tn)) cs
 
-bindPattern :: (MonadState (s a) m, HasTyEnv s, MonadError (DickinsonError a) m) => Pattern a -> (DickinsonTy a) -> m ()
+bindPattern :: (MonadState (s a) m, HasTyEnv s, MonadError (DickinsonError a) m) => Pattern a -> DickinsonTy a -> m ()
 bindPattern (PatternVar _ n) ty                 = tyInsert n ty
 bindPattern Wildcard{} _                        = pure ()
 bindPattern (PatternTuple _ ps) (TyTuple _ tys) = Ext.zipWithM_ bindPattern ps tys -- FIXME: length ps = length tys
