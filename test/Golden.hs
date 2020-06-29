@@ -21,6 +21,7 @@ goldenTests =
         [ withDckFile "test/data/nestLet.dck"
         , withDckFile "test/data/import.dck"
         , withDckFile "test/data/adt.dck"
+        , withDckFile "test/data/escaped.dck"
         , renameDckFile "test/data/nestLet.dck"
         , renameDckFile "test/data/let.dck"
         , renameDckFile "test/data/multiLet.dck"

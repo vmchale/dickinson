@@ -116,7 +116,7 @@ prettyChoiceBranch (d, e) = parens (pipe <+> pretty d <+> pretty e)
 
 
 prettyInterp :: Expression a -> Doc b
-prettyInterp (StrChunk _ t) = pretty t
+prettyInterp (StrChunk _ t) = pretty (escReplace t)
 prettyInterp e              = "${" <> pretty e <> "}"
 
 instance Pretty (Pattern a) where
@@ -124,10 +124,16 @@ instance Pretty (Pattern a) where
     pretty (PatternTuple _ ps) = tupled (toList (pretty <$> ps))
     pretty Wildcard{}          = "_"
 
+escReplace :: T.Text -> T.Text
+escReplace =
+      T.replace "\"" "\\\""
+    . T.replace "\n" "\\n"
+    . T.replace "$" "\\$"
+
 -- figure out indentation
 instance Pretty (Expression a) where
     pretty (Var _ n)          = pretty n
-    pretty (Literal _ l)      = dquotes $ pretty l
+    pretty (Literal _ l)      = dquotes $ pretty (escReplace l)
     pretty (Let _ ls e)       = group (parens (":let" <^> vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e])))
     -- TODO: if they're all equal, use :oneof
     -- also comments lol
