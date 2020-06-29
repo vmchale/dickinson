@@ -32,7 +32,7 @@ See `man/emd.1` for man pages.
 
 ### Examples
 
-An riff on the Unix fortune program is available
+A riff on the Unix fortune program is available
 [here](https://github.com/vmchale/dickinson/blob/master/examples/fortune.dck).
 Try
 
