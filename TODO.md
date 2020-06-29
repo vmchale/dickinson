@@ -10,7 +10,8 @@
 - [x] manpages
 - [ ] Tutorial/walkthrough?
   - [ ] Getting started?
-- [ ] User guide (see happy?)
+- [x] User guide (see happy?)
+  - [ ] Lints and such
 - [ ] Library documentation
 ## Examples
 - [ ] Poetry bot...? Rumi?
