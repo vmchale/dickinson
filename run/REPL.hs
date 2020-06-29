@@ -1,5 +1,6 @@
 {-# LANGUAGE FlexibleContexts  #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TupleSections     #-}
 
 module REPL ( dickinsonRepl
             ) where
@@ -33,8 +34,10 @@ import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
 import           Lens.Micro                            (_1)
 import           Lens.Micro.Mtl                        (use, (.=))
+import           REPL.Completions
 import           REPL.Save
-import           System.Console.Haskeline              (InputT, defaultSettings, getInputLine, historyFile, runInputT)
+import           System.Console.Haskeline              (InputT, completeFilename, defaultSettings, fallbackCompletion,
+                                                        getInputLine, historyFile, runInputT, setComplete)
 import           System.Directory                      (getHomeDirectory)
 import           System.FilePath                       ((</>))
 import           System.Random                         (newStdGen, randoms)
@@ -49,7 +52,8 @@ runRepl x = do
     g <- newStdGen
     emdDir <- (</> ".emd_history") <$> getHomeDirectory
     let initSt = EvalSt (randoms g) mempty initRenames mempty alexInitUserState emptyTyEnv
-    let emdSettings = defaultSettings { historyFile = Just emdDir }
+    let myCompleter = emdCompletions `fallbackCompletion` completeFilename
+    let emdSettings = setComplete myCompleter $ defaultSettings { historyFile = Just emdDir }
     flip evalStateT initSt $ runInputT emdSettings x
 
 loop :: Repl AlexPosn ()
@@ -65,7 +69,6 @@ loop = do
         Just (":r":fp:_)    -> loadReplSt fp *> loop
         Just (":type":e:_)  -> typeExpr e *> loop
         Just (":t":e:_)     -> typeExpr e *> loop
-        Just (":v":n:_)     -> bindDisplay (T.pack n) *> loop
         Just (":view":n:_)  -> bindDisplay (T.pack n) *> loop
         Just [":q"]         -> pure ()
         Just [":quit"]      -> pure ()
@@ -85,8 +88,8 @@ showHelp = liftIO $ putStr $ concat
     , helpOption ":load, :l" "<file>" "Load file contents"
     , helpOption ":r" "<file>" "Restore REPL state from a file"
     , helpOption ":type, :t" "<expression>" "Display the type of an expression"
-    , helpOption ":view, :v" "<name>" "Show the value of a name"
-    , helpOption ":quite, :q" "" "Quit REPL"
+    , helpOption ":view" "<name>" "Show the value of a name"
+    , helpOption ":quit, :q" "" "Quit REPL"
     , helpOption ":list" "" "List all names that are in scope"
     ]
 
@@ -114,7 +117,7 @@ listNames :: Repl AlexPosn ()
 listNames = liftIO . traverse_ TIO.putStrLn =<< names
 
 names :: Repl AlexPosn [T.Text]
-names = lift $ gets (M.keys . topLevel)
+names = lift $ namesState
 
 bindDisplay :: T.Text -> Repl AlexPosn ()
 bindDisplay t = do
@@ -183,7 +186,6 @@ putErr :: Pretty e => Either e b -> (b -> Repl a ()) -> Repl a ()
 putErr (Right x) f = f x
 putErr (Left y) _  = liftIO $ putDoc (pretty y <> hardline)
 
--- TODO: check
 loadFile :: FilePath -> Repl AlexPosn ()
 loadFile fp = do
     pathMod <- liftIO defaultLibPath
