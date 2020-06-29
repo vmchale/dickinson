@@ -32,6 +32,7 @@
 # Library API
 - [x] Maybe spin out internal library?
 # Bugs
+- [ ] `examples/fortune.dck` fails in repl
 - [x] Bug in `test/demo/animal.dck` - doesn't ever produce a bird?
 - [ ] Running `examples/doggo.dck` `main` - `pick` seems to be called by `probabilities` state doesn't seem to change?
   - [ ] More vexingly, calling e.g. `color` in `lib/color.dck` un-sticks it!!
