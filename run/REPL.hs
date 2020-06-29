@@ -80,7 +80,7 @@ rightPad n str = take n $ str ++ repeat ' '
 
 showHelp :: Repl AlexPosn ()
 showHelp = liftIO $ putStr $ concat
-    [ helpOption ":h, :help" "" "Show this help"
+    [ helpOption ":help, :h" "" "Show this help"
     , helpOption ":save" "<file>" "Save current state"
     , helpOption ":load, :l" "<file>" "Load file contents"
     , helpOption ":r" "<file>" "Restore REPL state from a file"
