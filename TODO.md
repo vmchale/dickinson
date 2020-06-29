@@ -46,7 +46,7 @@
 # Debugging
 - [ ] Verbosity
 # Features
-- [ ] Polyglot integration!
+- [x] Polyglot integration!
 - [x] Change `:import` to `:include`!
 - [ ] "append" repl command
 - [ ] Circular import checker
@@ -85,14 +85,14 @@
 # Tests
 - [ ] Nested interpolated strings
 - [ ] Renamer + pattern matching
-- [ ] `examples/shakespeare.dck`
-- [ ] golden tests via pretty-simple packages (debug output?)
+- [x] `examples/shakespeare.dck`
+- [x] golden tests via pretty-simple packages (debug output?)
 ## Test cases
 - [x] `test/eval/tyAnnot.dck` in the test suite
 - [ ] Lexer (fail) tests
   - [ ] Capital type names...
-- [ ] Escpaed characters
-  - [ ] Pretty-print
+- [x] Escpaed characters
+  - [x] Pretty-print
 - [ ] name shadowing & such
 - [ ] property test -> generate, pretty-print, parse
 - [ ] Something that kicks the tires on `tryEval` being called on `let` and

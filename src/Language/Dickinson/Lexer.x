@@ -49,15 +49,14 @@ $latin = [a-zA-Z]
 
 $str_special = [\\\"\$]
 
-@escape_str = \\ [$str_special \$n]
+@escape_str = \\ [$str_special n]
 
 -- single-line string
 @string = \" ([^ $str_special] | @escape_str)* \"
 
 $str_chunk = [^ \"\\\$]
 
-@escape_str_chunk = \\ [$str_chunk \$n]
-@str_interp_in = ([$str_chunk] | @escape_str_chunk)+
+@str_interp_in = ($str_chunk | @escape_str)+
 
 @interp = \$\{
 
