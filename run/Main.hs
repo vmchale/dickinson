@@ -19,8 +19,6 @@ data Act = Run !FilePath ![FilePath]
 main :: IO ()
 main = run =<< execParser wrapper
 
--- TODO: cache/"compile"?
-
 act :: Parser Act
 act = hsubparser
     (command "run" (info runP (progDesc "Execute a file"))
