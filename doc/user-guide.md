@@ -4,9 +4,16 @@
 # Introduction
 
 Dickinson is a text-generation language for generative literature. Each time you run your
-code, you get back text. The text is chosen randomly based on your code.
+code, you get back text. The text is generated randomly.
 
 # Installing Dickinson
+
+First, install [cabal](https://www.haskell.org/cabal/download.html) and
+[GHC](https://www.haskell.org/ghc/download.html). Then:
+
+```
+cabal install language-dickinson
+```
 
 ## Editor Integration
 
