@@ -15,6 +15,8 @@ First, install [cabal](https://www.haskell.org/cabal/download.html) and
 cabal install language-dickinson
 ```
 
+You may also want to install manpages.
+
 ## Editor Integration
 
 A [vim plugin](https://github.com/vmchale/dickinson/tree/master/vim) is
@@ -82,6 +84,12 @@ We can reference and recombine past definitions via string interpolation:
 ```
 
 # REPL
+
+To enter a REPL:
+
+```
+emd repl
+```
 
 # Libraries
 
