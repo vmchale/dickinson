@@ -5,6 +5,7 @@
   * Fix source distribution so nix builds it automatically
   * Fix a bug in the evaluator that caused valid expressions to be rejected
     in the REPL
+  * Show an error in the REPL when trying to `:view` a name not in scope.
 
 ## 0.1.0.0
 

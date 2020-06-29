@@ -129,7 +129,7 @@ bindDisplay t = do
             case IM.lookup i exprs of
                 Just e  -> liftIO $ putDoc (pretty e <> hardline)
                 Nothing -> error "Internal error."
-        Nothing -> pure () -- TODO: error
+        Nothing -> liftIO $ putDoc $ (<> hardline) $ pretty (NoText t :: DickinsonError AlexPosn)
 
 setSt :: AlexUserState -> Repl AlexPosn ()
 setSt newSt = lift $ do
