@@ -50,7 +50,7 @@ of its branches with equal probability.
 
 In general, when you `emd run` code, `emd` will display the result of evaluating `main`.
 
-## Definitions + Names
+## Definitions & Names
 
 We can define names and reference them later:
 
@@ -133,7 +133,7 @@ emd> (:def announcer "RESULT: ${gambling}")
 emd> announcer
 ```
 
-## Saving + Restoring States
+## Saving & Restoring States
 
 We can save the REPL state, including any defintions we've declared during the
 session.
