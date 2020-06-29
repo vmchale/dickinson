@@ -28,7 +28,7 @@ A user guide is available in
 and as
 a [pdf](https://github.com/vmchale/dickinson/blob/master/doc/user-guide.pdf).
 
-The source distribution ships with man pages.
+See `man/emd.1` for man pages.
 
 ### Examples
 
