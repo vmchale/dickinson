@@ -1,0 +1,13 @@
+%-
+
+(:def curry
+  (:lambda f (⟶ (text, text) text)
+    (:lambda x text
+      (:lambda y text
+        ($ f (x, y))))))
+
+(:def uncurry
+  (:lambda f (⟶ text (⟶ text text))
+    (:lambda x (text, text)
+      (:match x (y, z)
+        ($ $ f y z)))))

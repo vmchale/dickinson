@@ -34,6 +34,8 @@ syntax match dickinsonComment "\v;.*$" contains=@Spell
 syntax match dickinsonSymbol ">"
 syntax match dickinsonSymbol "\$"
 syntax match dickinsonSymbol "%-"
+syntax match dickinsonSymbol "⟶"
+syntax match dickinsonSymbol "->"
 
 highlight link dickinsonComment Comment
 highlight link dickinsonInterpolation Special
