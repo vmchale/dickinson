@@ -1,3 +1,5 @@
+{-# LANGUAGE TupleSections #-}
+
 module REPL.Completions ( emdCompletions
                         , namesState
                         ) where
@@ -48,7 +50,8 @@ emdCompletions ("q:", "")     = pure ("q:", cyclicSimple ["uit", ""])
 emdCompletions ("uq:", "")    = pure ("uq:", [simpleCompletion "it"])
 emdCompletions ("iuq:", "")   = pure ("iuq:", [simpleCompletion "t"])
 emdCompletions ("tiuq:", "")  = pure ("tiuq:", [simpleCompletion ""])
-emdCompletions (" weiv:", "") = do { ns <- namesStr ; pure (" weiv:", cyclicSimple ns) }
+emdCompletions (" weiv:", "") = do { ns <- namesStr ; pure (" weiv:", cyclicSimple ns) } -- TODO: when it matches part of the identifiers!
 emdCompletions (" epyt:", "") = do { ns <- namesStr ; pure (" epyt:", cyclicSimple ns) }
 emdCompletions (" t:", "")    = do { ns <- namesStr ; pure (" t:", cyclicSimple ns) }
+emdCompletions ("", "")       = ("",) . cyclicSimple <$> namesStr
 emdCompletions _              = pure (undefined, [])
