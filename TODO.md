@@ -44,6 +44,7 @@
 # Debugging
 - [ ] Verbosity
 # Features
+- [ ] Polyglot integration!
 - [x] Change `:import` to `:include`!
 - [ ] "append" repl command
 - [ ] Circular import checker
@@ -92,6 +93,8 @@
   - [ ] Pretty-print
 - [ ] name shadowing & such
 - [ ] property test -> generate, pretty-print, parse
+- [ ] Something that kicks the tires on `tryEval` being called on `let` and
+  `match`?
 # Libraries
 - [x] Colors
 - [ ] Animals

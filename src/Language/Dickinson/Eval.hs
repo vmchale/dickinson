@@ -30,6 +30,7 @@ import qualified Data.Map                      as M
 import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc     (Doc, Pretty (..), vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
+import           Debug.Trace
 import           Language.Dickinson.Error
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
@@ -195,22 +196,36 @@ bindPattern Wildcard{} _                     = pure id
 bindPattern (PatternTuple _ ps) (Tuple _ es) = thread <$> Ext.zipWithM bindPattern ps es
 bindPattern (PatternTuple l _) _             = throwError $ MalformedTuple l
 
+noVars :: Expression a -> Bool
+noVars StrChunk{} = True
+noVars _          = False
+
+-- To partially apply lambdas
 tryEvalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 tryEvalExpressionM e@Literal{}    = pure e
 tryEvalExpressionM e@StrChunk{}   = pure e
 tryEvalExpressionM v@(Var _ n)    = maybe (pure v) tryEvalExpressionM =<< tryLookupName n
 tryEvalExpressionM (Choice _ pes) = tryEvalExpressionM =<< pick pes
 tryEvalExpressionM (Tuple l es)   = Tuple l <$> traverse tryEvalExpressionM es
-tryEvalExpressionM e@Lambda{}     = pure e
+tryEvalExpressionM (Lambda l n ty e) = Lambda l n ty <$> tryEvalExpressionM e
 tryEvalExpressionM (Annot l e ty) = Annot l <$> tryEvalExpressionM e <*> pure ty
 tryEvalExpressionM (Flatten l e)  = Flatten l <$> tryEvalExpressionM e
-tryEvalExpressionM (Apply _ e e') = do
+tryEvalExpressionM (Apply l e e') = do
     e'' <- tryEvalExpressionM e
     case e'' of
         Lambda _ n _ e''' ->
             withSt (nameMod n e') $
                 tryEvalExpressionM e'''
-        _ -> error "Ill-type expression?"
+        _ -> pure $ Apply l e'' e
+tryEvalExpressionM (Interp l es)   = Interp l <$> traverse tryEvalExpressionM es
+tryEvalExpressionM (Concat l es)   = Concat l <$> traverse tryEvalExpressionM es
+tryEvalExpressionM c@Constructor{} = pure c
+tryEvalExpressionM (Let _ bs e) = do
+    let stMod = thread $ fmap (uncurry nameMod) bs
+    withSt stMod $
+        tryEvalExpressionM e
+tryEvalExpressionM (Match l e p e') =
+    Match l <$> tryEvalExpressionM e <*> pure p <*> tryEvalExpressionM e'
 
 evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 evalExpressionM e@Literal{}    = pure e
@@ -224,12 +239,12 @@ evalExpressionM (Let _ bs e) = do
     let stMod = thread $ fmap (uncurry nameMod) bs
     withSt stMod $
         evalExpressionM e
-evalExpressionM (Apply _ e e') = do
-    e'' <- tryEvalExpressionM e -- TODO: go as far as we can
+evalExpressionM f@(Apply _ e e') = do
+    e'' <- evalExpressionM e
     case e'' of
         Lambda _ n _ e''' ->
             withSt (nameMod n e') $
-                evalExpressionM e'''
+                evalExpressionM =<< tryEvalExpressionM e''' -- tryEvalExpressionM is a special function to "pull" eval through lambdas...
         _ -> error "Ill-typed expression"
 evalExpressionM e@Lambda{} = pure e
 evalExpressionM (Match _ e p e') = do
@@ -279,13 +294,13 @@ resolveExpressionM (Let _ bs e) = do
     withSt stMod $
         resolveExpressionM e
 resolveExpressionM (Apply _ e e') = do
-    e'' <- resolveExpressionM e
+    e'' <- tryEvalExpressionM e
     case e'' of
         Lambda _ n _ e''' ->
             withSt (nameMod n e') $
-                resolveExpressionM e'''
+                resolveExpressionM e''' -- TODO: is this right?
         _ -> error "Ill-typed expression"
-resolveExpressionM e@Lambda{} = pure e
+resolveExpressionM e@Lambda{} = pure e -- TODO: is this right?
 resolveExpressionM (Match _ e p e') =
     (bindPattern p =<< resolveExpressionM e) *>
     resolveExpressionM e'
