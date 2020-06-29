@@ -53,6 +53,9 @@ main =
                     , bench "examples/hotTake.dck" $ nfIO (evalFile [] "examples/hotTake.dck")
                     , bench "examples/fortune.dck" $ nfIO (evalFile [] "examples/fortune.dck")
                     ]
+                , bgroup "pipeline"
+                    [ bench "examples/shakespeare.dck" $ nfIO (pipeline [] "examples/shakespeare.dck")
+                    ]
                 , bgroup "tcFile"
                     [ bench "examples/hotTake.dck" $ nfIO (tcFile [] "examples/hotTake.dck")
                     ]

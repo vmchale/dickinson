@@ -78,7 +78,7 @@ versionMod :: Parser (a -> a)
 versionMod = infoOption dickinsonVersionString (short 'V' <> long "version" <> help "Show version")
 
 run :: Act -> IO ()
-run (Run fp is)     = do { pGo <- defaultLibPath ; TIO.putStrLn =<< evalFile (pGo is) fp }
+run (Run fp is)     = do { pGo <- defaultLibPath ; TIO.putStrLn =<< pipeline (pGo is) fp }
 run (REPL _)        = dickinsonRepl
 run (Check f i)     = do { pathMod <- defaultLibPath ; checkFile (pathMod i) f }
 run (Lint f)        = warnFile f
