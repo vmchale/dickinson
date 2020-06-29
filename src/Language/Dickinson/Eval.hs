@@ -270,7 +270,7 @@ resolveExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m)
 resolveExpressionM e@Literal{}     = pure e
 resolveExpressionM e@StrChunk{}    = pure e
 resolveExpressionM e@Constructor{} = pure e
-resolveExpressionM (Var _ n)       = resolveExpressionM =<< lookupName n
+resolveExpressionM v@(Var _ n)     = maybe (pure v) resolveExpressionM =<< tryLookupName n -- FIXME: not right in case of :flatten
 resolveExpressionM (Choice l pes) = do
     let ps = fst <$> pes
     es <- traverse resolveExpressionM (snd <$> pes)
@@ -282,13 +282,13 @@ resolveExpressionM (Let _ bs e) = do
     let stMod = thread $ fmap (uncurry nameMod) bs
     withSt stMod $
         resolveExpressionM e
-resolveExpressionM (Apply _ e e') = do
+resolveExpressionM (Apply l e e') = do
     e'' <- resolveExpressionM e
     case e'' of
         Lambda _ n _ e''' ->
             withSt (nameMod n e') $
                 resolveExpressionM e''' -- TODO: is this right?
-        _ -> error "Ill-typed expression"
+        _ -> Apply l e'' <$> resolveExpressionM e' -- FIXME: this causes problems with flatten
 resolveExpressionM e@Lambda{} = pure e -- TODO: is this right? need tryResolveExpressionM..?
 resolveExpressionM (Match _ e p e') =
     (bindPattern p =<< resolveExpressionM e) *>
