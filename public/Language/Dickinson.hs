@@ -13,6 +13,7 @@ module Language.Dickinson ( -- * Parser
                           , Pattern (..)
                           , DickinsonTy (..)
                           , Name
+                          , TyName
                           -- * Imports
                           , resolveImport
                           -- * Version info
