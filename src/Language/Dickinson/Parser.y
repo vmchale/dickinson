@@ -164,7 +164,7 @@ Leaf :: { Expression AlexPosn }
 
 DeclarationOrExpression :: { Either (Declaration AlexPosn) (Expression AlexPosn) }
                         : Expression { Right $1 }
-                        | parens(Declaration) { Left $1 }
+                        | Declaration { Left $1 }
 
 {
 
