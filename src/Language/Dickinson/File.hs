@@ -32,12 +32,21 @@ import           Language.Dickinson.Rename.Amalgamate
 import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
+import           System.Random                         (StdGen, newStdGen, randoms)
 
 data AmalgamateSt = AmalgamateSt { amalgamateRenames    :: Renames
                                  , amalgamateLexerState :: AlexUserState
                                  }
 
-type AmalgamateM = ExceptT (DickinsonError AlexPosn) (StateT AmalgamateSt IO)
+type AllM = StateT (EvalSt AlexPosn) (ExceptT (DickinsonError AlexPosn) IO)
+
+evalIO :: AllM x -> IO (Either (DickinsonError AlexPosn) x)
+evalIO me = (\g -> evalAllWithGen g me) =<< newStdGen
+
+evalAllWithGen :: StdGen
+               -> AllM x
+               -> IO (Either (DickinsonError AlexPosn) x)
+evalAllWithGen g me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty initRenames mempty alexInitUserState emptyTyEnv)
 
 initAmalgamateSt :: AmalgamateSt
 initAmalgamateSt = AmalgamateSt initRenames alexInitUserState

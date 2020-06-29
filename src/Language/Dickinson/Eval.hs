@@ -1,16 +1,13 @@
 {-# LANGUAGE FlexibleContexts  #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Language.Dickinson.Eval ( EvalM
-                               , EvalSt (..)
+module Language.Dickinson.Eval ( EvalSt (..)
                                , addDecl
                                , loadDickinson
                                , evalDickinsonAsMain
                                , resolveExpressionM
                                , evalExpressionM
                                , evalExpressionAsTextM
-                               , evalWithGen
-                               , evalIO
                                , findDecl
                                , findMain
                                , lexerStateLens
@@ -21,7 +18,7 @@ import           Control.Composition           (thread)
 import           Control.Monad                 ((<=<))
 import           Control.Monad.Except          (ExceptT, MonadError, runExceptT, throwError)
 import qualified Control.Monad.Ext             as Ext
-import           Control.Monad.State.Lazy      (MonadState, StateT, evalStateT, get, gets, modify, put)
+import           Control.Monad.State.Lazy      (MonadState, State, evalState, get, gets, modify, put)
 import           Data.Foldable                 (toList, traverse_)
 import qualified Data.IntMap                   as IM
 import           Data.List.NonEmpty            (NonEmpty, (<|))
@@ -39,7 +36,6 @@ import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
 import           Lens.Micro                    (Lens', over, set, _1)
 import           Lens.Micro.Mtl                (use, (.=))
-import           System.Random                 (StdGen, newStdGen, randoms)
 
 -- | The state during evaluation
 data EvalSt a = EvalSt
@@ -91,17 +87,6 @@ boundExprLens f s = fmap (\x -> s { boundExpr = x }) (f (boundExpr s))
 
 topLevelLens :: Lens' (EvalSt a) (M.Map T.Text Unique)
 topLevelLens f s = fmap (\x -> s { topLevel = x }) (f (topLevel s))
-
--- FIXME: remove IO
-type EvalM a = StateT (EvalSt a) (ExceptT (DickinsonError a) IO)
-
-evalIO :: EvalM a x -> IO (Either (DickinsonError a) x)
-evalIO me = (\g -> evalWithGen g me) =<< newStdGen
-
-evalWithGen :: StdGen
-            -> EvalM a x
-            -> IO (Either (DickinsonError a) x)
-evalWithGen g me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty initRenames mempty alexInitUserState emptyTyEnv)
 
 nameMod :: Name a -> Expression a -> EvalSt a -> EvalSt a
 nameMod (Name _ (Unique u) _) e = over boundExprLens (IM.insert u e)
