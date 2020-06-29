@@ -58,6 +58,7 @@ main =
                     ]
                 , bgroup "tcFile"
                     [ bench "examples/hotTake.dck" $ nfIO (tcFile [] "examples/hotTake.dck")
+                    , bench "examples/fortune.dck" $ nfIO (tcFile [] "examples/fortune.dck")
                     ]
                 ]
 
