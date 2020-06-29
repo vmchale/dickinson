@@ -1,9 +1,9 @@
 %-
 
-tydecl sex = Boy | Girl
-
 (:def boy
   Boy : sex)
+
+tydecl sex = Boy | Girl
 
 (:def main
   "Hello, World!")
