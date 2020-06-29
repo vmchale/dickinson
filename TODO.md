@@ -1,10 +1,9 @@
-- [ ] Type system
 - [ ] Something about sno executable/snow white that came to me in a dream
 # Specification
 - [ ] Grammar
 - [ ] Types &c.
   - [ ] Right now tc doesn't even work lol
-- [ ] Modules
+- [ ] Modules (inclusions lol)
 - [ ] Normalization
 # Documentation
 - [x] manpages
@@ -26,7 +25,7 @@
 - [x] Syntastic checker
 # Passes
 - [ ] Typechecker?
-- [ ] Warn if a string is duplicate? (warn on duplicate branches)
+- [x] Warn if a string is duplicate? (warn on duplicate branches)
 - [x] Make sure there are no top-level name clashes
 - [x] Scoping check (not lazy, like evaluation)
 - [ ] Error on negative numbers? (useful error)
@@ -42,7 +41,7 @@
 - [ ] Hangs indefinitely when lexing incomplete string
 # Code Quality
 - [ ] Kick tires on `:t` feature
-- [ ] Don't use the identifier `yeet`
+- [x] Don't use the identifier `yeet`
 # Debugging
 - [ ] Verbosity
 # Features
@@ -105,7 +104,7 @@
 - [ ] Currying?
 # Performance
 - [ ] Load modules in a sensible way?
-- [ ] Bench typechecker
+- [x] Bench typechecker
 - [ ] Normalization-by-evaluation? NbE
 - [ ] http://hackage.haskell.org/package/text-short
 - [x] Benchmark renamer
