@@ -1,4 +1,4 @@
--- | This modules contains some bits and pieces to work with Dickinson code.
+-- | This module contains some bits and pieces to work with Dickinson code.
 module Language.Dickinson ( -- * Parser
                             parse
                           , ParseError (..)
