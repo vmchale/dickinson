@@ -25,7 +25,7 @@ syntax match dickinsonEsc +\\["\\n]+
 
 syntax match dickinsonType "text"
 
-syntax region dickinsonInterpolation start='${' end='}' contains=dickinsonIdentifier,dickinsonKeyword,dickinsonType
+syntax region dickinsonInterpolation start='${' end='}' contains=dickinsonIdentifier,dickinsonKeyword,dickinsonType,dickinsonString
 
 syntax region dickinsonString start=+"+ end=+"+ contains=@Spell,dickinsonEsc,dickinsonInterpolation
 

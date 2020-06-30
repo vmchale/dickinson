@@ -20,6 +20,7 @@
 - [ ] https://www.nadyaprimak.com/blog/programming/poetry-bot/
 - [½] Dog greeter
 - [½] Fortune teller/unix fortune
+  - [ ] Fortune port? https://github.com/shlomif/fortune-mod/blob/master/fortune-mod/datfiles/disclaimer
 - [ ] Hot take generator
 - [ ] Cowsay-as-a-function
 # Editor Integration

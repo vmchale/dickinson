@@ -18,8 +18,9 @@ import           Data.List.NonEmpty            (NonEmpty)
 import qualified Data.List.NonEmpty            as NE
 import           Data.Semigroup                ((<>))
 import qualified Data.Text                     as T
-import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), brackets, colon, concatWith, dquotes, group,
-                                                hardline, hsep, indent, parens, pipe, rangle, tupled, vsep, (<+>))
+import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), align, brackets, colon, concatWith, dquotes,
+                                                group, hardline, hsep, indent, parens, pipe, rangle, tupled, vsep,
+                                                (<+>))
 import           Data.Text.Prettyprint.Doc.Ext (hardSep, (<#*>), (<#>), (<^>))
 import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Name
@@ -115,10 +116,14 @@ prettyLetLeaf (n, e) = group (brackets (pretty n <+> pretty e))
 prettyChoiceBranch :: (Double, Expression a) -> Doc b
 prettyChoiceBranch (d, e) = parens (pipe <+> pretty d <+> pretty e)
 
-
 prettyInterp :: Expression a -> Doc b
 prettyInterp (StrChunk _ t) = pretty (escReplace t)
 prettyInterp e              = "${" <> pretty e <> "}"
+
+prettyMultiInterp :: [Expression a] -> Doc b
+prettyMultiInterp = concatWith (<#>) . concatMap prettyChunk
+    where prettyChunk (StrChunk _ t) = fmap pretty (T.lines t)
+          prettyChunk _              = undefined -- TODO: handle this when interpolated multiline strings hit
 
 instance Pretty (Pattern a) where
     pretty (PatternVar _ n)    = pretty n
@@ -143,6 +148,7 @@ instance Pretty (Expression a) where
     pretty (Lambda _ n ty e)  = parens (":lambda" <+> pretty n <+> pretty ty <#*> pretty e)
     pretty (Apply _ e e')     = parens ("$" <+> pretty e <+> pretty e')
     pretty (Interp _ es)      = group (dquotes (foldMap prettyInterp es))
+    pretty (MultiInterp _ es) = group (align ("'''" <> prettyMultiInterp es <> "'''"))
     pretty (Concat _ es)      = parens (rangle <+> hsep (pretty <$> es))
     pretty StrChunk{}         = error "Internal error: naked StrChunk"
     pretty (Tuple _ es)       = tupled (toList (pretty <$> es))

@@ -120,7 +120,7 @@ tokens :-
     -- and indentation (strip it away like Dhall)
 
     <0> "'''"                      { mkSym MultiStrBegin `andBegin` multiStr }
-    <multiStr> @multi_str_in       { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
+    <multiStr> @multi_str_in       { tok (\p s -> alex $ TokStrChunk p (stripMulti $ mkText s)) }
     <multiStr> "'''"               { mkSym MultiStrEnd `andBegin` 0 }
 
     -- strings
@@ -137,7 +137,7 @@ countSpaces = T.length . T.takeWhile (== ' ')
 stripMulti :: T.Text -> T.Text
 stripMulti t =
     let ls = T.lines t
-        in let sp = minimum (fmap countSpaces ls)
+        in let sp = minimum (fmap countSpaces $ tail ls)
             in T.unlines (fmap (T.drop sp) ls)
 
 escReplace :: T.Text -> T.Text
