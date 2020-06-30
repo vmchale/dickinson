@@ -50,7 +50,6 @@ main =
                     , bench "examples/shakespeare.dck" $ nfIO (evalFile [] "examples/shakespeare.dck")
                     , bench "examples/doggo.dck" $ nfIO (evalFile ["prelude"] "examples/doggo.dck")
                     , bench "test/demo/animal.dck" $ nfIO (evalFile ["lib"] "test/demo/animal.dck")
-                    , bench "examples/hotTake.dck" $ nfIO (evalFile [] "examples/hotTake.dck")
                     , bench "examples/fortune.dck" $ nfIO (evalFile [] "examples/fortune.dck")
                     ]
                 , bgroup "pipeline"
@@ -58,8 +57,7 @@ main =
                     , bench "examples/fortune.dck" $ nfIO (pipeline [] "examples/fortune.dck")
                     ]
                 , bgroup "tcFile"
-                    [ bench "examples/hotTake.dck" $ nfIO (tcFile [] "examples/hotTake.dck")
-                    , bench "examples/fortune.dck" $ nfIO (tcFile [] "examples/fortune.dck")
+                    [ bench "examples/fortune.dck" $ nfIO (tcFile [] "examples/fortune.dck")
                     ]
                 ]
 
