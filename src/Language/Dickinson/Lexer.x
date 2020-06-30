@@ -131,6 +131,15 @@ tokens :-
 
 {
 
+countSpaces :: T.Text -> Int
+countSpaces = T.length . T.takeWhile (== ' ')
+
+stripMulti :: T.Text -> T.Text
+stripMulti t =
+    let ls = T.lines t
+        in let sp = minimum (fmap countSpaces ls)
+            in T.unlines (fmap (T.drop sp) ls)
+
 escReplace :: T.Text -> T.Text
 escReplace =
       T.replace "\\\"" "\""

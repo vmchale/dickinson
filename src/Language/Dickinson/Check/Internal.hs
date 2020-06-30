@@ -11,6 +11,7 @@ import           Language.Dickinson.Unique
 import           Lens.Micro.Mtl            (use)
 
 -- TODO: sanity check for the lexer
+-- | Sanity check for the renamer.
 sanityCheck :: (HasRenames s, MonadState s m) => [Declaration a] -> m ()
 sanityCheck d = do
     storedMax <- use (rename.maxLens)
