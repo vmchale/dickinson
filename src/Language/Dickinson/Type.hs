@@ -60,6 +60,7 @@ data Expression a = Literal { exprAnn :: a, litText :: T.Text }
                         }
                   | Var { exprAnn :: a, exprVar :: Name a }
                   | Interp { exprAnn :: a, exprInterp :: [Expression a] }
+                  | MultiInterp { exprAnn :: a, exprMultiInterp :: [Expression a] }
                   | Lambda { exprAnn    :: a
                            , lambdaVar  :: Name a
                            , lambdaTy   :: DickinsonTy a
@@ -129,7 +130,7 @@ escReplace :: T.Text -> T.Text
 escReplace =
       T.replace "\"" "\\\""
     . T.replace "\n" "\\n"
-    . T.replace "$" "\\$"
+    . T.replace "${" "\\${"
 
 -- figure out indentation
 instance Pretty (Expression a) where

@@ -52,9 +52,9 @@ $str_special = [\\\"\$]
 @escape_str = \\ [$str_special n]
 
 -- single-line string
-@string = \" ([^ $str_special] | @escape_str)* \"
+@string = \" ([^ $str_special] | "$" [^\{\"\$] | @escape_str)* (\" | \$\")
 
-$str_chunk = [^ \"\\\$]
+$str_chunk = [^\"\\\$]
 
 @str_interp_in = ($str_chunk | @escape_str)+
 
@@ -106,8 +106,16 @@ tokens :-
     <0> \"                         { mkSym StrBegin `andBegin` string }
     <string> @str_interp_in        { tok (\p s -> alex $ TokStrChunk p (escReplace $ mkText s)) }
     <string> @interp               { mkSym BeginInterp `andBegin` 0 }
+    <string> "$"                   { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
     <0> \}                         { mkSym EndInterp `andBegin` string }
     <string> \"                    { mkSym StrEnd `andBegin` 0 }
+
+    -- TODO: track "depth" in interpolations
+    -- and indentation (strip it away like Dhall)
+
+    <0> "'''"                      { mkSym MultiStrBegin `andBegin` multiStr }
+    <multiStr> [^\']*              { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
+    <multiStr> "'''"               { mkSym MultiStrEnd `andBegin` 0 }
 
     -- strings
     <0> @string                    { tok (\p s -> alex $ TokString p (escReplace . T.tail . T.init $ mkText s)) }
@@ -185,6 +193,8 @@ data Sym = LParen
          | EndInterp
          | StrBegin
          | StrEnd
+         | MultiStrBegin
+         | MultiStrEnd
          | Arrow
          | DollarSign
          | Comma
@@ -205,6 +215,8 @@ instance Pretty Sym where
     pretty EndInterp     = rbrace
     pretty StrBegin      = dquote
     pretty StrEnd        = dquote
+    pretty MultiStrBegin = "'''"
+    pretty MultiStrEnd   = "'''"
     pretty Arrow         = "⟶"
     pretty DollarSign    = "$"
     pretty Comma         = comma

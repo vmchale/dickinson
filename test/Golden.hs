@@ -31,6 +31,7 @@ goldenTests =
         , renameDckFile "test/data/tupleRename.dck"
         , renameDckFile "test/eval/match.dck"
         , renameDckFile "test/data/quoteify.dck"
+        , withDckFile "test/data/lexDollarSign.dck"
         ]
 
 prettyBSL :: Dickinson a -> BSL.ByteString

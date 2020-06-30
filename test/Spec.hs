@@ -43,6 +43,7 @@ parserTests =
         , parseNoError "lib/color.dck"
         , parseNoError "lib/birds.dck"
         , lexNoError "test/data/import.dck"
+        , lexNoError "test/data/lexDollarSign.dck"
         , parseNoError "test/data/import.dck"
         , detectDuplicate "test/data/multiple.dck"
         , detectDuplicate "test/error/double.dck"

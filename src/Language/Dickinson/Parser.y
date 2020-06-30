@@ -52,6 +52,8 @@ import Language.Dickinson.Unique
     rsqbracket { TokSym $$ RSqBracket }
     rbracket { TokSym $$ RBracket }
     strBegin { TokSym $$ StrBegin }
+    multiStrBegin { TokSym $$ MultiStrBegin }
+    multiStrEnd { TokSym $$ MultiStrEnd }
     strEnd { TokSym $$ StrEnd }
     arrow { TokSym $$ Arrow }
     dollar { TokSym $$ DollarSign }
