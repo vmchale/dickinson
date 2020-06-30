@@ -138,7 +138,7 @@ countSpaces = T.length . T.takeWhile (== ' ')
 stripMulti :: T.Text -> T.Text
 stripMulti t =
     let ls = T.lines t
-        in let sp = minimum (0 : (fmap countSpaces $ tail ls))
+        in let sp = minimum (maxBound : (fmap countSpaces $ tail ls))
             in T.unlines (fmap (T.drop sp) ls)
 
 escReplace :: T.Text -> T.Text
