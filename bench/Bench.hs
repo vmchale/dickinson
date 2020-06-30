@@ -55,7 +55,7 @@ main =
                     ]
                 , bgroup "pipeline"
                     [ bench "examples/shakespeare.dck" $ nfIO (pipeline [] "examples/shakespeare.dck")
-                    , bench "examples/fortune.dck" $ nfIO (pipeline [] "examples/fortune.dck"
+                    , bench "examples/fortune.dck" $ nfIO (pipeline [] "examples/fortune.dck")
                     ]
                 , bgroup "tcFile"
                     [ bench "examples/hotTake.dck" $ nfIO (tcFile [] "examples/hotTake.dck")
