@@ -45,6 +45,8 @@ emd - [Emily] Dickinson
 
 **:v** **:view** - Show the definition of a name
 
+**:h** **:help** - Display help
+
 # OPTIONS
 
 **-h** **-\-help**
