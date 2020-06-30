@@ -7,6 +7,7 @@
     in the REPL
   * Show an error in the REPL when trying to `:view` a name not in scope.
   * Throw error when tuple pattern doesn't match type of expression
+  * Fix `$` within strings so it doesn't need to be escaped
 
 ## 0.1.0.0
 
