@@ -23,6 +23,7 @@ import           Language.Dickinson.Unique
 
 type TyName a = Name a
 
+-- TODO: separate type for module name
 -- | A (possibly qualified) name.
 data Name a = Name { name   :: NonEmpty T.Text
                    , unique :: !Unique
