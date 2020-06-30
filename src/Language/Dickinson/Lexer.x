@@ -124,7 +124,7 @@ escReplace =
     . T.replace "\\$" "$"
 
 mkText :: BSL.ByteString -> T.Text
-mkText = decodeUtf8 . BSL.toStrict
+mkText = {-# SCC "mkText" #-} decodeUtf8 . BSL.toStrict
 
 alex :: a -> Alex a
 alex = pure
