@@ -1,0 +1,7 @@
+%-
+
+(:def main
+  '''
+  This is a multi-line string
+  '''
+  )

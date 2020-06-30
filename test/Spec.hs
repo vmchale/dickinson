@@ -50,6 +50,8 @@ parserTests =
         , detectDuplicate "test/error/tyDouble.dck"
         , detectDuplicate "test/error/tyConsDouble.dck"
         , lexNoError "examples/shakespeare.dck"
+        , lexNoError "test/data/multiStr.dck"
+        , parseNoError "test/data/multiStr.dck"
         , parseNoError "examples/shakespeare.dck"
         , detectScopeError "test/demo/improbableScope.dck"
         , detectBadBranch "test/demo/sillyOption.dck"

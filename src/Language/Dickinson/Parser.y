@@ -148,6 +148,7 @@ Expression :: { Expression AlexPosn }
            | ident { Var (loc $1) (ident $1) }
            | stringLiteral { Literal (loc $1) (str $1) }
            | strBegin some(Interp) strEnd { Interp $1 (toList $ NE.reverse $2) }
+           | multiStrBegin some(Interp) multiStrEnd { MultiInterp $1 (toList $ NE.reverse $2) }
            | rbracket many(Expression) { Concat $1 (reverse $2) }
            | dollar Expression Expression { Apply $1 $2 $3 }
            | lparen sepBy(Expression,comma) rparen { Tuple $1 (NE.reverse $2) }

@@ -66,6 +66,8 @@ $str_chunk = [^\"\\\$]
 @name = (@lower_name \.)* @lower_name
 @tyname = [A-Z] @follow_char*
 
+@multi_str_in = ([^\'] | $white)*
+
 tokens :-
 
     <0> $white+                    ;
@@ -114,7 +116,7 @@ tokens :-
     -- and indentation (strip it away like Dhall)
 
     <0> "'''"                      { mkSym MultiStrBegin `andBegin` multiStr }
-    <multiStr> [^\']*              { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
+    <multiStr> @multi_str_in       { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
     <multiStr> "'''"               { mkSym MultiStrEnd `andBegin` 0 }
 
     -- strings
