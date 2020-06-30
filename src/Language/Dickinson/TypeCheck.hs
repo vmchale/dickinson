@@ -89,6 +89,8 @@ typeOf (Var l n@(Name _ (Unique i) _))  = do
     case IM.lookup i tyEnv of
         Just ty -> pure ty
         Nothing -> throwError $ UnfoundName l n
+typeOf (MultiInterp l es) =
+    traverse_ (tyAssert (TyText undefined)) es $> TyText l
 typeOf (Interp l es) =
     traverse_ (tyAssert (TyText undefined)) es $> TyText l
 typeOf (Concat l es) =

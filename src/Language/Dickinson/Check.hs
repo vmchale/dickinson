@@ -36,18 +36,19 @@ collectConstructors Define{}        = []
 collectConstructors (TyDecl _ _ cs) = toList cs
 
 checkMultipleExpr :: Expression a -> Maybe (DickinsonWarning a)
-checkMultipleExpr Var{}            = Nothing
-checkMultipleExpr Literal{}        = Nothing
-checkMultipleExpr StrChunk{}       = Nothing
-checkMultipleExpr (Interp _ es)    = foldMapAlternative checkMultipleExpr es
-checkMultipleExpr (Apply _ e e')   = checkMultipleExpr e <|> checkMultipleExpr e'
-checkMultipleExpr (Match _ e _ e') = checkMultipleExpr e <|> checkMultipleExpr e'
-checkMultipleExpr (Choice _ brs)   = foldMapAlternative (checkMultipleExpr . snd) brs
-checkMultipleExpr (Concat _ es)    = foldMapAlternative checkMultipleExpr es
-checkMultipleExpr (Tuple _ es)     = foldMapAlternative checkMultipleExpr es
-checkMultipleExpr (Lambda _ _ _ e) = checkMultipleExpr e
-checkMultipleExpr (Flatten _ e)    = checkMultipleExpr e
-checkMultipleExpr (Let _ bs e)     =
+checkMultipleExpr Var{}              = Nothing
+checkMultipleExpr Literal{}          = Nothing
+checkMultipleExpr StrChunk{}         = Nothing
+checkMultipleExpr (Interp _ es)      = foldMapAlternative checkMultipleExpr es
+checkMultipleExpr (MultiInterp _ es) = foldMapAlternative checkMultipleExpr es
+checkMultipleExpr (Apply _ e e')     = checkMultipleExpr e <|> checkMultipleExpr e'
+checkMultipleExpr (Match _ e _ e')   = checkMultipleExpr e <|> checkMultipleExpr e'
+checkMultipleExpr (Choice _ brs)     = foldMapAlternative (checkMultipleExpr . snd) brs
+checkMultipleExpr (Concat _ es)      = foldMapAlternative checkMultipleExpr es
+checkMultipleExpr (Tuple _ es)       = foldMapAlternative checkMultipleExpr es
+checkMultipleExpr (Lambda _ _ _ e)   = checkMultipleExpr e
+checkMultipleExpr (Flatten _ e)      = checkMultipleExpr e
+checkMultipleExpr (Let _ bs e)       =
         checkNames (toList $ fmap fst bs)
     <|> foldMapAlternative checkMultipleExpr (snd <$> bs)
     <|> checkMultipleExpr e

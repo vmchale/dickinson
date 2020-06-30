@@ -64,6 +64,7 @@ checkExpr Literal{}      = pure Nothing
 checkExpr StrChunk{}     = pure Nothing
 checkExpr (Apply _ e e') = (<|>) <$> checkExpr e <*> checkExpr e'
 checkExpr (Interp _ es)  = mapSumM checkExpr es
+checkExpr (MultiInterp _ es)  = mapSumM checkExpr es
 checkExpr (Choice _ brs) = mapSumM checkExpr (snd <$> brs)
 checkExpr (Concat _ es)  = mapSumM checkExpr es
 checkExpr (Tuple _ es)   = mapSumM checkExpr es

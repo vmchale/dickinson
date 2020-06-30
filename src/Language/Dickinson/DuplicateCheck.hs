@@ -32,17 +32,18 @@ collectText :: [(b, Expression a)] -> [(a, T.Text)]
 collectText = mapMaybe (extrText . snd)
 
 checkExprDuplicates :: Expression a -> Maybe (DickinsonWarning a)
-checkExprDuplicates Var{}            = Nothing
-checkExprDuplicates Literal{}        = Nothing
-checkExprDuplicates StrChunk{}       = Nothing
-checkExprDuplicates (Interp _ es)    = foldMapAlternative checkExprDuplicates es
-checkExprDuplicates (Concat _ es)    = foldMapAlternative checkExprDuplicates es
-checkExprDuplicates (Tuple _ es)     = foldMapAlternative checkExprDuplicates es
-checkExprDuplicates (Apply _ e e')   = checkExprDuplicates e <|> checkExprDuplicates e'
-checkExprDuplicates (Choice _ brs)   = checkNames (collectText $ toList brs)
-checkExprDuplicates (Let _ brs es)   = foldMapAlternative checkExprDuplicates (snd <$> brs) <|> checkExprDuplicates es
-checkExprDuplicates (Lambda _ _ _ e) = checkExprDuplicates e
-checkExprDuplicates (Match _ e _ e') = checkExprDuplicates e <|> checkExprDuplicates e'
-checkExprDuplicates (Flatten _ e)    = checkExprDuplicates e
-checkExprDuplicates (Annot _ e _)    = checkExprDuplicates e
-checkExprDuplicates Constructor{}    = Nothing
+checkExprDuplicates Var{}              = Nothing
+checkExprDuplicates Literal{}          = Nothing
+checkExprDuplicates StrChunk{}         = Nothing
+checkExprDuplicates (Interp _ es)      = foldMapAlternative checkExprDuplicates es
+checkExprDuplicates (MultiInterp _ es) = foldMapAlternative checkExprDuplicates es
+checkExprDuplicates (Concat _ es)      = foldMapAlternative checkExprDuplicates es
+checkExprDuplicates (Tuple _ es)       = foldMapAlternative checkExprDuplicates es
+checkExprDuplicates (Apply _ e e')     = checkExprDuplicates e <|> checkExprDuplicates e'
+checkExprDuplicates (Choice _ brs)     = checkNames (collectText $ toList brs)
+checkExprDuplicates (Let _ brs es)     = foldMapAlternative checkExprDuplicates (snd <$> brs) <|> checkExprDuplicates es
+checkExprDuplicates (Lambda _ _ _ e)   = checkExprDuplicates e
+checkExprDuplicates (Match _ e _ e')   = checkExprDuplicates e <|> checkExprDuplicates e'
+checkExprDuplicates (Flatten _ e)      = checkExprDuplicates e
+checkExprDuplicates (Annot _ e _)      = checkExprDuplicates e
+checkExprDuplicates Constructor{}      = Nothing

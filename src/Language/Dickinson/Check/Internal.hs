@@ -36,6 +36,7 @@ maxUniqueExpression (Constructor _ (Name _ (Unique k) _)) = k
 maxUniqueExpression StrChunk{}                            = 0
 maxUniqueExpression (Var _ (Name _ (Unique i) _))         = i
 maxUniqueExpression (Choice _ pes)                        = maximum (maxUniqueExpression . snd <$> pes)
+maxUniqueExpression (MultiInterp _ es)                    = maximum (fmap maxUniqueExpression es)
 maxUniqueExpression (Interp _ es)                         = maximum (fmap maxUniqueExpression es)
 maxUniqueExpression (Concat _ es)                         = maximum (fmap maxUniqueExpression es)
 maxUniqueExpression (Apply _ e e')                        = max (maxUniqueExpression e) (maxUniqueExpression e')
