@@ -1,5 +1,10 @@
 %-
 
+(:def strangeChar
+  '''
+  I saw my boss' dog today
+  ''')
+
 (:def empty
   '''
   ''')

@@ -120,8 +120,8 @@ tokens :-
     -- and indentation (strip it away like Dhall)
 
     <0> "'''"                      { mkSym MultiStrBegin `andBegin` multiStr }
-    <multiStr> @multi_str_in       { tok (\p s -> alex $ TokStrChunk p (stripMulti $ mkText s)) }
-    <multiStr> \' [^\']            { tok (\p s -> alex $ TokStrChunk p (stripMulti $ mkText s)) }
+    <multiStr> @multi_str_in       { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
+    <multiStr> \' [^\']            { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
     <multiStr> "'''"               { mkSym MultiStrEnd `andBegin` 0 }
 
     -- strings
@@ -131,15 +131,6 @@ tokens :-
     <0> @num                       { tok (\p s -> alex $ TokDouble p (read $ ASCII.unpack s)) } -- shouldn't cause any problems cuz digits
 
 {
-
-countSpaces :: T.Text -> Int
-countSpaces = T.length . T.takeWhile (== ' ')
-
-stripMulti :: T.Text -> T.Text
-stripMulti t =
-    let ls = T.lines t
-        in let sp = minimum (maxBound : (fmap countSpaces $ tail ls))
-            in T.unlines (fmap (T.drop sp) ls)
 
 escReplace :: T.Text -> T.Text
 escReplace =

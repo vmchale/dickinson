@@ -148,7 +148,7 @@ Expression :: { Expression AlexPosn }
            | ident { Var (loc $1) (ident $1) }
            | stringLiteral { Literal (loc $1) (str $1) }
            | strBegin some(Interp) strEnd { Interp $1 (toList $ NE.reverse $2) }
-           | multiStrBegin some(Interp) multiStrEnd { MultiInterp $1 (toList $ NE.reverse $2) }
+           | multiStrBegin some(Interp) multiStrEnd { MultiInterp $1 (processMultiChunks $ toList $ NE.reverse $2) }
            | rbracket many(Expression) { Concat $1 (reverse $2) }
            | dollar Expression Expression { Apply $1 $2 $3 }
            | lparen sepBy(Expression,comma) rparen { Tuple $1 (NE.reverse $2) }
@@ -170,6 +170,27 @@ DeclarationOrExpression :: { Either (Declaration AlexPosn) (Expression AlexPosn)
                         | Declaration { Left $1 }
 
 {
+
+countSpaces :: T.Text -> Int
+countSpaces = T.length . T.takeWhile (== ' ')
+
+stripMulti :: T.Text -> T.Text
+stripMulti t =
+    let ls = T.lines t
+        in let sp = minimum (maxBound : (fmap countSpaces $ tail ls))
+            in T.unlines (fmap (T.drop sp) ls)
+
+mapStrChunk :: (T.Text -> T.Text) -> Expression a -> Expression a
+mapStrChunk f (StrChunk l t) = StrChunk l (f t)
+mapStrChunk _ e = e
+
+squishStrChunks :: [Expression a] -> [Expression a]
+squishStrChunks (StrChunk l t:StrChunk _ t':ts) = squishStrChunks (StrChunk l (t <> t') : ts)
+squishStrChunks (t:ts)                          = t : squishStrChunks ts
+squishStrChunks []                              = []
+
+processMultiChunks :: [Expression a] -> [Expression a]
+processMultiChunks = fmap (mapStrChunk stripMulti) . squishStrChunks
 
 weight :: NonEmpty (Expression a) -> NonEmpty (Double, Expression a)
 weight es = (recip, ) <$> es

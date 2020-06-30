@@ -122,7 +122,7 @@ prettyInterp e              = "${" <> pretty e <> "}"
 
 prettyMultiInterp :: [Expression a] -> Doc b
 prettyMultiInterp = concatWith (<#>) . concatMap prettyChunk
-    where prettyChunk (StrChunk _ t) = fmap pretty (T.lines t)
+    where prettyChunk (StrChunk _ t) = fmap pretty (T.lines t) -- TODO: squish StrChunks together (so that ' blocks are not separated...)
           prettyChunk _              = undefined -- TODO: handle this when interpolated multiline strings hit
 
 instance Pretty (Pattern a) where
