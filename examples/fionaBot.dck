@@ -1,0 +1,9 @@
+%-
+
+(:def fiona
+  (:oneof
+    (| "You forgot the difference between equanimity and passivity.")
+    (| "Just tolerate my little fist\nTugging on your forest chest")))
+
+(:def main
+  fiona)
