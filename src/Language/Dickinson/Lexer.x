@@ -117,7 +117,6 @@ tokens :-
     <string> \"                    { mkSym StrEnd `andBegin` 0 }
 
     -- TODO: track "depth" in interpolations
-    -- and indentation (strip it away like Dhall)
 
     <0> "'''"                      { mkSym MultiStrBegin `andBegin` multiStr }
     <multiStr> @multi_str_in       { tok (\p s -> alex $ TokStrChunk p (mkText s)) }

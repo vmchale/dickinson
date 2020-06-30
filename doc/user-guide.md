@@ -106,6 +106,20 @@ We can recombine past definitions via string interpolation:
   "What a ${adjective}, ${adjective} day!")
 ```
 
+### Multi-Line Strings
+
+For large blocks of text, we can use multi-line strings.
+
+```
+(:def twain
+  '''
+  Truth is the most valuable thing we have — so let us economize it.
+    — Mark Twain
+  ''')
+```
+
+Multiline strings begin and end with `'''`.
+
 ## Expressions
 
 Branches, strings, and interpolations are expressions. A `:def` can attach
