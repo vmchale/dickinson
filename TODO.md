@@ -18,7 +18,7 @@
 - [ ] Fiona bot?
 - [ ] Storytelling? RPG? idk
 - [ ] https://www.nadyaprimak.com/blog/programming/poetry-bot/
-- [x] Dog greeter
+- [½] Dog greeter
 - [½] Fortune teller/unix fortune
 - [ ] Hot take generator
 - [ ] Cowsay-as-a-function

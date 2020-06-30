@@ -230,11 +230,11 @@ The `:include` must come before the `%-`; definitions come after the
 %-
 
 (:def color
-    (:oneof
-        (| "aubergine")
-        (| "cerulean")
-        (| "azure")
-        ...
+  (:oneof
+    (| "aubergine")
+    (| "cerulean")
+    (| "azure")
+    ...
 ```
 
 ## Writing Libraries

@@ -16,7 +16,7 @@ checkNames ns = foldMapAlternative announce (groupBy ((==) `on` snd) $ sortBy (c
     where announce (_:(l, y):_) = Just $ DuplicateStr l y
           announce _            = Nothing
 
--- | Check that there are no duplicate names as the top-level
+-- | Check that there are not duplicates in branches.
 checkDuplicates :: [Declaration a] -> Maybe (DickinsonWarning a)
 checkDuplicates = foldMapAlternative checkDeclDuplicates
 
@@ -30,8 +30,6 @@ extrText _             = Nothing
 
 collectText :: [(b, Expression a)] -> [(a, T.Text)]
 collectText = mapMaybe (extrText . snd)
-
--- TODO: check duplicate tydecl names!!
 
 checkExprDuplicates :: Expression a -> Maybe (DickinsonWarning a)
 checkExprDuplicates Var{}            = Nothing

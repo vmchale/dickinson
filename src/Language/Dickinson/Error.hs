@@ -25,9 +25,8 @@ data DickinsonError a = UnfoundName a (Name a)
                       | ModuleNotFound a (Name a)
                       | TypeMismatch (Expression a) (DickinsonTy a) (DickinsonTy a)
                       | ExpectedLambda (Expression a) (DickinsonTy a)
-                      | MultiBind a (Name a) (Pattern a) -- When a variable is bound more than once in a pattern...
+                      | MultiBind a (Name a) (Pattern a) -- When a variable is bound more than once in a pattern
                       | MalformedTuple a
-                      | InternalError
                       | UnfoundConstructor a (TyName a)
                       | UnfoundType a (Name a)
                       deriving (Generic, NFData)
@@ -52,7 +51,6 @@ instance (Pretty a) => Pretty (DickinsonError a) where
     pretty (ExpectedLambda e ty)     = "Expected" <+> squotes (pretty e) <+> "to be of function type, found type" <+> pretty ty
     pretty (MultiBind l n p)         = pretty l <+> "Name" <+> pretty n <+> "is bound more than once in" <+> pretty p
     pretty (MalformedTuple l)        = pretty l <+> "Malformed tuple"
-    pretty InternalError             = "Internal error. Please report this as a bug: https://github.com/vmchale/dickinson/issues"
     pretty (UnfoundConstructor l tn) = pretty l <+> "Constructor" <+> pretty tn <+> "not found"
     pretty (UnfoundType l ty)        = pretty l <+> "Type" <+> pretty ty <+> "not found"
 

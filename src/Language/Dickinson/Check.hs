@@ -16,7 +16,8 @@ checkNames ns = foldMapAlternative announce (group $ sort ns)
           announce _       = Nothing
 
 -- runs after the renamer
--- | Checks that there are not name clashes at the top level.
+-- | Checks that there are not name clashes at the top level or within let
+-- bindings.
 checkMultiple :: [Declaration a] -> Maybe (DickinsonWarning a)
 checkMultiple ds =
         checkNames (mapMaybe defNameM ds)

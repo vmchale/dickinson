@@ -98,10 +98,11 @@ tokens :-
     <0> ":flatten"                 { mkKeyword KwFlatten }
     <0> "tydecl"                   { mkKeyword KwTyDecl }
 
+    -- identifiers
     <0> @name                      { tok (\p s -> TokIdent p <$> newIdentAlex p (mkText s)) }
     <0> @tyname                    { tok (\p s -> TokTyCons p <$> newIdentAlex p (mkText s)) }
 
-    -- strings
+    -- interpolated strings
     <0> \"                         { mkSym StrBegin `andBegin` string }
     <string> @str_interp_in        { tok (\p s -> alex $ TokStrChunk p (escReplace $ mkText s)) }
     <string> @interp               { mkSym BeginInterp `andBegin` 0 }
@@ -249,9 +250,9 @@ data Token a = EOF { loc :: a }
              | TokIdent { loc :: a, ident :: Name a }
              | TokTyCons { loc :: a, tyIdent :: TyName a }
              | TokDouble { loc :: a, double :: Double }
+             | TokStrChunk { loc :: a, str :: T.Text }
              -- separate tok for full strings for sake of speed
              | TokString { loc :: a, str :: T.Text }
-             | TokStrChunk { loc :: a, str :: T.Text }
              | TokKeyword { loc :: a, kw :: Keyword }
              | TokSym { loc :: a, sym :: Sym }
              deriving (Eq, Generic, NFData)

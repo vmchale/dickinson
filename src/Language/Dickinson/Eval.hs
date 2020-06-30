@@ -46,7 +46,7 @@ data EvalSt a = EvalSt
     , renameCtx     :: Renames
     -- TODO: map to uniques or an expression?
     , topLevel      :: M.Map T.Text Unique
-    -- For imports & such.
+    -- Used in the REPL, for instance
     , lexerState    :: AlexUserState
     -- For error messages
     , tyEnv         :: (TyEnv a)
@@ -147,6 +147,7 @@ loadDickinson :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m)
               -> m ()
 loadDickinson = traverse_ addDecl
 
+-- Used in the REPL
 balanceMax :: (HasRenames s, HasLexerState s) => MonadState s m => m ()
 balanceMax = do
     m0 <- use (rename.maxLens)
@@ -165,6 +166,8 @@ extrText (Literal _ t)  = pure t
 extrText (StrChunk _ t) = pure t
 extrText e              = do { ty <- typeOf e ; throwError $ TypeMismatch e (TyText $ exprAnn e) ty }
 
+-- Work with a temporary state, handling the max sensibly so as to prevent name
+-- collisions
 withSt :: (HasRenames s, MonadState s m) => (s -> s) -> m b -> m b
 withSt modSt act = do
     preSt <- get
@@ -177,10 +180,10 @@ withSt modSt act = do
 bindPattern :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m) => Pattern a -> Expression a -> m (EvalSt a -> EvalSt a)
 bindPattern (PatternVar _ n) e               = pure $ nameMod n e
 bindPattern Wildcard{} _                     = pure id
-bindPattern (PatternTuple _ ps) (Tuple _ es) = thread <$> Ext.zipWithM bindPattern ps es
+bindPattern (PatternTuple _ ps) (Tuple _ es) = thread <$> Ext.zipWithM bindPattern ps es -- don't need to verify length because in theory typechecker already did
 bindPattern (PatternTuple l _) _             = throwError $ MalformedTuple l
 
--- To partially apply lambdas
+-- To partially apply lambdas (needed for curried functions)
 tryEvalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 tryEvalExpressionM e@Literal{}    = pure e
 tryEvalExpressionM e@StrChunk{}   = pure e
@@ -265,7 +268,8 @@ evalExpressionAsTextM = extrText <=< evalExpressionM
 resolveDeclarationM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Declaration a -> m (Declaration a)
 resolveDeclarationM (Define l n e) = Define l n <$> resolveExpressionM e
 
--- | Resolve let bindings and such; no not perform choices or concatenations.
+-- | To aid the @:flatten@ function: resolve an expression, leaving
+-- choices/branches intact.
 resolveFlattenM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 resolveFlattenM e@Literal{}     = pure e
 resolveFlattenM e@StrChunk{}    = pure e
@@ -297,7 +301,7 @@ resolveFlattenM (Flatten l e) =
     Flatten l <$> resolveFlattenM e
 resolveFlattenM (Annot _ e _) = resolveFlattenM e
 
--- | Resolve let bindings and such; no not perform choices or concatenations.
+-- | Resolve let bindings and such; do not perform choices or concatenations.
 resolveExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 resolveExpressionM e@Literal{}     = pure e
 resolveExpressionM e@StrChunk{}    = pure e

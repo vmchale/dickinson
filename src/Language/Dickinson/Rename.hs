@@ -81,28 +81,33 @@ replaceVar (Name n u l) = {-# SCC "replaceVar" #-} do
     u' <- replaceUnique u
     pure $ Name n u' l
 
+-- exported so we can test it alone
 renameDickinson :: Int -> Dickinson a -> (Dickinson a, Int)
 renameDickinson m ds = runRenameM m $ renameDickinsonM ds
 
+-- | The renamer ensures global uniqueness and is used during evaluation to
+-- clone expressions with bound variables.
 renameDickinsonM :: (MonadState s m, HasRenames s) => Dickinson a -> m (Dickinson a)
 renameDickinsonM (Dickinson i d) = Dickinson i <$> renameDeclarationsM d
 
 renameDeclarationsM :: (MonadState s m, HasRenames s) => [Declaration a] -> m [Declaration a]
 renameDeclarationsM = traverse renameDeclarationM <=< traverse insDeclM
 
--- broadcast first...
+-- broadcast first... This allows definitions to be declared in any order.
 insDeclM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)
 insDeclM (Define p n e) = do
     (n', modR) <- withName n
     modifying rename modR
     pure $ Define p n' e
-insDeclM d@TyDecl{} = pure d -- FIXME: scoping!! (two type decls should be illegal?)
+insDeclM d@TyDecl{} = pure d -- TODO: decide on spec for scoping. (two type decls should be illegal)
 
 renameDeclarationM :: (MonadState s m, HasRenames s) => Declaration a -> m (Declaration a)
 renameDeclarationM (Define p n e) =
     Define p n <$> renameExpressionM e
 renameDeclarationM d@TyDecl{} = pure d
 
+-- allows us to work with a temporary change to the renamer state, tracking the
+-- max sensibly
 withRenames :: (HasRenames s, MonadState s m) => (Renames -> Renames) -> m a -> m a
 withRenames modSt act = do
     preSt <- use rename

@@ -31,7 +31,7 @@ liftLexerState fAct = do
     (st, x) <- fAct lSt
     (lexerStateLens .= st) $> x
 
--- Parse an import. Does NOT perform renaming!
+-- | Parse an import. Does not perform renaming!
 parseImport :: (MonadError (DickinsonError AlexPosn) m, MonadIO m)
             => [FilePath] -- ^ Include path
             -> Import AlexPosn
