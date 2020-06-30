@@ -70,39 +70,43 @@ $str_chunk = [^\"\\\$]
 
 tokens :-
 
-    <0> $white+                    ;
-    <0> ";".*                      ;
+    <0> {
 
-    <0> \(                         { mkSym LParen }
-    <0> \)                         { mkSym RParen }
-    <0> \>                         { mkSym RBracket }
-    <0> \|                         { mkSym VBar }
-    <0> \[                         { mkSym LSqBracket }
-    <0> \]                         { mkSym RSqBracket }
-    <0> \$                         { mkSym DollarSign }
-    <0> \,                         { mkSym Comma }
-    <0> \_                         { mkSym Underscore }
-    <0> "⟶"                        { mkSym Arrow }
-    <0> "->"                       { mkSym Arrow }
-    <0> \:                         { mkSym Colon }
-    <0> \%\-                       { mkSym DeclBreak }
-    <0> "="                        { mkSym Eq }
+        $white+                    ;
+        ";".*                      ;
 
-    -- keywords
-    <0> ":let"                     { mkKeyword KwLet }
-    <0> ":branch"                  { mkKeyword KwBranch }
-    <0> ":oneof"                   { mkKeyword KwOneof }
-    <0> ":def"                     { mkKeyword KwDef }
-    <0> ":include"                 { mkKeyword KwInclude }
-    <0> ":lambda"                  { mkKeyword KwLambda }
-    <0> "text"                     { mkKeyword KwText }
-    <0> ":match"                   { mkKeyword KwMatch }
-    <0> ":flatten"                 { mkKeyword KwFlatten }
-    <0> "tydecl"                   { mkKeyword KwTyDecl }
+        \(                         { mkSym LParen }
+        \)                         { mkSym RParen }
+        \>                         { mkSym RBracket }
+        \|                         { mkSym VBar }
+        \[                         { mkSym LSqBracket }
+        \]                         { mkSym RSqBracket }
+        \$                         { mkSym DollarSign }
+        \,                         { mkSym Comma }
+        \_                         { mkSym Underscore }
+        "⟶"                        { mkSym Arrow }
+        "->"                       { mkSym Arrow }
+        \:                         { mkSym Colon }
+        \%\-                       { mkSym DeclBreak }
+        "="                        { mkSym Eq }
 
-    -- identifiers
-    <0> @name                      { tok (\p s -> TokIdent p <$> newIdentAlex p (mkText s)) }
-    <0> @tyname                    { tok (\p s -> TokTyCons p <$> newIdentAlex p (mkText s)) }
+        -- keywords
+        ":let"                     { mkKeyword KwLet }
+        ":branch"                  { mkKeyword KwBranch }
+        ":oneof"                   { mkKeyword KwOneof }
+        ":def"                     { mkKeyword KwDef }
+        ":include"                 { mkKeyword KwInclude }
+        ":lambda"                  { mkKeyword KwLambda }
+        "text"                     { mkKeyword KwText }
+        ":match"                   { mkKeyword KwMatch }
+        ":flatten"                 { mkKeyword KwFlatten }
+        "tydecl"                   { mkKeyword KwTyDecl }
+
+        -- identifiers
+        @name                      { tok (\p s -> TokIdent p <$> newIdentAlex p (mkText s)) }
+        @tyname                    { tok (\p s -> TokTyCons p <$> newIdentAlex p (mkText s)) }
+
+    }
 
     -- interpolated strings
     <0> \"                         { mkSym StrBegin `andBegin` string }
