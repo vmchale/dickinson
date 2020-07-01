@@ -11,6 +11,14 @@ To install, first download [cabal-install](https://www.haskell.org/cabal/) and
 cabal install language-dickinson
 ```
 
+Manpages are installed at
+
+```
+emd man
+```
+
+So `man $(emd man)` will pull them up in bash, for instance.
+
 ### Editor Integration
 
 Editor integration is available for vim.

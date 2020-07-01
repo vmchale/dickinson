@@ -29,6 +29,8 @@ emd - [Emily] Dickinson
 
 **fmt** - Format Dickinson code
 
+**man** - Point to where manpages are installed
+
 ## REPL COMMANDS
 
 **:save** - Save curent state in a file

@@ -1,12 +1,14 @@
 module Main (main) where
 
 import           Data.Semigroup
-import qualified Data.Text.IO            as TIO
-import           Language.Dickinson      (dickinsonVersionString)
+import qualified Data.Text.IO             as TIO
+import           Language.Dickinson       (dickinsonVersionString)
 import           Language.Dickinson.File
 import           Language.Dickinson.Lib
 import           Options.Applicative
+import           Paths_language_dickinson (getDataDir)
 import           REPL
+import           System.FilePath          ((</>))
 
 -- TODO debug/verbosity options...
 data Act = Run !FilePath ![FilePath]
@@ -15,6 +17,7 @@ data Act = Run !FilePath ![FilePath]
          | Lint !FilePath
          | Typecheck !FilePath ![FilePath]
          | Format !FilePath
+         | Man
 
 main :: IO ()
 main = run =<< execParser wrapper
@@ -27,6 +30,7 @@ act = hsubparser
     <> command "lint" (info lintP (progDesc "Examine a file for common errors."))
     <> command "typecheck" (info typecheckP (progDesc "Type information for a program (for debugging)"))
     <> command "fmt" (info formatP (progDesc "Format Dickinson code"))
+    <> command "man" (info (pure Man) (progDesc "Dump path to manpages"))
     )
 
 formatP :: Parser Act
@@ -82,3 +86,4 @@ run (Check f i)     = do { pathMod <- defaultLibPath ; checkFile (pathMod i) f }
 run (Lint f)        = warnFile f
 run (Typecheck f i) = do { pathMod <- defaultLibPath ; tcFile (pathMod i) f }
 run (Format fp)     = fmtFile fp
+run Man             = putStrLn =<< (</> "emd.1") . (</> "man") <$> getDataDir

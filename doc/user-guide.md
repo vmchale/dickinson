@@ -18,6 +18,11 @@ cabal install language-dickinson
 This provides `emd`, the command-line interface to the Dickinson language.
 
 You may also wish to install manpages for reference information about `emd`.
+Manpages are installed at
+
+```
+emd man
+```
 
 ## Editor Integration
 
