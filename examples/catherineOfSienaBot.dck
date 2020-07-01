@@ -2,7 +2,8 @@
 
 %-
 
-(:def wisdom
+; From The Dialogue
+(:def dialogue
   (:oneof
     (| "Sin is the opposite of being")
     (| "Perseverance is necessary if you want to see your desires realized.")
@@ -57,4 +58,4 @@
     ))
 
 (:def main
-  wisdom)
+  dialogue)
