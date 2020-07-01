@@ -70,7 +70,7 @@ instance Pretty (EvalSt a) where
             <#> prettyAlexState st
 
 prettyAlexState :: AlexUserState -> Doc a
-prettyAlexState (m, _, nEnv) =
+prettyAlexState (m, _, _, nEnv) =
         "max:" <+> pretty m
     <#> prettyDumpBinds nEnv
 

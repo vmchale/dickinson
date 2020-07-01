@@ -26,7 +26,7 @@ import Data.Semigroup ((<>))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Data.Text.Prettyprint.Doc (Pretty (pretty), (<+>))
-import Data.Tuple.Ext (fst3)
+import Data.Tuple.Ext (fst4)
 import Data.Typeable (Typeable)
 import GHC.Generics (Generic)
 import Language.Dickinson.Lexer
@@ -240,7 +240,7 @@ parseWithInitSt parser str st = liftErr $ withAlexSt str st (runExceptT parser)
           liftErr (Right (i, Right x))  = Right (i, x)
 
 parseWrapper :: Parse a -> BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, a)
-parseWrapper parser str = fmap (first fst3) $ liftErr $ runAlexSt str (runExceptT parser)
+parseWrapper parser str = fmap (first fst4) $ liftErr $ runAlexSt str (runExceptT parser)
 
 liftErr :: Either String (b, Either (ParseError a) c) -> Either (ParseError a) (b, c)
 liftErr (Left err)            = Left (LexErr err)

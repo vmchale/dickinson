@@ -1,5 +1,5 @@
-module Data.Tuple.Ext ( fst3
+module Data.Tuple.Ext ( fst4
                       ) where
 
-fst3 :: (a, b, c) -> a
-fst3 (x, _, _) = x
+fst4 :: (a, b, c, d) -> a
+fst4 (x, _, _, _) = x

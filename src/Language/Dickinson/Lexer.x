@@ -9,6 +9,7 @@
                                     , withAlexSt
                                     , lexDickinson
                                     , alexInitUserState
+                                    , scdInitState
                                     , AlexPosn (..)
                                     , AlexUserState
                                     , Alex (..)
@@ -143,6 +144,10 @@ mkText = {-# SCC "mkText" #-} decodeUtf8 . BSL.toStrict
 alex :: a -> Alex a
 alex = pure
 
+set_scd :: Int -> Alex ()
+set_scd st = Alex (Right . (go &&& (const ())))
+    where go s = s { alex_scd = st }
+
 set_ust :: AlexUserState -> Alex ()
 set_ust st = Alex (Right . (go &&& (const ())))
     where go s = s { alex_ust = st }
@@ -166,7 +171,10 @@ mkKeyword = constructor TokKeyword
 
 mkSym = constructor TokSym
 
-type AlexUserState = (UniqueCtx, M.Map T.Text Int, NameEnv AlexPosn)
+data ScdState = InStr
+              | InMultiStr
+
+type AlexUserState = (UniqueCtx, [ScdState], M.Map T.Text Int, NameEnv AlexPosn)
 
 class HasLexerState a where
     lexerStateLens :: Lens' a AlexUserState
@@ -178,16 +186,19 @@ newIdentAlex pos t = do
     set_ust st' $> (n $> pos)
 
 newIdent :: AlexPosn -> T.Text -> AlexUserState -> (AlexUserState, Name AlexPosn)
-newIdent pos t pre@(max', names, uniqs) =
+newIdent pos t pre@(max', scd, names, uniqs) =
     case M.lookup t names of
         Just i -> (pre, Name tQual (Unique i) pos)
         Nothing -> let i = max' + 1
             in let newName = Name tQual (Unique i) pos
-                in ((i, M.insert t i names, IM.insert i newName uniqs), newName)
+                in ((i, scd, M.insert t i names, IM.insert i newName uniqs), newName)
     where tQual = NE.fromList (T.splitOn "." t)
 
+scdInitState :: [ScdState]
+scdInitState = mempty
+
 alexInitUserState :: AlexUserState
-alexInitUserState = (0, mempty, mempty)
+alexInitUserState = (0, scdInitState, mempty, mempty)
 
 data Sym = LParen
          | RParen
