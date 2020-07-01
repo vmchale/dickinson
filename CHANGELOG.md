@@ -1,5 +1,9 @@
 # dickinson
 
+## 0.1.1.0
+
+  * Export renamer in `Language.Dickinson`
+
 ## 0.1.0.1
 
   * Fix source distribution so nix builds it automatically

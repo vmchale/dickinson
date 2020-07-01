@@ -200,10 +200,11 @@ tryEvalExpressionM (Apply l e e') = do
             withSt (nameMod n e') $
                 tryEvalExpressionM e'''
         _ -> pure $ Apply l e'' e
-tryEvalExpressionM (Interp l es)   = Interp l <$> traverse tryEvalExpressionM es
-tryEvalExpressionM (Concat l es)   = Concat l <$> traverse tryEvalExpressionM es
-tryEvalExpressionM c@Constructor{} = pure c
-tryEvalExpressionM (Let _ bs e) = do
+tryEvalExpressionM (Interp l es)      = Interp l <$> traverse tryEvalExpressionM es
+tryEvalExpressionM (MultiInterp l es) = MultiInterp l <$> traverse tryEvalExpressionM es
+tryEvalExpressionM (Concat l es)      = Concat l <$> traverse tryEvalExpressionM es
+tryEvalExpressionM c@Constructor{}    = pure c
+tryEvalExpressionM (Let _ bs e)       = do
     let stMod = thread $ fmap (uncurry nameMod) bs
     withSt stMod $
         tryEvalExpressionM e
@@ -216,8 +217,9 @@ evalExpressionM e@StrChunk{}    = pure e
 evalExpressionM e@Constructor{} = pure e
 evalExpressionM (Var _ n)       = evalExpressionM =<< lookupName n
 evalExpressionM (Choice _ pes)  = evalExpressionM =<< pick pes
-evalExpressionM (Interp l es)   = concatOrFail l es
-evalExpressionM (Concat l es)   = concatOrFail l es
+evalExpressionM (MultiInterp l es) = concatOrFail (T.dropAround (== '\n')) l es
+evalExpressionM (Interp l es)   = concatOrFail id l es
+evalExpressionM (Concat l es)   = concatOrFail id l es
 evalExpressionM (Tuple l es)    = Tuple l <$> traverse evalExpressionM es
 evalExpressionM (Let _ bs e) = do
     let stMod = thread $ fmap (uncurry nameMod) bs
@@ -241,26 +243,29 @@ evalExpressionM (Flatten _ e) = do
 evalExpressionM (Annot _ e _) = evalExpressionM e
 
 mapChoice :: (NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a)) -> Expression a -> Expression a
-mapChoice f (Choice l pes) = Choice l (f pes)
-mapChoice _ e@Literal{}    = e
-mapChoice _ e@StrChunk{}   = e
-mapChoice f (Interp l es)  = Interp l (mapChoice f <$> es)
-mapChoice f (Concat l es)  = Concat l (mapChoice f <$> es)
-mapChoice f (Annot l e ty) = Annot l (mapChoice f e) ty
+mapChoice f (Choice l pes)     = Choice l (f pes)
+mapChoice _ e@Literal{}        = e
+mapChoice _ e@StrChunk{}       = e
+mapChoice f (Interp l es)      = Interp l (mapChoice f <$> es)
+mapChoice f (MultiInterp l es) = MultiInterp l (mapChoice f <$> es)
+mapChoice f (Concat l es)      = Concat l (mapChoice f <$> es)
+mapChoice f (Annot l e ty)     = Annot l (mapChoice f e) ty
 
 setFrequency :: NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a)
 setFrequency = fmap (\(_, e) -> (fromIntegral $ {-# SCC "countNodes" #-} countNodes e, e))
 
 countNodes :: Expression a -> Int
-countNodes Literal{}      = 1
-countNodes StrChunk{}     = 1
-countNodes (Choice _ pes) = sum (fmap (countNodes . snd) pes)
-countNodes (Interp _ es)  = product (fmap countNodes es)
-countNodes (Concat _ es)  = product (fmap countNodes es)
-countNodes (Annot _ e _)  = countNodes e
+countNodes Literal{}          = 1
+countNodes StrChunk{}         = 1
+countNodes (Choice _ pes)     = sum (fmap (countNodes . snd) pes)
+countNodes (Interp _ es)      = product (fmap countNodes es)
+countNodes (MultiInterp _ es) = product (fmap countNodes es)
+countNodes (Concat _ es)      = product (fmap countNodes es)
+countNodes (Annot _ e _)      = countNodes e
 
-concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)
-concatOrFail l = fmap (Literal l . mconcat) . traverse evalExpressionAsTextM
+concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => (T.Text -> T.Text) -> a -> [Expression a] -> m (Expression a)
+concatOrFail process l = fmap (Literal l . process . mconcat) . traverse evalExpressionAsTextM
+
 
 evalExpressionAsTextM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 evalExpressionAsTextM = extrText <=< evalExpressionM
@@ -279,10 +284,11 @@ resolveFlattenM (Choice l pes) = do
     let ps = fst <$> pes
     es <- traverse resolveFlattenM (snd <$> pes)
     pure $ Choice l (NE.zip ps es)
-resolveFlattenM (Interp l es) = Interp l <$> traverse resolveFlattenM es
-resolveFlattenM (Concat l es) = Concat l <$> traverse resolveFlattenM es
-resolveFlattenM (Tuple l es) = Tuple l <$> traverse resolveFlattenM es
-resolveFlattenM (Let _ bs e) = do
+resolveFlattenM (Interp l es)      = Interp l <$> traverse resolveFlattenM es
+resolveFlattenM (MultiInterp l es) = MultiInterp l <$> traverse resolveFlattenM es
+resolveFlattenM (Concat l es)      = Concat l <$> traverse resolveFlattenM es
+resolveFlattenM (Tuple l es)       = Tuple l <$> traverse resolveFlattenM es
+resolveFlattenM (Let _ bs e)       = do
     let stMod = thread $ fmap (uncurry nameMod) bs
     withSt stMod $
         resolveFlattenM e
@@ -312,6 +318,7 @@ resolveExpressionM (Choice l pes) = do
     es <- traverse resolveExpressionM (snd <$> pes)
     pure $ Choice l (NE.zip ps es)
 resolveExpressionM (Interp l es) = Interp l <$> traverse resolveExpressionM es
+resolveExpressionM (MultiInterp l es) = MultiInterp l <$> traverse resolveExpressionM es
 resolveExpressionM (Concat l es) = Concat l <$> traverse resolveExpressionM es
 resolveExpressionM (Tuple l es) = Tuple l <$> traverse resolveExpressionM es
 resolveExpressionM (Let _ bs e) = do

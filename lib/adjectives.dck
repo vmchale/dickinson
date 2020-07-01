@@ -1,0 +1,5 @@
+%-
+
+(:def adjective
+  (:oneof
+    (| "stentorian")))

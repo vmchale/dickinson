@@ -54,6 +54,23 @@ of its branches with equal probability.
 
 In general, when you `emd run` code, you'll see the result of evaluating `main`.
 
+### Comments
+
+Comments are indicated with a `;` at the beginning of the line. Anything to the
+right of the `;` is ignored. So
+
+```
+%-
+
+; This returns one of 'heads' or 'tails'
+(:def main
+  (:oneof
+    (| "heads")
+    (| "tails")))
+```
+
+is perfectly valid code and is functionally the same as the above.
+
 ## Definitions & Names
 
 We can define names and reference them later:

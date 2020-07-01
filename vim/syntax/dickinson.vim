@@ -28,7 +28,7 @@ syntax match dickinsonType "text"
 syntax region dickinsonInterpolation start='${' end='}' contains=dickinsonIdentifier,dickinsonKeyword,dickinsonType,dickinsonString
 
 syntax region dickinsonString start=+"+ end=+"+ contains=@Spell,dickinsonEsc,dickinsonInterpolation
-syntax region dickinsonString start=+'''+ end=+'''+
+syntax region dickinsonString start=+'''+ end=+'''+ contains=@Spell
 
 syntax match dickinsonComment "\v;.*$" contains=@Spell
 

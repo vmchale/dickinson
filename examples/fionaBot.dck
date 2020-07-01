@@ -1,10 +1,31 @@
 %-
 
+; see https://twitter.com/fionalyric for a fully fleshed-out implementation of this idea
+
 (:def fiona
   (:oneof
     (| "You forgot the difference between equanimity and passivity.")
     (| "You're more likely to get cut with a dull tool than a sharp one.")
+    (| "I've finally grown weary of waiting to be consumed by you.")
+    (| "The child is gone.")
+    (| "I think he let me down when he didn't disappoint me.")
+    (|
+      '''
+      If I let you get too close
+      ''')
     (| "Hunger hurts but starving works.")
+    (| 
+     '''
+     What's so impressive about a diamond
+     Except the mining
+     ''')
+    (| "Now I only move to move.")
+    (|
+      '''
+      I would beg to disagree
+      But begging disagrees with me
+      ''')
+    (| "Fetch the bolt cutters")
     (| "I ran out of white doves' feathers\nTo soak up the hot piss that comes from your mouth")
     (| "Just tolerate my little fist\nTugging on your forest chest")))
 

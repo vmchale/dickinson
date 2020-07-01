@@ -14,6 +14,9 @@ module Language.Dickinson ( -- * Parser
                           , DickinsonTy (..)
                           , Name
                           , TyName
+                          -- * Renamer
+                          , HasRenames (..)
+                          , renameExpressionM
                           -- * Imports
                           , resolveImport
                           -- * Version info
@@ -26,6 +29,7 @@ import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
+import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import qualified Paths_language_dickinson  as P
 

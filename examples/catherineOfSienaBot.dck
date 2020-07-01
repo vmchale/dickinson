@@ -1,0 +1,37 @@
+; Taken from an English translation since I don't know Tuscan
+
+%-
+
+(:def wisdom
+  (:oneof
+    (| "Sin is the opposite of being")
+    (| "Perseverance is necessary if you want to see your desires realized.")
+    (| "Their selfish sensuality, which is the source of every harm that can come to soul or body.")
+    (| "She has let go of and drowned her own will, and when that will is dead there is peace and quiet.")
+    (| "Penance ought to be undertaken as a means to growth.")
+    (| "Virtue can be proved only by its opposite.")
+    (| "Sensuality is the opposite of spirit.")
+    (| "You should build your foundation by slaying and annhilating your self-will.")
+    (| "Humility comes from knowledge and holy hatred of oneself.")
+    (|
+      '''
+      Memory is beleagured by the body's imperfection; understanding is blocked and fettered by the heaviness
+      of the body.
+      ''')
+    (|
+      '''
+      The despair of Judas displeased more and was a greater insult to my son than his betrayal had been.
+      Therefore, such as these are reproved for this false judgment of considering their sin to be greater
+      than my mercy, and for this they are punished with the demons and tortured eternally with them.
+      ''')
+    (|
+      '''
+      Then my justice reproves them harshly for their injustice and false judgment. And not simply in 
+      general terms for their pervasive habits of injustice and false judgment during their earthly lives,
+      but even more for that particular unjust judgment by which at the very end they have judged their own
+      wretchedness to be greater than my mercy.
+      ''')
+    ))
+
+(:def main
+  wisdom)
