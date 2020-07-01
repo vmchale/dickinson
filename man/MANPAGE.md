@@ -17,6 +17,8 @@ emd - [Emily] Dickinson
 
   emd run project.dck -\-include lib
 
+  man $(emd man)
+
 # SUBCOMMANDS
 
 **repl** - Start a repl
