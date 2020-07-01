@@ -59,6 +59,8 @@ parserTests =
         , noScopeError "test/data/adt.dck"
         , detectScopeError "test/error/tyScope.dck"
         , detectScopeError "test/error/constructorScope.dck"
+        , lexNoError "test/data/multiQuoteify.dck"
+        , parseNoError "test/data/multiQuoteify.dck"
         , findPath
         ]
 

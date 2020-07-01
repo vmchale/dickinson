@@ -16,6 +16,7 @@ evalTests = testGroup "Evaluation test"
     , resultCase "test/data/tuple.dck"
     , resultCase "test/demo/tyAnnot.dck"
     , resultCase "test/data/quoteify.dck"
+    , resultCase "test/data/multiQuoteify.dck"
     , resultCase "test/data/hangIndefinitely.dck"
     , resolveCase "test/data/hangIndefinitely.dck"
     ]

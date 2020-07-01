@@ -21,6 +21,7 @@
 
 import Control.Arrow ((&&&))
 import Control.DeepSeq (NFData)
+import Control.Monad.Fail (MonadFail (..))
 import Data.Bifunctor (first)
 import Data.Binary (Binary)
 import qualified Data.ByteString.Lazy as BSL
@@ -110,19 +111,17 @@ tokens :-
     }
 
     -- interpolated strings
-    <0> \"                         { mkSym StrBegin `andBegin` string }
+    <0> \"                         { doSym StrBegin (pushScd InStr) `andBegin` string }
     <string> @str_interp_in        { tok (\p s -> alex $ TokStrChunk p (escReplace $ mkText s)) }
-    <string> @interp               { mkSym BeginInterp `andBegin` 0 }
+    <string,multiStr> @interp      { mkSym BeginInterp `andBegin` 0 }
     <string> "$"                   { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
-    <0> \}                         { mkSym EndInterp `andBegin` string }
-    <string> \"                    { mkSym StrEnd `andBegin` 0 }
+    <0> \}                         { doSym EndInterp exitInterp }
+    <string> \"                    { doSym StrEnd popScd `andBegin` 0 }
 
-    -- TODO: track "depth" in interpolations
-
-    <0> "'''"                      { mkSym MultiStrBegin `andBegin` multiStr }
+    <0> "'''"                      { doSym MultiStrBegin (pushScd InMultiStr) `andBegin` multiStr }
     <multiStr> @multi_str_in       { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
     <multiStr> \' [^\']            { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
-    <multiStr> "'''"               { mkSym MultiStrEnd `andBegin` 0 }
+    <multiStr> "'''"               { doSym MultiStrEnd popScd `andBegin` 0 }
 
     -- strings
     <0> @string                    { tok (\p s -> alex $ TokString p (escReplace . T.tail . T.init $ mkText s)) }
@@ -131,6 +130,9 @@ tokens :-
     <0> @num                       { tok (\p s -> alex $ TokDouble p (read $ ASCII.unpack s)) } -- shouldn't cause any problems cuz digits
 
 {
+
+instance MonadFail Alex where
+    fail = alexError
 
 escReplace :: T.Text -> T.Text
 escReplace =
@@ -144,6 +146,20 @@ mkText = {-# SCC "mkText" #-} decodeUtf8 . BSL.toStrict
 alex :: a -> Alex a
 alex = pure
 
+popScd :: Alex ()
+popScd = mod_ust (\(x,pop,y,z) -> (x,tail pop,y,z))
+
+pushScd :: ScdState -> Alex ()
+pushScd st =
+    mod_ust (\(x,push,y,z) -> (x,st:push,y,z))
+
+exitInterp :: Alex ()
+exitInterp = do 
+    (_,iSt:_,_,_) <- get_ust
+    case iSt of
+        InStr -> set_scd string
+        InMultiStr -> set_scd multiStr
+
 set_scd :: Int -> Alex ()
 set_scd st = Alex (Right . (go &&& (const ())))
     where go s = s { alex_scd = st }
@@ -151,6 +167,10 @@ set_scd st = Alex (Right . (go &&& (const ())))
 set_ust :: AlexUserState -> Alex ()
 set_ust st = Alex (Right . (go &&& (const ())))
     where go s = s { alex_ust = st }
+
+mod_ust :: (AlexUserState -> AlexUserState) -> Alex ()
+mod_ust f = Alex (Right . (go &&& (const ())))
+    where go s = s { alex_ust = f (alex_ust s) }
 
 gets_alex :: (AlexState -> a) -> Alex a
 gets_alex f = Alex (Right . (id &&& f))
@@ -171,6 +191,8 @@ mkKeyword = constructor TokKeyword
 
 mkSym = constructor TokSym
 
+doSym t act = tok (\p _ -> TokSym p t <$ act)
+
 data ScdState = InStr
               | InMultiStr
 
@@ -186,7 +208,7 @@ newIdentAlex pos t = do
     set_ust st' $> (n $> pos)
 
 newIdent :: AlexPosn -> T.Text -> AlexUserState -> (AlexUserState, Name AlexPosn)
-newIdent pos t pre@(max', scd, names, uniqs) =
+newIdent pos t pre@(max', scd, names, uniqs) = {-# SCC "newIdent" #-}
     case M.lookup t names of
         Just i -> (pre, Name tQual (Unique i) pos)
         Nothing -> let i = max' + 1

@@ -33,6 +33,7 @@ goldenTests =
         , renameDckFile "test/data/quoteify.dck"
         , withDckFile "test/data/lexDollarSign.dck"
         , withDckFile "test/data/multiStr.dck"
+        , withDckFile "test/data/multiQuoteify.dck"
         ]
 
 prettyBSL :: Dickinson a -> BSL.ByteString

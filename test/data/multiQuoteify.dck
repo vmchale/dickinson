@@ -1,0 +1,13 @@
+%-
+
+(:def quote
+  (:lambda qu text
+    (:lambda name text
+      '''
+      ${qu}
+          — ${name}
+      ''')))
+
+(:def main
+  (:oneof
+    (| ($ $ quote "God created war so that Americans would learn geography." "Mark Twain"))))
