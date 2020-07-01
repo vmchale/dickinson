@@ -28,10 +28,12 @@
     (| "Knowledge begets humility.")
     (| "Love animals.")
     ; judgment
+    (| "Irony is the weakest brand of pessimism")
     (| "Sex wastes the male body.")
     (| "Cultivate weakness.")
     (| "Beauty is a moral imperative.")
     (| "We are all damned by our own personalities. That is beauty.")
+    (| "Hobbies are sublunary")
     (| "To err is immoral.")
     (| $ quote ("« Le beau est ce qu'on désire sans vouloir le manger. »", "Simone Weil"))
     (| $ quote ("\"You're more likely to get cut with a dull tool than a sharp one.\"", "Fiona Apple"))
