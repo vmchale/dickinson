@@ -3,6 +3,7 @@
 ## 0.1.1.0
 
   * Export renamer in `Language.Dickinson`
+  * Fix build with GHC ≤ 8.2.2
 
 ## 0.1.0.1
 

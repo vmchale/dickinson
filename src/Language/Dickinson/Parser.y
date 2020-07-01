@@ -22,6 +22,7 @@ import qualified Data.ByteString.Lazy as BSL
 import Data.Foldable (toList)
 import qualified Data.List.NonEmpty as NE
 import Data.List.NonEmpty (NonEmpty ((:|)), (<|))
+import Data.Semigroup ((<>))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Data.Text.Prettyprint.Doc (Pretty (pretty), (<+>))

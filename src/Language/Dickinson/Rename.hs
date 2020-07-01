@@ -47,6 +47,7 @@ boundLens f s = fmap (\x -> s { bound = x }) (f (bound s))
 maxLens :: Lens' Renames Int
 maxLens f s = fmap (\x -> s { max_ = x }) (f (max_ s))
 
+-- | @since 0.1.1.0
 class HasRenames a where
     rename :: Lens' a Renames
 
@@ -141,6 +142,7 @@ renamePatternM (PatternVar l n) = do
     (n', modR) <- withName n
     pure (modR, PatternVar l n')
 
+-- | @since 0.1.1.0
 renameExpressionM :: (MonadState s m, HasRenames s) => Expression a -> m (Expression a)
 renameExpressionM e@Literal{} = pure e
 renameExpressionM e@StrChunk{} = pure e
