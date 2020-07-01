@@ -10,3 +10,8 @@ dist-*
 .stack-work/
 .ghc.environment.*
 stack.yaml.lock
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.synctex.gz
