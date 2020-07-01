@@ -22,6 +22,8 @@
 - [½] Fortune teller/unix fortune
   - [ ] Fortune port? https://github.com/shlomif/fortune-mod/blob/master/fortune-mod/datfiles/disclaimer
 - [ ] Hot take generator
+- [ ] Catherine of Siena bot
+- [ ] Margery Kempe bot
 - [ ] Cowsay-as-a-function
 # Editor Integration
 - [x] Syntastic checker
