@@ -175,23 +175,8 @@ DeclarationOrExpression :: { Either (Declaration AlexPosn) (Expression AlexPosn)
 countSpaces :: T.Text -> Int
 countSpaces = T.length . T.takeWhile (== ' ')
 
-stripMulti :: T.Text -> T.Text
-stripMulti t =
-    let ls = T.lines t
-        in let sp = minimum (maxBound : (fmap countSpaces $ tail ls))
-            in T.unlines (fmap (T.drop sp) ls)
-
-mapStrChunk :: (T.Text -> T.Text) -> Expression a -> Expression a
-mapStrChunk f (StrChunk l t) = StrChunk l (f t)
-mapStrChunk _ e = e
-
-squishStrChunks :: [Expression a] -> [Expression a]
-squishStrChunks (StrChunk l t:StrChunk _ t':ts) = squishStrChunks (StrChunk l (t <> t') : ts)
-squishStrChunks (t:ts)                          = t : squishStrChunks ts
-squishStrChunks []                              = []
-
 processMultiChunks :: [Expression a] -> [Expression a]
-processMultiChunks = fmap (mapStrChunk stripMulti) . squishStrChunks
+processMultiChunks = undefined
 
 weight :: NonEmpty (Expression a) -> NonEmpty (Double, Expression a)
 weight es = (recip, ) <$> es
