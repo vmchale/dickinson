@@ -22,6 +22,7 @@ import qualified Data.ByteString.Lazy as BSL
 import Data.Foldable (toList)
 import qualified Data.List.NonEmpty as NE
 import Data.List.NonEmpty (NonEmpty ((:|)), (<|))
+import Data.Maybe (mapMaybe)
 import Data.Semigroup ((<>))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
@@ -175,8 +176,26 @@ DeclarationOrExpression :: { Either (Declaration AlexPosn) (Expression AlexPosn)
 countSpaces :: T.Text -> Int
 countSpaces = T.length . T.takeWhile (== ' ')
 
+-- minimum indentation (relevant in a string containing newline characters)
+minIndent :: T.Text -> Int
+minIndent t = minimum (maxBound : fmap countSpaces (T.lines t))
+
+minIndentExpr :: Expression a -> Maybe Int
+minIndentExpr (StrChunk _ t) | "\n" `T.isPrefixOf` t = Just $ minIndent t
+minIndentExpr _                                      = Nothing
+
+mapStrChunk :: (T.Text -> T.Text) -> Expression a -> Expression a
+mapStrChunk f (StrChunk l t) = StrChunk l (f t)
+mapStrChunk _ e              = e
+
+minIndentChunks :: [Expression a] -> Int
+minIndentChunks es =
+    minimum (maxBound : mapMaybe minIndentExpr es)
+
 processMultiChunks :: [Expression a] -> [Expression a]
-processMultiChunks = undefined
+processMultiChunks es =
+    let toStrip = minIndentChunks es
+        in undefined
 
 weight :: NonEmpty (Expression a) -> NonEmpty (Double, Expression a)
 weight es = (recip, ) <$> es
