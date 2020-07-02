@@ -68,7 +68,7 @@ $str_chunk = [^\"\\\$]
 @name = (@lower_name \.)* @lower_name
 @tyname = [A-Z] @follow_char*
 
-@multi_str_in = ([^\'] | $white)*
+@multi_str_in = ([^\'\$] | $white)*
 
 tokens :-
 
@@ -114,7 +114,7 @@ tokens :-
     <0> \"                         { doSym StrBegin (pushScd InStr) `andBegin` string }
     <string> @str_interp_in        { tok (\p s -> alex $ TokStrChunk p (escReplace $ mkText s)) }
     <string,multiStr> @interp      { mkSym BeginInterp `andBegin` 0 }
-    <string> "$"                   { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
+    <string,multiStr> "$"          { tok (\p s -> alex $ TokStrChunk p (mkText s)) }
     <0> \}                         { doSym EndInterp exitInterp }
     <string> \"                    { doSym StrEnd popScd `andBegin` 0 }
 

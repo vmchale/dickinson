@@ -100,6 +100,7 @@
   - [x] Pretty-print
 - [ ] name shadowing & such
 - [ ] property test -> generate, pretty-print, parse
+- [ ] Interleaved multi-line string interpolations/strings/string interpolations
 - [ ] Something that kicks the tires on `tryEval` being called on `let` and
   `match`?
 # Libraries
