@@ -51,6 +51,7 @@
 - [ ] Verbosity
 # Features
 - [x] Polyglot integration!
+- [ ] Turn off zstd saving with a flag (for freebsd or etlas)
 - [x] Change `:import` to `:include`!
 - [ ] "append" repl command
 - [ ] Circular import checker
