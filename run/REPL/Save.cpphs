@@ -2,7 +2,9 @@ module REPL.Save ( decodeReplSt
                  , encodeReplSt
                  ) where
 
+#ifdef ZSTD
 import qualified Codec.Compression.Zstd.Lazy as Zstd
+#endif
 import           Data.Binary                 (Binary, Get, Put, get, put)
 import           Data.Binary.Get             (runGet)
 import           Data.Binary.Put             (runPut)
@@ -39,7 +41,15 @@ putReplState (EvalSt _ be rs t lSt ty) =
     <> put ty
 
 decodeReplSt :: Binary a => [Double] -> BSL.ByteString -> EvalSt a
+#ifdef ZSTD
 decodeReplSt ds = runGet (getReplState ds) . Zstd.decompress
+#else
+decodeReplSt ds = runGet (getReplState ds)
+#endif
 
 encodeReplSt :: Binary a => EvalSt a -> BSL.ByteString
+#ifdef ZSTD
 encodeReplSt = Zstd.compress 3 . runPut . putReplState
+#else
+encodeReplSt = runPut . putReplState
+#endif
