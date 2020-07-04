@@ -2,4 +2,6 @@
 
 (:def noun
   (:oneof
+    (| "valetudinarian")
+    (| "valedictorian")
     (| "folderol")))
