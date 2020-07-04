@@ -8,4 +8,6 @@ Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |v|
     v.memory = 8192
   end
+  config.vm.provision "shell",
+    inline: "pkg install --yes hs-cabal-install ghc"
 end
