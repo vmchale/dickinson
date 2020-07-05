@@ -3,6 +3,7 @@
 module Eval ( evalTests
             ) where
 
+import qualified Data.Text as T
 import           Language.Dickinson.File
 import           Test.Tasty              (TestTree, testGroup)
 import           Test.Tasty.HUnit        (Assertion, testCase, (@?=))
@@ -19,6 +20,7 @@ evalTests = testGroup "Evaluation test"
     , resultCase "test/data/multiQuoteify.dck"
     , resultCase "test/data/hangIndefinitely.dck"
     , resolveCase "test/data/hangIndefinitely.dck"
+    , testCase "Should handle interpolated multiline strings" multiQuoteEval
     ]
 
 forceResult :: a -> Assertion
@@ -40,17 +42,19 @@ result fp = do
     res <- evalFile ["prelude", "lib"] fp
     forceResult res
 
+evalTo :: FilePath -> T.Text -> Assertion
+evalTo fp t = do
+    res <- evalFile [] fp
+    res @?= t
+
 constEval :: Assertion
-constEval = do
-    res <- evalFile [] "test/eval/context.dck"
-    res @?= "woman"
+constEval = evalTo "test/eval/context.dck" "woman"
 
 scopeEval :: Assertion
-scopeEval = do
-    res <- evalFile [] "test/demo/circular.dck"
-    res @?= "a"
+scopeEval = evalTo "test/demo/circular.dck" "a"
 
 higherOrderEval :: Assertion
-higherOrderEval = do
-    res <- evalFile [] "test/data/higherOrder.dck"
-    res @?= "It's me"
+higherOrderEval = evalTo "test/data/higherOrder.dck" "It's me"
+
+multiQuoteEval :: Assertion
+multiQuoteEval = evalTo "test/data/multiQuoteify.dck" "God created war so that Americans would learn geography.\n    — Mark Twain"

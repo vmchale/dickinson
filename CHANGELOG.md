@@ -4,6 +4,8 @@
 
   * Export renamer in `Language.Dickinson`
   * Fix build with GHC ≤ 8.2.2
+  * Add `man` subcommand
+  * Introduce multiline strings
 
 ## 0.1.0.1
 
