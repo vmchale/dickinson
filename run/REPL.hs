@@ -168,7 +168,7 @@ printExpr str = do
                         mErr <- lift $ runExceptT $ do
                             e' <- resolveExpressionM =<< renameExpressionM e
                             checkScopeExpr e'
-                            void $ typeOf e'
+                            void $ typeOf e' -- TODO: typeOf e but context?
                             evalExpressionAsTextM e'
                         lift balanceMax
                         putErr mErr (liftIO . TIO.putStrLn)
