@@ -2,11 +2,11 @@
 
 module Main (main) where
 
-import           Control.Exception.Value              (eitherThrow)
-import qualified Data.ByteString.Lazy                 as BSL
-import           Data.Either                          (isRight)
-import           Data.List.NonEmpty                   (NonEmpty (..))
-import           Data.Maybe                           (isJust, isNothing)
+import           Control.Exception.Value           (eitherThrow)
+import qualified Data.ByteString.Lazy              as BSL
+import           Data.Either                       (isRight)
+import           Data.List.NonEmpty                (NonEmpty (..))
+import           Data.Maybe                        (isJust, isNothing)
 import           Eval
 import           Golden
 import           Language.Dickinson.Check
@@ -18,7 +18,6 @@ import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
-import           Language.Dickinson.Rename.Amalgamate
 import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
@@ -113,5 +112,5 @@ parseRename = fmap (fst . uncurry renameDickinson . eitherThrow . parseWithMax) 
 sanityCheckTest :: FilePath -> TestTree
 sanityCheckTest fp = testCase fp $
     fmap eitherThrow $ evalIO $ do
-        ds <- fileDecls [] fp
+        ds <- amalgamateRenameM [] fp
         sanityCheck ds
