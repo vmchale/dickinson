@@ -1,16 +1,25 @@
 module Language.Dickinson.Check.Internal ( sanityCheck
+                                         , sanityCheckLexer
                                          ) where
 
 import           Control.Monad             (when)
 import           Control.Monad.State       (MonadState)
 import           Data.List.NonEmpty        ((<|))
+import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
+import           Lens.Micro                (_1)
 import           Lens.Micro.Mtl            (use)
 
--- TODO: sanity check for the lexer
+sanityCheckLexer :: (HasLexerState s, MonadState s m) => [Declaration a] -> m ()
+sanityCheckLexer d = do
+    storedMax <- use (lexerStateLens._1)
+    let computedMax = maximum (maxUniqueDeclaration <$> d)
+    when (storedMax < computedMax) $
+        error "Sanity check failed!"
+
 -- | Sanity check for the renamer.
 sanityCheck :: (HasRenames s, MonadState s m) => [Declaration a] -> m ()
 sanityCheck d = do
