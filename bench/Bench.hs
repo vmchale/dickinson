@@ -15,6 +15,12 @@ import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
 
+benchResult :: FilePath -> Benchmark
+benchResult fp = bench fp $ nfIO (evalFile [] fp)
+
+benchPipeline :: FilePath -> Benchmark
+benchPipeline fp = bench fp $ nfIO (pipeline [] fp)
+
 main :: IO ()
 main =
     defaultMain [ env parses $ \ ~(c, s) ->
@@ -46,18 +52,18 @@ main =
                     , bench "bench/data/multiple.dck" $ nf checkDuplicates p -- TODO: better example
                     ]
                 , bgroup "result"
-                    [ bench "test/eval/context.dck" $ nfIO (evalFile [] "test/eval/context.dck")
-                    , bench "examples/shakespeare.dck" $ nfIO (evalFile [] "examples/shakespeare.dck")
+                    [ benchResult "test/eval/context.dck"
+                    , benchResult "examples/shakespeare.dck"
                     , bench "examples/doggo.dck" $ nfIO (evalFile ["prelude"] "examples/doggo.dck")
                     , bench "test/demo/animal.dck" $ nfIO (evalFile ["lib"] "test/demo/animal.dck")
-                    , bench "examples/fortune.dck" $ nfIO (evalFile [] "examples/fortune.dck")
+                    , benchResult "examples/fortune.dck"
                     ]
                 , bgroup "pipeline"
-                    [ bench "examples/shakespeare.dck" $ nfIO (pipeline [] "examples/shakespeare.dck")
-                    , bench "examples/fortune.dck" $ nfIO (pipeline [] "examples/fortune.dck")
+                    [ benchPipeline "examples/shakespeare.dck"
+                    , benchPipeline "examples/fortune.dck"
                     ]
                 , bgroup "tcFile"
-                    [ bench "examples/fortune.dck" $ nfIO (tcFile [] "examples/fortune.dck")
+                    [ bench "examples/fortune.dck" $ nfIO (tcFile [] "examples/fortune.dck") -- TODO: tc with syntax tree in env?
                     ]
                 ]
 
