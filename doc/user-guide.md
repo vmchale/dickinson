@@ -118,6 +118,8 @@ This will scale things so that picking `"tails"` is a little more likely.
 We can recombine past definitions via string interpolation:
 
 ```
+%-
+
 (:def adjective
   (:oneof
     (| "beautiful")
@@ -148,6 +150,8 @@ Branches, strings, and interpolations are expressions. A `:def` can attach
 an expression to a name.
 
 ```
+%-
+
 (:def color
   (:oneof
     (| "yellow")
