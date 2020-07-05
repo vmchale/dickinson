@@ -21,6 +21,7 @@ evalTests = testGroup "Evaluation test"
     , resultCase "test/data/hangIndefinitely.dck"
     , resolveCase "test/data/hangIndefinitely.dck"
     , testCase "Should handle interpolated multiline strings" multiQuoteEval
+    , testCase "Should handle nested interpolations" multiInterpolatedNestedEval
     ]
 
 forceResult :: a -> Assertion
@@ -58,3 +59,6 @@ higherOrderEval = evalTo "test/data/higherOrder.dck" "It's me"
 
 multiQuoteEval :: Assertion
 multiQuoteEval = evalTo "test/data/multiQuoteify.dck" "God created war so that Americans would learn geography.\n    — Mark Twain"
+
+multiInterpolatedNestedEval :: Assertion
+multiInterpolatedNestedEval = evalTo "test/data/interpolateNested.dck" "This is an interpolated string sort of."

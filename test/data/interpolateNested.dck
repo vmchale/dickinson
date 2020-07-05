@@ -1,0 +1,9 @@
+%-
+
+(:def main
+  (:let
+    [interpolated "interpolated"]
+    [sortOf "sort of"]
+      '''
+      This is an ${> interpolated " string ${sortOf}."}
+      '''))
