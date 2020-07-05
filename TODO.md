@@ -24,7 +24,8 @@
 - [ ] Hot take generator
 - [ ] Catherine of Siena bot
 - [ ] Margery Kempe bot
-- [ ] Cowsay-as-a-function
+- [x] Cowsay-as-a-function
+- [ ] jenny holzer bot
 # Editor Integration
 - [x] Syntastic checker
 # Passes
