@@ -217,9 +217,9 @@ evalExpressionM e@StrChunk{}    = pure e
 evalExpressionM e@Constructor{} = pure e
 evalExpressionM (Var _ n)       = evalExpressionM =<< lookupName n
 evalExpressionM (Choice _ pes)  = evalExpressionM =<< pick pes
-evalExpressionM (MultiInterp l es) = undefined
-evalExpressionM (Interp l es)   = concatOrFail l es
-evalExpressionM (Concat l es)   = concatOrFail l es
+evalExpressionM (MultiInterp l es) = concatOrFail (T.tail . T.init) l es
+evalExpressionM (Interp l es)   = concatOrFail id l es
+evalExpressionM (Concat l es)   = concatOrFail id l es
 evalExpressionM (Tuple l es)    = Tuple l <$> traverse evalExpressionM es
 evalExpressionM (Let _ bs e) = do
     let stMod = thread $ fmap (uncurry nameMod) bs
@@ -263,8 +263,8 @@ countNodes (MultiInterp _ es) = product (fmap countNodes es)
 countNodes (Concat _ es)      = product (fmap countNodes es)
 countNodes (Annot _ e _)      = countNodes e
 
-concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => a -> [Expression a] -> m (Expression a)
-concatOrFail l = fmap (Literal l . mconcat) . traverse evalExpressionAsTextM
+concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => (T.Text -> T.Text) -> a -> [Expression a] -> m (Expression a)
+concatOrFail process l = fmap (Literal l . process . mconcat) . traverse evalExpressionAsTextM
 
 
 evalExpressionAsTextM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
