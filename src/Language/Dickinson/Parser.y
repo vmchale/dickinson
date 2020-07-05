@@ -181,7 +181,7 @@ minIndent :: T.Text -> Int
 minIndent t = minimum (maxBound : fmap countSpaces (T.lines t))
 
 minIndentExpr :: Expression a -> Maybe Int
-minIndentExpr (StrChunk _ t) | "\n" `T.isPrefixOf` t = Just $ minIndent t
+minIndentExpr (StrChunk _ t) | "\n" `T.isInfixOf` t  = Just $ minIndent $ T.tail $ T.dropWhile (/= '\n') t -- tail because T.lines "\n   hello" is ["", "    hello"]
 minIndentExpr _                                      = Nothing
 
 mapStrChunk :: (T.Text -> T.Text) -> Expression a -> Expression a
@@ -195,7 +195,8 @@ minIndentChunks es =
 processMultiChunks :: [Expression a] -> [Expression a]
 processMultiChunks es =
     let toStrip = minIndentChunks es
-        in undefined
+        in let needle = "\n" <> T.replicate toStrip " "
+            in mapStrChunk (T.replace needle "\n") <$> es
 
 weight :: NonEmpty (Expression a) -> NonEmpty (Double, Expression a)
 weight es = (recip, ) <$> es
