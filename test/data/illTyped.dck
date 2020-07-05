@@ -1,0 +1,9 @@
+(:include cowsay)
+
+%-
+
+(:def someText
+  "Hello")
+
+(:def main
+  $ someText cowsay)

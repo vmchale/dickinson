@@ -4,6 +4,7 @@
 
 module Language.Dickinson.TypeCheck ( typeOf
                                     , tyAdd
+                                    , tyAddDecl
                                     , tyTraverse
                                     , tyRun
                                     , emptyTyEnv

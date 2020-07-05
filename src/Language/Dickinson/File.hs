@@ -3,6 +3,7 @@
 module Language.Dickinson.File ( evalIO
                                , evalFile
                                , checkFile
+                               , validateFile
                                , warnFile
                                , tcFile
                                , amalgamateRename
@@ -79,6 +80,13 @@ fmtFile = putDoc . (<> hardline) . pretty . eitherThrow . parse <=< BSL.readFile
 checkFile :: [FilePath] -> FilePath -> IO ()
 checkFile = ioChecker checkScope
 
+-- | Check scoping and types
+validateFile :: [FilePath] -> FilePath -> IO ()
+validateFile is fp = do
+    d <- amalgamateRename is fp
+    maybeThrowIO $ checkScope d
+    eitherThrowIO $ tyRun d
+
 -- | Run some lints
 warnFile :: FilePath -> IO ()
 warnFile = maybeThrowIO . (\x -> checkDuplicates x <|> checkMultiple x) . (\(Dickinson _ d) -> d)
@@ -101,4 +109,5 @@ pipeline :: [FilePath] -> FilePath -> IO T.Text
 pipeline is fp = fmap eitherThrow $ evalIO $ do
     ds <- amalgamateRenameM is fp
     maybeThrow $ checkScope ds
+    tyTraverse ds
     evalDickinsonAsMain ds

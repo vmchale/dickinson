@@ -28,7 +28,7 @@ act = hsubparser
     <> command "repl" (info replP (progDesc "Start a REPL"))
     <> command "check" (info checkP (progDesc "Check that some code is valid."))
     <> command "lint" (info lintP (progDesc "Examine a file for common errors."))
-    <> command "typecheck" (info typecheckP (progDesc "Type information for a program (for debugging)"))
+    <> command "typecheck" (info typecheckP (progDesc "Type information for a program"))
     <> command "fmt" (info formatP (progDesc "Format Dickinson code"))
     <> command "man" (info (pure Man) (progDesc "Dump path to manpages"))
     )
@@ -82,7 +82,7 @@ versionMod = infoOption dickinsonVersionString (short 'V' <> long "version" <> h
 run :: Act -> IO ()
 run (Run fp is)     = do { pGo <- defaultLibPath ; TIO.putStrLn =<< pipeline (pGo is) fp }
 run (REPL _)        = dickinsonRepl
-run (Check f i)     = do { pathMod <- defaultLibPath ; checkFile (pathMod i) f }
+run (Check f i)     = do { pathMod <- defaultLibPath ; validateFile (pathMod i) f } -- FIXME: reuse
 run (Lint f)        = warnFile f
 run (Typecheck f i) = do { pathMod <- defaultLibPath ; tcFile (pathMod i) f }
 run (Format fp)     = fmtFile fp

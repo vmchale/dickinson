@@ -1,5 +1,10 @@
 # dickinson
 
+## 0.1.1.1
+
+  * Run typechecker before evaluator in executable/REPL
+  * Add location info to type errors
+
 ## 0.1.1.0
 
   * Export renamer in `Language.Dickinson`

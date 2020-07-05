@@ -31,6 +31,8 @@ emd - [Emily] Dickinson
 
 **fmt** - Format Dickinson code
 
+**typecheck** - Check that some code is well-typed
+
 **man** - Point to where manpages are installed
 
 ## REPL COMMANDS

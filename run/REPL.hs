@@ -5,6 +5,7 @@
 module REPL ( dickinsonRepl
             ) where
 
+import           Control.Monad                         (void)
 import           Control.Monad.Except                  (ExceptT, runExceptT)
 import           Control.Monad.IO.Class                (liftIO)
 import           Control.Monad.State.Lazy              (StateT, evalStateT, get, gets, lift, put)
@@ -167,6 +168,7 @@ printExpr str = do
                         mErr <- lift $ runExceptT $ do
                             e' <- resolveExpressionM =<< renameExpressionM e
                             checkScopeExpr e'
+                            void $ typeOf e'
                             evalExpressionAsTextM e'
                         lift balanceMax
                         putErr mErr (liftIO . TIO.putStrLn)
@@ -174,6 +176,8 @@ printExpr str = do
                         mErr <- lift $ runExceptT $ do
                             d <- renameDeclarationM decl
                             checkScopeDecl =<< resolveDeclarationM d
+                            tyAddDecl d
+                            tyAdd d
                             addDecl' d
                         lift balanceMax
                         putErr mErr (const $ pure ())
@@ -192,6 +196,7 @@ loadFile fp = do
     mErr <- lift $ runExceptT $ do
         d <- amalgamateRenameM (pathMod ["."]) fp
         maybeThrow $ checkScope d
+        tyTraverse d
         loadDickinson d
     lift balanceMax
     putErr mErr (const $ pure ())
