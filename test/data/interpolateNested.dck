@@ -1,9 +1,11 @@
 %-
 
+(:def of "of")
+
 (:def main
   (:let
     [interpolated "interpolated"]
-    [sortOf "sort of"]
+    [sortOf "sort ${of}"]
       '''
       This is an ${> interpolated " string ${sortOf}."}
       '''))
