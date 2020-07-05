@@ -15,17 +15,17 @@
 - [ ] Library documentation
 ## Examples
 - [ ] Poetry bot...? Rumi?
-- [ ] Fiona bot?
+- [½] Fiona bot?
 - [ ] Storytelling? RPG? idk
 - [ ] https://www.nadyaprimak.com/blog/programming/poetry-bot/
 - [½] Dog greeter
 - [½] Fortune teller/unix fortune
   - [ ] Fortune port? https://github.com/shlomif/fortune-mod/blob/master/fortune-mod/datfiles/disclaimer
 - [ ] Hot take generator
-- [ ] Catherine of Siena bot
+- [½] Catherine of Siena bot
 - [ ] Margery Kempe bot
 - [x] Cowsay-as-a-function
-- [ ] jenny holzer bot
+- [ ] jenny holzer bot https://www.tate.org.uk/art/artworks/holzer-truisms-t03959 https://wordsofwomen.com/jenny-holzers-list-of-truisms/ https://www.moma.org/collection/works/63755
 # Editor Integration
 - [x] Syntastic checker
 # Passes
@@ -50,9 +50,10 @@
 - [x] Don't use the identifier `yeet`
 # Debugging
 - [ ] Verbosity
+- [ ] Turn on sanity checking?
 # Features
 - [x] Polyglot integration!
-- [ ] Turn off zstd saving with a flag (for freebsd or etlas)
+- [x] Turn off zstd saving with a flag (for freebsd)
 - [x] Change `:import` to `:include`!
 - [ ] "append" repl command
 - [ ] Circular import checker
@@ -83,6 +84,7 @@
 - [ ] Remove duplicates (for regen adjectives...)
 - [x] Only allow imports at the beginning
 - [ ] Install files globally?
+- [ ] Binary distribution with `make install`? `language_dickinson_datadir`
 # Tooling
 - [x] REPL
   - [x] Actually fix identifiers/threading state to the lexer
@@ -98,7 +100,7 @@
 - [x] `test/eval/tyAnnot.dck` in the test suite
 - [ ] Lexer (fail) tests
   - [ ] Capital type names...
-- [x] Escpaed characters
+- [x] Escaped characters
   - [x] Pretty-print
 - [ ] name shadowing & such
 - [ ] property test -> generate, pretty-print, parse
@@ -110,7 +112,7 @@
 - [ ] Animals
   - [x] Birds
 - [ ] builtins (capitalization &c.)
-- [ ] Currying?
+- [x] Currying?
 # Performance
 - [ ] Load modules in a sensible way?
 - [x] Bench typechecker
