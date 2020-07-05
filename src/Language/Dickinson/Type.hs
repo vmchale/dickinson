@@ -11,18 +11,19 @@ module Language.Dickinson.Type ( Dickinson (..)
                                , DickinsonTy (..)
                                ) where
 
-import           Control.DeepSeq               (NFData)
-import           Data.Binary                   (Binary)
-import           Data.Foldable                 (toList)
-import           Data.List.NonEmpty            (NonEmpty)
-import qualified Data.List.NonEmpty            as NE
-import           Data.Semigroup                ((<>))
-import qualified Data.Text                     as T
-import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty), align, brackets, colon, concatWith, dquotes,
-                                                group, hardline, hsep, indent, parens, pipe, rangle, tupled, vsep,
-                                                (<+>))
-import           Data.Text.Prettyprint.Doc.Ext (hardSep, (<#*>), (<#>), (<^>))
-import           GHC.Generics                  (Generic)
+import           Control.DeepSeq                    (NFData)
+import           Data.Binary                        (Binary)
+import           Data.Foldable                      (toList)
+import           Data.List.NonEmpty                 (NonEmpty)
+import qualified Data.List.NonEmpty                 as NE
+import           Data.Semigroup                     ((<>))
+import qualified Data.Text                          as T
+import           Data.Text.Prettyprint.Doc          (Doc, Pretty (pretty), align, brackets, colon, concatWith, dquotes,
+                                                     group, hardline, hsep, indent, parens, pipe, rangle, tupled, vsep,
+                                                     (<+>))
+import           Data.Text.Prettyprint.Doc.Ext      (hardSep, (<#*>), (<#>), (<^>))
+import           Data.Text.Prettyprint.Doc.Internal (unsafeTextWithoutNewlines)
+import           GHC.Generics                       (Generic)
 import           Language.Dickinson.Name
 
 data Dickinson a = Dickinson { modImports :: [Import a]
@@ -121,9 +122,12 @@ prettyInterp (StrChunk _ t) = pretty (escReplace t)
 prettyInterp e              = "${" <> pretty e <> "}"
 
 prettyMultiInterp :: [Expression a] -> Doc b
-prettyMultiInterp = concatWith (<#>) . concatMap prettyChunk
-    where prettyChunk (StrChunk _ t) = fmap pretty (T.lines t)
-          prettyChunk e              = undefined
+prettyMultiInterp = mconcat . fmap prettyChunk
+    where prettyChunk (StrChunk _ t) = textHard t -- FIXME: convert "\n" to hardline...
+          prettyChunk e              = "${" <> pretty e <> "}"
+
+textHard :: T.Text -> Doc a
+textHard = concatWith (<#>) . map unsafeTextWithoutNewlines . T.splitOn "\n"
 
 instance Pretty (Pattern a) where
     pretty (PatternVar _ n)    = pretty n

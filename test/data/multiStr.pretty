@@ -5,6 +5,17 @@
   I saw my boss' dog today
   ''')
 
+(:def doubleIndent
+  '''
+  I saw my boss' dog today
+  ''')
+
+(:def indented
+  '''
+  hello
+    world
+  ''')
+
 (:def empty
   '''
   ''')
