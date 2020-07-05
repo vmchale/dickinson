@@ -3,7 +3,7 @@
 docs: man/emd.1 doc/user-guide.pdf
 
 clean:
-	rm -rf dist-newstyle .stack-work *.svg stack.yaml.lock doc/user-guide.html *.hp *.prof dist
+	rm -rf dist-newstyle .stack-work *.svg stack.yaml.lock doc/user-guide.html *.hp *.prof dist *.emdi
 
 doc/%.html: doc/%.md
 	pandoc $< -s -o $@ --toc
