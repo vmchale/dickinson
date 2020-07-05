@@ -2,4 +2,6 @@
 
 (:def adjective
   (:oneof
+    (| "sententious")
+    (| "pithy")
     (| "stentorian")))

@@ -4,4 +4,5 @@
   (:oneof
     (| "valetudinarian")
     (| "valedictorian")
+    (| "apothegm")
     (| "folderol")))
