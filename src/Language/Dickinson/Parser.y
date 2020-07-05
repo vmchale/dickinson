@@ -193,7 +193,7 @@ minIndentChunks es =
     minimum (maxBound : mapMaybe minIndentExpr es)
 
 processMultiChunks :: [Expression a] -> [Expression a]
-processMultiChunks es =
+processMultiChunks es = {-# SCC "processMultiChunks" #-}
     let toStrip = minIndentChunks es
         in let needle = "\n" <> T.replicate toStrip " "
             in mapStrChunk (T.replace needle "\n") <$> es
