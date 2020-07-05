@@ -5,4 +5,7 @@
     (| "valetudinarian")
     (| "valedictorian")
     (| "apothegm")
+    (| "apotheosis")
+    (| "aphelion")
+    (| "perihelion")
     (| "folderol")))
