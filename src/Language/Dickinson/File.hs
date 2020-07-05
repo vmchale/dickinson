@@ -1,6 +1,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 
-module Language.Dickinson.File ( evalFile
+module Language.Dickinson.File ( evalIO
+                               , evalFile
                                , checkFile
                                , warnFile
                                , tcFile

@@ -87,6 +87,7 @@ library dickinson
         Language.Dickinson.File
         Language.Dickinson.Import
         Language.Dickinson.Lib
+        Language.Dickinson.Check.Internal
         Data.Tuple.Ext
         Control.Exception.Value
         Data.Text.Prettyprint.Doc.Ext
@@ -95,7 +96,6 @@ library dickinson
     other-modules:
         Paths_language_dickinson
         Language.Dickinson.Check.Pattern
-        Language.Dickinson.Check.Internal
         Language.Dickinson.Lib.Get
         Control.Monad.Ext
         Data.Foldable.Ext

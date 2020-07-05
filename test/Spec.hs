@@ -2,20 +2,23 @@
 
 module Main (main) where
 
-import           Control.Exception                 (throw)
-import qualified Data.ByteString.Lazy              as BSL
-import           Data.Either                       (isRight)
-import           Data.List.NonEmpty                (NonEmpty (..))
-import           Data.Maybe                        (isJust, isNothing)
+import           Control.Exception.Value              (eitherThrow)
+import qualified Data.ByteString.Lazy                 as BSL
+import           Data.Either                          (isRight)
+import           Data.List.NonEmpty                   (NonEmpty (..))
+import           Data.Maybe                           (isJust, isNothing)
 import           Eval
 import           Golden
 import           Language.Dickinson.Check
+import           Language.Dickinson.Check.Internal
 import           Language.Dickinson.DuplicateCheck
+import           Language.Dickinson.File
 import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
+import           Language.Dickinson.Rename.Amalgamate
 import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
@@ -62,6 +65,7 @@ parserTests =
         , lexNoError "test/data/multiQuoteify.dck"
         , parseNoError "test/data/multiQuoteify.dck"
         , findPath
+        , sanityCheckTest "test/data/adt.dck"
         ]
 
 findPath :: TestTree
@@ -70,7 +74,7 @@ findPath = testCase "Finds import at correct path" $ do
     res @?= Just "lib/color.dck"
 
 readNoFail :: FilePath -> IO (Dickinson AlexPosn)
-readNoFail = fmap (either throw id . parse) . BSL.readFile
+readNoFail = fmap (eitherThrow . parse) . BSL.readFile
 
 detectBadBranch :: FilePath -> TestTree
 detectBadBranch fp = testCase "Detects suspicious branch" $ do
@@ -103,4 +107,11 @@ lexNoError fp = testCase ("Lexing doesn't fail (" ++ fp ++ ")") $ do
     assertBool "Doesn't fail lexing" $ isRight (lexDickinson contents)
 
 parseRename :: FilePath -> IO (Dickinson AlexPosn)
-parseRename = fmap (fst . uncurry renameDickinson . either throw id . parseWithMax) . BSL.readFile
+parseRename = fmap (fst . uncurry renameDickinson . eitherThrow . parseWithMax) . BSL.readFile
+
+-- sanity check the renamer
+sanityCheckTest :: FilePath -> TestTree
+sanityCheckTest fp = testCase fp $
+    fmap eitherThrow $ evalIO $ do
+        ds <- fileDecls [] fp
+        sanityCheck ds
