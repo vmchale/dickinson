@@ -15,7 +15,7 @@ import           System.FilePath          ((</>))
 data Act = Run !FilePath ![FilePath]
          | REPL ![FilePath]
          | Check ![FilePath] ![FilePath]
-         | Lint !FilePath
+         | Lint ![FilePath]
          | Format !FilePath
          | Man
 
@@ -45,7 +45,7 @@ checkP :: Parser Act
 checkP = Check <$> some dckFile <*> includes
 
 lintP :: Parser Act
-lintP = Lint <$> dckFile
+lintP = Lint <$> some dckFile
 
 dckFile :: Parser FilePath
 dckFile = argument str
@@ -79,6 +79,6 @@ run :: Act -> IO ()
 run (Run fp is)  = do { pGo <- defaultLibPath ; TIO.putStrLn =<< pipeline (pGo is) fp }
 run (REPL _)     = dickinsonRepl
 run (Check fs i) = do { pathMod <- defaultLibPath ; traverse_ (validateFile (pathMod i)) fs } -- FIXME: reuse
-run (Lint f)     = warnFile f
+run (Lint fs)    = traverse_ warnFile fs
 run (Format fp)  = fmtFile fp
 run Man          = putStrLn . (</> "emd.1") . (</> "man") =<< getDataDir
