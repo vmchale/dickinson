@@ -11,6 +11,8 @@ emd - [Emily] Dickinson
 
 # SYNOPSIS
 
+  emd fortune.dck
+
   emd repl
 
   emd run literature.dck
