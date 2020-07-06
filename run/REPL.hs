@@ -1,6 +1,5 @@
 {-# LANGUAGE FlexibleContexts  #-}
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TupleSections     #-}
 
 module REPL ( dickinsonRepl
             ) where
@@ -118,7 +117,7 @@ listNames :: Repl AlexPosn ()
 listNames = liftIO . traverse_ TIO.putStrLn =<< names
 
 names :: Repl AlexPosn [T.Text]
-names = lift $ namesState
+names = lift namesState
 
 bindDisplay :: T.Text -> Repl AlexPosn ()
 bindDisplay t = do

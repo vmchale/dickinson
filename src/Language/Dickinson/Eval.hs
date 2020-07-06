@@ -49,7 +49,7 @@ data EvalSt a = EvalSt
     -- Used in the REPL, for instance
     , lexerState    :: AlexUserState
     -- For error messages
-    , tyEnv         :: (TyEnv a)
+    , tyEnv         :: TyEnv a
     }
 
 

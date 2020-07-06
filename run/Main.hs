@@ -80,4 +80,4 @@ run (REPL _)    = dickinsonRepl
 run (Check f i) = do { pathMod <- defaultLibPath ; validateFile (pathMod i) f } -- FIXME: reuse
 run (Lint f)    = warnFile f
 run (Format fp) = fmtFile fp
-run Man         = putStrLn =<< (</> "emd.1") . (</> "man") <$> getDataDir
+run Man         = putStrLn . (</> "emd.1") . (</> "man") =<< getDataDir
