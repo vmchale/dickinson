@@ -1,5 +1,9 @@
 # dickinson
 
+## 0.1.1.2
+
+  * Ignore lines starting with `#!` (for shell shebangs)
+
 ## 0.1.1.1
 
   * Run typechecker before evaluator in executable/REPL

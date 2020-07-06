@@ -72,11 +72,11 @@ $str_chunk = [^\"\\\$]
 
 tokens :-
 
+    <0> "#!".*                     ; -- ignore shebangs
     <0> {
 
         $white+                    ;
         ";".*                      ;
-        "#!".*                     ; -- ignore shebangs
 
         \(                         { mkSym LParen }
         \)                         { mkSym RParen }
