@@ -21,6 +21,16 @@ emd - [Emily] Dickinson
 
   man $(emd man)
 
+## SHEBANG
+
+Dickinson ignores lines starting with `#!` so putting
+
+```
+#!/usr/bin/env emd
+```
+
+at the top of a file will mean `emd` is used as an interpreter.
+
 # SUBCOMMANDS
 
 **repl** - Start a repl
