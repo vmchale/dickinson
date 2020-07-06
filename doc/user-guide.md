@@ -279,4 +279,14 @@ The `:include` must come before the `%-`; definitions come after the
 
 ## Writing Libraries
 
+# Scripting
+
+`emd` ignores any lines staring with `#!`; put
+
+```
+#!/usr/bin/env emd
+```
+
+and the top of a file to use `emd` as an interpreter.
+
 # Examples

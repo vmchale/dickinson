@@ -23,13 +23,13 @@ emd - [Emily] Dickinson
 
 ## SHEBANG
 
-Dickinson ignores lines starting with `#!` so putting
+Dickinson ignores lines starting with `#!` so we can put
 
 ```
 #!/usr/bin/env emd
 ```
 
-at the top of a file will mean `emd` is used as an interpreter.
+at the top of a file and `emd` will be used as an interpreter.
 
 # SUBCOMMANDS
 
