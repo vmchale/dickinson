@@ -3,5 +3,9 @@
 (:def adjective
   (:oneof
     (| "sententious")
+    (| "poetic")
+    (| "plain")
+    (| "bromide")
+    (| "banal")
     (| "pithy")
     (| "stentorian")))
