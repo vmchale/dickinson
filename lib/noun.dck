@@ -3,6 +3,7 @@
 (:def noun
   (:oneof
     (| "valetudinarian")
+    (| "heliophagy")
     (| "valedictorian")
     (| "apothegm")
     (| "apotheosis")
