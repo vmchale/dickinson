@@ -4,6 +4,7 @@
 
   * Run typechecker before evaluator in executable/REPL
   * Add location info to type errors
+  * `emd FILE` now runs file (for use in shell shebangs)
 
 ## 0.1.1.0
 
