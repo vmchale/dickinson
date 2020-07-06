@@ -76,6 +76,7 @@ tokens :-
 
         $white+                    ;
         ";".*                      ;
+        "#!".*                     ; -- ignore shebangs
 
         \(                         { mkSym LParen }
         \)                         { mkSym RParen }
@@ -154,7 +155,7 @@ pushScd st =
     mod_ust (\(x,push,y,z) -> (x,st:push,y,z))
 
 exitInterp :: Alex ()
-exitInterp = do 
+exitInterp = do
     (_,iSt:_,_,_) <- get_ust
     case iSt of
         InStr -> set_scd string
