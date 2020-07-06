@@ -29,7 +29,7 @@ act = hsubparser
     <> command "lint" (info lintP (progDesc "Examine a file for common errors."))
     <> command "fmt" (info formatP (progDesc "Format Dickinson code"))
     <> command "man" (info (pure Man) (progDesc "Dump path to manpages"))
-    )
+    ) <|> runP
 
 formatP :: Parser Act
 formatP = Format <$> dckFile
