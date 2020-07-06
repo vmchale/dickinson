@@ -287,6 +287,21 @@ The `:include` must come before the `%-`; definitions come after the
 #!/usr/bin/env emd
 ```
 
-and the top of a file to use `emd` as an interpreter.
+and the top of a file to use `emd` as an interpreter. As an example, here is
+an implementation of the Unix fortune program as a script:
+
+```
+#!/usr/bin/env emd
+
+%-
+
+(:def adjective
+  (:oneof
+    (| "good")
+    (| "bad")))
+
+(:def main
+  "You will have a ${adjective} day")
+```
 
 # Examples
