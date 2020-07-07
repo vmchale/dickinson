@@ -9,6 +9,7 @@ import qualified Data.ByteString.Lazy              as BSL
 import qualified Data.Text                         as T
 import           Language.Dickinson.Check
 import           Language.Dickinson.DuplicateCheck
+import           Language.Dickinson.Eval
 import           Language.Dickinson.File
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Parser
@@ -70,9 +71,14 @@ main =
                     [ bench "examples/fortune.dck" $ nfIO (tcFile [] "examples/fortune.dck") -- TODO: tc with syntax tree in env?
                     ]
                 , env amalgamated $ \ ~(s, c) ->
-                  bgroup "eval"
+                  bgroup "check + eval"
                     [ bench "examples/shakespeare.dck" $ nfIO (txtIO s)
                     , bench "examples/catherineOfSienaBot.dck" $ nfIO (txtIO c)
+                    ]
+                , env amalgamated $ \ ~(s, c) ->
+                  bgroup "eval"
+                    [ bench "examples/shakespeare.dck" $ nfIO (evalIO $ evalDickinsonAsMain s)
+                    , bench "examples/catherineOfSienaBot.dck" $ nfIO (evalIO $ evalDickinsonAsMain c)
                     ]
                 ]
 
