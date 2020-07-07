@@ -15,6 +15,13 @@
     (| "I want to suffer for my sins")
     (| "I'm full as a tick")
     (| "I wanna make a mistake")
+    (| "Scratch me out, free yourself.")
+    (| "Run, free yourself of me.")
+    (|
+      '''
+      Oh darling, it's so sweet
+      You think you know how crazy, how crazy I am.
+      ''')
     (| "I need to be redeemed to the one I've sinned against")
     (|
       '''
@@ -34,7 +41,7 @@
       All that love must've been lacking something
       If I got bored trying to figure you out
       ''')
-    (| 
+    (|
       '''
       So I will keep a deliberate pace
       Let the damned breeze dry my face
@@ -45,7 +52,7 @@
       If I let you get too close
       ''')
     (| "Hunger hurts but starving works.")
-    (| 
+    (|
      '''
      What's so impressive about a diamond
      Except the mining
