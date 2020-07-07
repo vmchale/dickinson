@@ -170,6 +170,10 @@ an expression to a name.
 Branches can contain any expression, including names that have been defined
 previously (such as `color` in the example above).
 
+### Lambdas
+
+Lambdas are how we introduce functions in Dickinson.
+
 # REPL
 
 To enter a REPL:
@@ -240,6 +244,15 @@ For reference information about the Dickinson REPL:
 
 ```
 :help
+```
+
+# Lints
+
+`emd` has a linter which can make suggestions based on
+probable mistakes. We can invoke it with `emd lint`:
+
+```
+emd lint silly.dck
 ```
 
 # Libraries
