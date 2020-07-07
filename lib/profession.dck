@@ -1,0 +1,16 @@
+%-
+
+(:def profession
+  (:oneof
+    (| "professor")
+    (| "psychiatrist")
+    (| "physician")
+    (| "poet")
+    (| "psychologist")
+    (| "sanitation worker")
+    (| "teacher")
+    (| "police officer")
+    (| "lawyer")
+    (| "engineer")
+    (| "writer")
+    (| "artist")))
