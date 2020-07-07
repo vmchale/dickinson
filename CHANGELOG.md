@@ -3,6 +3,8 @@
 ## 0.1.1.2
 
   * Ignore lines starting with `#!` (for shell shebangs)
+  * Fix bug in evaluator which caused `:flatten` to work improperly.
+  * Fix bug which caused `:match` within `:flatten` to work improperly.
 
 ## 0.1.1.1
 
