@@ -8,6 +8,7 @@ import           Data.Binary                       (decode, encode)
 import qualified Data.ByteString.Lazy              as BSL
 import qualified Data.Text                         as T
 import           Language.Dickinson.Check
+import           Language.Dickinson.Check.Internal
 import           Language.Dickinson.DuplicateCheck
 import           Language.Dickinson.Eval
 import           Language.Dickinson.File
@@ -84,6 +85,9 @@ main =
                     [ bench "examples/shakespeare.dck" $ nfIO (evalIO $ evalDickinsonAsMain s)
                     , bench "examples/catherineOfSienaBot.dck" $ nfIO (evalIO $ evalDickinsonAsMain c)
                     ]
+                , env multiParsed $ \p ->
+                  bgroup "maxUnique"
+                    [ bench "bench/data/multiple.dck" $ nf maxUniqueDickinson p ]
                 ]
 
     where libFile = BSL.readFile "lib/color.dck"
@@ -105,3 +109,6 @@ plainExpr = fst . uncurry renameDickinson
 -- FIXME: StdGen in env?
 txtIO :: [Declaration AlexPosn] -> IO T.Text
 txtIO = fmap eitherThrow . evalIO . checkEvalM
+
+maxUniqueDickinson :: Dickinson AlexPosn -> Int
+maxUniqueDickinson (Dickinson _ ds) = maximum (maxUniqueDeclaration <$> ds)

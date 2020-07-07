@@ -1,5 +1,6 @@
 module Language.Dickinson.Check.Internal ( sanityCheck
                                          , sanityCheckLexer
+                                         , maxUniqueDeclaration
                                          ) where
 
 import           Control.Monad             (when)
@@ -28,6 +29,8 @@ sanityCheck d = do
     when (storedMax < computedMax) $
         error "Sanity check failed!"
 
+-- TODO: see http://hackage.haskell.org/package/uniplate-1.6.12/docs/Data-Generics-Uniplate-Operations.html
+-- TODO: recursion schemes? would need benchmark...
 maxUniqueDeclaration :: Declaration a -> Int
 maxUniqueDeclaration (Define _ (Name _ (Unique i) _) e)   = max i (maxUniqueExpression e)
 maxUniqueDeclaration (TyDecl _ (Name _ (Unique i) _) tns) =
