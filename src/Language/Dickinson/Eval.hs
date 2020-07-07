@@ -262,6 +262,7 @@ countNodes (Interp _ es)      = product (fmap countNodes es)
 countNodes (MultiInterp _ es) = product (fmap countNodes es)
 countNodes (Concat _ es)      = product (fmap countNodes es)
 countNodes (Annot _ e _)      = countNodes e
+countNodes _                  = error "Internal error in function countNodes"
 
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => (T.Text -> T.Text) -> a -> [Expression a] -> m (Expression a)
 concatOrFail process l = fmap (Literal l . process . mconcat) . traverse evalExpressionAsTextM
@@ -279,7 +280,7 @@ resolveFlattenM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) =>
 resolveFlattenM e@Literal{}     = pure e
 resolveFlattenM e@StrChunk{}    = pure e
 resolveFlattenM e@Constructor{} = pure e
-resolveFlattenM (Var _ n)       = lookupName n
+resolveFlattenM (Var _ n)       = resolveFlattenM =<< lookupName n
 resolveFlattenM (Choice l pes) = do
     let ps = fst <$> pes
     es <- traverse resolveFlattenM (snd <$> pes)
