@@ -31,6 +31,7 @@ syntax region dickinsonString start=+"+ end=+"+ contains=@Spell,dickinsonEsc,dic
 syntax region dickinsonString start=+'''+ end=+'''+ contains=@Spell,dickinsonInterpolation
 
 syntax match dickinsonComment "\v;.*$" contains=@Spell
+syntax match dickinsonComment "\v#!.*$"
 
 syntax match dickinsonSymbol ">"
 syntax match dickinsonSymbol "\$"
