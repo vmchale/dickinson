@@ -7,11 +7,13 @@
 - [ ] Normalization
 # Documentation
 - [x] manpages
+  - [x] Document shebang trick
 - [ ] `:flatten`
 - [ ] Tutorial/walkthrough?
   - [ ] Getting started?
 - [x] User guide (see happy?)
   - [ ] Lints and such
+  - [ ] Bibliography
 - [ ] Library documentation
 ## Examples
 - [ ] Poetry bot...? Rumi?
@@ -37,7 +39,7 @@
 # Library API
 - [x] Maybe spin out internal library?
 # Bugs
-- [ ] `examples/fortune.dck` fails in repl
+- [x] `examples/fortune.dck` fails in repl
 - [x] Bug in `test/demo/animal.dck` - doesn't ever produce a bird?
 - [ ] Running `examples/doggo.dck` `main` - `pick` seems to be called by `probabilities` state doesn't seem to change?
   - [ ] More vexingly, calling e.g. `color` in `lib/color.dck` un-sticks it!!
@@ -84,7 +86,9 @@
 - [ ] Remove duplicates (for regen adjectives...)
 - [x] Only allow imports at the beginning
 - [ ] Install files globally?
+## Distribution
 - [ ] Binary distribution with `make install`? `language_dickinson_datadir`
+- [ ] Debianization?
 # Tooling
 - [x] REPL
   - [x] Actually fix identifiers/threading state to the lexer
