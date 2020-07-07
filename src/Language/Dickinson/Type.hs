@@ -2,6 +2,7 @@
 {-# LANGUAGE DeriveFunctor     #-}
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeFamilies      #-}
 
 module Language.Dickinson.Type ( Dickinson (..)
                                , Declaration (..)
@@ -9,9 +10,14 @@ module Language.Dickinson.Type ( Dickinson (..)
                                , Expression (..)
                                , Pattern (..)
                                , DickinsonTy (..)
+                               -- * Base functors
+                               , PatternF (..)
+                               , DickinsonTyF (..)
+                               , ExpressionF (..)
                                ) where
 
 import           Control.DeepSeq                    (NFData)
+import           Control.Recursion                  (Base, Recursive)
 import           Data.Binary                        (Binary)
 import           Data.Foldable                      (toList)
 import           Data.List.NonEmpty                 (NonEmpty)
@@ -49,7 +55,15 @@ data Pattern a = PatternVar a (Name a)
                | PatternTuple a (NonEmpty (Pattern a))
                | PatternCons a (TyName a)
                | Wildcard a
-               deriving (Generic, NFData, Binary, Functor, Show)
+               deriving (Generic, NFData, Binary, Functor, Show, Recursive)
+
+type instance Base (Pattern a) = PatternF a
+
+data PatternF a x = PatternVarF a (Name a)
+                  | PatternTupleF a (NonEmpty x)
+                  | PatternConsF a (TyName a)
+                  | WildcardF a
+                  deriving (Generic, Functor)
 
 data Expression a = Literal { exprAnn :: a, litText :: T.Text }
                   | StrChunk { exprAnn :: a, chunkText :: T.Text }
@@ -85,14 +99,41 @@ data Expression a = Literal { exprAnn :: a, litText :: T.Text }
                           , exprTy  :: DickinsonTy a
                           }
                   | Constructor { exprAnn :: a, constructorName :: TyName a }
-                  deriving (Generic, NFData, Binary, Functor, Show)
+                  deriving (Generic, NFData, Binary, Functor, Show, Recursive)
                   -- TODO: builtins?
+
+type instance Base (Expression a) = ExpressionF a
+
+data ExpressionF a x = LiteralF a T.Text
+                     | StrChunkF a T.Text
+                     | ChoiceF a (NonEmpty (Double, x))
+                     | LetF a (NonEmpty (Name a, x)) x
+                     | VarF a (Name a)
+                     | InterpF a [x]
+                     | MultiInterpF a [x]
+                     | LambdaF a (Name a) (DickinsonTy a) x
+                     | ApplyF a x x
+                     | ConcatF a [x]
+                     | TupleF a (NonEmpty x)
+                     | MatchF a x (Pattern a) x
+                     | FlattenF a x
+                     | AnnotF a x (DickinsonTy a)
+                     | ConstructorF a (TyName a)
+                     deriving (Generic, Functor)
 
 data DickinsonTy a = TyText a
                    | TyFun a (DickinsonTy a) (DickinsonTy a)
                    | TyTuple a (NonEmpty (DickinsonTy a))
                    | TyNamed a (Name a)
-                   deriving (Generic, NFData, Binary, Show, Functor)
+                   deriving (Generic, NFData, Binary, Show, Functor, Recursive)
+
+type instance Base (DickinsonTy a) = DickinsonTyF a
+
+data DickinsonTyF a x = TyTextF a
+                      | TyFunF a x x
+                      | TyTupleF a (NonEmpty x)
+                      | TyNamedF a (Name a)
+                      deriving (Functor, Generic)
 
 instance Eq (DickinsonTy a) where
     (==) TyText{} TyText{}                     = True

@@ -250,10 +250,12 @@ mapChoice f (Interp l es)      = Interp l (mapChoice f <$> es)
 mapChoice f (MultiInterp l es) = MultiInterp l (mapChoice f <$> es)
 mapChoice f (Concat l es)      = Concat l (mapChoice f <$> es)
 mapChoice f (Annot l e ty)     = Annot l (mapChoice f e) ty
+mapChoice _ _                  = error "Internal error in mapChoice"
 
 setFrequency :: NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a)
 setFrequency = fmap (\(_, e) -> (fromIntegral $ {-# SCC "countNodes" #-} countNodes e, e))
 
+-- TODO: recursion schemes? uniplate?
 countNodes :: Expression a -> Int
 countNodes Literal{}          = 1
 countNodes StrChunk{}         = 1
@@ -262,7 +264,7 @@ countNodes (Interp _ es)      = product (fmap countNodes es)
 countNodes (MultiInterp _ es) = product (fmap countNodes es)
 countNodes (Concat _ es)      = product (fmap countNodes es)
 countNodes (Annot _ e _)      = countNodes e
-countNodes _                  = error "Internal error in function countNodes"
+countNodes _                  = error "Internal error in function countNodes" -- should only be called on one of ^ by resolveFlattenM
 
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => (T.Text -> T.Text) -> a -> [Expression a] -> m (Expression a)
 concatOrFail process l = fmap (Literal l . process . mconcat) . traverse evalExpressionAsTextM

@@ -5,6 +5,7 @@ module Language.Dickinson.Check.Internal ( sanityCheck
 
 import           Control.Monad             (when)
 import           Control.Monad.State       (MonadState)
+import           Control.Recursion         (cata)
 import           Data.List.NonEmpty        ((<|))
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
@@ -43,38 +44,26 @@ maxUniqueType (TyTuple _ ts)                    = maximum (fmap maxUniqueType ts
 maxUniqueType (TyNamed _ (Name _ (Unique k) _)) = k
 
 maxUniqueExpression :: Expression a -> Int
-maxUniqueExpression Literal{}                             = 0
-maxUniqueExpression (Constructor _ (Name _ (Unique k) _)) = k
-maxUniqueExpression StrChunk{}                            = 0
-maxUniqueExpression (Var _ (Name _ (Unique i) _))         = i
-maxUniqueExpression (Choice _ pes)                        = maximum (maxUniqueExpression . snd <$> pes)
-maxUniqueExpression (MultiInterp _ es)                    = maximum (fmap maxUniqueExpression es)
-maxUniqueExpression (Interp _ es)                         = maximum (fmap maxUniqueExpression es)
-maxUniqueExpression (Concat _ es)                         = maximum (fmap maxUniqueExpression es)
-maxUniqueExpression (Apply _ e e')                        = max (maxUniqueExpression e) (maxUniqueExpression e')
-maxUniqueExpression (Annot _ e ty)                        = max (maxUniqueExpression e) (maxUniqueType ty)
-maxUniqueExpression (Flatten _ e)                         = maxUniqueExpression e
-maxUniqueExpression (Tuple _ es)                          = maximum (fmap maxUniqueExpression es)
-maxUniqueExpression (Lambda _ (Name _ (Unique i) _) ty e) =
-    maximum [ i
-            , maxUniqueExpression e
-            , maxUniqueType ty
-            ]
-maxUniqueExpression (Match _ e p e')                      =
-    maximum
-        [ maxUniqueExpression e
-        , maxUniquePattern p
-        , maxUniqueExpression e'
-        ]
-maxUniqueExpression (Let _ bs e) =
-    maximum
-        [ maxUniqueExpression e
-        , maximum (maxUniqueExpression . snd <$> bs)
-        , maximum (unUnique . unique . fst <$> bs)
-        ]
+maxUniqueExpression = cata a where
+    a LiteralF{}                              = 0
+    a (ConstructorF _ (Name _ (Unique k) _))  = k
+    a StrChunkF{}                             = 0
+    a (VarF _ (Name _ (Unique i) _))          = i
+    a (ChoiceF _ pes)                         = maximum (snd <$> pes)
+    a (MultiInterpF _ es)                     = maximum es
+    a (InterpF _ es)                          = maximum es
+    a (ConcatF _ es)                          = maximum es
+    a (ApplyF _ e e')                         = max e e'
+    a (AnnotF _ e ty)                         = max e (maxUniqueType ty)
+    a (FlattenF _ e)                          = e
+    a (TupleF _ es)                           = maximum es
+    a (LambdaF  _ (Name _ (Unique i) _) ty e) = maximum [i, e, maxUniqueType ty]
+    a (MatchF _ e p e')                       = maximum [e, maxUniquePattern p, e']
+    a (LetF _ bs e)                           = maximum [e, maximum (snd <$> bs), maximum (unUnique . unique . fst <$> bs)]
 
 maxUniquePattern :: Pattern a -> Int
-maxUniquePattern (PatternVar _ (Name _ (Unique i) _))  = i
-maxUniquePattern Wildcard{}                            = 0
-maxUniquePattern (PatternTuple _ ps)                   = maximum (fmap maxUniquePattern ps)
-maxUniquePattern (PatternCons _ (Name _ (Unique k) _)) = k
+maxUniquePattern = cata a where
+    a (PatternVarF _ (Name _ (Unique i) _))  = i
+    a WildcardF{}                            = 0
+    a (PatternTupleF _ ps)                   = maximum ps
+    a (PatternConsF _ (Name _ (Unique k) _)) = k
