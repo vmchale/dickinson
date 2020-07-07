@@ -1,7 +1,6 @@
 {-# LANGUAGE FlexibleContexts #-}
 
-module Language.Dickinson.Pipeline ( tcIO
-                                   , checkEvalM
+module Language.Dickinson.Pipeline ( checkEvalM
                                    ) where
 
 import           Control.Exception.Value       (eitherThrowIO)
@@ -15,9 +14,6 @@ import           Language.Dickinson.Eval
 import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
-
-tcIO :: (Typeable a, Pretty a) => [Declaration a] -> IO ()
-tcIO = eitherThrowIO . tyRun
 
 checkEvalM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => [Declaration a] -> m T.Text
 checkEvalM ds = do

@@ -17,6 +17,7 @@ import           Language.Dickinson.Pipeline
 import           Language.Dickinson.Rename
 import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
+import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
 
 benchResult :: FilePath -> Benchmark
@@ -70,6 +71,9 @@ main =
                 , bgroup "tcFile"
                     [ bench "examples/fortune.dck" $ nfIO (tcFile [] "examples/fortune.dck") -- TODO: tc with syntax tree in env?
                     ]
+                , env amalFortune $ \f ->
+                  bgroup "typecheck"
+                    [ bench "examples/fortune.dck" $ nf tyRun f ]
                 , env amalgamated $ \ ~(s, c) ->
                   bgroup "check + eval"
                     [ bench "examples/shakespeare.dck" $ nfIO (txtIO s)
@@ -90,6 +94,7 @@ main =
           encoded = encode . void <$> multiParsed
           encodeShakespeare = encode . void . either throw id . parse <$> shakespeare
           encodeEnv = (,) <$> encoded <*> encodeShakespeare
+          amalFortune = amalgamateRename [] "examples/fortune.dck"
           amalgamated = (,)
             <$> amalgamateRename [] "examples/shakespeare.dck"
             <*> amalgamateRename [] "examples/catherineOfSienaBot.dck"

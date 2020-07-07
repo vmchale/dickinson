@@ -98,7 +98,7 @@ ioChecker :: Exception e => ([Declaration AlexPosn] -> Maybe e) -> [FilePath] ->
 ioChecker checker is = maybeThrowIO . checker <=< amalgamateRename is
 
 tcFile :: [FilePath] -> FilePath -> IO ()
-tcFile is = tcIO <=< amalgamateRename is
+tcFile is = eitherThrowIO . tyRun <=< amalgamateRename is
 
 evalFile :: [FilePath] -> FilePath -> IO T.Text
 evalFile is = fmap eitherThrow . evalIO . (evalDickinsonAsMain <=< amalgamateRenameM is)
