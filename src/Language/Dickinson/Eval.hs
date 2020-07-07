@@ -301,9 +301,10 @@ resolveFlattenM (Apply _ e e') = do
                 resolveFlattenM e'''
         _ -> error "Ill-typed expression"
 resolveFlattenM e@Lambda{} = pure e
-resolveFlattenM (Match _ e p e') =
-    (bindPattern p =<< resolveFlattenM e) *>
-    resolveFlattenM e'
+resolveFlattenM (Match _ e p e') = do
+    modSt <- (bindPattern p =<< resolveFlattenM e)
+    withSt modSt $
+        resolveFlattenM e'
 resolveFlattenM (Flatten l e) =
     Flatten l <$> resolveFlattenM e
 resolveFlattenM (Annot _ e _) = resolveFlattenM e

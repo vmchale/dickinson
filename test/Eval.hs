@@ -3,6 +3,7 @@
 module Eval ( evalTests
             ) where
 
+import           Control.Monad           ((<=<))
 import qualified Data.Text               as T
 import           Language.Dickinson.File
 import           Test.Tasty              (TestTree, testGroup)
@@ -22,6 +23,7 @@ evalTests = testGroup "Evaluation test"
     , resolveCase "test/data/hangIndefinitely.dck"
     , testCase "Should handle interpolated multiline strings" multiQuoteEval
     , testCase "Should handle nested interpolations" multiInterpolatedNestedEval
+    , testCase "test/data/flattenLambda.dck" example
     ]
 
 forceResult :: a -> Assertion
@@ -34,14 +36,13 @@ resolveCase :: FilePath -> TestTree
 resolveCase fp = testCase fp $ resolve fp
 
 resolve :: FilePath -> Assertion
-resolve fp = do
-    res <- resolveFile ["prelude", "lib"] fp
-    forceResult res
+resolve = forceResult <=< resolveFile ["prelude", "lib"]
 
 result :: FilePath -> Assertion
-result fp = do
-    res <- evalFile ["prelude", "lib"] fp
-    forceResult res
+result = forceResult <=< evalFile ["prelude", "lib"]
+
+example :: Assertion
+example = forceResult =<< evalFile ["examples"] "test/data/flattenLambda.dck"
 
 evalTo :: FilePath -> T.Text -> Assertion
 evalTo fp t = do
