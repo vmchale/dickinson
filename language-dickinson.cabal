@@ -85,6 +85,7 @@ library dickinson
         Language.Dickinson.DuplicateCheck
         Language.Dickinson.Unique
         Language.Dickinson.File
+        Language.Dickinson.Pipeline
         Language.Dickinson.Import
         Language.Dickinson.Lib
         Language.Dickinson.Check.Internal
@@ -247,7 +248,8 @@ benchmark dickinson-bench
         dickinson -any,
         binary -any,
         criterion -any,
-        bytestring -any
+        bytestring -any,
+        text -any
 
     if impl(ghc >=8.0)
         ghc-options:

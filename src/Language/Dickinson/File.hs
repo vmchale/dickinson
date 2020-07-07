@@ -31,6 +31,7 @@ import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Parser
+import           Language.Dickinson.Pipeline
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Rename.Amalgamate
 import           Language.Dickinson.ScopeCheck
@@ -97,7 +98,7 @@ ioChecker :: Exception e => ([Declaration AlexPosn] -> Maybe e) -> [FilePath] ->
 ioChecker checker is = maybeThrowIO . checker <=< amalgamateRename is
 
 tcFile :: [FilePath] -> FilePath -> IO ()
-tcFile is = eitherThrowIO . tyRun <=< amalgamateRename is
+tcFile is = tcIO <=< amalgamateRename is
 
 evalFile :: [FilePath] -> FilePath -> IO T.Text
 evalFile is = fmap eitherThrow . evalIO . (evalDickinsonAsMain <=< amalgamateRenameM is)
@@ -106,8 +107,5 @@ resolveFile :: [FilePath] -> FilePath -> IO [Declaration AlexPosn]
 resolveFile is = fmap eitherThrow . evalIO . (traverse resolveDeclarationM <=< amalgamateRenameM is)
 
 pipeline :: [FilePath] -> FilePath -> IO T.Text
-pipeline is fp = fmap eitherThrow $ evalIO $ do
-    ds <- amalgamateRenameM is fp
-    maybeThrow $ checkScope ds
-    tyTraverse ds
-    evalDickinsonAsMain ds
+pipeline is fp = fmap eitherThrow $ evalIO $
+    checkEvalM =<< amalgamateRenameM is fp
