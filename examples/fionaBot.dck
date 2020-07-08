@@ -1,6 +1,6 @@
 %-
 
-; see https://twitter.com/fionalyric for a fully fleshed-out implementation of this idea
+; see https://twitter.com/fionalyric for a fleshed-out implementation of this idea
 
 (:def fiona
   (:oneof

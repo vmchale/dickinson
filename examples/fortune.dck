@@ -40,6 +40,7 @@
     (| "What do you know about dietetics?")
     (| "Hobbies are sublunary")
     (| "To err is immoral.")
+    (| "Bats can give humans rabies.")
     (| $ quote ("« Le beau est ce qu'on désire sans vouloir le manger. »", "Simone Weil"))
     (| $ quote ("\"You're more likely to get cut with a dull tool than a sharp one.\"", "Fiona Apple"))
     (| $ quote ("\"You forgot the difference between equanimity and passivity.\"", "Fiona Apple"))
