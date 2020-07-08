@@ -1,4 +1,4 @@
-.PHONY: clean install check
+.PHONY: clean install check lint
 
 DCK_LIB := $(wildcard ./lib/*.dck)
 DCK_PRELUDE := $(wildcard ./prelude/*.dck)
@@ -6,6 +6,9 @@ DCK_PRELUDE := $(wildcard ./prelude/*.dck)
 check:
 	emd lint $(DCK_LIB) $(DCK_PRELUDE)
 	emd check $(DCK_LIB) $(DCK_PRELUDE)
+
+lint:
+	hlint src bench run ./test
 
 docs: man/emd.1 doc/user-guide.pdf
 

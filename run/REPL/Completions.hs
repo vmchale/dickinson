@@ -14,7 +14,7 @@ namesState :: StateT (EvalSt a) IO [T.Text]
 namesState = gets (M.keys . topLevel)
 
 namesStr :: StateT (EvalSt a) IO [String]
-namesStr = fmap T.unpack <$> gets (M.keys . topLevel)
+namesStr = gets (fmap T.unpack . M.keys . topLevel)
 
 cyclicSimple :: [String] -> [Completion]
 cyclicSimple [] = []
