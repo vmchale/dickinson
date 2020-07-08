@@ -154,6 +154,7 @@ executable emd
         REPL
         REPL.Save
         REPL.Completions
+        Format
         Paths_language_dickinson
 
     autogen-modules:  Paths_language_dickinson

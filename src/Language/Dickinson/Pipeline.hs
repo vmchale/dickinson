@@ -1,16 +1,18 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module Language.Dickinson.Pipeline ( checkEvalM
+                                   , format
                                    ) where
 
-import           Control.Exception.Value       (eitherThrowIO)
+import           Control.Exception.Value       (eitherThrow)
 import           Control.Monad.Except          (MonadError)
 import           Control.Monad.State.Lazy      (MonadState)
+import qualified Data.ByteString.Lazy          as BSL
 import qualified Data.Text                     as T
-import           Data.Text.Prettyprint.Doc     (Pretty)
-import           Data.Typeable                 (Typeable)
+import           Data.Text.Prettyprint.Doc.Ext (prettyText)
 import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
+import           Language.Dickinson.Parser
 import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
@@ -20,3 +22,6 @@ checkEvalM ds = do
     maybeThrow $ checkScope ds
     tyTraverse ds
     evalDickinsonAsMain ds
+
+format :: BSL.ByteString -> T.Text
+format = prettyText . eitherThrow . parse

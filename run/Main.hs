@@ -3,6 +3,7 @@ module Main (main) where
 import           Data.Foldable            (traverse_)
 import           Data.Semigroup
 import qualified Data.Text.IO             as TIO
+import           Format
 import           Language.Dickinson       (dickinsonVersionString)
 import           Language.Dickinson.File
 import           Language.Dickinson.Lib
@@ -16,7 +17,7 @@ data Act = Run !FilePath ![FilePath]
          | REPL ![FilePath]
          | Check ![FilePath] ![FilePath]
          | Lint ![FilePath]
-         | Format !FilePath
+         | Format !FilePath Bool
          | Man
 
 main :: IO ()
@@ -33,7 +34,9 @@ act = hsubparser
     ) <|> runP
 
 formatP :: Parser Act
-formatP = Format <$> dckFile
+formatP = Format
+    <$> dckFile
+    <*> switch (long "inplace" <> short 'i' <> help "Overwrite file in-place")
 
 replP :: Parser Act
 replP = REPL <$> many dckFile
@@ -76,9 +79,10 @@ versionMod :: Parser (a -> a)
 versionMod = infoOption dickinsonVersionString (short 'V' <> long "version" <> help "Show version")
 
 run :: Act -> IO ()
-run (Run fp is)  = do { pGo <- defaultLibPath ; TIO.putStrLn =<< pipeline (pGo is) fp }
-run (REPL _)     = dickinsonRepl
-run (Check fs i) = do { pathMod <- defaultLibPath ; traverse_ (validateFile (pathMod i)) fs } -- FIXME: reuse
-run (Lint fs)    = traverse_ warnFile fs
-run (Format fp)  = fmtFile fp
-run Man          = putStrLn . (</> "emd.1") . (</> "man") =<< getDataDir
+run (Run fp is)       = do { pGo <- defaultLibPath ; TIO.putStrLn =<< pipeline (pGo is) fp }
+run (REPL _)          = dickinsonRepl
+run (Check fs i)      = do { pathMod <- defaultLibPath ; traverse_ (validateFile (pathMod i)) fs } -- FIXME: reuse
+run (Lint fs)         = traverse_ warnFile fs
+run (Format fp False) = fmtFile fp
+run (Format fp True)  = fmtInplace fp
+run Man               = putStrLn . (</> "emd.1") . (</> "man") =<< getDataDir

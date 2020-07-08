@@ -8,23 +8,21 @@ module Language.Dickinson.File ( evalIO
                                , tcFile
                                , amalgamateRename
                                , amalgamateRenameM
-                               , fmtFile
                                , pipeline
                                , resolveFile
                                ) where
 
-import           Control.Applicative                   ((<|>))
-import           Control.Exception                     (Exception)
+import           Control.Applicative                  ((<|>))
+import           Control.Exception                    (Exception)
 import           Control.Exception.Value
-import           Control.Monad                         ((<=<))
-import           Control.Monad.Except                  (ExceptT, MonadError, runExceptT)
-import           Control.Monad.IO.Class                (MonadIO)
-import           Control.Monad.State                   (MonadState, StateT, evalStateT)
-import qualified Data.ByteString.Lazy                  as BSL
-import           Data.Semigroup                        ((<>))
-import           Data.Text                             as T
-import           Data.Text.Prettyprint.Doc             (hardline, pretty)
-import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
+import           Control.Monad                        ((<=<))
+import           Control.Monad.Except                 (ExceptT, MonadError, runExceptT)
+import           Control.Monad.IO.Class               (MonadIO)
+import           Control.Monad.State                  (MonadState, StateT, evalStateT)
+import qualified Data.ByteString.Lazy                 as BSL
+import           Data.Semigroup                       ((<>))
+import           Data.Text                            as T
+import qualified Data.Text.IO                         as TIO
 import           Language.Dickinson.Check
 import           Language.Dickinson.DuplicateCheck
 import           Language.Dickinson.Error
@@ -37,7 +35,7 @@ import           Language.Dickinson.Rename.Amalgamate
 import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
-import           System.Random                         (StdGen, newStdGen, randoms)
+import           System.Random                        (StdGen, newStdGen, randoms)
 
 data AmalgamateSt = AmalgamateSt { amalgamateRenames    :: Renames
                                  , amalgamateLexerState :: AlexUserState
@@ -72,10 +70,6 @@ amalgamateRename :: [FilePath]
                  -> FilePath
                  -> IO [Declaration AlexPosn]
 amalgamateRename is fp = flip evalStateT initAmalgamateSt $ fmap eitherThrow $ runExceptT $ amalgamateRenameM is fp
-
--- TODO: smart formatter
-fmtFile :: FilePath -> IO ()
-fmtFile = putDoc . (<> hardline) . pretty . eitherThrow . parse <=< BSL.readFile
 
 -- | Check scoping
 checkFile :: [FilePath] -> FilePath -> IO ()

@@ -14,7 +14,7 @@ module Language.Dickinson.Type ( Dickinson (..)
 import           Control.DeepSeq                    (NFData)
 import           Data.Binary                        (Binary)
 import           Data.Foldable                      (toList)
-import           Data.List.NonEmpty                 (NonEmpty)
+import           Data.List.NonEmpty                 (NonEmpty (..))
 import qualified Data.List.NonEmpty                 as NE
 import           Data.Semigroup                     ((<>))
 import qualified Data.Text                          as T
@@ -117,6 +117,9 @@ prettyLetLeaf (n, e) = group (brackets (pretty n <+> pretty e))
 prettyChoiceBranch :: (Double, Expression a) -> Doc b
 prettyChoiceBranch (d, e) = parens (pipe <+> pretty d <+> pretty e)
 
+prettyChoiceOneof :: Expression a -> Doc b
+prettyChoiceOneof e = parens (pipe <+> pretty e)
+
 prettyInterp :: Expression a -> Doc b
 prettyInterp (StrChunk _ t) = pretty (escReplace t)
 prettyInterp e              = "${" <> pretty e <> "}"
@@ -141,14 +144,18 @@ escReplace =
     . T.replace "\n" "\\n"
     . T.replace "${" "\\${"
 
+allEq :: Eq a => NonEmpty a -> Bool
+allEq (x :| xs) = all (== x) xs
+
 -- figure out indentation
 instance Pretty (Expression a) where
     pretty (Var _ n)          = pretty n
     pretty (Literal _ l)      = dquotes $ pretty (escReplace l)
     pretty (Let _ ls e)       = group (parens (":let" <^> vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e])))
-    -- TODO: if they're all equal, use :oneof
     -- also comments lol
-    pretty (Choice _ brs)     = parens (":branch" <#> indent 2 (hardSep (toList $ fmap prettyChoiceBranch brs)))
+    pretty (Choice _ brs)
+        | allEq (fst <$> brs) = parens (":oneof" <#> indent 2 (hardSep (toList $ fmap prettyChoiceOneof (snd <$> brs))))
+        | otherwise           = parens (":branch" <#> indent 2 (hardSep (toList $ fmap prettyChoiceBranch brs)))
     pretty (Lambda _ n ty e)  = parens (":lambda" <+> pretty n <+> pretty ty <#*> pretty e)
     pretty (Apply _ e e')     = parens ("$" <+> pretty e <+> pretty e')
     pretty (Interp _ es)      = group (dquotes (foldMap prettyInterp es))
