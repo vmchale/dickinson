@@ -174,6 +174,27 @@ previously (such as `color` in the example above).
 
 Lambdas are how we introduce functions in Dickinson.
 
+```
+(:def sayHello
+  (:lambda name text
+    "Hello, ${name}."))
+```
+
+Note that we have to specify the type of `name` - here, it stands in for some
+string, so it is of type `text`.
+
+We can use `sayHello` with `$` (pronounced "apply")
+
+```
+(:def name
+  (:oneof
+    (| "Alice")
+    (| "Bob")))
+
+(:def main
+  ($ sayHello name))
+```
+
 # REPL
 
 To enter a REPL:
@@ -318,3 +339,22 @@ an implementation of the Unix fortune program as a script:
 ```
 
 # Examples
+
+## Cowsay
+
+Here is a variation on cowsay:
+
+```
+(:def cowsay
+  (:lambda txt text
+    '''
+    
+    ${txt}
+    ------
+          \   ^__^
+           \  (oo)\_______
+              (__)\       )\/\
+                  ||----w |
+                  ||     ||
+    '''))
+```
