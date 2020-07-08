@@ -9,5 +9,5 @@
       ''')))
 
 (:def main
-  (:branch
-    (| 1.0 ($ ($ quote "God created war so that Americans would learn geography.") "Mark Twain"))))
+  (:oneof
+    (| ($ ($ quote "God created war so that Americans would learn geography.") "Mark Twain"))))
