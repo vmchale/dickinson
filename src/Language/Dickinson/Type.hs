@@ -126,7 +126,7 @@ prettyInterp e              = "${" <> pretty e <> "}"
 
 prettyMultiInterp :: [Expression a] -> Doc b
 prettyMultiInterp = mconcat . fmap prettyChunk
-    where prettyChunk (StrChunk _ t) = textHard t -- FIXME: convert "\n" to hardline...
+    where prettyChunk (StrChunk _ t) = textHard t
           prettyChunk e              = "${" <> pretty e <> "}"
 
 textHard :: T.Text -> Doc a
