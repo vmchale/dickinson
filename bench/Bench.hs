@@ -1,15 +1,15 @@
 module Main (main) where
 
-import           Control.Exception                 (throw)
-import           Control.Exception.Value           (eitherThrow)
-import           Control.Monad                     (void)
+import           Control.Exception                  (throw)
+import           Control.Exception.Value            (eitherThrow)
+import           Control.Monad                      (void)
 import           Criterion.Main
-import           Data.Binary                       (decode, encode)
-import qualified Data.ByteString.Lazy              as BSL
-import qualified Data.Text                         as T
+import           Data.Binary                        (decode, encode)
+import qualified Data.ByteString.Lazy               as BSL
+import qualified Data.Text                          as T
 import           Language.Dickinson.Check
+import           Language.Dickinson.Check.Duplicate
 import           Language.Dickinson.Check.Internal
-import           Language.Dickinson.DuplicateCheck
 import           Language.Dickinson.Eval
 import           Language.Dickinson.File
 import           Language.Dickinson.Lexer

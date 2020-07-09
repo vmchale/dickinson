@@ -2,16 +2,16 @@
 
 module Main (main) where
 
-import           Control.Exception.Value           (eitherThrow)
-import qualified Data.ByteString.Lazy              as BSL
-import           Data.Either                       (isRight)
-import           Data.List.NonEmpty                (NonEmpty (..))
-import           Data.Maybe                        (isJust, isNothing)
+import           Control.Exception.Value            (eitherThrow)
+import qualified Data.ByteString.Lazy               as BSL
+import           Data.Either                        (isRight)
+import           Data.List.NonEmpty                 (NonEmpty (..))
+import           Data.Maybe                         (isJust, isNothing)
 import           Eval
 import           Golden
 import           Language.Dickinson.Check
+import           Language.Dickinson.Check.Duplicate
 import           Language.Dickinson.Check.Internal
-import           Language.Dickinson.DuplicateCheck
 import           Language.Dickinson.File
 import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer

@@ -1,5 +1,5 @@
-module Language.Dickinson.DuplicateCheck ( checkDuplicates
-                                         ) where
+module Language.Dickinson.Check.Duplicate ( checkDuplicates
+                                          ) where
 
 import           Control.Applicative      ((<|>))
 import           Data.Foldable            (toList)

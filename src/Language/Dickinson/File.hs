@@ -23,7 +23,7 @@ import qualified Data.ByteString.Lazy                 as BSL
 import           Data.Semigroup                       ((<>))
 import           Data.Text                            as T
 import           Language.Dickinson.Check
-import           Language.Dickinson.DuplicateCheck
+import           Language.Dickinson.Check.Duplicate
 import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
 import           Language.Dickinson.Lexer

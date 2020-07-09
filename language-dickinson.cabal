@@ -82,13 +82,13 @@ library dickinson
         Language.Dickinson.Error
         Language.Dickinson.Check
         Language.Dickinson.ScopeCheck
-        Language.Dickinson.DuplicateCheck
         Language.Dickinson.Unique
         Language.Dickinson.File
         Language.Dickinson.Pipeline
         Language.Dickinson.Import
         Language.Dickinson.Lib
         Language.Dickinson.Check.Internal
+        Language.Dickinson.Check.Duplicate
         Data.Tuple.Ext
         Control.Exception.Value
         Data.Text.Prettyprint.Doc.Ext
