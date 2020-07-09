@@ -21,6 +21,7 @@ import           Data.Text.Lazy.Encoding               (encodeUtf8)
 import           Data.Text.Prettyprint.Doc             (Pretty (pretty), hardline)
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Data.Tuple.Ext                        (fst4)
+import           Language.Dickinson.Check.Scope
 import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
 import           Language.Dickinson.File
@@ -28,7 +29,6 @@ import           Language.Dickinson.Lexer              (AlexPosn, AlexUserState,
 import           Language.Dickinson.Lib
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
-import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique

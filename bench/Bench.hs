@@ -10,13 +10,13 @@ import qualified Data.Text                          as T
 import           Language.Dickinson.Check
 import           Language.Dickinson.Check.Duplicate
 import           Language.Dickinson.Check.Internal
+import           Language.Dickinson.Check.Scope
 import           Language.Dickinson.Eval
 import           Language.Dickinson.File
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Pipeline
 import           Language.Dickinson.Rename
-import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique

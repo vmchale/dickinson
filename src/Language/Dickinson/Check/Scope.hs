@@ -1,9 +1,9 @@
 {-# LANGUAGE FlexibleContexts #-}
 
-module Language.Dickinson.ScopeCheck ( checkScope
-                                     , checkScopeExpr
-                                     , checkScopeDecl
-                                     ) where
+module Language.Dickinson.Check.Scope ( checkScope
+                                      , checkScopeExpr
+                                      , checkScopeDecl
+                                      ) where
 
 import           Control.Applicative              (Alternative, (<|>))
 import           Control.Monad.Except             (MonadError)

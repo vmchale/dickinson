@@ -12,13 +12,13 @@ import           Golden
 import           Language.Dickinson.Check
 import           Language.Dickinson.Check.Duplicate
 import           Language.Dickinson.Check.Internal
+import           Language.Dickinson.Check.Scope
 import           Language.Dickinson.File
 import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
-import           Language.Dickinson.ScopeCheck
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
 import           Test.Tasty
