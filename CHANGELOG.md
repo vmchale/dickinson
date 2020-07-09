@@ -1,5 +1,9 @@
 # dickinson
 
+## 0.1.1.3
+
+  * Fail on bad patterns, e.g. `(:match xy (x, x) x)`
+
 ## 0.1.1.2
 
   * Ignore lines starting with `#!` (for shell shebangs)
