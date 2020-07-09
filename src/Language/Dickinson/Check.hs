@@ -26,8 +26,6 @@ checkMultiple ds =
     <|> checkNames (concatMap collectConstructors ds)
     where defNameM (Define _ n _) = Just n
           defNameM TyDecl{}       = Nothing
-          defExprM (Define _ _ e) = Just e
-          defExprM TyDecl{}       = Nothing
           tyDeclNameM Define{}       = Nothing
           tyDeclNameM (TyDecl _ n _) = Just n
 
@@ -50,7 +48,7 @@ checkMultipleExpr (Lambda _ _ _ e)   = checkMultipleExpr e
 checkMultipleExpr (Flatten _ e)      = checkMultipleExpr e
 checkMultipleExpr (Let _ bs e)       =
         checkNames (toList $ fmap fst bs)
-    <|> foldMapAlternative checkMultipleExpr (snd <$> bs)
+    <|> foldMapAlternative (checkMultipleExpr . snd) bs
     <|> checkMultipleExpr e
 checkMultipleExpr (Annot _ e _)    = checkMultipleExpr e
 checkMultipleExpr Constructor{}    = Nothing

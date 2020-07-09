@@ -83,6 +83,7 @@ library dickinson
         Language.Dickinson.Check
         Language.Dickinson.Check.Scope
         Language.Dickinson.Check.Internal
+        Language.Dickinson.Check.Pattern
         Language.Dickinson.Check.Duplicate
         Language.Dickinson.Unique
         Language.Dickinson.File
@@ -96,7 +97,6 @@ library dickinson
     hs-source-dirs:   src
     other-modules:
         Paths_language_dickinson
-        Language.Dickinson.Check.Pattern
         Language.Dickinson.Lib.Get
         Control.Monad.Ext
         Data.Foldable.Ext

@@ -4,11 +4,13 @@ module Language.Dickinson.Rename.Amalgamate ( amalgamateM
                                             , fileDecls
                                             ) where
 
-import           Control.Monad              ((<=<))
-import           Control.Monad.Except       (MonadError)
-import           Control.Monad.IO.Class     (MonadIO)
-import           Control.Monad.State        (MonadState)
-import           Data.Semigroup             ((<>))
+import           Control.Monad                    ((<=<))
+import           Control.Monad.Except             (MonadError)
+import           Control.Monad.IO.Class           (MonadIO)
+import           Control.Monad.State              (MonadState)
+import           Data.Functor                     (($>))
+import           Data.Semigroup                   ((<>))
+import           Language.Dickinson.Check.Pattern
 import           Language.Dickinson.Error
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Lib.Get
@@ -27,7 +29,7 @@ amalgamateM :: (HasLexerState s, MonadIO m, MonadError (DickinsonError AlexPosn)
             => [FilePath] -- ^ Includes
             -> Dickinson AlexPosn
             -> m [Declaration AlexPosn]
-amalgamateM _ (Dickinson [] ds)    = pure ds
+amalgamateM _ (Dickinson [] ds)    = (maybeThrow $ checkPatternDecl ds) $> ds
 amalgamateM is (Dickinson imps ds) = do
     ids <- traverse (withImportM is) imps
     pure (concat ids <> ds)

@@ -9,6 +9,8 @@ module Language.Dickinson.Type ( Dickinson (..)
                                , Expression (..)
                                , Pattern (..)
                                , DickinsonTy (..)
+                               -- * Accesors
+                               , defExprM
                                ) where
 
 import           Control.DeepSeq                    (NFData)
@@ -173,3 +175,7 @@ instance Pretty (DickinsonTy a) where
     pretty (TyFun _ t t') = parens ("⟶" <+> pretty t <+> pretty t')
     pretty (TyTuple _ ts) = tupled (toList (pretty <$> ts))
     pretty (TyNamed _ n)  = pretty n
+
+defExprM :: Declaration a -> Maybe (Expression a)
+defExprM (Define _ _ e) = Just e
+defExprM TyDecl{}       = Nothing
