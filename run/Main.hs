@@ -81,7 +81,7 @@ versionMod = infoOption dickinsonVersionString (short 'V' <> long "version" <> h
 run :: Act -> IO ()
 run (Run fp is)       = do { pGo <- defaultLibPath ; TIO.putStrLn =<< pipeline (pGo is) fp }
 run (REPL _)          = dickinsonRepl
-run (Check fs i)      = do { pathMod <- defaultLibPath ; traverse_ (validateFile (pathMod i)) fs } -- FIXME: reuse
+run (Check fs i)      = do { pathMod <- defaultLibPath ; traverse_ (validateFile (pathMod i)) fs }
 run (Lint fs)         = traverse_ warnFile fs
 run (Format fp False) = fmtFile fp
 run (Format fp True)  = fmtInplace fp

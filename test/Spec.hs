@@ -12,6 +12,7 @@ import           Golden
 import           Language.Dickinson.Check
 import           Language.Dickinson.Check.Duplicate
 import           Language.Dickinson.Check.Internal
+import           Language.Dickinson.Check.Pattern
 import           Language.Dickinson.Check.Scope
 import           Language.Dickinson.File
 import           Language.Dickinson.Import
@@ -65,6 +66,7 @@ parserTests =
         , parseNoError "test/data/multiQuoteify.dck"
         , findPath
         , sanityCheckTest "test/data/adt.dck"
+        , detectSuspiciousPattern "test/error/badMatch.dck"
         ]
 
 findPath :: TestTree
@@ -84,6 +86,11 @@ detectDuplicate :: FilePath -> TestTree
 detectDuplicate fp = testCase ("Detects duplicate name (" ++ fp ++ ")") $ do
     (Dickinson _ parsed) <- readNoFail fp
     assertBool fp $ isJust (checkMultiple parsed)
+
+detectSuspiciousPattern :: FilePath -> TestTree
+detectSuspiciousPattern fp = testCase fp $ do
+    (Dickinson _ parsed) <- readNoFail fp
+    assertBool fp $ isJust (checkPatternDecl parsed)
 
 detectScopeError :: FilePath -> TestTree
 detectScopeError fp = testCase "Finds scoping error" $ do
