@@ -1,6 +1,6 @@
 .PHONY: clean install check lint
 
-MAKEFLAGS += --warn-undefined-variables --no-builtin-rules -j
+MAKEFLAGS += --warn-undefined-variables --no-builtin-rules
 .DELETE_ON_ERROR:
 
 
