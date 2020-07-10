@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -e pipefail
-
-cabal build exe:emd --enable-profiling
-bin="$(fd -t x '^emd$' -I | tail -n1)"
-cp "$bin" "$HOME"/.local/bin/emd-prof
