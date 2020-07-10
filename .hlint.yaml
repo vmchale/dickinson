@@ -1,0 +1,4 @@
+---
+- ignore: {name: Avoid lambda using `infix`}
+
+- fixity: infixr 1 <=<

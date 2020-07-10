@@ -29,7 +29,7 @@ amalgamateM :: (HasLexerState s, MonadIO m, MonadError (DickinsonError AlexPosn)
             => [FilePath] -- ^ Includes
             -> Dickinson AlexPosn
             -> m [Declaration AlexPosn]
-amalgamateM _ (Dickinson [] ds)    = maybeThrow (checkPatternDecl ds $> ds
+amalgamateM _ (Dickinson [] ds)    = maybeThrow (checkPatternDecl ds) $> ds
 amalgamateM is (Dickinson imps ds) = do
     ids <- traverse (withImportM is) imps
     pure (concat ids <> ds)

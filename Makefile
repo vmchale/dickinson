@@ -9,6 +9,9 @@ check:
 
 lint:
 	hlint src bench run ./test
+	yamllint stack.yaml
+	yamllint .stylish-haskell.yaml
+	yamllint .hlint.yaml
 
 docs: man/emd.1 doc/user-guide.pdf
 
