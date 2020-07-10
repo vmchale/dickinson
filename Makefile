@@ -1,5 +1,9 @@
 .PHONY: clean install check lint
 
+MAKEFLAGS += --warn-undefined-variables -no-builtin-rules -j
+.DELETE_ON_ERROR:
+
+
 DCK_LIB := $(wildcard ./lib/*.dck)
 DCK_PRELUDE := $(wildcard ./prelude/*.dck)
 
