@@ -14,7 +14,6 @@ import           Data.Binary                   (Binary (..))
 import           Data.Foldable                 (toList)
 import qualified Data.IntMap                   as IM
 import           Data.List.NonEmpty            (NonEmpty (..))
-import           Data.Semigroup                ((<>))
 import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc     (Pretty (pretty))
 import           Data.Text.Prettyprint.Doc.Ext (intercalate)

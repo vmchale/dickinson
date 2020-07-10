@@ -20,7 +20,6 @@ import           Control.Monad.Except                 (ExceptT, MonadError, runE
 import           Control.Monad.IO.Class               (MonadIO)
 import           Control.Monad.State                  (MonadState, StateT, evalStateT)
 import qualified Data.ByteString.Lazy                 as BSL
-import           Data.Semigroup                       ((<>))
 import           Data.Text                            as T
 import           Language.Dickinson.Check
 import           Language.Dickinson.Check.Duplicate
