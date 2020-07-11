@@ -45,10 +45,7 @@ flag zstd
     description: Use zstd to compress saved REPL states
 
 library
-    exposed-modules:
-        Language.Dickinson
-        Language.Dickinson.QuasiQuoter
-
+    exposed-modules:  Language.Dickinson
     hs-source-dirs:   public
     other-modules:    Paths_language_dickinson
     autogen-modules:  Paths_language_dickinson
@@ -56,9 +53,15 @@ library
     ghc-options:      -Wall
     build-depends:
         base >=4.9 && <5,
-        dickinson -any,
-        template-haskell -any,
-        text -any
+        dickinson -any
+
+    if !flag(cross)
+        exposed-modules: Language.Dickinson.QuasiQuoter
+
+    if !flag(cross)
+        build-depends:
+            template-haskell -any,
+            text -any
 
     if impl(ghc >=8.0)
         ghc-options:
