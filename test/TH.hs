@@ -1,19 +1,19 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell   #-}
 
-module QQ ( qqTests
+module TH ( thTests
           ) where
 
 import           Language.Dickinson
-import           Language.Dickinson.QuasiQuoter
+import           Language.Dickinson.TH
 import           Test.Tasty
 import           Test.Tasty.HUnit
 
-qqDecl :: [Declaration AlexPosn]
-qqDecl = $(dickinson [] "test/eval/context.dck")
+thDecl :: [Declaration AlexPosn]
+thDecl = $(dickinson [] "test/eval/context.dck")
 
-qqTests :: TestTree
-qqTests =
+thTests :: TestTree
+thTests =
     testCase "Returns result" $ do
-        res <- run qqDecl
+        res <- run thDecl
         res @?= "woman"

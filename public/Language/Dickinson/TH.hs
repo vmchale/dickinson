@@ -1,9 +1,9 @@
 {-# LANGUAGE TemplateHaskell #-}
 
 -- | @since 0.1.2.0
-module Language.Dickinson.QuasiQuoter ( dickinson
-                                      , run
-                                      ) where
+module Language.Dickinson.TH ( dickinson
+                             , run
+                             ) where
 
 import           Control.Exception.Value    (eitherThrow)
 import           Data.Data                  (Data)

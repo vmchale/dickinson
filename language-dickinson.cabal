@@ -56,7 +56,7 @@ library
         dickinson -any
 
     if !flag(cross)
-        exposed-modules: Language.Dickinson.QuasiQuoter
+        exposed-modules: Language.Dickinson.TH
 
     if !flag(cross)
         build-depends:
@@ -216,7 +216,7 @@ test-suite dickinson-test
         Golden
         Eval
         TypeCheck
-        QQ
+        TH
 
     default-language: Haskell2010
     other-extensions: OverloadedStrings

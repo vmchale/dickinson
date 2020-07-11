@@ -24,6 +24,7 @@ import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
 import           Test.Tasty
 import           Test.Tasty.HUnit
+import           TH
 import           TypeCheck
 
 main :: IO ()
@@ -67,6 +68,7 @@ parserTests =
         , findPath
         , sanityCheckTest "test/data/adt.dck"
         , detectSuspiciousPattern "test/error/badMatch.dck"
+        , thTests
         ]
 
 findPath :: TestTree
