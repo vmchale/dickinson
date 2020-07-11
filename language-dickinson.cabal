@@ -59,6 +59,9 @@ library
         exposed-modules: Language.Dickinson.TH
 
     if !flag(cross)
+        other-extensions: TemplateHaskell
+
+    if !flag(cross)
         build-depends:
             template-haskell -any,
             text -any
