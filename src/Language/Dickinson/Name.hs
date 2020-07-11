@@ -1,7 +1,8 @@
-{-# LANGUAGE DeriveAnyClass    #-}
-{-# LANGUAGE DeriveFunctor     #-}
-{-# LANGUAGE DeriveGeneric     #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveAnyClass     #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveFunctor      #-}
+{-# LANGUAGE DeriveGeneric      #-}
+{-# LANGUAGE OverloadedStrings  #-}
 
 module Language.Dickinson.Name ( TyName
                                , Name (..)
@@ -11,6 +12,7 @@ module Language.Dickinson.Name ( TyName
 
 import           Control.DeepSeq               (NFData (..))
 import           Data.Binary                   (Binary (..))
+import           Data.Data                     (Data)
 import           Data.Foldable                 (toList)
 import qualified Data.IntMap                   as IM
 import           Data.List.NonEmpty            (NonEmpty (..))
@@ -27,7 +29,7 @@ type TyName a = Name a
 data Name a = Name { name   :: NonEmpty T.Text
                    , unique :: !Unique
                    , loc    :: a
-                   } deriving (Functor, Generic, Binary, Show)
+                   } deriving (Functor, Generic, Binary, Show, Data)
 
 instance NFData a => NFData (Name a) where
     rnf (Name _ u x) = rnf x `seq` u `seq` ()

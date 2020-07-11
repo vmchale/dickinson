@@ -4,5 +4,5 @@ set -e pipefail
 
 for arch in aarch64-linux-gnu arm-linux-gnueabihf
 do
-    cabal build --with-ghc="$arch"-ghc --with-ghc-pkg="$arch"-ghc-pkg --constraint='language-dickinson +cross'
+    cabal build --with-ghc="$arch"-ghc --with-ghc-pkg="$arch"-ghc-pkg --constraint='language-dickinson +cross' exe:emd
 done

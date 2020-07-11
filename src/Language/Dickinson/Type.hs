@@ -1,7 +1,8 @@
-{-# LANGUAGE DeriveAnyClass    #-}
-{-# LANGUAGE DeriveFunctor     #-}
-{-# LANGUAGE DeriveGeneric     #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveAnyClass     #-}
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE DeriveFunctor      #-}
+{-# LANGUAGE DeriveGeneric      #-}
+{-# LANGUAGE OverloadedStrings  #-}
 
 module Language.Dickinson.Type ( Dickinson (..)
                                , Declaration (..)
@@ -15,6 +16,7 @@ module Language.Dickinson.Type ( Dickinson (..)
 
 import           Control.DeepSeq                    (NFData)
 import           Data.Binary                        (Binary)
+import           Data.Data                          (Data)
 import           Data.Foldable                      (toList)
 import           Data.List.NonEmpty                 (NonEmpty (..))
 import qualified Data.List.NonEmpty                 as NE
@@ -40,7 +42,7 @@ data Declaration a = Define { declAnn :: a
                             , tyName  :: Name a
                             , tyCons  :: NonEmpty (TyName a)
                             }
-                   deriving (Generic, NFData, Binary, Functor, Show)
+                   deriving (Generic, NFData, Binary, Functor, Show, Data)
 
 data Import a = Import { importAnn :: a
                        , declMod   :: Name a
@@ -51,7 +53,7 @@ data Pattern a = PatternVar a (Name a)
                | PatternTuple a (NonEmpty (Pattern a))
                | PatternCons a (TyName a)
                | Wildcard a
-               deriving (Generic, NFData, Binary, Functor, Show)
+               deriving (Generic, NFData, Binary, Functor, Show, Data)
 
 data Expression a = Literal { exprAnn :: a, litText :: T.Text }
                   | StrChunk { exprAnn :: a, chunkText :: T.Text }
@@ -87,14 +89,14 @@ data Expression a = Literal { exprAnn :: a, litText :: T.Text }
                           , exprTy  :: DickinsonTy a
                           }
                   | Constructor { exprAnn :: a, constructorName :: TyName a }
-                  deriving (Generic, NFData, Binary, Functor, Show)
+                  deriving (Generic, NFData, Binary, Functor, Show, Data)
                   -- TODO: builtins?
 
 data DickinsonTy a = TyText a
                    | TyFun a (DickinsonTy a) (DickinsonTy a)
                    | TyTuple a (NonEmpty (DickinsonTy a))
                    | TyNamed a (Name a)
-                   deriving (Generic, NFData, Binary, Show, Functor)
+                   deriving (Generic, NFData, Binary, Show, Functor, Data)
 
 instance Eq (DickinsonTy a) where
     (==) TyText{} TyText{}                     = True

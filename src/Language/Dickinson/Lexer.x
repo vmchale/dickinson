@@ -1,5 +1,6 @@
 {
     {-# LANGUAGE DeriveAnyClass #-}
+    {-# LANGUAGE DeriveDataTypeable #-}
     {-# LANGUAGE DeriveGeneric #-}
     {-# LANGUAGE OverloadedStrings #-}
     {-# LANGUAGE StandaloneDeriving #-}
@@ -20,6 +21,7 @@
                                     ) where
 
 import Control.Arrow ((&&&))
+import Data.Data (Data)
 import Control.DeepSeq (NFData)
 import Control.Monad.Fail (MonadFail (..))
 import Data.Bifunctor (first)
@@ -297,6 +299,8 @@ deriving instance Generic AlexPosn
 deriving instance NFData AlexPosn
 
 deriving instance Binary AlexPosn
+
+deriving instance Data AlexPosn
 
 data Token a = EOF { loc :: a }
              | TokIdent { loc :: a, ident :: Name a }

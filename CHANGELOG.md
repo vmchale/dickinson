@@ -1,8 +1,9 @@
 # dickinson
 
-## 0.1.1.3
+## 0.1.2.0
 
   * Fail on bad patterns, e.g. `(:match xy (x, x) x)`
+  * Add `Language.Dickinson.QuasiQuoter` module
 
 ## 0.1.1.2
 

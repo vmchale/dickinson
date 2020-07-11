@@ -1,3 +1,4 @@
+{-# LANGUAGE DeriveDataTypeable         #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 module Language.Dickinson.Unique ( Unique (..)
@@ -7,11 +8,12 @@ module Language.Dickinson.Unique ( Unique (..)
 
 import           Control.DeepSeq           (NFData)
 import           Data.Binary               (Binary (..))
+import           Data.Data                 (Data)
 import           Data.Text.Prettyprint.Doc (Pretty)
 
 -- | For interning identifiers.
 newtype Unique = Unique { unUnique :: Int }
-    deriving (Eq, Ord, Pretty, NFData, Binary, Show)
+    deriving (Eq, Ord, Pretty, NFData, Binary, Show, Data)
 
 -- | Dummy unique for sake of testing
 dummyUnique :: Unique

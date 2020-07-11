@@ -4,6 +4,7 @@ module Language.Dickinson.File ( evalIO
                                , evalFile
                                , checkFile
                                , validateFile
+                               , validateAmalgamate
                                , warnFile
                                , tcFile
                                , amalgamateRename
@@ -13,13 +14,15 @@ module Language.Dickinson.File ( evalIO
                                ) where
 
 import           Control.Applicative                  ((<|>))
+import           Control.Composition                  ((.*))
 import           Control.Exception                    (Exception)
 import           Control.Exception.Value
-import           Control.Monad                        ((<=<))
+import           Control.Monad                        (void, (<=<))
 import           Control.Monad.Except                 (ExceptT, MonadError, runExceptT)
 import           Control.Monad.IO.Class               (MonadIO)
 import           Control.Monad.State                  (MonadState, StateT, evalStateT)
 import qualified Data.ByteString.Lazy                 as BSL
+import           Data.Functor                         (($>))
 import           Data.Text                            as T
 import           Language.Dickinson.Check
 import           Language.Dickinson.Check.Duplicate
@@ -75,10 +78,13 @@ checkFile = ioChecker checkScope
 
 -- | Check scoping and types
 validateFile :: [FilePath] -> FilePath -> IO ()
-validateFile is fp = do
+validateFile = void .* validateAmalgamate
+
+validateAmalgamate :: [FilePath] -> FilePath -> IO [Declaration AlexPosn]
+validateAmalgamate is fp = do
     d <- amalgamateRename is fp
     maybeThrowIO $ checkScope d
-    eitherThrowIO $ tyRun d
+    eitherThrowIO (tyRun d) $> d
 
 -- | Run some lints
 warnFile :: FilePath -> IO ()
@@ -93,7 +99,10 @@ tcFile :: [FilePath] -> FilePath -> IO ()
 tcFile is = eitherThrowIO . tyRun <=< amalgamateRename is
 
 evalFile :: [FilePath] -> FilePath -> IO T.Text
-evalFile is = fmap eitherThrow . evalIO . (evalDickinsonAsMain <=< amalgamateRenameM is)
+evalFile is fp = (\g -> evalFileGen g is fp) =<< newStdGen
+
+evalFileGen :: StdGen -> [FilePath] -> FilePath -> IO T.Text
+evalFileGen g is = fmap eitherThrow . evalAllWithGen g . (evalDickinsonAsMain <=< amalgamateRenameM is)
 
 resolveFile :: [FilePath] -> FilePath -> IO [Declaration AlexPosn]
 resolveFile is = fmap eitherThrow . evalIO . (traverse resolveDeclarationM <=< amalgamateRenameM is)
