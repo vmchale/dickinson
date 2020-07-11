@@ -43,13 +43,11 @@
 - [x] Bug in `test/demo/animal.dck` - doesn't ever produce a bird?
 - [ ] Running `examples/doggo.dck` `main` - `pick` seems to be called by `probabilities` state doesn't seem to change?
   - [ ] More vexingly, calling e.g. `color` in `lib/color.dck` un-sticks it!!
-  - [ ] running `test/data/nestLet.dck` fucks up
 - [x] Bug when running `test/demo/animal.dck` with renamer then eval
 - [x] `examples/doggo.dck` hangs indefinitely lol
 - [ ] Hangs indefinitely when lexing incomplete string
 # Code Quality
 - [ ] Kick tires on `:t` feature
-- [x] Don't use the identifier `yeet`
 # Debugging
 - [ ] Verbosity
 - [ ] Turn on sanity checking?
@@ -113,7 +111,7 @@
   `match`?
 # Libraries
 - [x] Colors
-- [ ] Animals
+- [x] Animals
   - [x] Birds
 - [ ] builtins (capitalization &c.)
 - [x] Currying?
