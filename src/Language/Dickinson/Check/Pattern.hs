@@ -39,6 +39,6 @@ checkPatternExpr (Let _ bs e)       = foldMapAlternative (checkPatternExpr . snd
 checkPatternExpr (Annot _ e _)      = checkPatternExpr e
 checkPatternExpr Constructor{}      = Nothing
 
-checkPatternDecl :: [Declaration a] -> Maybe (DickinsonError a) -- Expression
+checkPatternDecl :: [Declaration a] -> Maybe (DickinsonError a)
 checkPatternDecl ds =
     foldMapAlternative checkPatternExpr (mapMaybe defExprM ds)
