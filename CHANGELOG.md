@@ -1,6 +1,7 @@
 # dickinson
 
   * Fix bug in typechecker
+  * Pattern matching now has branches
 
 ## 0.1.2.0
 

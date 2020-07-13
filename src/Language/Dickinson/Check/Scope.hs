@@ -88,11 +88,14 @@ checkExpr (Let _ bs e) = do
     traverse_ insertName ns
     (<|>) <$> checkExpr e <*> mapSumM checkExpr (snd <$> bs)
         <* traverse_ deleteName ns
-checkExpr (Match _ e p e') =
-    ((<|>) <$> checkExpr e) <*> do
-        let ns = traversePattern p
-        traverse_ insertName ns
-        checkExpr e' <* traverse_ deleteName ns
+checkExpr (Match _ e brs) =
+    ((<|>) <$> checkExpr e) <*> mapSumM checkPair brs
+
+checkPair :: (Pattern a, Expression a) -> CheckM (Maybe (DickinsonError a))
+checkPair (p, e) = do
+    let ns = traversePattern p
+    traverse_ insertName ns
+    checkExpr e <* traverse_ deleteName ns
 
 mapSumM :: (Traversable t, Alternative f, Applicative m) => (a -> m (f b)) -> t a -> m (f b)
 mapSumM = (fmap asum .) . traverse

@@ -78,10 +78,9 @@ data Expression a = Literal { exprAnn :: a, litText :: T.Text }
                           }
                   | Concat { exprAnn :: a, exprConcats :: [Expression a] }
                   | Tuple { exprAnn :: a, exprTup :: NonEmpty (Expression a) }
-                  | Match { exprAnn   :: a
-                          , exprMatch :: Expression a
-                          , exprPat   :: Pattern a
-                          , exprIn    :: Expression a
+                  | Match { exprAnn    :: a
+                          , exprMatch  :: Expression a
+                          , exprBranch :: NonEmpty (Pattern a, Expression a)
                           }
                   | Flatten { exprAnn :: a, exprFlat :: Expression a }
                   | Annot { exprAnn :: a
@@ -115,7 +114,7 @@ instance Pretty (Import a) where
 instance Pretty (Dickinson a) where
     pretty (Dickinson is ds) = concatWith (\x y -> x <> hardline <> hardline <> y) (fmap pretty is <> ["%-"] <> fmap pretty ds)
 
-prettyLetLeaf :: (Name a, Expression a) -> Doc b
+prettyLetLeaf :: Pretty t => (t, Expression a) -> Doc b
 prettyLetLeaf (n, e) = group (brackets (pretty n <+> pretty e))
 
 prettyChoiceBranch :: (Double, Expression a) -> Doc b
@@ -167,7 +166,7 @@ instance Pretty (Expression a) where
     pretty (Concat _ es)      = parens (rangle <+> hsep (pretty <$> es))
     pretty StrChunk{}         = error "Internal error: naked StrChunk"
     pretty (Tuple _ es)       = tupled (toList (pretty <$> es))
-    pretty (Match _ n p e)    = parens (":match" <+> pretty n <^> pretty p <^> pretty e)
+    pretty (Match _ n brs)    = parens (":match" <+> pretty n <^> vsep (toList (fmap prettyLetLeaf brs)))
     pretty (Flatten _ e)      = parens (":flatten" <^> pretty e)
     pretty (Annot _ e ty)     = pretty e <+> colon <+> pretty ty
     pretty (Constructor _ tn) = pretty tn

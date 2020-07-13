@@ -29,6 +29,7 @@ data DickinsonError a = UnfoundName a (Name a)
                       | MalformedTuple a
                       | UnfoundConstructor a (TyName a)
                       | UnfoundType a (Name a)
+                      | PatternFail a (Expression a)
                       deriving (Generic, NFData)
 
 data DickinsonWarning a = MultipleNames a (Name a) -- TODO: throw both?
@@ -53,6 +54,7 @@ instance (Pretty a) => Pretty (DickinsonError a) where
     pretty (MalformedTuple l)        = pretty l <+> "Malformed tuple"
     pretty (UnfoundConstructor l tn) = pretty l <+> "Constructor" <+> pretty tn <+> "not found"
     pretty (UnfoundType l ty)        = pretty l <+> "Type" <+> pretty ty <+> "not found"
+    pretty (PatternFail l e)         = pretty l <+> "Expression" <+> pretty e <+> "failed to match"
 
 instance (Pretty a, Typeable a) => Exception (DickinsonError a)
 

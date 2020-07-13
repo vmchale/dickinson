@@ -109,6 +109,7 @@ library dickinson
     other-modules:
         Paths_language_dickinson
         Language.Dickinson.Lib.Get
+        Language.Dickinson.Pattern
         Control.Monad.Ext
         Data.Foldable.Ext
 

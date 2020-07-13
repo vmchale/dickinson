@@ -133,6 +133,9 @@ Type :: { DickinsonTy AlexPosn }
 Bind :: { (Name AlexPosn, Expression AlexPosn) }
      : Name Expression { ($1, $2) }
 
+PatternBind :: { (Pattern AlexPosn, Expression AlexPosn) }
+            : Pattern Expression { ($1, $2) }
+
 Interp :: { Expression AlexPosn }
 Interp : strChunk { StrChunk (loc $1) (str $1) }
        | beginInterp Expression endInterp { $2 }
@@ -154,7 +157,7 @@ Expression :: { Expression AlexPosn }
            | rbracket many(Expression) { Concat $1 (reverse $2) }
            | dollar Expression Expression { Apply $1 $2 $3 }
            | lparen sepBy(Expression,comma) rparen { Tuple $1 (NE.reverse $2) }
-           | match Expression Pattern Expression { Match $1 $2 $3 $4 }
+           | match Expression some(brackets(PatternBind)) { Match $1 $2 $3 }
            | flatten Expression { Flatten $1 $2 }
            | Expression colon Type { Annot $2 $1 $3 }
            | tyIdent { Constructor (loc $1) (tyIdent $1) }

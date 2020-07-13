@@ -1,5 +1,6 @@
 {-# LANGUAGE FlexibleContexts  #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TupleSections     #-}
 
 module Language.Dickinson.Eval ( EvalSt (..)
                                , addDecl
@@ -31,6 +32,7 @@ import           Data.Text.Prettyprint.Doc.Ext
 import           Language.Dickinson.Error
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
+import           Language.Dickinson.Pattern
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
@@ -208,8 +210,10 @@ tryEvalExpressionM (Let _ bs e)       = do
     let stMod = thread $ fmap (uncurry nameMod) bs
     withSt stMod $
         tryEvalExpressionM e
-tryEvalExpressionM (Match l e p e') =
-    Match l <$> tryEvalExpressionM e <*> pure p <*> tryEvalExpressionM e'
+tryEvalExpressionM (Match l e brs) = do
+    let ps = fst <$> brs
+    es <- traverse (tryEvalExpressionM . snd) brs
+    Match l <$> tryEvalExpressionM e <*> pure (NE.zip ps es)
 
 evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 evalExpressionM e@Literal{}     = pure e
@@ -233,7 +237,8 @@ evalExpressionM (Apply _ e e') = do
                 evalExpressionM =<< tryEvalExpressionM e''' -- tryEvalExpressionM is a special function to "pull" eval through lambdas...
         _ -> error "Ill-typed expression"
 evalExpressionM e@Lambda{} = pure e
-evalExpressionM (Match _ e p e') = do
+evalExpressionM (Match l e brs) = do
+    (p, e') <- matchPattern l e (toList $ fmap fst brs)
     modSt <- bindPattern p =<< evalExpressionM e
     withSt modSt $
         evalExpressionM e'
@@ -302,7 +307,8 @@ resolveFlattenM (Apply _ e e') = do
                 resolveFlattenM e'''
         _ -> error "Ill-typed expression"
 resolveFlattenM e@Lambda{} = pure e
-resolveFlattenM (Match _ e p e') = do
+resolveFlattenM (Match l e brs) = do
+    (p, e') <- matchPattern l e (toList $ fmap fst brs)
     modSt <- bindPattern p =<< resolveFlattenM e
     withSt modSt $
         resolveFlattenM e'
@@ -336,8 +342,10 @@ resolveExpressionM (Apply l e e') = do
                 resolveExpressionM e'''
         _ -> Apply l e'' <$> resolveExpressionM e'
 resolveExpressionM (Lambda l n ty e) = Lambda l n ty <$> resolveExpressionM e
-resolveExpressionM (Match l e p e') =
-    Match l <$> resolveExpressionM e <*> pure p <*> resolveExpressionM e'
+resolveExpressionM (Match l e brs) = do
+    let ps = fst <$> brs
+    es <- traverse (resolveExpressionM . snd) brs
+    Match l <$> resolveExpressionM e <*> pure (NE.zip ps es)
 resolveExpressionM (Flatten l e) =
     Flatten l <$> resolveExpressionM e
 resolveExpressionM (Annot _ e _) = resolveExpressionM e

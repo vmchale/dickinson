@@ -9,5 +9,5 @@
 (:def uncurry
   (:lambda f (⟶ text (⟶ text text))
     (:lambda x (text, text)
-      (:match x (y, z)
-        ($ $ f y z)))))
+      (:match x 
+        [(y, z) ($ $ f y z)]))))

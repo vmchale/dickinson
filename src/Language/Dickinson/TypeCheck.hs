@@ -12,7 +12,7 @@ module Language.Dickinson.TypeCheck ( typeOf
                                     , HasTyEnv (..)
                                     ) where
 
-import           Control.Monad             (unless)
+import           Control.Monad             (forM_, unless)
 import           Control.Monad.Except      (ExceptT, MonadError, runExceptT, throwError)
 import qualified Control.Monad.Ext         as Ext
 import           Control.Monad.State       (MonadState, State, evalState)
@@ -112,10 +112,14 @@ typeOf (Let _ bs e) = do
     let ns = fst <$> bs
     Ext.zipWithM_ tyInsert ns es'
     typeOf e
-typeOf (Match _ e p e') = do
+typeOf (Match _ e brs@((_,e') :| ps)) = do
     ty <- typeOf e
-    bindPattern p ty
-    typeOf e'
+    -- FIXME: typecheck patterns?
+    forM_ (fst <$> brs) $ \p ->
+        bindPattern p ty
+    res <- typeOf e'
+    traverse_ (tyAssert res) (snd <$> brs)
+    pure res
 typeOf (Flatten _ e) = typeOf e
 typeOf (Annot _ e ty) =
     tyAssert ty e $> ty

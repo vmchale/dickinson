@@ -60,11 +60,11 @@ maxUniqueExpression (Lambda _ (Name _ (Unique i) _) ty e) =
             , maxUniqueExpression e
             , maxUniqueType ty
             ]
-maxUniqueExpression (Match _ e p e')                      =
+maxUniqueExpression (Match _ e brs)                       =
     maximum
         [ maxUniqueExpression e
-        , maxUniquePattern p
-        , maxUniqueExpression e'
+        , maximum (fmap (maxUniquePattern . fst) brs)
+        , maximum (fmap (maxUniqueExpression . snd) brs)
         ]
 maxUniqueExpression (Let _ bs e) =
     maximum

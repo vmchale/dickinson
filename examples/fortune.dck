@@ -7,8 +7,9 @@
 
 (:def quote
   (:lambda q (text, text)
-    (:match q (qu, name)
-      "${qu}\n    — ${name}")))
+    (:match q 
+      [(qu, name)
+        "${qu}\n    — ${name}"])))
 
 (:def fortune
   (:oneof

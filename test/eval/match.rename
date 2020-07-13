@@ -27,23 +27,25 @@ Dickinson
               , loc = ()
               }
             }
-          , exprPat = PatternTuple ()
-            ( PatternVar ()
-              ( Name
+          , exprBranch =
+            ( PatternTuple ()
+              ( PatternVar ()
+                ( Name
+                  { name = "x" :| []
+                  , unique = Unique { unUnique = 16 }
+                  , loc = ()
+                  }
+                ) :| [ Wildcard () ]
+              )
+            , Var
+              { exprAnn = ()
+              , exprVar = Name
                 { name = "x" :| []
                 , unique = Unique { unUnique = 16 }
                 , loc = ()
                 }
-              ) :| [ Wildcard () ]
-            )
-          , exprIn = Var
-            { exprAnn = ()
-            , exprVar = Name
-              { name = "x" :| []
-              , unique = Unique { unUnique = 16 }
-              , loc = ()
               }
-            }
+            ) :| []
           }
         }
       }
@@ -73,25 +75,27 @@ Dickinson
               , loc = ()
               }
             }
-          , exprPat = PatternTuple ()
-            ( Wildcard () :|
-              [ PatternVar ()
-                ( Name
-                  { name = "y" :| []
-                  , unique = Unique { unUnique = 18 }
-                  , loc = ()
-                  }
-                )
-              ]
-            )
-          , exprIn = Var
-            { exprAnn = ()
-            , exprVar = Name
-              { name = "y" :| []
-              , unique = Unique { unUnique = 18 }
-              , loc = ()
+          , exprBranch =
+            ( PatternTuple ()
+              ( Wildcard () :|
+                [ PatternVar ()
+                  ( Name
+                    { name = "y" :| []
+                    , unique = Unique { unUnique = 18 }
+                    , loc = ()
+                    }
+                  )
+                ]
+              )
+            , Var
+              { exprAnn = ()
+              , exprVar = Name
+                { name = "y" :| []
+                , unique = Unique { unUnique = 18 }
+                , loc = ()
+                }
               }
-            }
+            ) :| []
           }
         }
       }

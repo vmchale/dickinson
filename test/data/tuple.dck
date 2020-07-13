@@ -2,8 +2,8 @@
 
 (:def fst
   (:lambda xy (text, text)
-    (:match xy (x, _)
-      x)))
+    (:match xy 
+      [(x, _) x])))
 
 (:def dog
   (:oneof

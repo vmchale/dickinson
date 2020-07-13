@@ -1,6 +1,7 @@
 {-# LANGUAGE DeriveAnyClass    #-}
 {-# LANGUAGE DeriveGeneric     #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TupleSections     #-}
 
 module Language.Dickinson.Rename ( renameDickinson
                                  , renameDickinsonM
@@ -17,7 +18,7 @@ module Language.Dickinson.Rename ( renameDickinson
                                  ) where
 
 import           Control.Composition           (thread)
-import           Control.Monad                 ((<=<))
+import           Control.Monad                 (forM, (<=<))
 import           Control.Monad.Ext             (zipWithM)
 import           Control.Monad.State           (MonadState, State, runState)
 import           Data.Bifunctor                (second)
@@ -160,10 +161,12 @@ renameExpressionM (Apply p e e') = Apply p <$> renameExpressionM e <*> renameExp
 renameExpressionM (Lambda p n ty e) = do
     (n', modR) <- withName n
     Lambda p n' ty <$> withRenames modR (renameExpressionM e)
-renameExpressionM (Match l e p e') = do
+renameExpressionM (Match l e brs) = do
     preE <- renameExpressionM e
-    (modP, p') <- renamePatternM p
-    Match l preE p' <$> withRenames modP (renameExpressionM e')
+    brs' <- forM brs $ \(p, e') -> do
+        (modP, p') <- renamePatternM p
+        (p' ,) <$> withRenames modP (renameExpressionM e')
+    pure $ Match l preE brs'
 renameExpressionM (Let p bs e) = do
     newBs <- traverse withName (fst <$> bs)
     let localRenames = snd <$> newBs

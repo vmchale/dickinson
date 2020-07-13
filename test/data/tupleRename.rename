@@ -40,23 +40,25 @@ Dickinson
                 , loc = ()
                 }
               }
-            , exprPat = PatternTuple ()
-              ( PatternVar ()
-                ( Name
+            , exprBranch =
+              ( PatternTuple ()
+                ( PatternVar ()
+                  ( Name
+                    { name = "x" :| []
+                    , unique = Unique { unUnique = 7 }
+                    , loc = ()
+                    }
+                  ) :| [ Wildcard () ]
+                )
+              , Var
+                { exprAnn = ()
+                , exprVar = Name
                   { name = "x" :| []
                   , unique = Unique { unUnique = 7 }
                   , loc = ()
                   }
-                ) :| [ Wildcard () ]
-              )
-            , exprIn = Var
-              { exprAnn = ()
-              , exprVar = Name
-                { name = "x" :| []
-                , unique = Unique { unUnique = 7 }
-                , loc = ()
                 }
-              }
+              ) :| []
             }
           }
         }
