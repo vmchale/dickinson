@@ -1,5 +1,7 @@
 # dickinson
 
+  * Fix bug in typechecker
+
 ## 0.1.2.0
 
   * Fail on bad patterns, e.g. `(:match xy (x, x) x)`

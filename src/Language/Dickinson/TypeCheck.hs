@@ -49,7 +49,7 @@ tyInsert (Name _ (Unique i) _) ty = modifying tyEnvLens (IM.insert i ty)
 tyMatch :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m) => NonEmpty (Expression a) -> m (DickinsonTy a)
 tyMatch (e :| es) = do
     ty <- typeOf e
-    traverse_ (tyAssert (TyText undefined)) es $> ty
+    traverse_ (tyAssert ty) es $> ty
 
 type TypeM a = ExceptT (DickinsonError a) (State (TyEnv a))
 
