@@ -1,5 +1,7 @@
 # dickinson
 
+# 1.0.0.0
+
   * Fix bug in typechecker
   * Pattern matching now has branches
   * Better error message when `:view` is called without any arguments
