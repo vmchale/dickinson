@@ -162,6 +162,7 @@ addDecl :: (MonadState (EvalSt a) m)
         => Declaration a
         -> m ()
 addDecl (Define _ n e) = bindName n e *> topLevelAdd n
+addDecl TyDecl{}       = pure () -- TODO: should add top level name? may be nice in REPL
 
 extrText :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 extrText (Literal _ t)  = pure t
@@ -182,6 +183,7 @@ withSt modSt act = do
 bindPattern :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m) => Pattern a -> Expression a -> m (EvalSt a -> EvalSt a)
 bindPattern (PatternVar _ n) e               = pure $ nameMod n e
 bindPattern Wildcard{} _                     = pure id
+bindPattern PatternCons{} _                  = pure id
 bindPattern (PatternTuple _ ps) (Tuple _ es) = thread <$> Ext.zipWithM bindPattern ps es -- don't need to verify length because in theory typechecker already did
 bindPattern (PatternTuple l _) _             = throwError $ MalformedTuple l
 
@@ -238,8 +240,9 @@ evalExpressionM (Apply _ e e') = do
         _ -> error "Ill-typed expression"
 evalExpressionM e@Lambda{} = pure e
 evalExpressionM (Match l e brs) = do
-    (p, e') <- matchPattern l e (toList $ fmap fst brs)
-    modSt <- bindPattern p =<< evalExpressionM e
+    eEval <- evalExpressionM e
+    (p, e') <- matchPattern l eEval (toList brs)
+    modSt <- bindPattern p eEval
     withSt modSt $
         evalExpressionM e'
 evalExpressionM (Flatten _ e) = do
@@ -288,7 +291,7 @@ resolveFlattenM e@StrChunk{}    = pure e
 resolveFlattenM e@Constructor{} = pure e
 resolveFlattenM (Var _ n)       = resolveFlattenM =<< lookupName n
 resolveFlattenM (Choice l pes) = do
-    let ps = fst <$> pes
+    let ps = fst <$> pes -- TODO: do these need to be renamed
     es <- traverse resolveFlattenM (snd <$> pes)
     pure $ Choice l (NE.zip ps es)
 resolveFlattenM (Interp l es)      = Interp l <$> traverse resolveFlattenM es
@@ -308,8 +311,9 @@ resolveFlattenM (Apply _ e e') = do
         _ -> error "Ill-typed expression"
 resolveFlattenM e@Lambda{} = pure e
 resolveFlattenM (Match l e brs) = do
-    (p, e') <- matchPattern l e (toList $ fmap fst brs)
-    modSt <- bindPattern p =<< resolveFlattenM e
+    eEval <- resolveFlattenM e
+    (p, e') <- matchPattern l eEval (toList brs)
+    modSt <- bindPattern p eEval
     withSt modSt $
         resolveFlattenM e'
 resolveFlattenM (Flatten l e) =

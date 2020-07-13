@@ -2,6 +2,7 @@
 
   * Fix bug in typechecker
   * Pattern matching now has branches
+  * Better error message when `:view` is called without any arguments
 
 ## 0.1.2.0
 

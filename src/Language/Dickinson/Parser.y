@@ -144,6 +144,7 @@ Pattern :: { Pattern AlexPosn }
         : ident { PatternVar (loc $1) (ident $1) }
         | lparen sepBy(Pattern,comma) rparen { PatternTuple $1 (NE.reverse $2) }
         | underscore { Wildcard $1 }
+        | tyIdent { PatternCons (loc $1) (tyIdent $1) }
 
 Expression :: { Expression AlexPosn }
            : branch some(parens(WeightedLeaf)) { Choice $1 (NE.reverse $2) }

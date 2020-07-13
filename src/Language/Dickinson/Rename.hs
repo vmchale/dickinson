@@ -142,6 +142,7 @@ renamePatternM (PatternTuple l ps) = do
 renamePatternM (PatternVar l n) = do
     (n', modR) <- withName n
     pure (modR, PatternVar l n')
+renamePatternM c@PatternCons{}     = pure (id, c) -- TODO: correct?
 
 -- | @since 0.1.1.0
 renameExpressionM :: (MonadState s m, HasRenames s) => Expression a -> m (Expression a)

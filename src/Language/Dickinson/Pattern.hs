@@ -15,7 +15,7 @@ matches _ PatternVar{}                         = True
 matches (Tuple _ es) (PatternTuple _ ps)       = and (NE.zipWith matches es ps) -- already check they're the same length during amalgamation
 matches _ _                                    = False
 
-matchPattern :: MonadError (DickinsonError a) m => a -> Expression a -> [Pattern a] -> m (Pattern a, Expression a)
-matchPattern l e (p:ps) | matches e p = pure (p, e)
+matchPattern :: MonadError (DickinsonError a) m => a -> Expression a -> [(Pattern a, Expression a)] -> m (Pattern a, Expression a)
+matchPattern l e (p:ps) | matches e (fst p) = pure p
                         | otherwise = matchPattern l e ps
 matchPattern l e [] = throwError $ PatternFail l e

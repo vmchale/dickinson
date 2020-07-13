@@ -70,6 +70,7 @@ loop = do
         Just (":type":e:_)  -> typeExpr e *> loop
         Just (":t":e:_)     -> typeExpr e *> loop
         Just (":view":n:_)  -> bindDisplay (T.pack n) *> loop
+        Just (":view":_)    -> liftIO (putStrLn ":view takes a name as an argument") *> loop
         Just [":q"]         -> pure ()
         Just [":quit"]      -> pure ()
         Just [":list"]      -> listNames *> loop

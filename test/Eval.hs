@@ -24,6 +24,7 @@ evalTests = testGroup "Evaluation test"
     , testCase "Should handle interpolated multiline strings" multiQuoteEval
     , testCase "Should handle nested interpolations" multiInterpolatedNestedEval
     , testCase "test/data/flattenLambda.dck" example
+    , testCase "Match on ADT constructors" matchAdtEval
     ]
 
 forceResult :: a -> Assertion
@@ -54,6 +55,9 @@ constEval = evalTo "test/eval/context.dck" "woman"
 
 scopeEval :: Assertion
 scopeEval = evalTo "test/demo/circular.dck" "a"
+
+matchAdtEval :: Assertion
+matchAdtEval = evalTo "test/eval/matchSex.dck" "Maxine is a good girl. She tries her best."
 
 higherOrderEval :: Assertion
 higherOrderEval = evalTo "test/data/higherOrder.dck" "It's me"

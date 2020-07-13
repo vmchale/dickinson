@@ -1,0 +1,33 @@
+%-
+
+(:def address
+  (:lambda dog sex
+    (:match dog
+      [Boy "boy"]
+      [Girl "girl"])))
+
+tydecl sex = Boy | Girl
+
+(:def obliquePronoun
+  (:lambda dog sex
+    (:match dog
+      [Boy "He"]
+      [Girl "She"])))
+
+(:def possPronoun
+  (:lambda dog sex
+    (:match dog
+      [Girl "her"]
+      [Boy "his"])))
+
+; see https://github.com/vmchale/doggo-command-line/blob/master/src/main.rs
+(:def greeter
+  (:lambda dog (text, sex)
+    (:match dog
+      [(name, boyGirl)
+        (:oneof
+          (| "${name} is a good ${($ address boyGirl)}. ${($ obliquePronoun boyGirl)} tries ${($ possPronoun boyGirl)} best."))])))
+
+(:def main
+  ($ greeter ("Maxine", Girl)))
+
