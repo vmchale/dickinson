@@ -63,10 +63,10 @@
   - [ ] "character map" approach?
     - [ ] Requires expression application + type checker pass?
   - [ ] Filter? (e.g. vowels...)
-- [x] Import/module system
+- [ ] Import/module system
   - [ ] Checkers should work with the module system
   - [ ] Modules don't give global uniqueness; fix scoping/deletions
-- [ ] Sum types (`Boy | Girl`)
+- [x] Sum types (`Boy | Girl`)
   - [ ] Exhaustiveness checker
 - [x] Tuples/multi-return & agreement.
   - [ ] Def need product types...
