@@ -11,16 +11,23 @@ tcTests = testGroup "Typecheck test"
     , testCase "Currying" testCurry
     , testCase "See ADTs" testAdtTc
     , testCase "Currying (prelude functions)" testCurryPrelude
+    , testCase "Works with :choice branches" testChoice
     ]
 
+testChoice :: Assertion
+testChoice = tcPlain "test/data/tyChoice.dck"
+
 testCurry :: Assertion
-testCurry = tcFile [] "test/data/quoteify.dck"
+testCurry = tcPlain "test/data/quoteify.dck"
 
 testMatchTc :: Assertion
-testMatchTc = tcFile [] "test/eval/match.dck"
+testMatchTc = tcPlain "test/eval/match.dck"
 
 testAdtTc :: Assertion
-testAdtTc = tcFile [] "test/data/adt.dck"
+testAdtTc = tcPlain "test/data/adt.dck"
 
 testCurryPrelude :: Assertion
-testCurryPrelude = tcFile [] "prelude/curry.dck"
+testCurryPrelude = tcPlain "prelude/curry.dck"
+
+tcPlain :: FilePath -> Assertion
+tcPlain = tcFile []

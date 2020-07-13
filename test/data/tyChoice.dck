@@ -1,0 +1,10 @@
+%-
+
+(:def weird
+  (:oneof
+    (|
+      (:lambda x text
+        "${x}, Alice"))
+    (|
+      (:lambda y text
+        "${y}. Bob"))))
