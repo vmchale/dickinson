@@ -1,0 +1,30 @@
+%-
+
+(:def address
+  (:lambda dog sex
+    (:match dog
+      [Girl "girl"]
+      [Boy "boy"])))
+
+tydecl sex = Boy | Girl
+
+(:def obliquePronoun
+  (:lambda dog sex
+    (:match dog
+      [Girl "She"]
+      [Boy "He"])))
+
+(:def possPronoun
+  (:lambda dog sex
+    (:match dog
+      [Boy "his"]
+      [Girl "her"])))
+
+(:def greeter
+  (:lambda dog (text, sex)
+    (:match dog
+      [(name, boyGirl) (:oneof
+        (| "${name} is a good ${($ address boyGirl)}. ${($ obliquePronoun boyGirl)} tries ${($ possPronoun boyGirl)} best."))])))
+
+(:def main
+  ($ greeter ("Maxine", Girl)))

@@ -79,6 +79,13 @@ bindPattern (PatternTuple l ps) (TyTuple _ tys)
     | length ps == length tys = Ext.zipWithM_ bindPattern ps tys
     | otherwise = throwError $ MalformedTuple l
 bindPattern (PatternTuple l _) _                = throwError $ MalformedTuple l
+bindPattern p@(PatternCons l tn@(Name _ (Unique k) _)) ty = do
+    tyEnv <- use tyEnvLens
+    case IM.lookup k tyEnv of
+        Just ty' -> 
+            unless (ty' == ty) $
+                throwError (PatternTypeMismatch p ty ty')
+        Nothing -> throwError $ UnfoundConstructor l tn
 
 -- run after global renamer
 typeOf :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m) => Expression a -> m (DickinsonTy a)

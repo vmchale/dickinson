@@ -41,15 +41,18 @@ Dickinson
                 }
               }
             , exprBranch =
-              ( PatternTuple ()
-                ( PatternVar ()
-                  ( Name
+              ( PatternTuple
+                { patAnn = ()
+                , patTup = PatternVar
+                  { patAnn = ()
+                  , patName = Name
                     { name = "x" :| []
                     , unique = Unique { unUnique = 7 }
                     , loc = ()
                     }
-                  ) :| [ Wildcard () ]
-                )
+                  } :|
+                  [ Wildcard { patAnn = () } ]
+                }
               , Var
                 { exprAnn = ()
                 , exprVar = Name

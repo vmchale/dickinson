@@ -24,6 +24,7 @@ data DickinsonError a = UnfoundName a (Name a)
                       | ParseErr FilePath (ParseError a)
                       | ModuleNotFound a (Name a)
                       | TypeMismatch (Expression a) (DickinsonTy a) (DickinsonTy a)
+                      | PatternTypeMismatch (Pattern a) (DickinsonTy a) (DickinsonTy a)
                       | ExpectedLambda (Expression a) (DickinsonTy a)
                       | MultiBind a (Name a) (Pattern a) -- When a variable is bound more than once in a pattern
                       | MalformedTuple a
@@ -48,6 +49,7 @@ instance (Pretty a) => Pretty (DickinsonError a) where
     pretty (NoText t)                = squotes (pretty t) <+> "not defined"
     pretty (ParseErr _ e)            = pretty e
     pretty (TypeMismatch e ty ty')   = pretty (exprAnn e) <+> "Expected" <+> pretty e <+> "to have type" <+> squotes (pretty ty) <> ", found type" <+> squotes (pretty ty')
+    pretty (PatternTypeMismatch p ty ty') = pretty (patAnn p) <+> "Constructor" <+> pretty p <+> "has type" <+> pretty ty' <+> "but must be of type" <+> pretty ty
     pretty (ModuleNotFound l n)      = pretty l <+> "Module" <+> pretty n <+> "not found"
     pretty (ExpectedLambda e ty)     = pretty (exprAnn e) <+> "Expected" <+> squotes (pretty e) <+> "to be of function type, found type" <+> pretty ty
     pretty (MultiBind l n p)         = pretty l <+> "Name" <+> pretty n <+> "is bound more than once in" <+> pretty p

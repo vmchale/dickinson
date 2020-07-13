@@ -1,18 +1,22 @@
-(:include tuple)
-
 %-
 
-; tydecl sex = Boy | Girl
+tydecl sex = Boy | Girl
+
+(:def obliquePronoun
+  (:lambda boyGirl sex
+    (:match boyGirl 
+      [Boy "he"]
+      [Girl "she"])))
 
 ; see https://github.com/vmchale/doggo-command-line/blob/master/src/main.rs
 (:def greeter
-  (:lambda dog (text, text)
+  (:lambda dog (text, sex)
     (:match dog
-      (name, pronoun)
+      [(name, boyGirl)
         (:oneof
           (| "${name} is a heckin' fine floofer")
           (| "${name} is a good woofer")
-          (| "${name} eats toilet paper sometimes but ${pronoun} tries.")))))
+          (| "${name} eats toilet paper sometimes but ${($ obliquePronoun boyGirl)} tries."))])))
 
 (:def main
-  ($ greeter ("Maxine", "she")))
+  ($ greeter ("Maxine", Girl)))

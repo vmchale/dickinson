@@ -28,15 +28,18 @@ Dickinson
               }
             }
           , exprBranch =
-            ( PatternTuple ()
-              ( PatternVar ()
-                ( Name
+            ( PatternTuple
+              { patAnn = ()
+              , patTup = PatternVar
+                { patAnn = ()
+                , patName = Name
                   { name = "x" :| []
                   , unique = Unique { unUnique = 16 }
                   , loc = ()
                   }
-                ) :| [ Wildcard () ]
-              )
+                } :|
+                [ Wildcard { patAnn = () } ]
+              }
             , Var
               { exprAnn = ()
               , exprVar = Name
@@ -76,17 +79,19 @@ Dickinson
               }
             }
           , exprBranch =
-            ( PatternTuple ()
-              ( Wildcard () :|
-                [ PatternVar ()
-                  ( Name
+            ( PatternTuple
+              { patAnn = ()
+              , patTup = Wildcard { patAnn = () } :|
+                [ PatternVar
+                  { patAnn = ()
+                  , patName = Name
                     { name = "y" :| []
                     , unique = Unique { unUnique = 18 }
                     , loc = ()
                     }
-                  )
+                  }
                 ]
-              )
+              }
             , Var
               { exprAnn = ()
               , exprVar = Name

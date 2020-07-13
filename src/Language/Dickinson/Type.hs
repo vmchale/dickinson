@@ -49,10 +49,10 @@ data Import a = Import { importAnn :: a
                        }
                        deriving (Generic, NFData, Binary, Functor, Show)
 
-data Pattern a = PatternVar a (Name a)
-               | PatternTuple a (NonEmpty (Pattern a))
-               | PatternCons a (TyName a)
-               | Wildcard a
+data Pattern a = PatternVar { patAnn :: a, patName :: (Name a) }
+               | PatternTuple { patAnn :: a, patTup :: (NonEmpty (Pattern a)) }
+               | PatternCons { patAnn :: a, patCons :: (TyName a) }
+               | Wildcard { patAnn :: a }
                deriving (Generic, NFData, Binary, Functor, Show, Data)
 
 data Expression a = Literal { exprAnn :: a, litText :: T.Text }
