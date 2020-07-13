@@ -23,7 +23,7 @@ run = fmap eitherThrow . evalIO . evalDickinsonAsMain
 
 dickinson :: [FilePath] -> FilePath -> Q Exp
 dickinson is fp = do
-    traverse_ TH.addDependentFile (fp:is) -- TODO: resolve dependencies
+    traverse_ TH.addDependentFile [fp] -- TODO: resolve dependencies
     ds <- TH.runIO (validateAmalgamate is fp)
     liftDataWithText ds
 
