@@ -12,6 +12,7 @@ tcTests = testGroup "Typecheck test"
     , testCase "See ADTs" testAdtTc
     , testCase "Currying (prelude functions)" testCurryPrelude
     , testCase "Works with :choice branches" testChoice
+    , testCase "Checks ADTs and matches" testAdtMatch
     ]
 
 testChoice :: Assertion
@@ -22,6 +23,9 @@ testCurry = tcPlain "test/data/quoteify.dck"
 
 testMatchTc :: Assertion
 testMatchTc = tcPlain "test/eval/match.dck"
+
+testAdtMatch :: Assertion
+testAdtMatch = tcPlain "test/eval/matchSex.dck"
 
 testAdtTc :: Assertion
 testAdtTc = tcPlain "test/data/adt.dck"
