@@ -4,13 +4,14 @@
 
 (:def cite
   (:lambda q (text, text)
-    (:match q (qu, loc)
-      '''
-      ${qu}
-          — Psalms ${loc}
-      ''')))
+    (:match q
+      [(qu, loc)
+        '''
+        ${qu}
+            — Psalms ${loc}
+        '''])))
 
-; https://en.wikipedia.org/wiki/Psalm_23
+; https://www.biblegateway.com/passage/?search=Psalm%2023&version=KJV
 (:def psalm
   (:oneof
     (|
