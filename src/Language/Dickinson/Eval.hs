@@ -161,7 +161,7 @@ addDecl :: (MonadState (EvalSt a) m)
         => Declaration a
         -> m ()
 addDecl (Define _ n e) = bindName n e *> topLevelAdd n
-addDecl TyDecl{}       = pure () -- TODO: should add top level name? may be nice in REPL
+addDecl TyDecl{}       = pure ()
 
 extrText :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 extrText (Literal _ t)  = pure t
@@ -281,6 +281,7 @@ evalExpressionAsTextM = extrText <=< evalExpressionM
 
 resolveDeclarationM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Declaration a -> m (Declaration a)
 resolveDeclarationM (Define l n e) = Define l n <$> resolveExpressionM e
+resolveDeclarationM d@TyDecl{}     = pure d
 
 -- | To aid the @:flatten@ function: resolve an expression, leaving
 -- choices/branches intact.

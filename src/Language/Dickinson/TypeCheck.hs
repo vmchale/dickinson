@@ -82,7 +82,7 @@ bindPattern (PatternTuple l _) _                = throwError $ MalformedTuple l
 bindPattern p@(PatternCons l tn@(Name _ (Unique k) _)) ty = do
     tyEnv <- use tyEnvLens
     case IM.lookup k tyEnv of
-        Just ty' -> 
+        Just ty' ->
             unless (ty' == ty) $
                 throwError (PatternTypeMismatch p ty ty')
         Nothing -> throwError $ UnfoundConstructor l tn
