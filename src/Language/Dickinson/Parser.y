@@ -158,7 +158,7 @@ Expression :: { Expression AlexPosn }
            | rbracket many(Expression) { Concat $1 (reverse $2) }
            | dollar Expression Expression { Apply $1 $2 $3 }
            | lparen sepBy(Expression,comma) rparen { Tuple $1 (NE.reverse $2) }
-           | match Expression some(brackets(PatternBind)) { Match $1 $2 $3 }
+           | match Expression some(brackets(PatternBind)) { Match $1 $2 (NE.reverse $3) }
            | flatten Expression { Flatten $1 $2 }
            | Expression colon Type { Annot $2 $1 $3 }
            | tyIdent { Constructor (loc $1) (tyIdent $1) }

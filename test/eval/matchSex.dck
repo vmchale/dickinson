@@ -4,15 +4,17 @@
   (:lambda dog sex
     (:match dog
       [Boy "boy"]
-      [Girl "girl"])))
+      [_ "girl"])))
 
 tydecl sex = Boy | Girl
+
+tydecl animal = Dog | Cat
 
 (:def obliquePronoun
   (:lambda dog sex
     (:match dog
       [Boy "He"]
-      [Girl "She"])))
+      [g "She"])))
 
 (:def possPronoun
   (:lambda dog sex

@@ -119,9 +119,8 @@ typeOf (Let _ bs e) = do
     let ns = fst <$> bs
     Ext.zipWithM_ tyInsert ns es'
     typeOf e
-typeOf (Match _ e brs@((_,e') :| ps)) = do
+typeOf (Match _ e brs@((_,e') :| _)) = do
     ty <- typeOf e
-    -- FIXME: typecheck patterns?
     forM_ (fst <$> brs) $ \p ->
         bindPattern p ty
     res <- typeOf e'
