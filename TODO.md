@@ -46,12 +46,14 @@
 - [x] Bug when running `test/demo/animal.dck` with renamer then eval
 - [x] `examples/doggo.dck` hangs indefinitely lol
 - [ ] Hangs indefinitely when lexing incomplete string
+- [ ] `tydecl` inside REPL crashes
 # Code Quality
 - [ ] Kick tires on `:t` feature
 # Debugging
 - [ ] Verbosity
 - [ ] Turn on sanity checking?
 # Features
+- [ ] Warn on redundant `:include`s
 - [x] Polyglot integration!
 - [x] Turn off zstd saving with a flag (for freebsd)
 - [x] Change `:import` to `:include`!
