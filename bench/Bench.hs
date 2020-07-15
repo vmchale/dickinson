@@ -21,9 +21,6 @@ import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
 
-benchResult :: FilePath -> Benchmark
-benchResult fp = bench fp $ nfIO (evalFile [] fp)
-
 benchPipeline :: FilePath -> Benchmark
 benchPipeline fp = bench fp $ nfIO (pipeline [] fp)
 
@@ -59,12 +56,6 @@ main =
                   bgroup "check"
                     [ bench "bench/data/multiple.dck" $ nf checkMultiple p
                     , bench "bench/data/multiple.dck" $ nf checkDuplicates p -- TODO: better example
-                    ]
-                , bgroup "result"
-                    [ benchResult "test/eval/context.dck"
-                    , benchResult "examples/shakespeare.dck"
-                    , bench "test/demo/animal.dck" $ nfIO (evalFile ["lib"] "test/demo/animal.dck")
-                    , benchResult "examples/fortune.dck"
                     ]
                 , bgroup "pipeline"
                     [ benchPipeline "examples/shakespeare.dck"
