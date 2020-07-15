@@ -65,9 +65,6 @@ main =
                 , bgroup "validate"
                     [ benchValidate "test/eval/orExample.dck"
                     ]
-                , bgroup "tcFile"
-                    [ bench "examples/fortune.dck" $ nfIO (tcFile [] "examples/fortune.dck") -- TODO: tc with syntax tree in env?
-                    ]
                 , env amalFortune $ \f ->
                   bgroup "typecheck"
                     [ bench "examples/fortune.dck" $ nf tyRun f ]
