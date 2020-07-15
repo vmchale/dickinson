@@ -73,8 +73,6 @@ main =
                     ]
                 , bgroup "validate"
                     [ benchValidate "test/eval/orExample.dck"
-                    , benchValidate "examples/shakespeare.dck"
-                    , benchValidate "examples/catherineOfSienaBot.dck"
                     ]
                 , bgroup "tcFile"
                     [ bench "examples/fortune.dck" $ nfIO (tcFile [] "examples/fortune.dck") -- TODO: tc with syntax tree in env?
