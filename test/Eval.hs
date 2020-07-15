@@ -41,10 +41,10 @@ resolve :: FilePath -> Assertion
 resolve = forceResult <=< resolveFile ["prelude", "lib"]
 
 result :: FilePath -> Assertion
-result = forceResult <=< evalFile ["prelude", "lib"]
+result = forceResult <=< pipeline ["prelude", "lib"]
 
 example :: Assertion
-example = forceResult =<< evalFile ["examples"] "test/data/flattenLambda.dck"
+example = forceResult =<< pipeline ["examples"] "test/data/flattenLambda.dck"
 
 evalTo :: FilePath -> T.Text -> Assertion
 evalTo fp t = do

@@ -7,7 +7,12 @@ tydecl gender = Masculine | Feminine | Neuter
 tydecl number = Singular | Plural
 
 ; demonstrative pronouns
+; "this" or "these"
 (:def decline
   (:lambda x (case, gender, number)
     (:match x
-      [((Nominative|Accusative), _, Plural) "þa"])))
+      [((Nominative|Accusative), _, Plural) "þas"]
+      [((Nominative|Accusative), Neuter, Singular) "þis"]
+      [((Genitive|Dative|Instrumental), Feminine, Plural) "þisse"]
+      [(Dative, (Masculine|Neuter), Singular) "þissum"]
+      )))
