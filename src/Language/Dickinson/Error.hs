@@ -58,7 +58,7 @@ instance (Pretty a) => Pretty (DickinsonError a) where
     pretty (UnfoundConstructor l tn) = pretty l <+> "Constructor" <+> squotes (pretty tn) <+> "not found"
     pretty (UnfoundType l ty)        = pretty l <+> "Type" <+> squotes (pretty ty) <+> "not found"
     pretty (PatternFail l e)         = pretty l <+> "Expression" <+> pretty e <+> "failed to match"
-    pretty (SuspectPattern l p)      = pretty l <+> "Pattern" <+> squotes (pretty p) <+> "is an or-pattern but contains a wildcard or variable."
+    pretty (SuspectPattern l p)      = pretty l <+> "Pattern" <+> squotes (pretty p) <+> "is an or-pattern but it contains a variable."
 
 instance (Pretty a, Typeable a) => Exception (DickinsonError a)
 

@@ -1,0 +1,13 @@
+%-
+
+tydecl case = Nominative | Accusative | Dative | Genitive | Instrumental
+
+tydecl gender = Masculine | Feminine | Neuter
+
+tydecl number = Singular | Plural
+
+; demonstrative pronouns
+(:def decline
+  (:lambda x (case, gender, number)
+    (:match x
+      [((Nominative|Accusative), _, Plural) "þa"])))

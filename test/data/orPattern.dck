@@ -5,13 +5,13 @@ tydecl case = Nominative | Accusative | Dative | Genitive
 tydecl gender = Masculine | Feminine | Neuter
 
 ; shamelessly yote from http://www.oldenglishaerobics.net/resources/magic_letter.pdf
+; third person neuter singular pronoun
 (:def decline
   (:lambda c case
     (:match c
       [(Nominative|Accusative) "hit"]
       [Dative "his"]
       [Genitive "him"])))
-
 
 (:def main
   $ decline Accusative)

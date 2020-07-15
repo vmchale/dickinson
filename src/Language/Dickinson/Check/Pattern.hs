@@ -29,7 +29,7 @@ checkNames p = foldMapAlternative announce (group $ sort (traversePattern p))
 noVar :: Pattern a -> Bool
 noVar PatternVar{}        = False
 noVar (PatternTuple _ ps) = all noVar ps
-noVar Wildcard{}          = False
+noVar Wildcard{}          = True
 noVar PatternCons{}       = True
 noVar (OrPattern _ ps)    = all noVar ps
 
@@ -38,11 +38,11 @@ noVar (OrPattern _ ps)    = all noVar ps
 --
 -- but this throws out any or-patterns containing wildcards or variables
 checkCoherent :: Pattern a -> Maybe (DickinsonError a)
-checkCoherent PatternVar{} = Nothing
-checkCoherent (PatternTuple _ ps) = foldMapAlternative checkCoherent ps
-checkCoherent Wildcard{} = Nothing
-checkCoherent PatternCons{} = Nothing
-checkCoherent o@(OrPattern l _) | noVar o = Nothing
+checkCoherent PatternVar{}                  = Nothing
+checkCoherent (PatternTuple _ ps)           = foldMapAlternative checkCoherent ps
+checkCoherent Wildcard{}                    = Nothing
+checkCoherent PatternCons{}                 = Nothing
+checkCoherent o@(OrPattern l _) | noVar o   = Nothing
                                 | otherwise = Just $ SuspectPattern l o
 
 checkPatternExpr :: Expression a -> Maybe (DickinsonError a)
