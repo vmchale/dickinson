@@ -14,6 +14,8 @@
 - [x] User guide (see happy?)
   - [ ] Lints and such
   - [ ] Bibliography
+  - [ ] Or-patterns
+  - [ ] Matching
 - [ ] Library documentation
 ## Examples
 - [ ] Poetry bot...? Rumi?
