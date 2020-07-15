@@ -183,6 +183,7 @@ bindPattern :: (MonadError (DickinsonError a) m, MonadState (EvalSt a) m) => Pat
 bindPattern (PatternVar _ n) e               = pure $ nameMod n e
 bindPattern Wildcard{} _                     = pure id
 bindPattern PatternCons{} _                  = pure id
+bindPattern OrPattern{} _                    = pure id
 bindPattern (PatternTuple _ ps) (Tuple _ es) = thread <$> Ext.zipWithM bindPattern ps es -- don't need to verify length because in theory typechecker already did
 bindPattern (PatternTuple l _) _             = throwError $ MalformedTuple l
 

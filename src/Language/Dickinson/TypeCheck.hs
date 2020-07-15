@@ -86,6 +86,8 @@ bindPattern p@(PatternCons l tn@(Name _ (Unique k) _)) ty = do
             unless (ty' == ty) $
                 throwError (PatternTypeMismatch p ty ty')
         Nothing -> throwError $ UnfoundConstructor l tn
+bindPattern (OrPattern _ ps) ty =
+    traverse_ (\p -> bindPattern p ty) ps
 
 -- run after global renamer
 typeOf :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m) => Expression a -> m (DickinsonTy a)

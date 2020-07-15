@@ -31,6 +31,7 @@ data DickinsonError a = UnfoundName a (Name a)
                       | UnfoundConstructor a (TyName a)
                       | UnfoundType a (Name a)
                       | PatternFail a (Expression a)
+                      | SuspectPattern a (Pattern a)
                       deriving (Generic, NFData)
 
 data DickinsonWarning a = MultipleNames a (Name a) -- TODO: throw both?
@@ -57,6 +58,7 @@ instance (Pretty a) => Pretty (DickinsonError a) where
     pretty (UnfoundConstructor l tn) = pretty l <+> "Constructor" <+> pretty tn <+> "not found"
     pretty (UnfoundType l ty)        = pretty l <+> "Type" <+> pretty ty <+> "not found"
     pretty (PatternFail l e)         = pretty l <+> "Expression" <+> pretty e <+> "failed to match"
+    pretty (SuspectPattern l p)      = pretty l <+> "Pattern" <+> pretty p <+> "is an or-pattern but contains a wildcard or variable."
 
 instance (Pretty a, Typeable a) => Exception (DickinsonError a)
 

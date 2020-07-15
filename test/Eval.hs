@@ -25,6 +25,7 @@ evalTests = testGroup "Evaluation test"
     , testCase "Should handle nested interpolations" multiInterpolatedNestedEval
     , testCase "test/data/flattenLambda.dck" example
     , testCase "Match on ADT constructors" matchAdtEval
+    , testCase "Work with or-patterns" orPatternEval
     ]
 
 forceResult :: a -> Assertion
@@ -67,3 +68,6 @@ multiQuoteEval = evalTo "test/data/multiQuoteify.dck" "God created war so that A
 
 multiInterpolatedNestedEval :: Assertion
 multiInterpolatedNestedEval = evalTo "test/data/interpolateNested.dck" "This is an interpolated string sort of."
+
+orPatternEval :: Assertion
+orPatternEval = evalTo "test/data/orPattern.dck" "hit"

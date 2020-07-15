@@ -78,3 +78,4 @@ maxUniquePattern (PatternVar _ (Name _ (Unique i) _))  = i
 maxUniquePattern Wildcard{}                            = 0
 maxUniquePattern (PatternTuple _ ps)                   = maximum (fmap maxUniquePattern ps)
 maxUniquePattern (PatternCons _ (Name _ (Unique k) _)) = k
+maxUniquePattern (OrPattern _ ps)                      = maximum (fmap maxUniquePattern ps)

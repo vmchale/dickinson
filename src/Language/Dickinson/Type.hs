@@ -23,8 +23,8 @@ import qualified Data.List.NonEmpty                 as NE
 import           Data.Semigroup                     ((<>))
 import qualified Data.Text                          as T
 import           Data.Text.Prettyprint.Doc          (Doc, Pretty (pretty), align, brackets, colon, concatWith, dquotes,
-                                                     group, hardline, hsep, indent, parens, pipe, rangle, tupled, vsep,
-                                                     (<+>))
+                                                     encloseSep, group, hardline, hsep, indent, lparen, parens, pipe,
+                                                     rangle, rparen, tupled, vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext      (hardSep, (<#*>), (<#>), (<^>))
 import           Data.Text.Prettyprint.Doc.Internal (unsafeTextWithoutNewlines)
 import           GHC.Generics                       (Generic)
@@ -53,6 +53,7 @@ data Pattern a = PatternVar { patAnn :: a, patName :: Name a }
                | PatternTuple { patAnn :: a, patTup :: NonEmpty (Pattern a) }
                | PatternCons { patAnn :: a, patCons :: TyName a }
                | Wildcard { patAnn :: a }
+               | OrPattern { patAnn :: a, patOr :: NonEmpty (Pattern a) }
                deriving (Generic, NFData, Binary, Functor, Show, Data)
 
 data Expression a = Literal { exprAnn :: a, litText :: T.Text }
@@ -140,6 +141,7 @@ instance Pretty (Pattern a) where
     pretty (PatternTuple _ ps) = tupled (toList (pretty <$> ps))
     pretty Wildcard{}          = "_"
     pretty (PatternCons _ c)   = pretty c
+    pretty (OrPattern _ ps)    = group (encloseSep lparen rparen pipe (toList $ fmap pretty ps))
 
 escReplace :: T.Text -> T.Text
 escReplace =

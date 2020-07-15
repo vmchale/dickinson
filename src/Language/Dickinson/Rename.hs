@@ -143,6 +143,11 @@ renamePatternM (PatternVar l n) = do
     (n', modR) <- withName n
     pure (modR, PatternVar l n')
 renamePatternM c@PatternCons{}     = pure (id, c) -- TODO: correct?
+renamePatternM (OrPattern l ps) = do
+    ps' <- traverse renamePatternM ps
+    let modR = thread (fst <$> ps')
+        ps'' = snd <$> ps'
+    pure (modR, OrPattern l ps'')
 
 -- | @since 0.1.1.0
 renameExpressionM :: (MonadState s m, HasRenames s) => Expression a -> m (Expression a)

@@ -145,6 +145,7 @@ Pattern :: { Pattern AlexPosn }
         | lparen sepBy(Pattern,comma) rparen { PatternTuple $1 (NE.reverse $2) }
         | underscore { Wildcard $1 }
         | tyIdent { PatternCons (loc $1) (tyIdent $1) }
+        | lparen sepBy(Pattern,vbar) rparen { OrPattern $1 (NE.reverse $2) }
 
 Expression :: { Expression AlexPosn }
            : branch some(parens(WeightedLeaf)) { Choice $1 (NE.reverse $2) }

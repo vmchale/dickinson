@@ -36,6 +36,7 @@ goldenTests =
         , withDckFile "test/data/multiQuoteify.dck"
         , withDckFile "test/data/lambdaMultiQuote.dck"
         , withDckFile "test/eval/matchSex.dck"
+        , withDckFile "test/data/orPattern.dck"
         ]
 
 prettyBSL :: Dickinson a -> BSL.ByteString
