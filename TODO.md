@@ -107,6 +107,7 @@
 - [ ] Renamer + pattern matching
 - [x] `examples/shakespeare.dck`
 - [x] golden tests via pretty-simple packages (debug output?)
+- [ ] golden tests for error messages
 ## Test cases
 - [x] `test/eval/tyAnnot.dck` in the test suite
 - [ ] Lexer (fail) tests

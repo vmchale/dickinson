@@ -50,15 +50,15 @@ instance (Pretty a) => Pretty (DickinsonError a) where
     pretty (NoText t)                = squotes (pretty t) <+> "not defined"
     pretty (ParseErr _ e)            = pretty e
     pretty (TypeMismatch e ty ty')   = pretty (exprAnn e) <+> "Expected" <+> pretty e <+> "to have type" <+> squotes (pretty ty) <> ", found type" <+> squotes (pretty ty')
-    pretty (PatternTypeMismatch p ty ty') = pretty (patAnn p) <+> "Constructor" <+> pretty p <+> "has type" <+> pretty ty' <+> "but must be of type" <+> pretty ty
-    pretty (ModuleNotFound l n)      = pretty l <+> "Module" <+> pretty n <+> "not found"
+    pretty (PatternTypeMismatch p ty ty') = pretty (patAnn p) <+> "Constructor" <+> squotes (pretty p) <+> "has type" <+> pretty ty' <+> "but must be of type" <+> squotes (pretty ty)
+    pretty (ModuleNotFound l n)      = pretty l <+> "Module" <+> squotes (pretty n) <+> "not found"
     pretty (ExpectedLambda e ty)     = pretty (exprAnn e) <+> "Expected" <+> squotes (pretty e) <+> "to be of function type, found type" <+> pretty ty
-    pretty (MultiBind l n p)         = pretty l <+> "Name" <+> pretty n <+> "is bound more than once in" <+> pretty p
+    pretty (MultiBind l n p)         = pretty l <+> "Name" <+> squotes (pretty n) <+> "is bound more than once in" <+> pretty p
     pretty (MalformedTuple l)        = pretty l <+> "Malformed tuple"
-    pretty (UnfoundConstructor l tn) = pretty l <+> "Constructor" <+> pretty tn <+> "not found"
-    pretty (UnfoundType l ty)        = pretty l <+> "Type" <+> pretty ty <+> "not found"
+    pretty (UnfoundConstructor l tn) = pretty l <+> "Constructor" <+> squotes (pretty tn) <+> "not found"
+    pretty (UnfoundType l ty)        = pretty l <+> "Type" <+> squotes (pretty ty) <+> "not found"
     pretty (PatternFail l e)         = pretty l <+> "Expression" <+> pretty e <+> "failed to match"
-    pretty (SuspectPattern l p)      = pretty l <+> "Pattern" <+> pretty p <+> "is an or-pattern but contains a wildcard or variable."
+    pretty (SuspectPattern l p)      = pretty l <+> "Pattern" <+> squotes (pretty p) <+> "is an or-pattern but contains a wildcard or variable."
 
 instance (Pretty a, Typeable a) => Exception (DickinsonError a)
 
