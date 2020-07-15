@@ -27,6 +27,9 @@ benchResult fp = bench fp $ nfIO (evalFile [] fp)
 benchPipeline :: FilePath -> Benchmark
 benchPipeline fp = bench fp $ nfIO (pipeline [] fp)
 
+benchValidate :: FilePath -> Benchmark
+benchValidate fp = bench fp $ nfIO (validateFile [] fp)
+
 main :: IO ()
 main =
     defaultMain [ env parses $ \ ~(c, s) ->
@@ -67,6 +70,11 @@ main =
                     [ benchPipeline "examples/shakespeare.dck"
                     , benchPipeline "examples/fortune.dck"
                     , benchPipeline "examples/catherineOfSienaBot.dck"
+                    ]
+                , bgroup "validate"
+                    [ benchValidate "test/eval/orExample.dck"
+                    , benchValidate "examples/shakespeare.dck"
+                    , benchValidate "examples/catherineOfSienaBot.dck"
                     ]
                 , bgroup "tcFile"
                     [ bench "examples/fortune.dck" $ nfIO (tcFile [] "examples/fortune.dck") -- TODO: tc with syntax tree in env?
