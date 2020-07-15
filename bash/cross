@@ -2,7 +2,7 @@
 
 set -e pipefail
 
-for arch in aarch64-linux-gnu arm-linux-gnueabihf
+for arch in aarch64-linux-gnu arm-linux-gnueabihf powerpc64le-linux-gnu
 do
     cabal build --with-ghc="$arch"-ghc --with-ghc-pkg="$arch"-ghc-pkg --constraint='language-dickinson +cross' exe:emd
 done
