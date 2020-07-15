@@ -15,6 +15,7 @@
   - [ ] Lints and such
   - [ ] Bibliography
   - [ ] Or-patterns
+    - [ ] Declension example?
   - [ ] Matching
 - [ ] Library documentation
 ## Examples
@@ -38,6 +39,7 @@
 - [x] Make sure there are no top-level name clashes
 - [x] Scoping check (not lazy, like evaluation)
 - [ ] Error on negative numbers? (useful error)
+- [ ] Warn on or-patterns containing wildcards at the highest level
 # Library API
 - [x] Maybe spin out internal library?
 # Bugs
