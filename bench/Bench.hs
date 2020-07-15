@@ -60,7 +60,6 @@ main =
                 , bgroup "result"
                     [ benchResult "test/eval/context.dck"
                     , benchResult "examples/shakespeare.dck"
-                    , bench "examples/doggo.dck" $ nfIO (evalFile ["prelude"] "examples/doggo.dck")
                     , bench "test/demo/animal.dck" $ nfIO (evalFile ["lib"] "test/demo/animal.dck")
                     , benchResult "examples/fortune.dck"
                     ]
