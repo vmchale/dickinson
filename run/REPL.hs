@@ -7,10 +7,11 @@ module REPL ( dickinsonRepl
 import           Control.Monad                         (void)
 import           Control.Monad.Except                  (ExceptT, runExceptT)
 import           Control.Monad.IO.Class                (liftIO)
-import           Control.Monad.State.Lazy              (StateT, evalStateT, get, gets, lift, put)
+import           Control.Monad.State.Lazy              (MonadState, StateT, evalStateT, get, gets, lift, put)
 import qualified Data.ByteString.Lazy                  as BSL
 import           Data.Foldable                         (traverse_)
 import qualified Data.IntMap                           as IM
+import qualified Data.IntSet                           as IS
 import qualified Data.Map                              as M
 import           Data.Maybe                            (fromJust)
 import           Data.Semigroup                        ((<>))
@@ -47,6 +48,10 @@ dickinsonRepl = runRepl loop
 
 type Repl a = InputT (StateT (EvalSt a) IO)
 
+toCheckSt :: MonadState (EvalSt a) m => m IS.IntSet
+toCheckSt = gets (IM.keysSet . fth . lexerState)
+    where fth (_,_,_,x) = x
+
 runRepl :: Repl a x -> IO x
 runRepl x = do
     g <- newStdGen
@@ -63,10 +68,12 @@ loop = do
         Just []             -> loop
         Just (":h":_)       -> showHelp *> loop
         Just (":help":_)    -> showHelp *> loop
-        Just (":save":fp:_) -> saveReplSt fp *> loop
+        Just (":save":[fp]) -> saveReplSt fp *> loop
+        Just (":save":_)    -> liftIO (putStrLn ":save takes one argument") *> loop
         Just (":l":fs)      -> traverse loadFile fs *> loop
         Just (":load":fs)   -> traverse loadFile fs *> loop
-        Just (":r":fp:_)    -> loadReplSt fp *> loop
+        Just (":r":[fp])    -> loadReplSt fp *> loop
+        Just (":r":_)       -> liftIO (putStrLn ":r takes one argument") *> loop
         Just (":type":e:_)  -> typeExpr e *> loop
         Just (":t":e:_)     -> typeExpr e *> loop
         Just (":view":n:_)  -> bindDisplay (T.pack n) *> loop
@@ -74,7 +81,9 @@ loop = do
         Just [":q"]         -> pure ()
         Just [":quit"]      -> pure ()
         Just [":list"]      -> listNames *> loop
+        Just (":list":_)    -> liftIO (putStrLn ":list takes no arguments") *> loop
         Just [":dump"]      -> dumpSt *> loop
+        Just (":dump":_)    -> liftIO (putStrLn ":dump takes no arguments") *> loop
         -- TODO: erase/delete names?
         Just{}              -> printExpr (fromJust inp) *> loop
         Nothing             -> pure ()
@@ -151,6 +160,7 @@ typeExpr str = do
         Left err -> liftIO $ putDoc (pretty err <> hardline)
         Right (newSt, e) -> do
             setSt newSt
+            -- TODO: no scope check?
             mErr <- lift $ runExceptT $ typeOf =<< resolveExpressionM =<< renameExpressionM e
             lift balanceMax
             putErr mErr (liftIO . putDoc . (<> hardline) . pretty)
@@ -167,7 +177,8 @@ printExpr str = do
                     Right e -> do
                         mErr <- lift $ runExceptT $ do
                             e' <- resolveExpressionM =<< renameExpressionM e
-                            checkScopeExpr e'
+                            checkSt <- toCheckSt
+                            checkScopeExprWith checkSt e' -- TODO: pass in state
                             void $ typeOf e' -- TODO: typeOf e but context?
                             evalExpressionAsTextM e'
                         lift balanceMax
@@ -175,7 +186,8 @@ printExpr str = do
                     Left decl -> do
                         mErr <- lift $ runExceptT $ do
                             d <- renameDeclarationM decl
-                            checkScopeDecl =<< resolveDeclarationM d
+                            checkSt <- toCheckSt
+                            checkScopeDeclWith checkSt =<< resolveDeclarationM d
                             tyAddDecl d
                             tyAdd d
                             addDecl' d

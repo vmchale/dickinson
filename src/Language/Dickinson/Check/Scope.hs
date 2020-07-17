@@ -1,8 +1,8 @@
 {-# LANGUAGE FlexibleContexts #-}
 
 module Language.Dickinson.Check.Scope ( checkScope
-                                      , checkScopeExpr
-                                      , checkScopeDecl
+                                      , checkScopeExprWith
+                                      , checkScopeDeclWith
                                       ) where
 
 import           Control.Applicative              (Alternative, (<|>))
@@ -32,11 +32,11 @@ deleteName (Name _ (Unique i) _) = modify (IS.delete i)
 checkScope :: [Declaration a] -> Maybe (DickinsonError a)
 checkScope = runCheckM . checkDickinson
 
-checkScopeExpr :: MonadError (DickinsonError a) m => Expression a -> m ()
-checkScopeExpr = maybeThrow . runCheckM . checkExpr
+checkScopeExprWith :: MonadError (DickinsonError a) m => IS.IntSet -> Expression a -> m ()
+checkScopeExprWith is = maybeThrow . flip evalState is . checkExpr
 
-checkScopeDecl :: MonadError (DickinsonError a) m => Declaration a -> m ()
-checkScopeDecl = maybeThrow . runCheckM . checkDecl
+checkScopeDeclWith :: MonadError (DickinsonError a) m => IS.IntSet -> Declaration a -> m ()
+checkScopeDeclWith is = maybeThrow . flip evalState is . checkDecl
 
 checkDickinson :: [Declaration a] -> CheckM (Maybe (DickinsonError a))
 checkDickinson d = traverse_ insDecl d *> mapSumM checkDecl d

@@ -50,11 +50,18 @@
 - [x] Bug when running `test/demo/animal.dck` with renamer then eval
 - [x] `examples/doggo.dck` hangs indefinitely lol
 - [ ] Hangs indefinitely when lexing incomplete string
-- [ ]
+- [x]
   ```
   emd> tydecl sex = Boy | Girl
   emd> Boy
   1:1 Constructor Boy not found
+  ```
+- [ ]
+  ```
+  emd> (:flatten "a")
+  a
+  emd> :type (:flatten "a")
+  1:10 Unexpected
   ```
 # Code Quality
 - [ ] Kick tires on `:t` feature
