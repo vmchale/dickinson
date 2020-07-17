@@ -110,7 +110,6 @@ library dickinson
         Paths_language_dickinson
         Language.Dickinson.Lib.Get
         Language.Dickinson.Pattern
-        Language.Dickinson.Pattern.Useless
         Control.Monad.Ext
         Data.Foldable.Ext
 
@@ -126,7 +125,6 @@ library dickinson
         base >=4.9 && <5,
         bytestring -any,
         text -any,
-        array -any,
         mtl -any,
         transformers -any,
         containers -any,
