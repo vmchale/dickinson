@@ -20,6 +20,7 @@ import qualified Data.Text.IO                          as TIO
 import qualified Data.Text.Lazy                        as TL
 import           Data.Text.Lazy.Encoding               (encodeUtf8)
 import           Data.Text.Prettyprint.Doc             (Pretty (pretty), hardline)
+import           Data.Text.Prettyprint.Doc.Ext         (prettyText)
 import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
 import           Data.Tuple.Ext                        (fst4)
 import           Language.Dickinson.Check.Scope
@@ -178,9 +179,12 @@ printExpr str = do
                         mErr <- lift $ runExceptT $ do
                             e' <- resolveExpressionM =<< renameExpressionM e
                             checkSt <- toCheckSt
-                            checkScopeExprWith checkSt e' -- TODO: pass in state
+                            checkScopeExprWith checkSt e'
                             void $ typeOf e' -- TODO: typeOf e but context?
-                            evalExpressionAsTextM e'
+                            res <- evalExpressionM e'
+                            case res of
+                                (Literal _ t) -> pure t
+                                e''           -> pure $ prettyText e''
                         lift balanceMax
                         putErr mErr (liftIO . TIO.putStrLn)
                     Left decl -> do
@@ -200,7 +204,7 @@ printExpr str = do
 
 putErr :: Pretty e => Either e b -> (b -> Repl a ()) -> Repl a ()
 putErr (Right x) f = f x
-putErr (Left y) _  = liftIO $ putDoc (pretty y <> hardline)
+putErr (Left y) _  = liftIO $ TIO.putStrLn (prettyText y)
 
 loadFile :: FilePath -> Repl AlexPosn ()
 loadFile fp = do
