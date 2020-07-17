@@ -123,6 +123,7 @@ library dickinson
     ghc-options:      -Wall -O2
     build-depends:
         base >=4.9 && <5,
+        array -any,
         bytestring -any,
         text -any,
         mtl -any,
