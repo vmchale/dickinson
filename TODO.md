@@ -20,14 +20,14 @@
 - [ ] Library documentation
 ## Examples
 - [ ] Poetry bot...? Rumi?
-- [½] Fiona bot?
+- [x] Fiona bot?
 - [ ] Storytelling? RPG? idk
 - [ ] https://www.nadyaprimak.com/blog/programming/poetry-bot/
-- [½] Dog greeter
-- [½] Fortune teller/unix fortune
+- [ ] Dog greeter
+- [x] Fortune teller/unix fortune
   - [ ] Fortune port? https://github.com/shlomif/fortune-mod/blob/master/fortune-mod/datfiles/disclaimer
 - [ ] Hot take generator
-- [½] Catherine of Siena bot
+- [x] Catherine of Siena bot
 - [ ] Margery Kempe bot
 - [x] Cowsay-as-a-function
 - [ ] jenny holzer bot https://www.tate.org.uk/art/artworks/holzer-truisms-t03959 https://wordsofwomen.com/jenny-holzers-list-of-truisms/ https://www.moma.org/collection/works/63755
