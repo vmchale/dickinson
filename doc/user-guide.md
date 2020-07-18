@@ -6,6 +6,9 @@
 Dickinson is a text-generation language for generative literature. Each time you run your
 code, you get back randomly generated text.
 
+It provides a language to define random texts like the [Magical Realism
+Bot](https://twitter.com/MagicRealismBot).
+
 # Installing Dickinson
 
 First, install [cabal](https://www.haskell.org/cabal/download.html) and
@@ -183,7 +186,7 @@ Lambdas are how we introduce functions in Dickinson.
 Note that we have to specify the type of `name` - here, it stands in for some
 string, so it is of type `text`.
 
-We can use `sayHello` with `$` (pronounced "apply")
+We can use `sayHello` with `$` (pronounced "apply").
 
 ```
 (:def name
@@ -194,6 +197,39 @@ We can use `sayHello` with `$` (pronounced "apply")
 (:def main
   ($ sayHello name))
 ```
+
+`$ f x` corresponds to `f x` in ML.
+
+### Matches & Tuples
+
+Suppose we want to randomly pick quotes.
+
+```
+(:def quote
+  (:oneof
+    (| ("« Le beau est ce qu'on désire sans vouloir le manger. »", "Simone Weil"))
+    (| ("\"You forgot the difference between equanimity and passivity.\"", "Fiona Apple"))))
+```
+
+```
+(:def formatQuote
+  (:lambda q (text, text)
+    (:match q
+      [(quote, name)
+        '''
+        ${quote}
+            — ${name}
+        '''])))
+
+(:def main
+  $ formatQuote quote)
+```
+
+### Tags
+
+Tags are a restricted form of sum types. <!-- or-patterns -->
+
+## Types <!-- types lol -->
 
 # REPL
 
