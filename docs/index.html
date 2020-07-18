@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="Vanessa McHale" />
+  <title>Dickinson User Guide</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Dickinson User Guide</h1>
+<p class="author">Vanessa McHale</p>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#installing-dickinson">Installing Dickinson</a>
+<ul>
+<li><a href="#editor-integration">Editor Integration</a></li>
+</ul></li>
+<li><a href="#program-structure">Program Structure</a>
+<ul>
+<li><a href="#example">Example</a>
+<ul>
+<li><a href="#comments">Comments</a></li>
+</ul></li>
+<li><a href="#definitions-names">Definitions &amp; Names</a></li>
+<li><a href="#branching">Branching</a></li>
+<li><a href="#interpolation">Interpolation</a>
+<ul>
+<li><a href="#multi-line-strings">Multi-Line Strings</a></li>
+</ul></li>
+<li><a href="#expressions">Expressions</a>
+<ul>
+<li><a href="#lambdas">Lambdas</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#repl">REPL</a>
+<ul>
+<li><a href="#saving-restoring-states">Saving &amp; Restoring States</a></li>
+</ul></li>
+<li><a href="#lints">Lints</a></li>
+<li><a href="#libraries">Libraries</a>
+<ul>
+<li><a href="#using-libraries">Using Libraries</a>
+<ul>
+<li><a href="#example-1">Example</a></li>
+</ul></li>
+<li><a href="#writing-libraries">Writing Libraries</a></li>
+</ul></li>
+<li><a href="#scripting">Scripting</a></li>
+<li><a href="#examples">Examples</a>
+<ul>
+<li><a href="#cowsay">Cowsay</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="introduction">Introduction</h1>
+<p>Dickinson is a text-generation language for generative literature. Each time you run your code, you get back randomly generated text.</p>
+<h1 id="installing-dickinson">Installing Dickinson</h1>
+<p>First, install <a href="https://www.haskell.org/cabal/download.html">cabal</a> and <a href="https://www.haskell.org/ghc/download.html">GHC</a>. Then:</p>
+<pre><code>cabal install language-dickinson</code></pre>
+<p>This provides <code>emd</code>, the command-line interface to the Dickinson language.</p>
+<p>You may also wish to install manpages for reference information about <code>emd</code>. Manpages are installed at</p>
+<pre><code>emd man</code></pre>
+<h2 id="editor-integration">Editor Integration</h2>
+<p>A <a href="https://github.com/vmchale/dickinson/tree/master/vim">vim plugin</a> is available.</p>
+<h1 id="program-structure">Program Structure</h1>
+<p>Dickinson files begin with <code>%-</code>, followed by definitions.</p>
+<h2 id="example">Example</h2>
+<p>Here is a simple Dickinson program:</p>
+<pre><code>%-
+
+(:def main
+  (:oneof
+    (| &quot;heads&quot;)
+    (| &quot;tails&quot;)))</code></pre>
+<p>Save this as <code>gambling.dck</code>. Then:</p>
+<pre><code>emd run gambling.dck</code></pre>
+<p>which will display either <code>heads</code> or <code>tails</code>.</p>
+<p>The <code>:oneof</code> construct selects one of its branches with equal probability.</p>
+<p>In general, when you <code>emd run</code> code, you’ll see the result of evaluating <code>main</code>.</p>
+<h3 id="comments">Comments</h3>
+<p>Comments are indicated with a <code>;</code> at the beginning of the line. Anything to the right of the <code>;</code> is ignored. So</p>
+<pre><code>%-
+
+; This returns one of &#39;heads&#39; or &#39;tails&#39;
+(:def main
+  (:oneof
+    (| &quot;heads&quot;)
+    (| &quot;tails&quot;)))</code></pre>
+<p>is perfectly valid code and is functionally the same as the above.</p>
+<h2 id="definitions-names">Definitions &amp; Names</h2>
+<p>We can define names and reference them later:</p>
+<pre><code>%-
+
+(:def gambling
+  (:oneof
+    (| &quot;heads&quot;)
+    (| &quot;tails&quot;)))
+
+(:def main
+  gambling)</code></pre>
+<p>We can <code>emd run</code> this and it will give the same results as above.</p>
+<h2 id="branching">Branching</h2>
+<p>When you use <code>:oneof</code>, Dickinson picks one of the branches with equal probability. If this is not what you want, you can use <code>:branch</code>:</p>
+<pre><code>%-
+
+(:def unfairCoin
+  (:branch
+    (| 1.0 &quot;heads&quot;)
+    (| 1.1 &quot;tails&quot;)))
+
+(:def main
+  unfairCoin)</code></pre>
+<p>This will scale things so that picking <code>"tails"</code> is a little more likely.</p>
+<h2 id="interpolation">Interpolation</h2>
+<p>We can recombine past definitions via string interpolation:</p>
+<pre><code>%-
+
+(:def adjective
+  (:oneof
+    (| &quot;beautiful&quot;)
+    (| &quot;auspicious&quot;)
+    (| &quot;cold&quot;)))
+
+(:def main
+  &quot;What a ${adjective}, ${adjective} day!&quot;)</code></pre>
+<h3 id="multi-line-strings">Multi-Line Strings</h3>
+<p>For large blocks of text, we can use multi-line strings.</p>
+<pre><code>(:def twain
+  &#39;&#39;&#39;
+  Truth is the most valuable thing we have — so let us economize it.
+    — Mark Twain
+  &#39;&#39;&#39;)</code></pre>
+<p>Multiline strings begin and end with <code>'''</code>.</p>
+<h2 id="expressions">Expressions</h2>
+<p>Branches, strings, and interpolations are expressions. A <code>:def</code> can attach an expression to a name.</p>
+<pre><code>%-
+
+(:def color
+  (:oneof
+    (| &quot;yellow&quot;)
+    (| &quot;blue&quot;)))
+
+(:def adjective
+  (:oneof
+    (| &quot;beautiful&quot;)
+    (| &quot;auspicious&quot;)
+    (| color)))
+
+(:def main
+  &quot;What a ${adjective}, ${adjective} day!&quot;)</code></pre>
+<p>Branches can contain any expression, including names that have been defined previously (such as <code>color</code> in the example above).</p>
+<h3 id="lambdas">Lambdas</h3>
+<p>Lambdas are how we introduce functions in Dickinson.</p>
+<pre><code>(:def sayHello
+  (:lambda name text
+    &quot;Hello, ${name}.&quot;))</code></pre>
+<p>Note that we have to specify the type of <code>name</code> - here, it stands in for some string, so it is of type <code>text</code>.</p>
+<p>We can use <code>sayHello</code> with <code>$</code> (pronounced “apply”)</p>
+<pre><code>(:def name
+  (:oneof
+    (| &quot;Alice&quot;)
+    (| &quot;Bob&quot;)))
+
+(:def main
+  ($ sayHello name))</code></pre>
+<h1 id="repl">REPL</h1>
+<p>To enter a REPL:</p>
+<pre><code>emd repl</code></pre>
+<p>This will show a prompt</p>
+<pre><code>emd&gt;</code></pre>
+<p>If we have</p>
+<pre><code>%-
+
+(:def gambling
+  (:oneof
+    (| &quot;heads&quot;)
+    (| &quot;tails&quot;)))</code></pre>
+<p>in a file <code>gambling.dck</code> as above, we can load it with</p>
+<pre><code>emd&gt; :l gambling.dck</code></pre>
+<p>We can then evaluate <code>gambling</code> if we like</p>
+<pre><code>emd&gt; gambling</code></pre>
+<p>or manipulate names that are in scope like so:</p>
+<pre><code>emd&gt; &quot;The result of the coin toss is: ${gambling}&quot;</code></pre>
+<p>We can also create new definitions:</p>
+<pre><code>emd&gt; (:def announcer &quot;RESULT: ${gambling}&quot;)
+emd&gt; announcer</code></pre>
+<h2 id="saving-restoring-states">Saving &amp; Restoring States</h2>
+<p>We can save the REPL state, including any definitions we’ve declared during the session.</p>
+<pre><code>emd&gt; :save replSt.emdi</code></pre>
+<p>If we exit the session we can restore the save definitions with</p>
+<pre><code>emd&gt; :r replSt.emdi
+emd&gt; announcer</code></pre>
+<p>For reference information about the Dickinson REPL:</p>
+<pre><code>:help</code></pre>
+<h1 id="lints">Lints</h1>
+<p><code>emd</code> has a linter which can make suggestions based on probable mistakes. We can invoke it with <code>emd lint</code>:</p>
+<pre><code>emd lint silly.dck</code></pre>
+<h1 id="libraries">Libraries</h1>
+<p>Dickinson allows pulling in definitions from other files with <code>:include</code>.</p>
+<h2 id="using-libraries">Using Libraries</h2>
+<h3 id="example-1">Example</h3>
+<p>The <code>color</code> module is bundled by default:</p>
+<pre><code>(:include color)
+
+%-
+
+(:def main
+  &quot;Today&#39;s mood is ${color}&quot;)</code></pre>
+<p>The <code>:include</code> must come before the <code>%-</code>; definitions come after the <code>%-</code> as above.</p>
+<p><code>color.dck</code> contains:</p>
+<pre><code>%-
+
+(:def color
+  (:oneof
+    (| &quot;aubergine&quot;)
+    (| &quot;cerulean&quot;)
+    (| &quot;azure&quot;)
+    ...</code></pre>
+<h2 id="writing-libraries">Writing Libraries</h2>
+<h1 id="scripting">Scripting</h1>
+<p><code>emd</code> ignores any lines staring with <code>#!</code>; put</p>
+<pre><code>#!/usr/bin/env emd</code></pre>
+<p>and the top of a file to use <code>emd</code> as an interpreter. As an example, here is an implementation of the Unix fortune program as a script:</p>
+<pre><code>#!/usr/bin/env emd
+
+%-
+
+(:def adjective
+  (:oneof
+    (| &quot;good&quot;)
+    (| &quot;bad&quot;)))
+
+(:def main
+  &quot;You will have a ${adjective} day&quot;)</code></pre>
+<h1 id="examples">Examples</h1>
+<h2 id="cowsay">Cowsay</h2>
+<p>Here is a variation on cowsay:</p>
+<pre><code>(:def cowsay
+  (:lambda txt text
+    &#39;&#39;&#39;
+    
+    ${txt}
+    ------
+          \   ^__^
+           \  (oo)\_______
+              (__)\       )\/\
+                  ||----w |
+                  ||     ||
+    &#39;&#39;&#39;))</code></pre>
+</body>
+</html>
