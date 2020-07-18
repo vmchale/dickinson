@@ -34,7 +34,8 @@ Plug 'vmchale/dickinson' , { 'rtp' : 'vim' }
 A user guide is available in
 [markdown](https://github.com/vmchale/dickinson/blob/master/doc/user-guide.md)
 and as
-a [pdf](https://github.com/vmchale/dickinson/blob/master/doc/user-guide.pdf).
+a [pdf](https://github.com/vmchale/dickinson/blob/master/doc/user-guide.pdf). It
+is hosted on [github pages](https://vmchale.github.io/dickinson/) in HTML form.
 
 See `man/emd.1` for man pages.
 
