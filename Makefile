@@ -17,10 +17,14 @@ lint:
 	yamllint .stylish-haskell.yaml
 	yamllint .hlint.yaml
 
-docs: man/emd.1 doc/user-guide.pdf
+docs: man/emd.1 doc/user-guide.pdf docs/index.html
 
 clean:
 	rm -rf dist-newstyle .stack-work *.svg stack.yaml.lock doc/user-guide.html *.hp *.prof dist *.emdi
+
+docs/index.html: doc/user-guide.html
+	@mkdir -p $(dir $@)
+	cp $< $@
 
 doc/%.html: doc/%.md
 	pandoc $< -s -o $@ --toc
