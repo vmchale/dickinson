@@ -1,12 +1,24 @@
 %-
 
-(:def noun
+(:def rhetoricalDevice
   (:oneof
-    (| "valetudinarian")
-    (| "heliophagy")
-    (| "valedictorian")
-    (| "apothegm")
-    (| "apotheosis")
-    (| "aphelion")
-    (| "perihelion")
-    (| "folderol")))
+    (| "stichomythia")
+    (| "antanaclasis")
+    (| "metaphor")
+    (| "simile")
+    (| "alliteration")
+    (| "synecdoche")
+    (| "metonymy")))
+
+(:def noun
+  (:flatten
+    (:oneof
+      (| rhetoricalDevice)
+      (| "valetudinarian")
+      (| "heliophagy")
+      (| "valedictorian")
+      (| "apothegm")
+      (| "apotheosis")
+      (| "aphelion")
+      (| "perihelion")
+      (| "folderol"))))
