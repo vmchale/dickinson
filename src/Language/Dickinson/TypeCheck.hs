@@ -8,6 +8,8 @@ module Language.Dickinson.TypeCheck ( typeOf
                                     , tyTraverse
                                     , tyRun
                                     , emptyTyEnv
+                                    , runTypeM
+                                    , TypeM
                                     , TyEnv
                                     , HasTyEnv (..)
                                     ) where
@@ -54,7 +56,10 @@ tyMatch (e :| es) = do
 type TypeM a = ExceptT (DickinsonError a) (State (TyEnv a))
 
 tyRun :: [Declaration a] -> Either (DickinsonError a) ()
-tyRun = flip evalState emptyTyEnv . runExceptT . (tyTraverse :: [Declaration a] -> TypeM a ())
+tyRun = runTypeM . tyTraverse
+
+runTypeM :: TypeM a x -> Either (DickinsonError a) x
+runTypeM = flip evalState emptyTyEnv . runExceptT
 
 emptyTyEnv :: TyEnv a
 emptyTyEnv = TyEnv IM.empty

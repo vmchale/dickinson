@@ -2,6 +2,7 @@
 
 module Language.Dickinson.Pipeline ( checkEvalM
                                    , format
+                                   , validateDecl
                                    ) where
 
 import           Control.Exception.Value        (eitherThrow)
@@ -19,9 +20,13 @@ import           Language.Dickinson.TypeCheck
 
 checkEvalM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => [Declaration a] -> m T.Text
 checkEvalM ds = do
-    maybeThrow $ checkScope ds
-    tyTraverse ds
+    validateDecl ds
     evalDickinsonAsMain ds
 
 format :: BSL.ByteString -> T.Text
 format = prettyText . eitherThrow . parse
+
+validateDecl :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m) => [Declaration a] -> m ()
+validateDecl d = do
+    maybeThrow $ checkScope d
+    tyTraverse d

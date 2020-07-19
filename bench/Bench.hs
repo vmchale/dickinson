@@ -11,6 +11,7 @@ import           Language.Dickinson.Check
 import           Language.Dickinson.Check.Duplicate
 import           Language.Dickinson.Check.Internal
 import           Language.Dickinson.Check.Scope
+import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
 import           Language.Dickinson.File
 import           Language.Dickinson.Lexer
@@ -62,9 +63,12 @@ main =
                     , benchPipeline "examples/fortune.dck"
                     , benchPipeline "examples/catherineOfSienaBot.dck"
                     ]
-                , bgroup "validate"
+                , bgroup "validateFile"
                     [ benchValidate "test/examples/declension.dck"
                     ]
+                , env amalDecline $ \d ->
+                  bgroup "validate"
+                    [ bench "test/examples/declension.dck" $ nf validateRun d ]
                 , env amalFortune $ \f ->
                   bgroup "typecheck"
                     [ bench "examples/fortune.dck" $ nf tyRun f ]
@@ -95,6 +99,7 @@ main =
           amalgamated = (,)
             <$> amalgamateRename [] "examples/shakespeare.dck"
             <*> amalgamateRename [] "examples/catherineOfSienaBot.dck"
+          amalDecline = amalgamateRename [] "test/examples/declension.dck"
 
 plainExpr :: (UniqueCtx, Dickinson a) -> Dickinson a
 plainExpr = fst . uncurry renameDickinson
@@ -105,3 +110,6 @@ txtIO = fmap eitherThrow . evalIO . checkEvalM
 
 maxUniqueDickinson :: Dickinson AlexPosn -> Int
 maxUniqueDickinson (Dickinson _ ds) = maximum (maxUniqueDeclaration <$> ds)
+
+validateRun :: [Declaration a] -> Either (DickinsonError a) ()
+validateRun = runTypeM . validateDecl
