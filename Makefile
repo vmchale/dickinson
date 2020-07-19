@@ -1,4 +1,4 @@
-.PHONY: clean install check lint
+.PHONY: clean install check lint release
 SHELL = bash
 
 MAKEFLAGS += --warn-undefined-variables --no-builtin-rules
@@ -11,19 +11,13 @@ DCK_PRELUDE := $(wildcard ./prelude/*.dck)
 
 HS_SRC := $(shell find run -type f) $(shell find src -type f) language-dickinson.cabal
 
-check:
-	emd lint $(DCK_LIB) $(DCK_PRELUDE)
-	emd check $(DCK_LIB) $(DCK_PRELUDE)
+VERSION := $(shell grep -P -o '\d+\.\d+\.\d+\.\d+' language-dickinson.cabal | head -n1)
 
-lint:
-	hlint src bench run ./test
-	yamllint stack.yaml
-	yamllint .stylish-haskell.yaml
-	yamllint .hlint.yaml
+TOKEN := $(shell cat ~/.git-token)
 
-docs: man/emd.1 doc/user-guide.pdf docs/index.html
+GR_OPTIONS := -s $(TOKEN) -u vmchale -r dickinson -t $(VERSION)
 
-distbins: bin/arm-linux-emd.lz \
+DISTBINS := bin/arm-linux-emd.lz \
     bin/arm-linux-emd.zst \
     bin/arm-linux-emd.gz \
     bin/arm-linux-emd.bz2 \
@@ -43,6 +37,27 @@ distbins: bin/arm-linux-emd.lz \
     bin/x86_64-linux-emd.zst \
     bin/x86_64-linux-emd.gz \
     bin/x86_64-linux-emd.bz2
+
+release: man/emd.1 distbins
+	# github-release release $(GR_OPTIONS)
+	github-release upload $(GR_OPTIONS) -n emd.1 -f man/emd.1 --replace
+	for bin in $(DISTBINS) ; do \
+	    github-release upload $(GR_OPTIONS) -n $$(basename $$bin) -f $$bin --replace ; \
+	done
+
+check:
+	emd lint $(DCK_LIB) $(DCK_PRELUDE)
+	emd check $(DCK_LIB) $(DCK_PRELUDE)
+
+lint:
+	hlint src bench run ./test
+	yamllint stack.yaml
+	yamllint .stylish-haskell.yaml
+	yamllint .hlint.yaml
+
+docs: man/emd.1 doc/user-guide.pdf docs/index.html
+
+distbins: $(DISTBINS)
 
 bins: bin/arm-linux-emd \
     bin/aarch64-linux-emd \
