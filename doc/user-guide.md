@@ -225,6 +225,8 @@ Suppose we want to randomly pick quotes.
   $ formatQuote quote)
 ```
 
+<!-- let bindings -->
+
 ### Tags
 
 Tags are a restricted form of sum types. <!-- or-patterns -->

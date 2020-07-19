@@ -135,6 +135,8 @@
 - [ ] builtins (capitalization &c.)
 - [x] Currying?
 # Performance
+- [ ] Annotate with big-O notation!
+- [ ] Figure out specific data types?
 - [ ] Load modules in a sensible way?
 - [x] Bench typechecker
 - [ ] Normalization-by-evaluation? NbE
