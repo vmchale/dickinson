@@ -63,7 +63,7 @@ main =
                     , benchPipeline "examples/catherineOfSienaBot.dck"
                     ]
                 , bgroup "validate"
-                    [ benchValidate "test/eval/orExample.dck"
+                    [ benchValidate "test/examples/declension.dck"
                     ]
                 , env amalFortune $ \f ->
                   bgroup "typecheck"
