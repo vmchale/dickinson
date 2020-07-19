@@ -46,7 +46,7 @@ instance HasTyEnv TyEnv where
     tyEnvLens f s = fmap (\x -> s { unTyEnv = x }) (f (unTyEnv s)) -- id
 
 tyInsert :: (HasTyEnv s, MonadState (s a) m) => Name a -> DickinsonTy a -> m ()
-tyInsert (Name _ (Unique i) _) ty = modifying tyEnvLens (IM.insert i ty)
+tyInsert (Name _ (Unique i) _) ty = {-# SCC "tyInsert" #-} modifying tyEnvLens (IM.insert i ty)
 
 tyMatch :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m) => NonEmpty (Expression a) -> m (DickinsonTy a)
 tyMatch (e :| es) = do
@@ -99,7 +99,7 @@ typeOf :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m) => E
 typeOf (Literal l _)  = pure (TyText l)
 typeOf (StrChunk l _) = pure (TyText l)
 typeOf (Choice _ brs) = tyMatch (snd <$> brs)
-typeOf (Var l n@(Name _ (Unique i) _))  = do
+typeOf (Var l n@(Name _ (Unique i) _)) = do
     tyEnv <- use tyEnvLens
     case IM.lookup i tyEnv of
         Just ty -> pure ty
@@ -129,7 +129,7 @@ typeOf (Let _ bs e) = do
 typeOf (Match _ e brs@((_,e') :| _)) = do
     ty <- typeOf e
     forM_ (fst <$> brs) $ \p ->
-        bindPattern p ty
+        {-# SCC "bindPattern" #-} bindPattern p ty
     res <- typeOf e'
     traverse_ (tyAssert res) (snd <$> brs)
     pure res

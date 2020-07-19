@@ -63,7 +63,7 @@ main =
                     , benchPipeline "examples/fortune.dck"
                     , benchPipeline "examples/catherineOfSienaBot.dck"
                     ]
-                , bgroup "validateFile"
+                , bgroup "fileValidate"
                     [ benchValidate "test/examples/declension.dck"
                     ]
                 , env amalDecline $ \d ->
