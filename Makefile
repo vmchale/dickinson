@@ -4,6 +4,7 @@ SHELL = bash
 MAKEFLAGS += --warn-undefined-variables --no-builtin-rules
 .DELETE_ON_ERROR:
 
+include mk/compress.mk
 
 DCK_LIB := $(wildcard ./lib/*.dck)
 DCK_PRELUDE := $(wildcard ./prelude/*.dck)
@@ -22,7 +23,7 @@ docs: man/emd.1 doc/user-guide.pdf docs/index.html
 
 bin/arm-linux-emd:
 	@mkdir -p $(dir $@)
-	@cabal build --with-ghc arm-linux-gnueabihf-ghc --with-ghc-pkg arm-linux-gnueabihf-ghc-pkg --constraint='language-dickinson +cross' exe:emd
+	@cabal build --with-ghc arm-linux-gnueabihf-ghc --with-ghc-pkg arm-linux-gnueabihf-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static
 	export BIN=$$(fd 'arm-linux.*emd$$' -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    arm-linux-gnueabihf-strip $@
