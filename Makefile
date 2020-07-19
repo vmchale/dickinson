@@ -9,7 +9,7 @@ include mk/compress.mk
 DCK_LIB := $(wildcard ./lib/*.dck)
 DCK_PRELUDE := $(wildcard ./prelude/*.dck)
 
-HS_SRC := $(wildcard ./src/*.hs)
+HS_SRC := $(shell find run -type f) $(shell find src -type f) language-dickinson.cabal
 
 check:
 	emd lint $(DCK_LIB) $(DCK_PRELUDE)
@@ -51,35 +51,35 @@ bins: bin/arm-linux-emd \
     bin/x86_64-linux-emd
 
 # might be slower b/c static but
-bin/x86_64-linux-emd: language-dickinson.cabal $(HS_SRC)
+bin/x86_64-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
 	cabal build exe:emd --enable-executable-static
 	export BIN=$$(fd 'x86_64-linux.*emd$$' -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    strip $@
 
-bin/sparc64-linux-emd: language-dickinson.cabal $(HS_SRC)
+bin/sparc64-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
 	@cabal build --with-ghc sparc64-linux-gnu-ghc --with-ghc-pkg sparc64-linux-gnu-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static
 	export BIN=$$(fd 'sparc-linux.*emd$$' -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    sparc64-linux-gnu-strip $@
 
-bin/powerpc64le-linux-emd: language-dickinson.cabal $(HS_SRC)
+bin/powerpc64le-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
 	@cabal build --with-ghc powerpc64le-linux-gnu-ghc --with-ghc-pkg powerpc64le-linux-gnu-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static
 	export BIN=$$(fd 'ppc64-linux.*emd$$' -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    powerpc64le-linux-gnu-strip $@
 
-bin/aarch64-linux-emd: language-dickinson.cabal $(HS_SRC)
+bin/aarch64-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
 	@cabal build --with-ghc aarch64-linux-gnu-ghc --with-ghc-pkg aarch64-linux-gnu-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static
 	export BIN=$$(fd 'aarch64-linux.*emd$$' -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    aarch64-linux-gnu-strip $@
 
-bin/arm-linux-emd: language-dickinson.cabal $(HS_SRC)
+bin/arm-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
 	@cabal build --with-ghc arm-linux-gnueabihf-ghc --with-ghc-pkg arm-linux-gnueabihf-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static
 	export BIN=$$(fd 'arm-linux.*emd$$' -t x -p -I); \
