@@ -75,7 +75,7 @@ bin/powerpc64le-linux-emd: $(HS_SRC)
 bin/aarch64-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
 	@cabal build --with-ghc aarch64-linux-gnu-ghc --with-ghc-pkg aarch64-linux-gnu-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static
-	export BIN=$$(fd 'aarch64-linux.*emd$$' -t x -p -I); \
+	export BIN=$$(fd 'aarch64-linux.*emd$$' dist-newstyle -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    aarch64-linux-gnu-strip $@
 
