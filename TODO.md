@@ -63,6 +63,11 @@
   emd> :type (:flatten "a")
   1:10 Unexpected
   ```
+- [ ]
+  ```
+  emd> $decline (Feminine, Feminine, Singular)
+  14:9 Constructor 'Nominative' has type 'case' but must be of type 'gender'
+  ```
 # Code Quality
 - [ ] Kick tires on `:t` feature
 # Debugging

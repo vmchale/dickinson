@@ -250,12 +250,13 @@ Note the use of the `:lambda` in `formatQuote`; we specify the type `(text, text
 
 ### Tags
 
-<!-- declension example? -->
-<!-- doggo example -->
+Tags are a restricted form of sum types.
 
-Tags are a restricted form of sum types. <!-- or-patterns -->
+```
+tydecl case = Nominative | Oblique | Possessive
+```
 
-## Types <!-- types lol -->
+## Types
 
 # REPL
 
