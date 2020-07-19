@@ -254,7 +254,18 @@ Tags can be used to split things based on cases.
 
 ```
 tydecl number = Singular | Plural
+
+(:def indefiniteArticle
+  (:lambda n number
+    (:match n
+      [Singular "a"]
+      [Plural "some"])))
 ```
+
+Note that we specify the type `number` in `(:lambda n number ...)`.
+
+Tags themselves must begin with a capital letter while types begin with
+a lowercase letter.
 
 Tags are a restricted form of sum types.
 
