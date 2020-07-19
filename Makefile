@@ -1,4 +1,5 @@
 .PHONY: clean install check lint
+SHELL = bash
 
 MAKEFLAGS += --warn-undefined-variables --no-builtin-rules
 .DELETE_ON_ERROR:
@@ -19,8 +20,15 @@ lint:
 
 docs: man/emd.1 doc/user-guide.pdf docs/index.html
 
+bin/arm-linux-emd:
+	@mkdir -p $(dir $@)
+	@cabal build --with-ghc arm-linux-gnueabihf-ghc --with-ghc-pkg arm-linux-gnueabihf-ghc-pkg --constraint='language-dickinson +cross' exe:emd
+	$(eval BIN=$$(fd 'arm-linux.*emd$$' -t x -p -I) \
+	    cp $$BIN $@ \
+	    strip $@)
+
 clean:
-	rm -rf dist-newstyle .stack-work *.svg stack.yaml.lock doc/user-guide.html *.hp *.prof dist *.emdi
+	rm -rf dist-newstyle .stack-work *.svg stack.yaml.lock doc/user-guide.html *.hp *.prof dist *.emdi bin
 
 docs/index.html: doc/user-guide.html
 	@mkdir -p $(dir $@)
