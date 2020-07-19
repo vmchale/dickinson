@@ -307,6 +307,13 @@ emd> (:def announcer "RESULT: ${gambling}")
 emd> announcer
 ```
 
+Inspect the type of an expression with `:type`:
+
+```
+emd> :type announcer
+text
+```
+
 ## Saving & Restoring States
 
 We can save the REPL state, including any definitions we've declared during the
@@ -419,4 +426,52 @@ Here is a variation on cowsay:
                   ||----w |
                   ||     ||
     '''))
+```
+
+## Noun Declension
+
+We can use tuples and tags to model nouns and noun declension.
+
+```
+tydecl case = Nominative | Accusative | Dative | Genitive | Instrumental
+
+tydecl gender = Masculine | Feminine | Neuter
+
+tydecl number = Singular | Plural
+
+; demonstrative pronouns
+; "this" or "these"
+(:def decline
+  (:lambda x (case, gender, number)
+    (:match x
+      [(Nominative, Masculine, Singular) "þes"]
+      [(Accusative, Masculine, Singular) "þisne"]
+      [(Genitive, (Masculine|Neuter), Singular) "þisses"]
+      [(Dative, (Masculine|Neuter), Singular) "þissum"]
+      [(Instrumental, (Masculine|Neuter), Singular) "þys"]
+      [((Nominative|Accusative), Neuter, Singular) "þis"]
+      [(Nominative, Feminine, Singular) "þeos"]
+      [(Accusative, Feminine, Singular) "þas"]
+      [((Genitive|Dative|Instrumental), Feminine, Singular) "þisse"]
+      [((Nominative|Accusative), _, Plural) "þas"]
+      [(Genitive, _, Plural) "þissa"]
+      [(Dative, _, Plural) "þissum"]
+      )))
+```
+
+In the REPL:
+
+```
+emd> $ decline (Nominative, Feminine, Singular)
+þeos
+```
+
+This actually has no element of randomness but such capabilities are important
+for agreement in longer generative texts.
+
+For guidance:
+
+```
+emd> :type decline
+(-> (case, gender, number) text)
 ```

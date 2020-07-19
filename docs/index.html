@@ -68,6 +68,7 @@
 <li><a href="#examples">Examples</a>
 <ul>
 <li><a href="#cowsay">Cowsay</a></li>
+<li><a href="#noun-declension">Noun Declension</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -241,6 +242,9 @@
 <p>We can also create new definitions:</p>
 <pre><code>emd&gt; (:def announcer &quot;RESULT: ${gambling}&quot;)
 emd&gt; announcer</code></pre>
+<p>Inspect the type of an expression with <code>:type</code>:</p>
+<pre><code>emd&gt; :type announcer
+text</code></pre>
 <h2 id="saving-restoring-states">Saving &amp; Restoring States</h2>
 <p>We can save the REPL state, including any definitions we’ve declared during the session.</p>
 <pre><code>emd&gt; :save replSt.emdi</code></pre>
@@ -304,5 +308,38 @@ emd&gt; announcer</code></pre>
                   ||----w |
                   ||     ||
     &#39;&#39;&#39;))</code></pre>
+<h2 id="noun-declension">Noun Declension</h2>
+<p>We can use tuples and tags to model nouns and noun declension.</p>
+<pre><code>tydecl case = Nominative | Accusative | Dative | Genitive | Instrumental
+
+tydecl gender = Masculine | Feminine | Neuter
+
+tydecl number = Singular | Plural
+
+; demonstrative pronouns
+; &quot;this&quot; or &quot;these&quot;
+(:def decline
+  (:lambda x (case, gender, number)
+    (:match x
+      [(Nominative, Masculine, Singular) &quot;þes&quot;]
+      [(Accusative, Masculine, Singular) &quot;þisne&quot;]
+      [(Genitive, (Masculine|Neuter), Singular) &quot;þisses&quot;]
+      [(Dative, (Masculine|Neuter), Singular) &quot;þissum&quot;]
+      [(Instrumental, (Masculine|Neuter), Singular) &quot;þys&quot;]
+      [((Nominative|Accusative), Neuter, Singular) &quot;þis&quot;]
+      [(Nominative, Feminine, Singular) &quot;þeos&quot;]
+      [(Accusative, Feminine, Singular) &quot;þas&quot;]
+      [((Genitive|Dative|Instrumental), Feminine, Singular) &quot;þisse&quot;]
+      [((Nominative|Accusative), _, Plural) &quot;þas&quot;]
+      [(Genitive, _, Plural) &quot;þissa&quot;]
+      [(Dative, _, Plural) &quot;þissum&quot;]
+      )))</code></pre>
+<p>In the REPL:</p>
+<pre><code>emd&gt; $ decline (Nominative, Feminine, Singular)
+þeos</code></pre>
+<p>This actually has no element of randomness but such capabilities are important for agreement in longer generative texts.</p>
+<p>For guidance:</p>
+<pre><code>emd&gt; :type decline
+(-&gt; (case, gender, number) text)</code></pre>
 </body>
 </html>
