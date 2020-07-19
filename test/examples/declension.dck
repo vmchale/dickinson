@@ -1,0 +1,26 @@
+%-
+
+tydecl case = Nominative | Accusative | Dative | Genitive | Instrumental
+
+tydecl gender = Masculine | Feminine | Neuter
+
+tydecl number = Singular | Plural
+
+; demonstrative pronouns
+; "this" or "these"
+(:def decline
+  (:lambda x (case, gender, number)
+    (:match x
+      [(Nominative, Masculine, Singular) "þes"]
+      [(Accusative, Masculine, Singular) "þisne"]
+      [(Genitive, (Masculine|Neuter), Singular) "þisses"]
+      [(Dative, (Masculine|Neuter), Singular) "þissum"]
+      [(Instrumental, (Masculine|Neuter), Singular) "þys"]
+      [((Nominative|Accusative), Neuter, Singular) "þis"]
+      [(Nominative, Feminine, Singular) "þeos"]
+      [(Accusative, Feminine, Singular) "þas"]
+      [((Genitive|Dative|Instrumental), Feminine, Singular) "þisse"]
+      [((Nominative|Accusative), _, Plural) "þas"]
+      [(Genitive, _, Plural) "þissa"]
+      [(Dative, _, Plural) "þissum"]
+      )))
