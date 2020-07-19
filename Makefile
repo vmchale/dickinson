@@ -21,22 +21,40 @@ lint:
 
 docs: man/emd.1 doc/user-guide.pdf docs/index.html
 
-bins: bin/arm-linux-emd \
-    bin/arm-linux-emd.lz \
+distbins: bin/arm-linux-emd.lz \
     bin/arm-linux-emd.zst \
     bin/arm-linux-emd.gz \
     bin/arm-linux-emd.bz2 \
-    bin/aarch64-linux-emd \
     bin/aarch64-linux-emd.lz \
     bin/aarch64-linux-emd.zst \
     bin/aarch64-linux-emd.bz2 \
     bin/aarch64-linux-emd.gz \
-    bin/powerpc64le-linux-emd \
     bin/powerpc64le-linux-emd.lz \
     bin/powerpc64le-linux-emd.zst \
     bin/powerpc64le-linux-emd.gz \
     bin/powerpc64le-linux-emd.bz2 \
-    bin/sparc64-linux-emd
+    bin/sparc64-linux-emd.lz \
+    bin/sparc64-linux-emd.zst \
+    bin/sparc64-linux-emd.gz \
+    bin/sparc64-linux-emd.bz2 \
+    bin/x86_64-linux-emd.lz \
+    bin/x86_64-linux-emd.zst \
+    bin/x86_64-linux-emd.gz \
+    bin/x86_64-linux-emd.bz2
+
+bins: bin/arm-linux-emd \
+    bin/aarch64-linux-emd \
+    bin/powerpc64le-linux-emd \
+    bin/sparc64-linux-emd \
+    bin/x86_64-linux-emd
+
+# might be slower b/c static but
+bin/x86_64-linux-emd:
+	@mkdir -p $(dir $@)
+	cabal build exe:emd --enable-executable-static
+	export BIN=$$(fd 'x86_64-linux.*emd$$' -t x -p -I); \
+	    cp $$BIN $@ ; \
+	    strip $@
 
 bin/sparc64-linux-emd:
 	@mkdir -p $(dir $@)
