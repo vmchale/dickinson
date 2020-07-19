@@ -185,11 +185,24 @@
   ($ sayHello name))</code></pre>
 <p><code>$ f x</code> corresponds to <code>f x</code> in ML.</p>
 <h3 id="matches-tuples">Matches &amp; Tuples</h3>
-<p>Suppose we want to randomly pick quotes.</p>
+<p>Suppose we want to randomly pick quotes. First we define a function to return a quote by Fiona Apple:</p>
+<pre><code>(:def fionaAppleQuote
+  (:oneof
+    (|
+      &#39;&#39;&#39;
+      &quot;You&#39;re more likely to get cut with a dull tool than a sharp one.&quot;
+      &#39;&#39;&#39;)
+    (|
+      &#39;&#39;&#39;
+      &quot;You forgot the difference between equanimity and passivity.&quot;
+      &#39;&#39;&#39;)))</code></pre>
+<p>Then we can define <code>quote</code>, which returns a quote as well as the person who said it.</p>
 <pre><code>(:def quote
   (:oneof
     (| (&quot;« Le beau est ce qu&#39;on désire sans vouloir le manger. »&quot;, &quot;Simone Weil&quot;))
-    (| (&quot;\&quot;You forgot the difference between equanimity and passivity.\&quot;&quot;, &quot;Fiona Apple&quot;))))</code></pre>
+    (| (fionaAppleQuote, &quot;Fiona Apple&quot;))))</code></pre>
+<p>Each branch returns a tuple.</p>
+<p>We can use the <code>:match</code> construct to format the result of <code>quote</code>, viz.</p>
 <pre><code>(:def formatQuote
   (:lambda q (text, text)
     (:match q
@@ -201,8 +214,10 @@
 
 (:def main
   $ formatQuote quote)</code></pre>
-<!-- let bindings -->
+<p>Note the use of the <code>:lambda</code> in <code>formatQuote</code>; we specify the type <code>(text, text)</code>.</p>
 <h3 id="tags">Tags</h3>
+<!-- declension example? -->
+<!-- doggo example -->
 <p>Tags are a restricted form of sum types. <!-- or-patterns --></p>
 <h2 id="types">Types <!-- types lol --></h2>
 <h1 id="repl">REPL</h1>

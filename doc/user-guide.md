@@ -203,13 +203,34 @@ We can use `sayHello` with `$` (pronounced "apply").
 ### Matches & Tuples
 
 Suppose we want to randomly pick quotes.
+First we define a function to return a quote by Fiona Apple:
+
+```
+(:def fionaAppleQuote
+  (:oneof
+    (|
+      '''
+      "You're more likely to get cut with a dull tool than a sharp one."
+      ''')
+    (|
+      '''
+      "You forgot the difference between equanimity and passivity."
+      ''')))
+```
+
+Then we can define `quote`, which returns a quote as well as the person who said
+it.
 
 ```
 (:def quote
   (:oneof
     (| ("« Le beau est ce qu'on désire sans vouloir le manger. »", "Simone Weil"))
-    (| ("\"You forgot the difference between equanimity and passivity.\"", "Fiona Apple"))))
+    (| (fionaAppleQuote, "Fiona Apple"))))
 ```
+
+Each branch returns a tuple.
+
+We can use the `:match` construct to format the result of `quote`, viz.
 
 ```
 (:def formatQuote
@@ -225,9 +246,12 @@ Suppose we want to randomly pick quotes.
   $ formatQuote quote)
 ```
 
-<!-- let bindings -->
+Note the use of the `:lambda` in `formatQuote`; we specify the type `(text, text)`.
 
 ### Tags
+
+<!-- declension example? -->
+<!-- doggo example -->
 
 Tags are a restricted form of sum types. <!-- or-patterns -->
 
