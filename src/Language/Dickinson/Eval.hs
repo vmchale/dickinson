@@ -258,6 +258,7 @@ mapChoice f (Interp l es)      = Interp l (mapChoice f <$> es)
 mapChoice f (MultiInterp l es) = MultiInterp l (mapChoice f <$> es)
 mapChoice f (Concat l es)      = Concat l (mapChoice f <$> es)
 mapChoice f (Annot l e ty)     = Annot l (mapChoice f e) ty
+mapChoice f (Tuple l es)       = Tuple l (mapChoice f <$> es)
 mapChoice _ _                  = error "Internal error in function mapChoice."
 
 setFrequency :: NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a)

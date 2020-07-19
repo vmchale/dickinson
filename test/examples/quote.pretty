@@ -1,0 +1,27 @@
+%-
+
+(:def fionaAppleQuote
+  (:oneof
+    (| '''
+       "You're more likely to get cut with a dull tool than a sharp one."
+       ''')
+    (| '''
+       "You forgot the difference between equanimity and passivity."
+       ''')))
+
+(:def quote
+  (:oneof
+    (| ("« Le beau est ce qu'on désire sans vouloir le manger. »", "Simone Weil"))
+    (| (fionaAppleQuote, "Fiona Apple"))))
+
+(:def formatQuote
+  (:lambda q (text, text)
+    (:match q
+      [(quote, name)
+        '''
+        ${quote}
+            — ${name}
+        '''])))
+
+(:def main
+  ($ formatQuote (:flatten quote)))

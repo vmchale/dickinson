@@ -26,6 +26,7 @@ evalTests = testGroup "Evaluation test"
     , testCase "test/data/flattenLambda.dck" example
     , testCase "Match on ADT constructors" matchAdtEval
     , testCase "Work with or-patterns" orPatternEval
+    , resultCase "test/examples/quote.dck"
     ]
 
 forceResult :: a -> Assertion

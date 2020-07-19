@@ -116,7 +116,8 @@ instance Pretty (Dickinson a) where
     pretty (Dickinson is ds) = concatWith (\x y -> x <> hardline <> hardline <> y) (fmap pretty is <> ["%-"] <> fmap pretty ds)
 
 prettyLetLeaf :: Pretty t => (t, Expression a) -> Doc b
-prettyLetLeaf (n, e) = group (brackets (pretty n <+> pretty e))
+prettyLetLeaf (n, e@MultiInterp{}) = group (brackets (pretty n <^> pretty e))
+prettyLetLeaf (n, e)               = group (brackets (pretty n <+> pretty e))
 
 prettyChoiceBranch :: (Double, Expression a) -> Doc b
 prettyChoiceBranch (d, e) = parens (pipe <+> pretty d <+> pretty e)
@@ -169,7 +170,7 @@ instance Pretty (Expression a) where
     pretty StrChunk{}         = error "Internal error: naked StrChunk"
     pretty (Tuple _ es)       = tupled (toList (pretty <$> es))
     pretty (Match _ n brs)    = parens (":match" <+> pretty n <^> vsep (toList (fmap prettyLetLeaf brs)))
-    pretty (Flatten _ e)      = parens (":flatten" <^> pretty e)
+    pretty (Flatten _ e)      = group (parens (":flatten" <^> pretty e))
     pretty (Annot _ e ty)     = pretty e <+> colon <+> pretty ty
     pretty (Constructor _ tn) = pretty tn
 

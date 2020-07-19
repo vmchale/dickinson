@@ -1,5 +1,9 @@
 # dickinson
 
+# 1.0.0.1
+
+  * Fix bug when calling `:flatten` on tuples.
+
 # 1.0.0.0
 
   * Fix bug in typechecker
