@@ -250,11 +250,13 @@ Note the use of the `:lambda` in `formatQuote`; we specify the type `(text, text
 
 ### Tags
 
-Tags are a restricted form of sum types.
+Tags can be used to split things based on cases.
 
 ```
-tydecl case = Nominative | Oblique | Possessive
+tydecl number = Singular | Plural
 ```
+
+Tags are a restricted form of sum types.
 
 ## Types
 
@@ -418,7 +420,7 @@ Here is a variation on cowsay:
 (:def cowsay
   (:lambda txt text
     '''
-    
+
     ${txt}
     ------
           \   ^__^
