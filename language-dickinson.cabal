@@ -26,6 +26,7 @@ extra-source-files:
     test/eval/*.dck
     test/error/*.dck
     test/demo/*.dck
+    test/examples/*.dck
     examples/*.dck
 
 extra-doc-files:
