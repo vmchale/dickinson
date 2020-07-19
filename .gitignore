@@ -1,4 +1,5 @@
 doc/user-guide.html
+bin/
 tags
 *.swp
 .vagrant
