@@ -117,6 +117,7 @@ instance Pretty (Dickinson a) where
 
 prettyLetLeaf :: Pretty t => (t, Expression a) -> Doc b
 prettyLetLeaf (n, e@MultiInterp{}) = group (brackets (pretty n <^> pretty e))
+prettyLetLeaf (n, e@Choice{})      = group (brackets (pretty n <^> pretty e))
 prettyLetLeaf (n, e)               = group (brackets (pretty n <+> pretty e))
 
 prettyChoiceBranch :: (Double, Expression a) -> Doc b
