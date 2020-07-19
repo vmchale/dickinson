@@ -1,8 +1,10 @@
+# sak: https://hub.darcs.net/vmchale/sak
+
 %.zst: %
 	sak compress $< $@ --best
 
 %.gz: %
-	sak compress $< $@ --best
+	gzip -k -f $< --best
 
 %.lz: %
 	sak compress $< $@ --best
