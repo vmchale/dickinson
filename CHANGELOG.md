@@ -2,6 +2,7 @@
 
   * Fix bug in `:type`
   * Add builtins `oulipo`, `allCaps`, `capitalize`, and `titlecase`
+  * Fix bug with nested `:flatten`s
 
 # 1.0.0.1
 

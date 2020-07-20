@@ -288,6 +288,9 @@ countNodes (Interp _ es)      = product (fmap countNodes es)
 countNodes (MultiInterp _ es) = product (fmap countNodes es)
 countNodes (Concat _ es)      = product (fmap countNodes es)
 countNodes (Annot _ e _)      = countNodes e
+countNodes (Flatten _ e)      = countNodes e
+countNodes BuiltinFn{}        = 1
+countNodes Constructor{}      = 1 -- TODO: lambdas too maybe? -> unclear
 countNodes _                  = error "Internal error in function countNodes"
 
 concatOrFail :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => (T.Text -> T.Text) -> a -> [Expression a] -> m (Expression a)
