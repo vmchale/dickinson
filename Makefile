@@ -11,7 +11,7 @@ DCK_PRELUDE := $(wildcard ./prelude/*.dck)
 
 HS_SRC := $(shell find run -type f) $(shell find src -type f) language-dickinson.cabal
 
-VERSION := $(shell grep -P -o '\d+\.\d+\.\d+\.\d+' language-dickinson.cabal | head -n1)
+VERSION := $(shell grep -E -o '\d+\.\d+\.\d+\.\d+' language-dickinson.cabal | head -n1)
 
 TOKEN := $(shell cat ~/.git-token)
 
