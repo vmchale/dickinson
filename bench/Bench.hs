@@ -66,9 +66,11 @@ main =
                 , bgroup "fileValidate"
                     [ benchValidate "test/examples/declension.dck"
                     ]
-                , env amalDecline $ \d ->
+                , env amalComplex $ \ ~(d, r) ->
                   bgroup "validate"
-                    [ bench "test/examples/declension.dck" $ nf validateRun d ]
+                    [ bench "test/examples/declension.dck" $ nf validateRun d
+                    , bench "test/data/refractory.dck" $ nf validateRun r
+                    ]
                 , env amalFortune $ \f ->
                   bgroup "typecheck"
                     [ bench "examples/fortune.dck" $ nf tyRun f ]
@@ -99,7 +101,9 @@ main =
           amalgamated = (,)
             <$> amalgamateRename [] "examples/shakespeare.dck"
             <*> amalgamateRename [] "examples/catherineOfSienaBot.dck"
-          amalDecline = amalgamateRename [] "test/examples/declension.dck"
+          amalComplex = (,)
+            <$> amalgamateRename [] "test/examples/declension.dck"
+            <*> amalgamateRename [] "test/data/refractory.dck"
 
 plainExpr :: (UniqueCtx, Dickinson a) -> Dickinson a
 plainExpr = fst . uncurry renameDickinson

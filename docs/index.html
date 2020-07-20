@@ -253,6 +253,10 @@ emd&gt; announcer</code></pre>
 <p>Inspect the type of an expression with <code>:type</code>:</p>
 <pre><code>emd&gt; :type announcer
 text</code></pre>
+<p>We can define types in the REPL:</p>
+<pre><code>emd&gt; tydecl case = Nominative | Oblique | Possessive
+emd&gt; :type Nominative
+case</code></pre>
 <h2 id="saving-restoring-states">Saving &amp; Restoring States</h2>
 <p>We can save the REPL state, including any definitions we’ve declared during the session.</p>
 <pre><code>emd&gt; :save replSt.emdi</code></pre>

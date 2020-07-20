@@ -188,3 +188,4 @@ renameExpressionM (Flatten l e) =
 renameExpressionM (Annot l e ty) =
     Annot l <$> renameExpressionM e <*> pure ty
 renameExpressionM c@Constructor{} = pure c
+renameExpressionM c@BuiltinFn{} = pure c

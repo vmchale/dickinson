@@ -78,6 +78,8 @@ import Language.Dickinson.Unique
     flatten { TokKeyword $$ KwFlatten }
     tydecl { TokKeyword $$ KwTyDecl }
 
+    builtin { $$@(TokBuiltin _ _) }
+
     text { TokKeyword $$ KwText }
 
     ident { $$@(TokIdent _ _) }
@@ -153,6 +155,7 @@ Expression :: { Expression AlexPosn }
            | let some(brackets(Bind)) Expression { Let $1 (NE.reverse $2) $3 }
            | lambda Name Type Expression { Lambda $1 $2 $3 $4 }
            | ident { Var (loc $1) (ident $1) }
+           | builtin { BuiltinFn (loc $1) (builtin $1) }
            | stringLiteral { Literal (loc $1) (str $1) }
            | strBegin some(Interp) strEnd { Interp $1 (toList $ NE.reverse $2) }
            | multiStrBegin some(Interp) multiStrEnd { MultiInterp $1 (processMultiChunks $ toList $ NE.reverse $2) }

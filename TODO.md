@@ -56,7 +56,7 @@
   emd> Boy
   1:1 Constructor Boy not found
   ```
-- [ ]
+- [x]
   ```
   emd> (:flatten "a")
   a
@@ -87,7 +87,7 @@
     - [ ] Requires expression application + type checker pass?
   - [ ] Filter? (e.g. vowels...)
 - [ ] Import/module system
-  - [ ] Checkers should work with the module system
+  - [x] Checkers should work with the module system
   - [ ] Modules don't give global uniqueness; fix scoping/deletions
 - [x] Sum types (`Boy | Girl`)
   - [ ] Exhaustiveness checker

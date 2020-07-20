@@ -66,28 +66,32 @@ loop :: Repl AlexPosn ()
 loop = do
     inp <- getInputLine "emd> "
     case words <$> inp of
-        Just []             -> loop
-        Just (":h":_)       -> showHelp *> loop
-        Just (":help":_)    -> showHelp *> loop
-        Just (":save":[fp]) -> saveReplSt fp *> loop
-        Just (":save":_)    -> liftIO (putStrLn ":save takes one argument") *> loop
-        Just (":l":fs)      -> traverse loadFile fs *> loop
-        Just (":load":fs)   -> traverse loadFile fs *> loop
-        Just (":r":[fp])    -> loadReplSt fp *> loop
-        Just (":r":_)       -> liftIO (putStrLn ":r takes one argument") *> loop
-        Just (":type":e:_)  -> typeExpr e *> loop
-        Just (":t":e:_)     -> typeExpr e *> loop
-        Just (":view":n:_)  -> bindDisplay (T.pack n) *> loop
-        Just (":view":_)    -> liftIO (putStrLn ":view takes a name as an argument") *> loop
-        Just [":q"]         -> pure ()
-        Just [":quit"]      -> pure ()
-        Just [":list"]      -> listNames *> loop
-        Just (":list":_)    -> liftIO (putStrLn ":list takes no arguments") *> loop
-        Just [":dump"]      -> dumpSt *> loop
-        Just (":dump":_)    -> liftIO (putStrLn ":dump takes no arguments") *> loop
+        Just []                       -> loop
+        Just (":h":_)                 -> showHelp *> loop
+        Just (":help":_)              -> showHelp *> loop
+        Just (":save":[fp])           -> saveReplSt fp *> loop
+        Just (":save":_)              -> liftIO (putStrLn ":save takes one argument") *> loop
+        Just (":l":fs)                -> traverse loadFile fs *> loop
+        Just (":load":fs)             -> traverse loadFile fs *> loop
+        Just (":r":[fp])              -> loadReplSt fp *> loop
+        Just (":r":_)                 -> liftIO (putStrLn ":r takes one argument") *> loop
+        Just (":type":e)              -> typeExpr (unwords e) *> loop
+        Just (":t":e)                 -> typeExpr (unwords e) *> loop
+        Just (":view":["oulipo"])     -> liftIO (putStrLn "(internal)") *> loop
+        Just (":view":["allCaps"])    -> liftIO (putStrLn "(internal)") *> loop
+        Just (":view":["capitalize"]) -> liftIO (putStrLn "(internal)") *> loop
+        Just (":view":["titleCase"])  -> liftIO (putStrLn "(internal)") *> loop
+        Just (":view":n:_)            -> bindDisplay (T.pack n) *> loop
+        Just (":view":_)              -> liftIO (putStrLn ":view takes a name as an argument") *> loop
+        Just [":q"]                   -> pure ()
+        Just [":quit"]                -> pure ()
+        Just [":list"]                -> listNames *> loop
+        Just (":list":_)              -> liftIO (putStrLn ":list takes no arguments") *> loop
+        Just [":dump"]                -> dumpSt *> loop
+        Just (":dump":_)              -> liftIO (putStrLn ":dump takes no arguments") *> loop
         -- TODO: erase/delete names?
-        Just{}              -> printExpr (fromJust inp) *> loop
-        Nothing             -> pure ()
+        Just{}                        -> printExpr (fromJust inp) *> loop
+        Nothing                       -> pure ()
 
 rightPad :: Int -> String -> String
 rightPad n str = take n $ str ++ repeat ' '
@@ -128,7 +132,12 @@ listNames :: Repl AlexPosn ()
 listNames = liftIO . traverse_ TIO.putStrLn =<< names
 
 names :: Repl AlexPosn [T.Text]
-names = lift namesState
+names = appendBuiltins <$> lift namesState
+    where appendBuiltins =
+              ("oulipo":)
+            . ("allCaps":)
+            . ("capitalize":)
+            . ("titleCase":)
 
 bindDisplay :: T.Text -> Repl AlexPosn ()
 bindDisplay t = do

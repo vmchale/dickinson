@@ -43,6 +43,7 @@ maxUniqueType (TyTuple _ ts)                    = maximum (fmap maxUniqueType ts
 maxUniqueType (TyNamed _ (Name _ (Unique k) _)) = k
 
 maxUniqueExpression :: Expression a -> Int
+maxUniqueExpression BuiltinFn{}                           = 0
 maxUniqueExpression Literal{}                             = 0
 maxUniqueExpression (Constructor _ (Name _ (Unique k) _)) = k
 maxUniqueExpression StrChunk{}                            = 0

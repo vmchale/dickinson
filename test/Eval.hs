@@ -27,6 +27,7 @@ evalTests = testGroup "Evaluation test"
     , testCase "Match on ADT constructors" matchAdtEval
     , testCase "Work with or-patterns" orPatternEval
     , resultCase "test/examples/quote.dck"
+    , resultCase "test/data/refractory.dck"
     ]
 
 forceResult :: a -> Assertion

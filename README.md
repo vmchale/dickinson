@@ -4,6 +4,13 @@ Dickinson is a text-generation language.
 
 ## Installation
 
+### Binaries
+
+Binaries for some platforms are available on the [releases
+page](https://github.com/vmchale/dickinson/releases).
+
+### Source
+
 To install, first download [cabal-install](https://www.haskell.org/cabal/) and
 [GHC](https://www.haskell.org/ghc/download.html). Then:
 
@@ -34,8 +41,7 @@ Plug 'vmchale/dickinson' , { 'rtp' : 'vim' }
 A user guide is available in
 [markdown](https://github.com/vmchale/dickinson/blob/master/doc/user-guide.md)
 and as
-a [pdf](https://github.com/vmchale/dickinson/blob/master/doc/user-guide.pdf). It
-is hosted on [github pages](https://vmchale.github.io/dickinson/) in HTML form.
+a [pdf](https://github.com/vmchale/dickinson/blob/master/doc/user-guide.pdf).
 
 See `man/emd.1` for man pages.
 

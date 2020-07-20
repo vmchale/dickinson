@@ -49,6 +49,7 @@ checkPatternExpr :: Expression a -> Maybe (DickinsonError a)
 checkPatternExpr Var{}              = Nothing
 checkPatternExpr Literal{}          = Nothing
 checkPatternExpr StrChunk{}         = Nothing
+checkPatternExpr BuiltinFn{}        = Nothing
 checkPatternExpr (Interp _ es)      = foldMapAlternative checkPatternExpr es
 checkPatternExpr (MultiInterp _ es) = foldMapAlternative checkPatternExpr es
 checkPatternExpr (Apply _ e e')     = checkPatternExpr e <|> checkPatternExpr e'

@@ -17,6 +17,7 @@
                                     , Token (..)
                                     , Keyword (..)
                                     , Sym (..)
+                                    , Builtin (..)
                                     , HasLexerState (..)
                                     ) where
 
@@ -107,6 +108,12 @@ tokens :-
         ":flatten"                 { mkKeyword KwFlatten }
         "tydecl"                   { mkKeyword KwTyDecl }
 
+        -- builtins
+        capitalize                 { mkBuiltin Capitalize }
+        allCaps                    { mkBuiltin AllCaps }
+        titlecase                  { mkBuiltin Titlecase }
+        oulipo                     { mkBuiltin Oulipo }
+
         -- identifiers
         @name                      { tok (\p s -> TokIdent p <$> newIdentAlex p (mkText s)) }
         @tyname                    { tok (\p s -> TokTyCons p <$> newIdentAlex p (mkText s)) }
@@ -192,6 +199,8 @@ constructor c t = tok (\p _ -> alex $ c p t)
 
 mkKeyword = constructor TokKeyword
 
+mkBuiltin = constructor TokBuiltin
+
 mkSym = constructor TokSym
 
 doSym t act = tok (\p _ -> TokSym p t <$ act)
@@ -267,6 +276,12 @@ instance Pretty Sym where
     pretty DeclBreak     = "%-"
     pretty Eq            = "="
 
+data Builtin = Capitalize
+             | AllCaps
+             | Titlecase
+             | Oulipo
+             deriving (Eq, Show, Generic, NFData, Binary, Data)
+
 data Keyword = KwDef
              | KwLet
              | KwBranch
@@ -278,6 +293,12 @@ data Keyword = KwDef
              | KwFlatten
              | KwTyDecl
              deriving (Eq, Generic, NFData)
+
+instance Pretty Builtin where
+    pretty Capitalize = "capitalize"
+    pretty AllCaps    = "allCaps"
+    pretty Titlecase  = "titlecase"
+    pretty Oulipo     = "oulipo"
 
 instance Pretty Keyword where
     pretty KwDef     = ":def"
@@ -311,6 +332,7 @@ data Token a = EOF { loc :: a }
              | TokString { loc :: a, str :: T.Text }
              | TokKeyword { loc :: a, kw :: Keyword }
              | TokSym { loc :: a, sym :: Sym }
+             | TokBuiltin { loc :: a, builtin :: Builtin }
              deriving (Eq, Generic, NFData)
 
 instance Pretty (Token a) where
@@ -322,6 +344,7 @@ instance Pretty (Token a) where
     pretty (TokStrChunk _ str') = pretty str'
     pretty (TokKeyword _ kw')   = pretty kw'
     pretty (TokSym _ sym')      = pretty sym'
+    pretty (TokBuiltin _ b)     = pretty b
 
 loop :: Alex [Token AlexPosn]
 loop = do

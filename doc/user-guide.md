@@ -328,6 +328,14 @@ emd> :type announcer
 text
 ```
 
+We can define types in the REPL:
+
+```
+emd> tydecl case = Nominative | Oblique | Possessive
+emd> :type Nominative
+case
+```
+
 ## Saving & Restoring States
 
 We can save the REPL state, including any definitions we've declared during the

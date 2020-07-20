@@ -126,7 +126,7 @@ library dickinson
         base >=4.9 && <5,
         array -any,
         bytestring -any,
-        text -any,
+        text >=1.0.0.0,
         mtl -any,
         transformers -any,
         containers -any,

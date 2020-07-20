@@ -65,6 +65,9 @@ bins: bin/arm-linux-emd \
     bin/sparc64-linux-emd \
     bin/x86_64-linux-emd
 
+language-dickinson-src.pax:
+	cabal sdist --list-only | spax -w -f $@
+
 # might be slower b/c static but
 bin/x86_64-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
