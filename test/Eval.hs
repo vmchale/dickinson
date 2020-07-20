@@ -28,6 +28,7 @@ evalTests = testGroup "Evaluation test"
     , testCase "Work with or-patterns" orPatternEval
     , resultCase "test/examples/quote.dck"
     , resultCase "test/data/refractory.dck"
+    , resultCase "test/examples/lambda.dck"
     ]
 
 forceResult :: a -> Assertion

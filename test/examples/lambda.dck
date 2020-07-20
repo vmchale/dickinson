@@ -1,0 +1,13 @@
+%-
+
+(:def sayHello
+  (:lambda name text
+    "Hello, ${name}."))
+
+(:def name
+  (:oneof
+    (| "Alice")
+    (| "Bob")))
+
+(:def main
+  ($ sayHello name))

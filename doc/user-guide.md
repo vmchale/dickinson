@@ -198,6 +198,12 @@ We can use `sayHello` with `$` (pronounced "apply").
   ($ sayHello name))
 ```
 
+We can `emd run` this:
+
+```
+Hello, Bob.
+```
+
 `$ f x` corresponds to `f x` in ML.
 
 ### Matches & Tuples
