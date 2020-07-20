@@ -37,6 +37,7 @@ checkMultipleExpr :: Expression a -> Maybe (DickinsonWarning a)
 checkMultipleExpr Var{}              = Nothing
 checkMultipleExpr Literal{}          = Nothing
 checkMultipleExpr StrChunk{}         = Nothing
+checkMultipleExpr BuiltinFn{}        = Nothing
 checkMultipleExpr (Interp _ es)      = foldMapAlternative checkMultipleExpr es
 checkMultipleExpr (MultiInterp _ es) = foldMapAlternative checkMultipleExpr es
 checkMultipleExpr (Apply _ e e')     = checkMultipleExpr e <|> checkMultipleExpr e'
