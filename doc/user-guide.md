@@ -252,6 +252,13 @@ We can use the `:match` construct to format the result of `quote`, viz.
   $ formatQuote quote)
 ```
 
+We `emd run` this to get something like:
+
+```
+"You forgot the difference between equanimity and passivity."
+    — Fiona Apple
+```
+
 Note the use of the `:lambda` in `formatQuote`; we specify the type `(text, text)`.
 
 ### Tags
