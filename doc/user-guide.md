@@ -7,7 +7,8 @@ Dickinson is a text-generation language for generative literature. Each time you
 code, you get back randomly generated text.
 
 It provides a language to define random texts like the [Magical Realism
-Bot](https://twitter.com/MagicRealismBot).
+Bot](https://twitter.com/MagicRealismBot) or [fortune
+program](https://en.wikipedia.org/wiki/Fortune_%28Unix%29).
 
 # Installing Dickinson
 
@@ -252,7 +253,7 @@ We can use the `:match` construct to format the result of `quote`, viz.
   $ formatQuote quote)
 ```
 
-We `emd run` this to get something like:
+We can `emd run` this:
 
 ```
 "You forgot the difference between equanimity and passivity."
@@ -399,8 +400,14 @@ The `color` module is bundled by default:
   "Today's mood is ${color}")
 ```
 
+Which gives:
+
+```
+Today's mood is citron
+```
+
 The `:include` must come before the `%-`; definitions come after the
-`%-` as above.
+`%-`.
 
 `color.dck` contains:
 
@@ -416,6 +423,10 @@ The `:include` must come before the `%-`; definitions come after the
 ```
 
 ## Writing Libraries
+
+Libraries can contain definitions and type declarations.
+
+You can run `emd check` on a library file to validate it.
 
 # Scripting
 

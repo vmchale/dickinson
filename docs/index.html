@@ -74,7 +74,7 @@
 </nav>
 <h1 id="introduction">Introduction</h1>
 <p>Dickinson is a text-generation language for generative literature. Each time you run your code, you get back randomly generated text.</p>
-<p>It provides a language to define random texts like the <a href="https://twitter.com/MagicRealismBot">Magical Realism Bot</a>.</p>
+<p>It provides a language to define random texts like the <a href="https://twitter.com/MagicRealismBot">Magical Realism Bot</a> or <a href="https://en.wikipedia.org/wiki/Fortune_%28Unix%29">fortune program</a>.</p>
 <h1 id="installing-dickinson">Installing Dickinson</h1>
 <p>First, install <a href="https://www.haskell.org/cabal/download.html">cabal</a> and <a href="https://www.haskell.org/ghc/download.html">GHC</a>. Then:</p>
 <pre><code>cabal install language-dickinson</code></pre>
@@ -217,7 +217,7 @@
 
 (:def main
   $ formatQuote quote)</code></pre>
-<p>We <code>emd run</code> this to get something like:</p>
+<p>We can <code>emd run</code> this:</p>
 <pre><code>&quot;You forgot the difference between equanimity and passivity.&quot;
     — Fiona Apple</code></pre>
 <p>Note the use of the <code>:lambda</code> in <code>formatQuote</code>; we specify the type <code>(text, text)</code>.</p>
@@ -284,7 +284,9 @@ emd&gt; announcer</code></pre>
 
 (:def main
   &quot;Today&#39;s mood is ${color}&quot;)</code></pre>
-<p>The <code>:include</code> must come before the <code>%-</code>; definitions come after the <code>%-</code> as above.</p>
+<p>Which gives:</p>
+<pre><code>Today&#39;s mood is citron</code></pre>
+<p>The <code>:include</code> must come before the <code>%-</code>; definitions come after the <code>%-</code>.</p>
 <p><code>color.dck</code> contains:</p>
 <pre><code>%-
 
@@ -295,6 +297,8 @@ emd&gt; announcer</code></pre>
     (| &quot;azure&quot;)
     ...</code></pre>
 <h2 id="writing-libraries">Writing Libraries</h2>
+<p>Libraries can contain definitions and type declarations.</p>
+<p>You can run <code>emd check</code> on a library file to validate it.</p>
 <h1 id="scripting">Scripting</h1>
 <p><code>emd</code> ignores any lines staring with <code>#!</code>; put</p>
 <pre><code>#!/usr/bin/env emd</code></pre>
