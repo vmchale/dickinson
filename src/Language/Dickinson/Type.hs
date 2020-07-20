@@ -28,6 +28,7 @@ import           Data.Text.Prettyprint.Doc          (Doc, Pretty (pretty), align
 import           Data.Text.Prettyprint.Doc.Ext      (hardSep, (<#*>), (<#>), (<^>))
 import           Data.Text.Prettyprint.Doc.Internal (unsafeTextWithoutNewlines)
 import           GHC.Generics                       (Generic)
+import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
 
 data Dickinson a = Dickinson { modImports :: [Import a]
@@ -89,6 +90,7 @@ data Expression a = Literal { exprAnn :: a, litText :: T.Text }
                           , exprTy  :: DickinsonTy a
                           }
                   | Constructor { exprAnn :: a, constructorName :: TyName a }
+                  | BuiltinFn { exprAnn :: a, exprBuiltin :: Builtin }
                   deriving (Generic, NFData, Binary, Functor, Show, Data)
                   -- TODO: builtins?
 
@@ -164,6 +166,7 @@ instance Pretty (Expression a) where
         | allEq (fst <$> brs) = parens (":oneof" <#> indent 2 (hardSep (toList $ fmap prettyChoiceOneof (snd <$> brs))))
         | otherwise           = parens (":branch" <#> indent 2 (hardSep (toList $ fmap prettyChoiceBranch brs)))
     pretty (Lambda _ n ty e)  = parens (":lambda" <+> pretty n <+> pretty ty <#*> pretty e)
+    pretty (Apply _ e e'@Choice{}) = parens ("$" <+> pretty e <^> pretty e')
     pretty (Apply _ e e')     = parens ("$" <+> pretty e <+> pretty e')
     pretty (Interp _ es)      = group (dquotes (foldMap prettyInterp es))
     pretty (MultiInterp _ es) = group (align ("'''" <> prettyMultiInterp es <> "'''"))
@@ -174,6 +177,7 @@ instance Pretty (Expression a) where
     pretty (Flatten _ e)      = group (parens (":flatten" <^> pretty e))
     pretty (Annot _ e ty)     = pretty e <+> colon <+> pretty ty
     pretty (Constructor _ tn) = pretty tn
+    pretty (BuiltinFn _ b)    = pretty b
 
 instance Pretty (DickinsonTy a) where
     pretty TyText{}       = "text"

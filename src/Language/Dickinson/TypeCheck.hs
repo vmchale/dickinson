@@ -141,3 +141,5 @@ typeOf (Constructor l tn@(Name _ (Unique k) _)) = do
     case IM.lookup k tyEnv of
         Just ty -> pure ty
         Nothing -> throwError $ UnfoundConstructor l tn
+typeOf (BuiltinFn l _) = pure $ -- all builtins have type (-> text text)
+    TyFun l (TyText l) (TyText l)

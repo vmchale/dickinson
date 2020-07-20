@@ -20,6 +20,7 @@ import           Control.Monad                 ((<=<))
 import           Control.Monad.Except          (MonadError, throwError)
 import qualified Control.Monad.Ext             as Ext
 import           Control.Monad.State.Lazy      (MonadState, get, gets, modify, put)
+import           Data.Char                     (toUpper)
 import           Data.Foldable                 (toList, traverse_)
 import qualified Data.IntMap                   as IM
 import           Data.List.NonEmpty            (NonEmpty, (<|))
@@ -52,7 +53,6 @@ data EvalSt a = EvalSt
     -- For error messages
     , tyEnv         :: TyEnv a
     }
-
 
 instance HasLexerState (EvalSt a) where
     lexerStateLens f s = fmap (\x -> s { lexerState = x }) (f (lexerState s))
@@ -191,6 +191,7 @@ bindPattern (PatternTuple l _) _             = throwError $ MalformedTuple l
 tryEvalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 tryEvalExpressionM e@Literal{}    = pure e
 tryEvalExpressionM e@StrChunk{}   = pure e
+tryEvalExpressionM e@BuiltinFn{}  = pure e
 tryEvalExpressionM v@(Var _ n)    = maybe (pure v) tryEvalExpressionM =<< tryLookupName n
 tryEvalExpressionM (Choice _ pes) = tryEvalExpressionM =<< pick pes
 tryEvalExpressionM (Tuple l es)   = Tuple l <$> traverse tryEvalExpressionM es
@@ -203,6 +204,8 @@ tryEvalExpressionM (Apply l e e') = do
         Lambda _ n _ e''' ->
             withSt (nameMod n e') $
                 tryEvalExpressionM e'''
+        BuiltinFn l' b ->
+            Apply l (BuiltinFn l' b) <$> tryEvalExpressionM e'
         _ -> pure $ Apply l e'' e
 tryEvalExpressionM (Interp l es)      = Interp l <$> traverse tryEvalExpressionM es
 tryEvalExpressionM (MultiInterp l es) = MultiInterp l <$> traverse tryEvalExpressionM es
@@ -220,6 +223,7 @@ tryEvalExpressionM (Match l e brs) = do
 evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 evalExpressionM e@Literal{}     = pure e
 evalExpressionM e@StrChunk{}    = pure e
+evalExpressionM e@BuiltinFn{}   = pure e
 evalExpressionM e@Constructor{} = pure e
 evalExpressionM (Var _ n)       = evalExpressionM =<< lookupName n
 evalExpressionM (Choice _ pes)  = evalExpressionM =<< pick pes
@@ -237,6 +241,8 @@ evalExpressionM (Apply _ e e') = do
         Lambda _ n _ e''' ->
             withSt (nameMod n e') $
                 evalExpressionM =<< tryEvalExpressionM e''' -- tryEvalExpressionM is a special function to "pull" eval through lambdas...
+        BuiltinFn _ b ->
+            mapText (applyBuiltin b) <$> evalExpressionM e'
         _ -> error "Ill-typed expression"
 evalExpressionM e@Lambda{} = pure e
 evalExpressionM (Match l e brs) = do
@@ -260,6 +266,16 @@ mapChoice f (Concat l es)      = Concat l (mapChoice f <$> es)
 mapChoice f (Annot l e ty)     = Annot l (mapChoice f e) ty
 mapChoice f (Tuple l es)       = Tuple l (mapChoice f <$> es)
 mapChoice _ _                  = error "Internal error in function mapChoice."
+
+mapText :: (T.Text -> T.Text) -> Expression a -> Expression a
+mapText f (Literal l t)      = Literal l (f t)
+mapText f (StrChunk l t)     = StrChunk l (f t)
+mapText f (Choice l brs)     = let ps = fst <$> brs in Choice l (NE.zip ps (fmap (mapText f . snd) brs))
+mapText f (Interp l es)      = Interp l (mapText f <$> es)
+mapText f (MultiInterp l es) = MultiInterp l (mapText f <$> es)
+mapText f (Annot l e ty)     = Annot l (mapText f e) ty
+mapText f (Concat l es)      = Concat l (mapText f <$> es)
+mapText _ _                  = error "Internal error in function mapText."
 
 setFrequency :: NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a)
 setFrequency = fmap (\(_, e) -> (fromIntegral $ {-# SCC "countNodes" #-} countNodes e, e))
@@ -291,6 +307,7 @@ resolveFlattenM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) =>
 resolveFlattenM e@Literal{}     = pure e
 resolveFlattenM e@StrChunk{}    = pure e
 resolveFlattenM e@Constructor{} = pure e
+resolveFlattenM e@BuiltinFn{}   = pure e
 resolveFlattenM (Var _ n)       = resolveFlattenM =<< lookupName n
 resolveFlattenM (Choice l pes) = do
     let ps = fst <$> pes -- TODO: do these need to be renamed
@@ -310,6 +327,8 @@ resolveFlattenM (Apply _ e e') = do
         Lambda _ n _ e''' ->
             withSt (nameMod n e') $
                 resolveFlattenM e'''
+        BuiltinFn _ b ->
+            mapText (applyBuiltin b) <$> resolveFlattenM e'
         _ -> error "Ill-typed expression"
 resolveFlattenM e@Lambda{} = pure e
 resolveFlattenM (Match l e brs) = do
@@ -325,6 +344,7 @@ resolveFlattenM (Annot _ e _) = resolveFlattenM e
 -- | Resolve let bindings and such; do not perform choices or concatenations.
 resolveExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 resolveExpressionM e@Literal{}     = pure e
+resolveExpressionM e@BuiltinFn{}   = pure e
 resolveExpressionM e@StrChunk{}    = pure e
 resolveExpressionM e@Constructor{} = pure e
 resolveExpressionM v@(Var _ n)     = maybe (pure v) resolveExpressionM =<< tryLookupName n
@@ -355,3 +375,11 @@ resolveExpressionM (Match l e brs) = do
 resolveExpressionM (Flatten l e) =
     Flatten l <$> resolveExpressionM e
 resolveExpressionM (Annot _ e _) = resolveExpressionM e
+
+applyBuiltin :: Builtin -> T.Text -> T.Text
+applyBuiltin AllCaps    = T.toUpper
+applyBuiltin Capitalize = \t -> case T.uncons t of
+    Nothing      -> ""
+    Just (c, t') -> T.cons (toUpper c) t'
+applyBuiltin Oulipo     = T.filter (/= 'e')
+applyBuiltin Titlecase  = T.toTitle -- TODO: better

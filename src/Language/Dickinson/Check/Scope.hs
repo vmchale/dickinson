@@ -60,6 +60,7 @@ checkType (TyNamed l n@(Name _ (Unique k) _)) = do
         else pure $ Just (UnfoundType l n)
 
 checkExpr :: Expression a -> CheckM (Maybe (DickinsonError a))
+checkExpr BuiltinFn{}    = pure Nothing
 checkExpr Literal{}      = pure Nothing
 checkExpr StrChunk{}     = pure Nothing
 checkExpr (Apply _ e e') = (<|>) <$> checkExpr e <*> checkExpr e'
