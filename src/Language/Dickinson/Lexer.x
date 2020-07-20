@@ -279,7 +279,7 @@ instance Pretty Sym where
 data Builtin = Capitalize
              | AllCaps
              | Titlecase
-             | Oulipo
+             | Oulipo -- ^ Filter all @e@s from text.
              deriving (Eq, Show, Generic, NFData, Binary, Data)
 
 data Keyword = KwDef

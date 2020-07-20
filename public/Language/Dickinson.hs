@@ -10,6 +10,7 @@ module Language.Dickinson ( -- * Parser
                           , Dickinson
                           , Declaration (..)
                           , Expression (..)
+                          , Builtin (..)
                           , Pattern (..)
                           , DickinsonTy (..)
                           , Name
