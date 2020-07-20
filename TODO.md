@@ -56,7 +56,7 @@
   emd> Boy
   1:1 Constructor Boy not found
   ```
-- [ ]
+- [x]
   ```
   emd> (:flatten "a")
   a

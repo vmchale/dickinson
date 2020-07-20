@@ -75,8 +75,8 @@ loop = do
         Just (":load":fs)   -> traverse loadFile fs *> loop
         Just (":r":[fp])    -> loadReplSt fp *> loop
         Just (":r":_)       -> liftIO (putStrLn ":r takes one argument") *> loop
-        Just (":type":e:_)  -> typeExpr e *> loop
-        Just (":t":e:_)     -> typeExpr e *> loop
+        Just (":type":e)    -> typeExpr (unwords e) *> loop
+        Just (":t":e)       -> typeExpr (unwords e) *> loop
         Just (":view":n:_)  -> bindDisplay (T.pack n) *> loop
         Just (":view":_)    -> liftIO (putStrLn ":view takes a name as an argument") *> loop
         Just [":q"]         -> pure ()
