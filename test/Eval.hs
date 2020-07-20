@@ -29,6 +29,7 @@ evalTests = testGroup "Evaluation test"
     , resultCase "test/examples/quote.dck"
     , resultCase "test/data/refractory.dck"
     , resultCase "test/examples/lambda.dck"
+    , resultCase "test/examples/library.dck"
     ]
 
 forceResult :: a -> Assertion

@@ -1,0 +1,6 @@
+(:include color)
+
+%-
+
+(:def main
+  "Today's mood is ${color}")
