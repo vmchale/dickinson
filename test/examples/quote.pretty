@@ -20,7 +20,7 @@
       [(quote, name)
         '''
         ${quote}
-            — ${($ titlecase name)}
+            — ${name}
         '''])))
 
 (:def main

@@ -38,6 +38,7 @@ goldenTests =
         , withDckFile "test/eval/matchSex.dck"
         , withDckFile "test/examples/quote.dck"
         , withDckFile "test/examples/declension.dck"
+        , withDckFile "test/data/refractory.dck"
         ]
 
 prettyBSL :: Dickinson a -> BSL.ByteString

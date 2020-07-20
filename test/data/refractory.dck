@@ -1,6 +1,7 @@
 %-
 
 (:def fionaAppleQuote
+  $ oulipo
   (:oneof
     (| 
       '''
@@ -22,7 +23,7 @@
       [(quote, name)
         '''
         ${quote}
-            — ${name}
+            — ${$titlecase name}
         '''])))
 
 (:def main

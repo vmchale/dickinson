@@ -1,15 +1,14 @@
 %-
 
 (:def fionaAppleQuote
-  (:oneof
-    (| 
-      '''
-      "You're more likely to get cut with a dull tool than a sharp one."
-      ''')
-    (|
-      '''
-      "You forgot the difference between equanimity and passivity."
-      ''')))
+  ($ oulipo
+    (:oneof
+      (| '''
+         "You're more likely to get cut with a dull tool than a sharp one."
+         ''')
+      (| '''
+         "You forgot the difference between equanimity and passivity."
+         '''))))
 
 (:def quote
   (:oneof
@@ -22,8 +21,8 @@
       [(quote, name)
         '''
         ${quote}
-            — ${name}
+            — ${($ titlecase name)}
         '''])))
 
 (:def main
-  $ formatQuote (:flatten quote))
+  ($ formatQuote (:flatten quote)))
