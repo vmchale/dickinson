@@ -13,9 +13,7 @@ HS_SRC := $(shell find run -type f) $(shell find src -type f) language-dickinson
 
 VERSION := $(shell grep -E -o '\d+\.\d+\.\d+\.\d+' language-dickinson.cabal | head -n1)
 
-TOKEN := $(shell cat ~/.git-token)
-
-GR_OPTIONS := -s $(TOKEN) -u vmchale -r dickinson -t $(VERSION)
+GR_OPTIONS := -u vmchale -r dickinson -t $(VERSION)
 
 DISTBINS := bin/arm-linux-emd.lz \
     bin/arm-linux-emd.zst \
