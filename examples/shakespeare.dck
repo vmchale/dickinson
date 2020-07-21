@@ -1,4 +1,5 @@
 ; ported from madlang
+; originally from http://web.mit.edu/dryfoo/Funny-pages/shakespeare-insult-kit.html I think
 %-
 
 (:def adjective
