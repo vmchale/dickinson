@@ -41,7 +41,6 @@ check:
 	emd check $(DCK_LIB) $(DCK_PRELUDE)
 
 release: man/emd.1 distbins
-	# github-release release $(GR_OPTIONS)
 	github-release upload $(GR_OPTIONS) -n emd.1 -f man/emd.1 --replace
 	for bin in $(DISTBINS) ; do \
 	    github-release upload $(GR_OPTIONS) -n $$(basename $$bin) -f $$bin --replace ; \
