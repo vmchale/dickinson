@@ -149,3 +149,5 @@
 - [x] Benchmark renamer
 - [x] `+RTS -Ax`
 - [ ] https://github.com/AndrasKovacs/smalltt/blob/master/krakow-pres.pdf
+# Paper
+- [ ] better tracery https://link.springer.com/chapter/10.1007/978-3-319-27036-4_14
