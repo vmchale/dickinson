@@ -558,3 +558,31 @@ Thou beslubbering clouted hedge-pig!
 ```
 
 See the full example in `examples/shakespeare.dck`.
+
+## Lyrics Bot
+
+Lyrics bots sample lyrics from some particular artist; see the [africa by toto bot]
+(https://twitter.com/africabytotobot) for an example.
+
+We can make our own Fiona Apple bot, viz.
+
+```
+%-
+
+(:def fiona
+  (:oneof
+    (| "You forgot the difference between equanimity and passivity.")
+    (| "You're more likely to get cut with a dull tool than a sharp one.")
+    (| "The child is gone.")
+    (|
+      '''
+      Oh darling, it's so sweet
+      You think you know how crazy, how crazy I am.
+      ''')
+    ...
+
+(:def main
+  fiona)
+```
+
+See the full example in `examples/fionaBot.dck`
