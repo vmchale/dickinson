@@ -526,7 +526,7 @@ emd> :type decline
 
 Inspired by the [Shakespeare Insult
 Kit](http://web.mit.edu/dryfoo/Funny-pages/shakespeare-insult-kit.html)'s
-insult table, we can generate our own randomly.
+insult table, we can generate our own insults.
 
 ```
 %-
@@ -556,3 +556,5 @@ Run it get something like:
 ```
 Thou beslubbering clouted hedge-pig!
 ```
+
+See the full example in `examples/shakespeare.dck`.
