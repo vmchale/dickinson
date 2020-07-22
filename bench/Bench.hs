@@ -74,12 +74,13 @@ main =
                 , env amalFortune $ \f ->
                   bgroup "typecheck"
                     [ bench "examples/fortune.dck" $ nf tyRun f ]
-                , env amalgamated $ \ ~(s, c) ->
+                , env amalgamated $ \ ~(s, c, r) ->
                   bgroup "check + eval"
                     [ bench "examples/shakespeare.dck" $ nfIO (txtIO s)
                     , bench "examples/catherineOfSienaBot.dck" $ nfIO (txtIO c)
+                    , bench "test/data/refractory" $ nfIO (txtIO r)
                     ]
-                , env amalgamated $ \ ~(s, c) ->
+                , env amalgamated $ \ ~(s, c, _) ->
                   bgroup "eval"
                     [ bench "examples/shakespeare.dck" $ nfIO (evalIO $ evalDickinsonAsMain s)
                     , bench "examples/catherineOfSienaBot.dck" $ nfIO (evalIO $ evalDickinsonAsMain c)
@@ -98,9 +99,10 @@ main =
           encodeShakespeare = encode . void . either throw id . parse <$> shakespeare
           encodeEnv = (,) <$> encoded <*> encodeShakespeare
           amalFortune = amalgamateRename [] "examples/fortune.dck"
-          amalgamated = (,)
+          amalgamated = (,,)
             <$> amalgamateRename [] "examples/shakespeare.dck"
             <*> amalgamateRename [] "examples/catherineOfSienaBot.dck"
+            <*> amalgamateRename [] "test/data/refractory.dck"
           amalComplex = (,)
             <$> amalgamateRename [] "test/examples/declension.dck"
             <*> amalgamateRename [] "test/data/refractory.dck"
