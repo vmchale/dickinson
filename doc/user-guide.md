@@ -561,8 +561,8 @@ See the full example in `examples/shakespeare.dck`.
 
 ## Lyrics Bot
 
-Lyrics bots sample lyrics from some particular artist; see the [africa by toto bot]
-(https://twitter.com/africabytotobot) for an example.
+Lyrics bots sample lyrics from some particular artist; see the [africa by toto bot](
+https://twitter.com/africabytotobot) for an example.
 
 We can make our own Fiona Apple bot, viz.
 

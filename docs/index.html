@@ -70,6 +70,7 @@
 <li><a href="#cowsay">Cowsay</a></li>
 <li><a href="#noun-declension">Noun Declension</a></li>
 <li><a href="#shakespearen-insult-generator">Shakespearen Insult Generator</a></li>
+<li><a href="#lyrics-bot">Lyrics Bot</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -364,7 +365,7 @@ tydecl number = Singular | Plural
 <pre><code>emd&gt; :type decline
 (-&gt; (case, gender, number) text)</code></pre>
 <h2 id="shakespearen-insult-generator">Shakespearen Insult Generator</h2>
-<p>Inspired by the <a href="http://web.mit.edu/dryfoo/Funny-pages/shakespeare-insult-kit.html">Shakespeare Insult Kit</a>’s insult table, we can generate our own randomly.</p>
+<p>Inspired by the <a href="http://web.mit.edu/dryfoo/Funny-pages/shakespeare-insult-kit.html">Shakespeare Insult Kit</a>’s insult table, we can generate our own insults.</p>
 <pre><code>%-
 
 (:def adjective
@@ -387,5 +388,26 @@ tydecl number = Singular | Plural
   (&quot;Thou ${adjective} ${adjective} ${noun}!&quot;))</code></pre>
 <p>Run it get something like:</p>
 <pre><code>Thou beslubbering clouted hedge-pig!</code></pre>
+<p>See the full example in <code>examples/shakespeare.dck</code>.</p>
+<h2 id="lyrics-bot">Lyrics Bot</h2>
+<p>Lyrics bots sample lyrics from some particular artist; see the <a href="https://twitter.com/africabytotobot">africa by toto bot</a> for an example.</p>
+<p>We can make our own Fiona Apple bot, viz.</p>
+<pre><code>%-
+
+(:def fiona
+  (:oneof
+    (| &quot;You forgot the difference between equanimity and passivity.&quot;)
+    (| &quot;You&#39;re more likely to get cut with a dull tool than a sharp one.&quot;)
+    (| &quot;The child is gone.&quot;)
+    (|
+      &#39;&#39;&#39;
+      Oh darling, it&#39;s so sweet
+      You think you know how crazy, how crazy I am.
+      &#39;&#39;&#39;)
+    ...
+
+(:def main
+  fiona)</code></pre>
+<p>See the full example in <code>examples/fionaBot.dck</code></p>
 </body>
 </html>
