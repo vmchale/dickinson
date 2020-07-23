@@ -21,9 +21,30 @@ Dickinson is a language for generative literature targeting English. This refere
 Dickinson programs have the following lexical structure:
 
 \begin{align*}
-    comment &=: {\tt ; .*} \\
+    comment &=: {\tt ; .}^*\$ \\
     identifier &=: {\tt [a-z][a-zA-Z0-9]}^* \\
-    typeIdentifier &=: {\tt [A-Z][a-zA-Z0-9]}^*
+    typeIdentifier &=: {\tt [A-Z][a-zA-Z0-9]}^* \\
+    moduleIdentifier &=: (identifier.)^* identifier \\
+    include &=: {\tt :include} \\
+    let &=: {\tt :let} \\
+    match &=: {\tt :match} \\
+    branch &=: {\tt :branch} \\
+    oneof &=: {\tt :oneof} \\
+    def &=: {\tt :def} \\
+    lambda &=: {\tt :lambda} \\
+    flatten &=: {\tt :flatten} \\
+    text &=: {\tt text} \\
+    tydecl &=: {\tt tydecl} \\
+    arrow &=: (\rightarrow | {\tt ->}) \\
+    probability &=: ({\tt [0-9]}^+| {\tt [0-9]}^+.{\tt [0-9]}^*)
+\end{align*}
+
+\subsection{Syntax Tree}
+
+\begin{align*}
+    expression =: &( ({\tt :let} identifier expression) \\
+               &| string \\
+               &)
 \end{align*}
 
 \end{document}
