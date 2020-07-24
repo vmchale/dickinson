@@ -36,7 +36,7 @@ import qualified Data.Map as M
 import Data.Semigroup ((<>))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
-import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, rbrace, rbracket, lbracket, colon, dquotes, dquote, rangle, comma)
+import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, rbrace, rbracket, lbracket, colon, squotes, dquotes, dquote, rangle, comma, (<+>))
 import GHC.Generics (Generic)
 import Language.Dickinson.Name
 import Language.Dickinson.Unique
@@ -337,14 +337,14 @@ data Token a = EOF { loc :: a }
 
 instance Pretty (Token a) where
     pretty EOF{}                = mempty
-    pretty (TokIdent _ n)       = pretty n
-    pretty (TokTyCons _ tn)     = pretty tn
+    pretty (TokIdent _ n)       = "identifier" <+> squotes (pretty n)
+    pretty (TokTyCons _ tn)     = "constructor" <+> squotes (pretty tn)
     pretty (TokDouble _ d)      = pretty d
     pretty (TokString _ str')   = dquotes (pretty str')
     pretty (TokStrChunk _ str') = pretty str'
-    pretty (TokKeyword _ kw')   = pretty kw'
+    pretty (TokKeyword _ kw')   = "keyword" <+> squotes (pretty kw')
     pretty (TokSym _ sym')      = pretty sym'
-    pretty (TokBuiltin _ b)     = pretty b
+    pretty (TokBuiltin _ b)     = "builtin" <+> squotes (pretty b)
 
 loop :: Alex [Token AlexPosn]
 loop = do
