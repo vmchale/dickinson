@@ -1,13 +1,17 @@
+(:include color)
+
 %-
 
 (:def adjective
-  (:oneof
-    (| "sententious")
-    (| "poetic")
-    (| "plain")
-    (| "bromide")
-    (| "banal")
-    (| "redolent")
-    (| "pithy")
-    (| "orotund")
-    (| "stentorian")))
+  (:flatten
+    (:oneof
+      (| color)
+      (| "sententious")
+      (| "poetic")
+      (| "plain")
+      (| "bromide")
+      (| "banal")
+      (| "redolent")
+      (| "pithy")
+      (| "orotund")
+      (| "stentorian"))))
