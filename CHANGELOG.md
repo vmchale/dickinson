@@ -1,5 +1,7 @@
 # dickinson
 
+# 1.1.0.0
+
   * Fix bug in `:type`
   * Add builtins `oulipo`, `allCaps`, `capitalize`, and `titlecase`
   * Fix bug with nested `:flatten`s
