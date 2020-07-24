@@ -1,0 +1,7 @@
+%-
+
+; use if you want to supplement e.g. the standard library's colors with your own
+(:def flappend
+  (:lambda x text
+    (:lambda y text
+      (:flatten (:oneof (|x) (|y))))))
