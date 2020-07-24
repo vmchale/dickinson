@@ -1,12 +1,17 @@
 module Language.Dickinson.Lib ( defaultLibPath
-                              , libPath
+                              , dckPath
                               ) where
 
+import           Data.List.Split          (splitWhen)
 import           Paths_language_dickinson (getDataDir)
+import           System.Environment       (lookupEnv)
 import           System.FilePath          ((</>))
 
-libPath :: IO [FilePath]
-libPath = defaultLibPath <*> pure []
+dckPath :: IO [FilePath]
+dckPath = maybe [] splitEnv <$> lookupEnv "DCK_PATH"
+
+splitEnv :: String -> [FilePath]
+splitEnv = splitWhen (== ':')
 
 defaultLibPath :: IO ([FilePath] -> [FilePath])
 defaultLibPath = do

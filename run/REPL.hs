@@ -44,8 +44,8 @@ import           System.Directory                      (getHomeDirectory)
 import           System.FilePath                       ((</>))
 import           System.Random                         (newStdGen, randoms)
 
-dickinsonRepl :: IO ()
-dickinsonRepl = runRepl loop
+dickinsonRepl :: [FilePath] -> IO ()
+dickinsonRepl fps = runRepl (traverse_ loadFile fps *> loop)
 
 type Repl a = InputT (StateT (EvalSt a) IO)
 
@@ -218,8 +218,9 @@ putErr (Left y) _  = liftIO $ TIO.putStrLn (prettyText y)
 loadFile :: FilePath -> Repl AlexPosn ()
 loadFile fp = do
     pathMod <- liftIO defaultLibPath
+    dp <- liftIO dckPath
     mErr <- lift $ runExceptT $ do
-        d <- amalgamateRenameM (pathMod ["."]) fp
+        d <- amalgamateRenameM (pathMod (".":dp)) fp
         maybeThrow $ checkScope d
         tyTraverse d
         loadDickinson d

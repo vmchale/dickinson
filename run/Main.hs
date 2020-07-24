@@ -78,10 +78,14 @@ wrapper = info (helper <*> versionMod <*> act)
 versionMod :: Parser (a -> a)
 versionMod = infoOption dickinsonVersionString (short 'V' <> long "version" <> help "Show version")
 
+modIs :: [FilePath] -> IO [FilePath]
+modIs is =
+    defaultLibPath <*> ((++) <$> dckPath <*> pure is)
+
 run :: Act -> IO ()
-run (Run fp is)       = do { pGo <- defaultLibPath ; TIO.putStrLn =<< pipeline (pGo is) fp }
-run (REPL _)          = dickinsonRepl
-run (Check fs i)      = do { pathMod <- defaultLibPath ; traverse_ (validateFile (pathMod i)) fs }
+run (Run fp is)       = do { is' <- modIs is ; TIO.putStrLn =<< pipeline is' fp }
+run (REPL fps)        = dickinsonRepl fps
+run (Check fs i)      = do { is' <- modIs i ; traverse_ (validateFile is') fs }
 run (Lint fs)         = traverse_ warnFile fs
 run (Format fp False) = fmtFile fp
 run (Format fp True)  = fmtInplace fp
