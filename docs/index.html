@@ -54,6 +54,7 @@
 <li><a href="#repl">REPL</a>
 <ul>
 <li><a href="#saving-restoring-states">Saving &amp; Restoring States</a></li>
+<li><a href="#builtins">Builtins</a></li>
 </ul></li>
 <li><a href="#lints">Lints</a></li>
 <li><a href="#libraries">Libraries</a>
@@ -272,6 +273,19 @@ case</code></pre>
 emd&gt; announcer</code></pre>
 <p>For reference information about the Dickinson REPL:</p>
 <pre><code>:help</code></pre>
+<h2 id="builtins">Builtins</h2>
+<p>Dickinson has several builtin functions. You can see all names in scope (including builtins) with <code>:list</code>, viz.</p>
+<pre><code>emd&gt; :list
+oulipo
+allCaps
+capitalize
+titleCase</code></pre>
+<p>We can inspect the type like defined names:</p>
+<pre><code>emd&gt; :type allCaps
+(-&gt; text text)</code></pre>
+<p>Try it out:</p>
+<pre><code>emd&gt; $ allCaps &quot;Guilt and self-laceration are indulgences&quot;
+GUILT AND SELF-LACERATION ARE INDULGENCES</code></pre>
 <h1 id="lints">Lints</h1>
 <p><code>emd</code> has a linter which can make suggestions based on probable mistakes. We can invoke it with <code>emd lint</code>:</p>
 <pre><code>emd lint silly.dck</code></pre>

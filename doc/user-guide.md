@@ -372,6 +372,33 @@ For reference information about the Dickinson REPL:
 :help
 ```
 
+## Builtins
+
+Dickinson has several builtin functions. You can see all names in scope
+(including builtins) with `:list`, viz.
+
+```
+emd> :list
+oulipo
+allCaps
+capitalize
+titleCase
+```
+
+We can inspect the type like defined names:
+
+```
+emd> :type allCaps
+(-> text text)
+```
+
+Try it out:
+
+```
+emd> $ allCaps "Guilt and self-laceration are indulgences"
+GUILT AND SELF-LACERATION ARE INDULGENCES
+```
+
 # Lints
 
 `emd` has a linter which can make suggestions based on
