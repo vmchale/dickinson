@@ -39,6 +39,11 @@ syntax match dickinsonSymbol "%-"
 syntax match dickinsonSymbol "⟶"
 syntax match dickinsonSymbol "->"
 
+syntax match dickinsonBuiltin "oulipo"
+syntax match dickinsonBuiltin "allCaps"
+syntax match dickinsonBuiltin "capitalize"
+syntax match dickinsonBuiltin "titlecase"
+
 highlight link dickinsonComment Comment
 highlight link dickinsonInterpolation Special
 highlight link dickinsonKeyword Keyword
@@ -48,5 +53,6 @@ highlight link dickinsonString String
 highlight link dickinsonType Type
 highlight link dickinsonSymbol Special
 highlight link dickinsonEsc Special
+highlight link dickinsonBuiltin Underlined
 
 let b:current_syntax = 'dickinson'
