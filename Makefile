@@ -15,6 +15,8 @@ VERSION := $(shell grep -P -o '\d+\.\d+\.\d+\.\d+' language-dickinson.cabal | he
 
 GR_OPTIONS := -u vmchale -r dickinson -t $(VERSION)
 
+DOCS := man/emd.1 doc/user-guide.pdf
+
 DISTBINS := bin/arm-linux-emd.lz \
     bin/arm-linux-emd.zst \
     bin/arm-linux-emd.gz \
@@ -62,7 +64,10 @@ bins: bin/arm-linux-emd \
     bin/sparc64-linux-emd \
     bin/x86_64-linux-emd
 
-language-dickinson-src.pax:
+dist.pax: $(DCK_PRELUDE) $(DCK_LIB) $(DOCS)
+	star -c -f $@ $^
+
+language-dickinson-src.pax: $(DCK_PRELUDE) $(DCK_LIB) $(HS_SRC)
 	cabal sdist --list-only | spax -w -f $@
 
 # might be slower b/c static but
@@ -102,7 +107,7 @@ bin/arm-linux-emd: $(HS_SRC)
 	    arm-linux-gnueabihf-strip $@
 
 clean:
-	rm -rf dist-newstyle .stack-work *.svg stack.yaml.lock doc/user-guide.html *.hp *.prof dist *.emdi bin
+	rm -rf dist-newstyle .stack-work *.svg stack.yaml.lock doc/user-guide.html *.hp *.prof dist *.emdi bin *.pax*
 
 docs/index.html: doc/user-guide.html
 	@mkdir -p $(dir $@)
