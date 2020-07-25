@@ -46,8 +46,7 @@ check:
 	emd lint $(DCK_LIB) $(DCK_PRELUDE)
 	emd check $(DCK_LIB) $(DCK_PRELUDE)
 
-release: man/emd.1 dists
-	github-release upload $(GR_OPTIONS) -n emd.1 -f man/emd.1 --replace
+release: dists
 	for dist in $(DISTS) ; do \
 	    github-release upload $(GR_OPTIONS) -n $$dist -f $$dist --replace ; \
 	done
