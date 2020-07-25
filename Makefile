@@ -75,12 +75,14 @@ language-dickinson-src.pax: $(DCK_PRELUDE) $(DCK_LIB) $(HS_SRC)
 
 bin/x86_64-freebsd-emd:
 	@mkdir -p $(dir $@)
-	vagrant ssh --command 'cabal update \
+	vagrant ssh --command 'set -x pipefail \
+	    cabal update \
 	    cabal unpack language-dickinson \
 	    cd language-dickinson-$(VERSION) \
 	    cabal build exe:emd --constraint="language-dickinson -zstd" --enable-executable-static \
-	    strip /home/vagrant/language-dickinson-$(VERSION)/dist-newstyle/build/x86_64-freebsd/ghc-8.8.3/language-dickinson-1.1.0.0/x/emd/build/emd/emd \
-	    cp /home/vagrant/language-dickinson-$(VERSION)/dist-newstyle/build/x86_64-freebsd/ghc-8.8.3/language-dickinson-1.1.0.0/x/emd/build/emd/emd /vagrant/$@'
+	    bin=$$(find . -name emd -type f) \
+	    strip $$bin \
+	    cp $$bin /vagrant/$@'
 
 # might be slower b/c static but
 bin/x86_64-linux-emd: $(HS_SRC)
