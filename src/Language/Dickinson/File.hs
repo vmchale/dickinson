@@ -88,7 +88,7 @@ validateAmalgamate is fp = do
 
 -- | Run some lints
 warnFile :: FilePath -> IO ()
-warnFile = maybeThrowIO . (\x -> checkDuplicates x <|> checkMultiple x) . (\(Dickinson _ d) -> d)
+warnFile = maybeThrowIO . (\x -> checkDuplicates x <|> checkMultiple x) . modDefs
     <=< eitherThrowIO . parse
     <=< BSL.readFile
 

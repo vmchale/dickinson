@@ -8,7 +8,7 @@ let g:syntastic_dickinson_emd_exec = 'emd'
 function! SyntaxCheckers_dickinson_emd_GetLocList() dict
     let makeprg = self.makeprgBuild({
                 \ 'exe': self.getExec(),
-                \ 'args': 'check',
+                \ 'args': 'ide',
                 \ 'fname': shellescape(expand('%') )})
 
     let errorformat =

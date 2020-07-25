@@ -19,6 +19,7 @@ data Act = Run !FilePath ![FilePath]
          | Lint ![FilePath]
          | Format !FilePath Bool
          | Man
+         | Ide !FilePath ![FilePath]
 
 main :: IO ()
 main = run =<< execParser wrapper
@@ -31,6 +32,7 @@ act = hsubparser
     <> command "lint" (info lintP (progDesc "Examine a file for common errors."))
     <> command "fmt" (info formatP (progDesc "Format Dickinson code"))
     <> command "man" (info (pure Man) (progDesc "Dump path to manpages"))
+    <> command "ide" (info ide (progDesc "Run all checks and lints"))
     ) <|> runP
 
 formatP :: Parser Act
@@ -43,6 +45,9 @@ replP = REPL <$> many dckFile
 
 runP :: Parser Act
 runP = Run <$> dckFile <*> includes
+
+ide :: Parser Act
+ide = Ide <$> dckFile <*> includes
 
 checkP :: Parser Act
 checkP = Check <$> some dckFile <*> includes
@@ -90,3 +95,4 @@ run (Lint fs)         = traverse_ warnFile fs
 run (Format fp False) = fmtFile fp
 run (Format fp True)  = fmtInplace fp
 run Man               = putStrLn . (</> "emd.1") . (</> "man") =<< getDataDir
+run (Ide fp is)       = do { is' <- modIs is ; validateFile is' fp ; warnFile fp }

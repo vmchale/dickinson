@@ -3,6 +3,7 @@
   * Read `DCK_PATH` variable when searching for files.
   * Improvements to `lib/noun.dck`
   * Add `lib/flappend.dck`
+  * Add `ide` subcommand that runs lints + checks
 
 # 1.1.0.0
 
