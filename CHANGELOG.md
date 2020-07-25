@@ -1,5 +1,9 @@
 # dickinson
 
+  * Read `DCK_PATH` variable when searching for files.
+  * Improvements to `lib/noun.dck`
+  * Add `lib/flappend.dck`
+
 # 1.1.0.0
 
   * Fix bug in `:type`
