@@ -75,7 +75,7 @@ language-dickinson-src.pax: $(DCK_PRELUDE) $(DCK_LIB) $(HS_SRC)
 
 bin/x86_64-freebsd-emd:
 	@mkdir -p $(dir $@)
-	vagrant ssh --command 'set -x pipefail \
+	vagrant ssh --command 'set -x \
 	    cabal update \
 	    cabal unpack language-dickinson \
 	    cd language-dickinson-$(VERSION) \
