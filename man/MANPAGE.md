@@ -74,6 +74,10 @@ at the top of a file and `emd` will be used as an interpreter.
 **-I** **-\-include**
 :   Directory to search for libraries
 
+# INFLUENTIAL ENVIRONMENT VARIABLES
+
+`DCK_PATH` - a colon-separated list of directories to search
+
 # EDITOR INTEGRATION
 
 A vim plugin is available; see
