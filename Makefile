@@ -17,35 +17,39 @@ GR_OPTIONS := -u vmchale -r dickinson -t $(VERSION)
 
 DOCS := man/emd.1 doc/user-guide.pdf
 
-DISTBINS := bin/arm-linux-emd.lz \
-    bin/arm-linux-emd.zst \
-    bin/arm-linux-emd.gz \
-    bin/arm-linux-emd.bz2 \
-    bin/aarch64-linux-emd.lz \
-    bin/aarch64-linux-emd.zst \
-    bin/aarch64-linux-emd.bz2 \
-    bin/aarch64-linux-emd.gz \
-    bin/powerpc64le-linux-emd.lz \
-    bin/powerpc64le-linux-emd.zst \
-    bin/powerpc64le-linux-emd.gz \
-    bin/powerpc64le-linux-emd.bz2 \
-    bin/sparc64-linux-emd.lz \
-    bin/sparc64-linux-emd.zst \
-    bin/sparc64-linux-emd.gz \
-    bin/sparc64-linux-emd.bz2 \
-    bin/x86_64-linux-emd.lz \
-    bin/x86_64-linux-emd.zst \
-    bin/x86_64-linux-emd.gz \
-    bin/x86_64-linux-emd.bz2
+DISTS := x86_64-linux-dist.tar.lz \
+    x86_64-linux-dist.tar.zst \
+    x86_64-linux-dist.tar.bz2 \
+    x86_64-linux-dist.tar.gz \
+    arm-linux-dist.tar.lz \
+    arm-linux-dist.tar.zst \
+    arm-linux-dist.tar.bz2 \
+    arm-linux-dist.tar.gz \
+    aarch64-linux-dist.tar.lz \
+    aarch64-linux-dist.tar.zst \
+    aarch64-linux-dist.tar.bz2 \
+    aarch64-linux-dist.tar.gz \
+    sparc64-linux-dist.tar.lz \
+    sparc64-linux-dist.tar.zst \
+    sparc64-linux-dist.tar.bz2 \
+    sparc64-linux-dist.tar.gz \
+    powerpc64le-linux-dist.tar.lz \
+    powerpc64le-linux-dist.tar.zst \
+    powerpc64le-linux-dist.tar.bz2 \
+    powerpc64le-linux-dist.tar.gz \
+    x86_64-freebsd-dist.tar.lz \
+    x86_64-freebsd-dist.tar.zst \
+    x86_64-freebsd-dist.tar.bz2 \
+    x86_64-freebsd-dist.tar.gz 
 
 check:
 	emd lint $(DCK_LIB) $(DCK_PRELUDE)
 	emd check $(DCK_LIB) $(DCK_PRELUDE)
 
-release: man/emd.1 distbins
+release: man/emd.1 dists
 	github-release upload $(GR_OPTIONS) -n emd.1 -f man/emd.1 --replace
-	for bin in $(DISTBINS) ; do \
-	    github-release upload $(GR_OPTIONS) -n $$(basename $$bin) -f $$bin --replace ; \
+	for dist in $(DISTS) ; do \
+	    github-release upload $(GR_OPTIONS) -n $$dist -f $$dist --replace ; \
 	done
 
 lint:
@@ -56,7 +60,7 @@ lint:
 
 docs: man/emd.1 doc/user-guide.pdf docs/index.html
 
-distbins: $(DISTBINS)
+dists: $(DISTS)
 
 bins: bin/arm-linux-emd \
     bin/aarch64-linux-emd \
@@ -64,11 +68,20 @@ bins: bin/arm-linux-emd \
     bin/sparc64-linux-emd \
     bin/x86_64-linux-emd
 
-dist.pax: $(DCK_PRELUDE) $(DCK_LIB) $(DOCS)
+%-dist.tar: $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) bin/%-emd
 	star -c -f $@ $^
 
 language-dickinson-src.pax: $(DCK_PRELUDE) $(DCK_LIB) $(HS_SRC)
 	cabal sdist --list-only | spax -w -f $@
+
+bin/x86_64-freebsd-emd:
+	@mkdir -p $(dir $@)
+	vagrant ssh --command 'cabal update \
+	    cabal unpack language-dickinson \
+	    cd language-dickinson-$(VERSION) \
+	    cabal build exe:emd --constraint="language-dickinson -zstd" --enable-executable-static \
+	    strip /home/vagrant/language-dickinson-$(VERSION)/dist-newstyle/build/x86_64-freebsd/ghc-8.8.3/language-dickinson-1.1.0.0/x/emd/build/emd/emd \
+	    cp /home/vagrant/language-dickinson-$(VERSION)/dist-newstyle/build/x86_64-freebsd/ghc-8.8.3/language-dickinson-1.1.0.0/x/emd/build/emd/emd /vagrant/$@'
 
 # might be slower b/c static but
 bin/x86_64-linux-emd: $(HS_SRC)
@@ -107,7 +120,7 @@ bin/arm-linux-emd: $(HS_SRC)
 	    arm-linux-gnueabihf-strip $@
 
 clean:
-	rm -rf dist-newstyle .stack-work *.svg stack.yaml.lock doc/user-guide.html *.hp *.prof dist *.emdi bin *.pax*
+	rm -rf dist-newstyle .stack-work *.svg stack.yaml.lock doc/user-guide.html *.hp *.prof dist *.emdi bin *.pax* *.tar*
 
 docs/index.html: doc/user-guide.html
 	@mkdir -p $(dir $@)

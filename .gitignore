@@ -1,6 +1,6 @@
 doc/user-guide.html
 *.pax*
-*.pax
+*.tar*
 *.toc
 bin/
 tags
