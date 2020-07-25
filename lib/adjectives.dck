@@ -1,3 +1,5 @@
+; augmented version of madlang library
+
 (:include color)
 
 %-
