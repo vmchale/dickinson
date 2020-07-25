@@ -65,6 +65,7 @@ main =
                     ]
                 , bgroup "fileValidate"
                     [ benchValidate "test/examples/declension.dck"
+                    , bench "lib/adjectives.dck" $ nfIO (validateFile ["lib"] "lib/adjectives.dck")
                     ]
                 , env amalComplex $ \ ~(d, r) ->
                   bgroup "validate"

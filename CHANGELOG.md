@@ -1,8 +1,8 @@
 # dickinson
 
   * Read `DCK_PATH` variable when searching for files.
-  * Improvements to `lib/noun.dck`
-  * Add `lib/flappend.dck`
+  * Improvements to `lib/noun.dck` and `lib/adjectives.dck`
+  * Add `lib/flappend.dck` and `lib/adverb.dck`
   * Add `ide` subcommand that runs lints + checks
 
 # 1.1.0.0
