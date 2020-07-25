@@ -65,7 +65,8 @@ bins: bin/arm-linux-emd \
     bin/aarch64-linux-emd \
     bin/powerpc64le-linux-emd \
     bin/sparc64-linux-emd \
-    bin/x86_64-linux-emd
+    bin/x86_64-linux-emd \
+    bin/x86_64-freebsd-emd
 
 %-dist.tar: $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) bin/%-emd
 	star -c -f $@ $^
@@ -82,7 +83,8 @@ bin/x86_64-freebsd-emd:
 	    cabal build exe:emd --constraint="language-dickinson -zstd" --enable-executable-static \
 	    bin=$$(find . -name emd -type f) \
 	    strip $$bin \
-	    cp $$bin /vagrant/$@'
+	    cp $$bin /vagrant/$$(basename $@)'
+	mv $$(basename $@) $@
 
 # might be slower b/c static but
 bin/x86_64-linux-emd: $(HS_SRC)
