@@ -38,6 +38,8 @@
       (| "lynx")
       (| "beaver")
       (| "sable")
+      (| "cow")
+      (| "cod")
       (| "weasel")
       (| "stoat")
       (| "ermine")
