@@ -1,0 +1,18 @@
+%-
+
+(:def mentalIllness
+  (:oneof
+    (| "depression")
+    (| "bipolar disorder")
+    (| "borderline personality disorder")
+    (| "PTSD")
+    (| "anorexia")
+    (| "agoraphobia")
+    (| "schizophrenia")
+    (| "OCD")
+    (| "trichotillomania")
+    (| "dermatillomania")
+    (| "hypochondria")
+    (| "kleptomania")
+    (| "pica")
+    (| "Tourette's")))
