@@ -38,7 +38,7 @@
     (| "Drugs have no mystic content.")
     (| "Irony is the weakest brand of pessimism")
     (| "Sin rots the flesh.")
-    (| "Sex wastes the male body.")
+    (| "Sex wastes the male body.") ; male sexuality is fundamentally weak
     (| "Did you remember to put apotheosis on your to-do list?")
     (| "Cultivate weakness.")
     (| "Beauty is a moral imperative.")
@@ -53,6 +53,7 @@
       ('''
        No more pennies to fill my pockets
        ''', "Arrow de Wilde"))
+    ; (| $ quote ("God save the prom queen", "Molly Kate Kestner"))
     (| $ quote ("« Le beau est ce qu'on désire sans vouloir le manger. »", "Simone Weil"))
     (| $ quote ("\"You're more likely to get cut with a dull tool than a sharp one.\"", "Fiona Apple"))
     (| $ quote ("\"You forgot the difference between equanimity and passivity.\"", "Fiona Apple"))
