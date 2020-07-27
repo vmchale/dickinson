@@ -1,0 +1,40 @@
+%-
+
+(:def building
+  (:oneof
+    (| "the Pentagon")
+    (| "the Sistine Chapel")))
+
+(:def bigCity
+  (:oneof
+    (| "Istanbul")
+    (| "Paris")
+    (| "Milan")
+    (| "Saigon")
+    (| "Naples")
+    (| "New York")
+    (| "LA")
+    (| "Cairo")
+    (| "Budapest")
+    (| "Edinburgh")
+    (| "London")
+    (| "Berlin")
+    (| "Hong Kong")
+    (| "Macau")
+    (| "Tokyo")
+    (| "Seoul")
+    (| "Lima")
+    (| "Madrid")
+    (| "Barcelona")
+    (| "Krakow")
+    (| "Moscow")
+    (| "St. Petersburg")
+    (| "San Fransisco")
+    (| "Manila")
+    (| "Kuala Lumpur")
+    (| "Kyoto")
+    (| "Calcutta")
+    (| "New Delhi")
+    (| "Lhasa")
+    (| "Delhi")
+    (| "São Paolo")))
