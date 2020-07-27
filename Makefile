@@ -40,7 +40,7 @@ DISTS := x86_64-linux-dist.tar.lz \
     x86_64-freebsd-dist.tar.lz \
     x86_64-freebsd-dist.tar.zst \
     x86_64-freebsd-dist.tar.bz2 \
-    x86_64-freebsd-dist.tar.gz 
+    x86_64-freebsd-dist.tar.gz
 
 check:
 	emd lint $(DCK_LIB) $(DCK_PRELUDE)
@@ -85,6 +85,13 @@ bin/x86_64-freebsd-emd:
 	    strip $$bin \
 	    cp $$bin /vagrant/$$(basename $@)'
 	mv $$(basename $@) $@
+
+bin/x86_64-darwin-emd: $(HS_SRC)
+	@mkdir -p $(dir $@)
+	cabal build exe:emd
+	export BIN=$$(fd 'x86_64-osx.*emd$$' dist-newstyle -t x -p -I); \
+	    cp $$BIN $@ ; \
+	    strip $@
 
 # might be slower b/c static but
 bin/x86_64-linux-emd: $(HS_SRC)
