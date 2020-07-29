@@ -17,11 +17,18 @@
     (| "sheela na gig")
     (| "roach clip")))
 
+(:def subjectDiscipline
+  (:oneof
+    (| "balneology")
+    (| "soteriology")
+    (| "dietetics")))
+
 ; ogee
 (:def noun
   (:flatten
     (:oneof
       (| rhetoricalDevice)
+      (| subjectDiscipline)
       (| "valetudinarian")
       (| "heliophagy")
       (| "valedictorian")
@@ -261,7 +268,6 @@
       (| "caltrop")
       (| "calque")
       (| "diet")
-      (| "dietetics")
       (| "ether")
       (| "xylem")
       (| "obreptition")
