@@ -1,5 +1,7 @@
 # dickinson
 
+## 1.1.0.1
+
   * Read `DCK_PATH` variable when searching for files.
   * Improvements to `lib/noun.dck` and `lib/adjectives.dck`
   * Add `lib/flappend.dck` and `lib/adverb.dck`
