@@ -9,7 +9,9 @@
     (:oneof
       (| color)
       (| "sententious")
+      (| "hylic")
       (| "poetic")
+      (| "limpid")
       (| "plain")
       (| "bromide")
       (| "banal")

@@ -17,6 +17,7 @@
     (| "sheela na gig")
     (| "roach clip")))
 
+; ogee
 (:def noun
   (:flatten
     (:oneof
@@ -258,6 +259,9 @@
       (| "fart")
       (| "exegesis")
       (| "caltrop")
+      (| "calque")
+      (| "diet")
+      (| "dietetics")
       (| "ether")
       (| "xylem")
       (| "obreptition")
@@ -284,5 +288,6 @@
       (| "sitiogonic")
       (| "apotheosis")
       (| "aphelion")
+      (| "bevel")
       (| "perihelion")
       (| "folderol"))))
