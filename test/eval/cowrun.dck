@@ -1,0 +1,6 @@
+(:include cowsay)
+
+%-
+
+(:def main
+  $ cowsay "Hello!")

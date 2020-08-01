@@ -30,6 +30,7 @@ evalTests = testGroup "Evaluation test"
     , resultCase "test/data/refractory.dck"
     , resultCase "test/examples/lambda.dck"
     , resultCase "test/examples/library.dck"
+    , testCase "Escapes even stripped multiline strings" cowsayEval
     ]
 
 forceResult :: a -> Assertion
@@ -75,3 +76,8 @@ multiInterpolatedNestedEval = evalTo "test/data/interpolateNested.dck" "This is 
 
 orPatternEval :: Assertion
 orPatternEval = evalTo "test/data/orPattern.dck" "hit"
+
+cowsayEval :: Assertion
+cowsayEval = do
+    res <- evalFile ["lib"] "test/eval/cowrun.dck"
+    res @?= "\nHello!\n------\n      \\   ^__^\n       \\  (oo)\\_______\n          (__)\\       )\\/\\\n              ||----w |\n              ||     ||"
