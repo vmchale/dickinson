@@ -25,7 +25,7 @@ import qualified Data.Text                          as T
 import           Data.Text.Prettyprint.Doc          (Doc, Pretty (pretty), align, brackets, colon, concatWith, dquotes,
                                                      encloseSep, group, hardline, hsep, indent, lparen, parens, pipe,
                                                      rangle, rparen, tupled, vsep, (<+>))
-import           Data.Text.Prettyprint.Doc.Ext      (hardSep, (<#*>), (<#>), (<^>))
+import           Data.Text.Prettyprint.Doc.Ext      (Debug (..), hardSep, (<#*>), (<#>), (<^>))
 import           Data.Text.Prettyprint.Doc.Internal (unsafeTextWithoutNewlines)
 import           GHC.Generics                       (Generic)
 import           Language.Dickinson.Lexer
@@ -112,7 +112,10 @@ instance Pretty (Declaration a) where
     pretty (TyDecl _ n cs) = "tydecl" <+> pretty n <+> "=" <+> concatWith (\x y -> x <+> pipe <+> y) (toList (pretty <$> cs))
 
 instance Pretty (Import a) where
-    pretty (Import _ n)   = parens (":include" <+> pretty n)
+    pretty = prettyImport pretty
+
+prettyImport :: (Name a -> Doc b) -> Import a -> Doc b
+prettyImport pn (Import _ n) = parens (":include" <+> pn n)
 
 instance Pretty (Dickinson a) where
     pretty (Dickinson is ds) = concatWith (\x y -> x <> hardline <> hardline <> y) (fmap pretty is <> ["%-"] <> fmap pretty ds)
@@ -141,11 +144,17 @@ textHard :: T.Text -> Doc a
 textHard = concatWith (<#>) . map unsafeTextWithoutNewlines . T.splitOn "\n"
 
 instance Pretty (Pattern a) where
-    pretty (PatternVar _ n)    = pretty n
-    pretty (PatternTuple _ ps) = tupled (toList (pretty <$> ps))
-    pretty Wildcard{}          = "_"
-    pretty (PatternCons _ c)   = pretty c
-    pretty (OrPattern _ ps)    = group (encloseSep lparen rparen pipe (toList $ fmap pretty ps))
+    pretty = prettyPattern pretty
+
+instance Debug (Pattern a) where
+    debug = prettyPattern debug
+
+prettyPattern :: (Name a -> Doc b) -> Pattern a -> Doc b
+prettyPattern pn (PatternVar _ n)    = pn n
+prettyPattern pn (PatternTuple _ ps) = tupled (toList (prettyPattern pn <$> ps))
+prettyPattern _ Wildcard{}           = "_"
+prettyPattern pn (PatternCons _ c)   = pn c
+prettyPattern pn (OrPattern _ ps)    = group (encloseSep lparen rparen pipe (toList $ fmap (prettyPattern pn) ps))
 
 escReplace :: T.Text -> T.Text
 escReplace =
@@ -180,10 +189,13 @@ instance Pretty (Expression a) where
     pretty (BuiltinFn _ b)    = pretty b
 
 instance Pretty (DickinsonTy a) where
-    pretty TyText{}       = "text"
-    pretty (TyFun _ t t') = parens ("⟶" <+> pretty t <+> pretty t')
-    pretty (TyTuple _ ts) = tupled (toList (pretty <$> ts))
-    pretty (TyNamed _ n)  = pretty n
+    pretty = prettyType pretty
+
+prettyType :: (Name a -> Doc b) -> DickinsonTy a -> Doc b
+prettyType _ TyText{}        = "text"
+prettyType pn (TyFun _ t t') = parens ("⟶" <+> prettyType pn t <+> prettyType pn t')
+prettyType pn (TyTuple _ ts) = tupled (toList (prettyType pn <$> ts))
+prettyType pn (TyNamed _ n)  = pn n
 
 defExprM :: Declaration a -> Maybe (Expression a)
 defExprM (Define _ _ e) = Just e
