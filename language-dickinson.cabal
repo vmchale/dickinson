@@ -219,8 +219,9 @@ test-suite dickinson-test
     main-is:          Spec.hs
     hs-source-dirs:   test
     other-modules:
-        Golden
         Eval
+        Golden
+        Roundtrip.Compare
         TypeCheck
         TH
 
