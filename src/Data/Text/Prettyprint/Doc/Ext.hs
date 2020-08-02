@@ -8,6 +8,8 @@ module Data.Text.Prettyprint.Doc.Ext ( prettyText
                                      , intercalate
                                      , hardSep
                                      , prettyDumpBinds
+                                     -- * Debug class
+                                     , Debug (..)
                                      -- * Operators
                                      , (<#>)
                                      , (<:>)
@@ -29,6 +31,9 @@ import           Data.Text.Prettyprint.Doc.Render.Text (renderLazy, renderStrict
 infixr 6 <#>
 infixr 6 <:>
 infixr 6 <^>
+
+class Debug a where
+    debug :: a -> Doc b
 
 (<#>) :: Doc a -> Doc a -> Doc a
 (<#>) x y = x <> hardline <> y
