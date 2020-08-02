@@ -16,8 +16,9 @@ import           Data.Data                     (Data)
 import           Data.Foldable                 (toList)
 import qualified Data.IntMap                   as IM
 import           Data.List.NonEmpty            (NonEmpty (..))
+import           Data.Semigroup                ((<>))
 import qualified Data.Text                     as T
-import           Data.Text.Prettyprint.Doc     (Doc, Pretty (pretty))
+import           Data.Text.Prettyprint.Doc     (Pretty (pretty))
 import           Data.Text.Prettyprint.Doc.Ext (Debug (..), intercalate)
 import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Unique
