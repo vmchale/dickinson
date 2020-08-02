@@ -131,7 +131,7 @@ library dickinson
         transformers -any,
         containers -any,
         random -any,
-        prettyprinter <1.7.0,
+        prettyprinter >=1.7.0,
         deepseq -any,
         microlens -any,
         microlens-mtl -any,
