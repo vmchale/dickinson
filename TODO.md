@@ -20,6 +20,7 @@
 - [ ] Library documentation
 ## Examples
 - [ ] Poetry bot...? Rumi?
+- [ ] bi update bot &c. -> show how to lazily reuse libraries
 - [x] Fiona bot?
 - [ ] Storytelling? RPG? idk
 - [ ] https://www.nadyaprimak.com/blog/programming/poetry-bot/
@@ -29,6 +30,7 @@
 - [ ] Hot take generator
 - [x] Catherine of Siena bot
 - [ ] Margery Kempe bot
+- [ ] Florence Welch bot
 - [x] Cowsay-as-a-function
 - [ ] jenny holzer bot https://www.tate.org.uk/art/artworks/holzer-truisms-t03959 https://wordsofwomen.com/jenny-holzers-list-of-truisms/ https://www.moma.org/collection/works/63755
 # Editor Integration
@@ -68,6 +70,9 @@
   emd> $decline (Feminine, Feminine, Singular)
   14:9 Constructor 'Nominative' has type 'case' but must be of type 'gender'
   ```
+## Upstream
+- [ ] Add combinator to `prettyprinter`
+- [ ] for some reason prettyprinter 1.7.0 triggers a linker bug in aarch64 ld
 # Code Quality
 - [ ] Kick tires on `:t` feature
 # Debugging
