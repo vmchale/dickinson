@@ -69,10 +69,10 @@ bins: bin/arm-linux-emd \
     bin/x86_64-freebsd-emd
 
 %-dist.tar: $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) bin/%-emd
-	star -c -f $@ $^
+	star -c -s ,^,language-dickinson-$(VERSION)/, -f $@ $^
 
 language-dickinson-$(VERSION).tar: $(DCK_PRELUDE) $(DCK_LIB) $(HS_SRC)
-	cabal sdist --list-only | spax -w -f $@
+	cabal sdist --list-only | spax -w -s ,^,language-dickinson-$(VERSION)/, -f $@
 
 bin/x86_64-freebsd-emd:
 	@mkdir -p $(dir $@)
