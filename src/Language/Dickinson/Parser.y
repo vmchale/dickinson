@@ -26,7 +26,7 @@ import Data.Maybe (mapMaybe)
 import Data.Semigroup ((<>))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
-import Data.Text.Prettyprint.Doc (Pretty (pretty), (<+>))
+import Prettyprinter (Pretty (pretty), (<+>))
 import Data.Tuple.Ext (fst4)
 import Data.Typeable (Typeable)
 import GHC.Generics (Generic)

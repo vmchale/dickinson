@@ -4,45 +4,45 @@
 module REPL ( dickinsonRepl
             ) where
 
-import           Control.Monad                         (void)
-import           Control.Monad.Except                  (ExceptT, runExceptT)
-import           Control.Monad.IO.Class                (liftIO)
-import           Control.Monad.State.Lazy              (MonadState, StateT, evalStateT, get, gets, lift, put)
-import qualified Data.ByteString.Lazy                  as BSL
-import           Data.Foldable                         (traverse_)
-import qualified Data.IntMap                           as IM
-import qualified Data.IntSet                           as IS
-import qualified Data.Map                              as M
-import           Data.Maybe                            (fromJust)
-import           Data.Semigroup                        ((<>))
-import qualified Data.Text                             as T
-import qualified Data.Text.IO                          as TIO
-import qualified Data.Text.Lazy                        as TL
-import           Data.Text.Lazy.Encoding               (encodeUtf8)
-import           Data.Text.Prettyprint.Doc             (Pretty (pretty), hardline)
-import           Data.Text.Prettyprint.Doc.Ext         (prettyText)
-import           Data.Text.Prettyprint.Doc.Render.Text (putDoc)
-import           Data.Tuple.Ext                        (fst4)
+import           Control.Monad                  (void)
+import           Control.Monad.Except           (ExceptT, runExceptT)
+import           Control.Monad.IO.Class         (liftIO)
+import           Control.Monad.State.Lazy       (MonadState, StateT, evalStateT, get, gets, lift, put)
+import qualified Data.ByteString.Lazy           as BSL
+import           Data.Foldable                  (traverse_)
+import qualified Data.IntMap                    as IM
+import qualified Data.IntSet                    as IS
+import qualified Data.Map                       as M
+import           Data.Maybe                     (fromJust)
+import           Data.Semigroup                 ((<>))
+import qualified Data.Text                      as T
+import qualified Data.Text.IO                   as TIO
+import qualified Data.Text.Lazy                 as TL
+import           Data.Text.Lazy.Encoding        (encodeUtf8)
+import           Data.Text.Prettyprint.Doc.Ext  (prettyText)
+import           Data.Tuple.Ext                 (fst4)
 import           Language.Dickinson.Check.Scope
 import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
 import           Language.Dickinson.File
-import           Language.Dickinson.Lexer              (AlexPosn, AlexUserState, alexInitUserState)
+import           Language.Dickinson.Lexer       (AlexPosn, AlexUserState, alexInitUserState)
 import           Language.Dickinson.Lib
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
-import           Lens.Micro                            (_1)
-import           Lens.Micro.Mtl                        (use, (.=))
+import           Lens.Micro                     (_1)
+import           Lens.Micro.Mtl                 (use, (.=))
+import           Prettyprinter                  (Pretty (pretty), hardline)
+import           Prettyprinter.Render.Text      (putDoc)
 import           REPL.Completions
 import           REPL.Save
-import           System.Console.Haskeline              (InputT, completeFilename, defaultSettings, fallbackCompletion,
-                                                        getInputLine, historyFile, runInputT, setComplete)
-import           System.Directory                      (getHomeDirectory)
-import           System.FilePath                       ((</>))
-import           System.Random                         (newStdGen, randoms)
+import           System.Console.Haskeline       (InputT, completeFilename, defaultSettings, fallbackCompletion,
+                                                 getInputLine, historyFile, runInputT, setComplete)
+import           System.Directory               (getHomeDirectory)
+import           System.FilePath                ((</>))
+import           System.Random                  (newStdGen, randoms)
 
 dickinsonRepl :: [FilePath] -> IO ()
 dickinsonRepl fps = runRepl (traverse_ loadFile fps *> loop)

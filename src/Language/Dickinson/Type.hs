@@ -14,22 +14,22 @@ module Language.Dickinson.Type ( Dickinson (..)
                                , defExprM
                                ) where
 
-import           Control.DeepSeq                    (NFData)
-import           Data.Binary                        (Binary)
-import           Data.Data                          (Data)
-import           Data.Foldable                      (toList)
-import           Data.List.NonEmpty                 (NonEmpty (..))
-import qualified Data.List.NonEmpty                 as NE
-import           Data.Semigroup                     ((<>))
-import qualified Data.Text                          as T
-import           Data.Text.Prettyprint.Doc          (Doc, Pretty (pretty), align, brackets, colon, concatWith, dquotes,
-                                                     encloseSep, group, hardline, hsep, indent, lparen, parens, pipe,
-                                                     rangle, rparen, tupled, vsep, (<+>))
-import           Data.Text.Prettyprint.Doc.Ext      (Debug (..), hardSep, (<#*>), (<#>), (<^>))
-import           Data.Text.Prettyprint.Doc.Internal (unsafeTextWithoutNewlines)
-import           GHC.Generics                       (Generic)
+import           Control.DeepSeq               (NFData)
+import           Data.Binary                   (Binary)
+import           Data.Data                     (Data)
+import           Data.Foldable                 (toList)
+import           Data.List.NonEmpty            (NonEmpty (..))
+import qualified Data.List.NonEmpty            as NE
+import           Data.Semigroup                ((<>))
+import qualified Data.Text                     as T
+import           Data.Text.Prettyprint.Doc.Ext (Debug (..), hardSep, (<#*>), (<#>), (<^>))
+import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
+import           Prettyprinter                 (Doc, Pretty (pretty), align, brackets, colon, concatWith, dquotes,
+                                                encloseSep, group, hardline, hsep, indent, lparen, parens, pipe, rangle,
+                                                rparen, tupled, vsep, (<+>))
+import           Prettyprinter.Internal        (unsafeTextWithoutNewlines)
 
 data Dickinson a = Dickinson { modImports :: [Import a]
                              , modDefs    :: [Declaration a]

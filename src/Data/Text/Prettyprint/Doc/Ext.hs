@@ -17,16 +17,15 @@ module Data.Text.Prettyprint.Doc.Ext ( prettyText
                                      , (<#*>)
                                      ) where
 
-import qualified Data.IntMap                           as IM
-import           Data.List                             (intersperse)
-import           Data.Semigroup                        ((<>))
-import qualified Data.Text                             as T
-import qualified Data.Text.Lazy                        as TL
-import           Data.Text.Prettyprint.Doc             (Doc, LayoutOptions (LayoutOptions),
-                                                        PageWidth (AvailablePerLine), Pretty (pretty), SimpleDocStream,
-                                                        concatWith, flatAlt, hardline, indent, layoutSmart, softline,
-                                                        vsep, (<+>))
-import           Data.Text.Prettyprint.Doc.Render.Text (renderLazy, renderStrict)
+import qualified Data.IntMap               as IM
+import           Data.List                 (intersperse)
+import           Data.Semigroup            ((<>))
+import qualified Data.Text                 as T
+import qualified Data.Text.Lazy            as TL
+import           Prettyprinter             (Doc, LayoutOptions (LayoutOptions), PageWidth (AvailablePerLine),
+                                            Pretty (pretty), SimpleDocStream, concatWith, flatAlt, hardline, indent,
+                                            layoutSmart, softline, vsep, (<+>))
+import           Prettyprinter.Render.Text (renderLazy, renderStrict)
 
 infixr 6 <#>
 infixr 6 <:>
