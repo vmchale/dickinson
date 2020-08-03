@@ -11,6 +11,9 @@ import qualified Data.Text                as T
 import           Language.Dickinson.Error
 import           Language.Dickinson.Type
 
+-- TODO: duplicate check better? hm
+-- FIXME: HashSet or whatever?
+
 checkNames :: [(a, T.Text)] -> Maybe (DickinsonWarning a)
 checkNames ns = foldMapAlternative announce (groupBy ((==) `on` snd) $ sortBy (compare `on` snd) ns)
     where announce (_:(l, y):_) = Just $ DuplicateStr l y

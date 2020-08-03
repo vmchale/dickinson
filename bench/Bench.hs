@@ -53,9 +53,10 @@ main =
                     [ bench "bench/data/multiple.dck" $ nf (decode :: BSL.ByteString -> Dickinson ()) e
                     , bench "examples/shakespeare.dck" $ nf (decode :: BSL.ByteString -> Dickinson ()) es
                     ]
-                , env multiParsed $ \ ~(Dickinson _ p) ->
+                , env checkEnv $ \ ~(Dickinson _ p, Dickinson _ p') ->
                   bgroup "check"
                     [ bench "bench/data/multiple.dck" $ nf checkMultiple p
+                    , bench "lib/adjectives.dck" $ nf checkMultiple p'
                     , bench "bench/data/multiple.dck" $ nf checkDuplicates p -- TODO: better example
                     ]
                 , bgroup "pipeline"
@@ -96,6 +97,7 @@ main =
           parses = (,) <$> libFile <*> shakespeare
           libParsed = either throw id . parseWithMax <$> BSL.readFile "bench/data/nestLet.dck"
           multiParsed = either throw id . parse <$> BSL.readFile "bench/data/multiple.dck"
+          libText = either throw id . parse <$> BSL.readFile "lib/adjectives.dck"
           encoded = encode . void <$> multiParsed
           encodeShakespeare = encode . void . either throw id . parse <$> shakespeare
           encodeEnv = (,) <$> encoded <*> encodeShakespeare
@@ -107,6 +109,9 @@ main =
           amalComplex = (,)
             <$> amalgamateRename [] "test/examples/declension.dck"
             <*> amalgamateRename [] "test/data/refractory.dck"
+          checkEnv = (,)
+            <$> multiParsed
+            <*> libText
 
 plainExpr :: (UniqueCtx, Dickinson a) -> Dickinson a
 plainExpr = fst . uncurry renameDickinson
