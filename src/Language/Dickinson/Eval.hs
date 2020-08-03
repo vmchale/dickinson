@@ -27,7 +27,6 @@ import           Data.List.NonEmpty            (NonEmpty, (<|))
 import qualified Data.List.NonEmpty            as NE
 import qualified Data.Map                      as M
 import qualified Data.Text                     as T
-import           Data.Text.Prettyprint.Doc     (Doc, Pretty (..), vsep, (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
 import           Language.Dickinson.Error
 import           Language.Dickinson.Lexer
@@ -39,6 +38,7 @@ import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
 import           Lens.Micro                    (Lens', over, set, _1)
 import           Lens.Micro.Mtl                (use, (.=))
+import           Prettyprinter                 (Doc, Pretty (..), vsep, (<+>))
 
 -- | The state during evaluation
 data EvalSt a = EvalSt

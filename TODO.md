@@ -75,6 +75,7 @@
 - [ ] for some reason prettyprinter 1.7.0 triggers a linker bug in aarch64 ld
 # Code Quality
 - [ ] Kick tires on `:t` feature
+- [ ] Move `Data.whatever.Ext` to `Prettyprinter.Ext`
 # Debugging
 - [ ] Verbosity
 - [ ] Turn on sanity checking?

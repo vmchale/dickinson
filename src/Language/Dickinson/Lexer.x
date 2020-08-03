@@ -36,7 +36,7 @@ import qualified Data.Map as M
 import Data.Semigroup ((<>))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
-import Data.Text.Prettyprint.Doc (Pretty (pretty), pipe, lparen, rparen, rbrace, rbracket, lbracket, colon, squotes, dquotes, dquote, rangle, comma, (<+>))
+import Prettyprinter (Pretty (pretty), pipe, lparen, rparen, rbrace, rbracket, lbracket, colon, squotes, dquotes, dquote, rangle, comma, (<+>))
 import GHC.Generics (Generic)
 import Language.Dickinson.Name
 import Language.Dickinson.Unique

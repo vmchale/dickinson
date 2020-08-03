@@ -26,7 +26,7 @@ import Data.Maybe (mapMaybe)
 import Data.Semigroup ((<>))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
-import Data.Text.Prettyprint.Doc (Pretty (pretty), (<+>))
+import Prettyprinter (Pretty (pretty), (<+>))
 import Data.Tuple.Ext (fst4)
 import Data.Typeable (Typeable)
 import GHC.Generics (Generic)
@@ -184,9 +184,14 @@ DeclarationOrExpression :: { Either (Declaration AlexPosn) (Expression AlexPosn)
 countSpaces :: T.Text -> Int
 countSpaces = T.length . T.takeWhile (== ' ')
 
+dropDoubleNewlines :: [T.Text] -> [T.Text]
+dropDoubleNewlines ("":t:ts) | " " `T.isPrefixOf` t = dropDoubleNewlines (t:ts)
+dropDoubleNewlines (t:ts)                           = t : dropDoubleNewlines ts
+dropDoubleNewlines []                               = []
+
 -- minimum indentation (relevant in a string containing newline characters)
 minIndent :: T.Text -> Int
-minIndent t = minimum (maxBound : fmap countSpaces (T.lines t))
+minIndent t = minimum (maxBound : fmap countSpaces (dropDoubleNewlines $ T.lines t)) -- reduce duplicates
 
 minIndentExpr :: Expression a -> Maybe Int
 minIndentExpr (StrChunk _ t) | "\n" `T.isInfixOf` t  = Just $ minIndent $ T.tail $ T.dropWhile (/= '\n') t -- tail because T.lines "\n   hello" is ["", "    hello"]

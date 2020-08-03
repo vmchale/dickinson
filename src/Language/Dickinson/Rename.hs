@@ -26,7 +26,6 @@ import           Data.Binary                   (Binary)
 import qualified Data.IntMap                   as IM
 import qualified Data.List.NonEmpty            as NE
 import           Data.Semigroup                (Semigroup (..))
-import           Data.Text.Prettyprint.Doc     (Pretty (..), (<+>))
 import           Data.Text.Prettyprint.Doc.Ext
 import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Name
@@ -34,6 +33,7 @@ import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
 import           Lens.Micro                    (Lens')
 import           Lens.Micro.Mtl                (modifying, use, (%=), (.=))
+import           Prettyprinter                 (Pretty (..), (<+>))
 
 -- | Renamer state passed between various stages of compilation
 data Renames = Renames { max_ :: Int, bound :: IM.IntMap Int }

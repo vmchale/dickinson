@@ -12,12 +12,12 @@ import           Control.Exception         (Exception)
 import           Control.Monad.Except      (MonadError, throwError)
 import           Data.Semigroup            ((<>))
 import qualified Data.Text                 as T
-import           Data.Text.Prettyprint.Doc (Pretty (pretty), dquotes, squotes, (<+>))
 import           Data.Typeable             (Typeable)
 import           GHC.Generics              (Generic)
 import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Type
+import           Prettyprinter             (Pretty (pretty), dquotes, squotes, (<+>))
 
 data DickinsonError a = UnfoundName a (Name a)
                       | NoText T.Text -- separate from UnfoundName since there is no loc

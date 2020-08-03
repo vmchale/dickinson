@@ -1,5 +1,7 @@
 # dickinson
 
+  * Support `prettyprinter` ≥ 1.7.0
+
 ## 1.1.0.1
 
   * Read `DCK_PATH` variable when searching for files.
