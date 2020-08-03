@@ -1,5 +1,7 @@
 # dickinson
 
+## 1.1.0.2
+
   * Support `prettyprinter` ≥ 1.7.0
 
 ## 1.1.0.1
