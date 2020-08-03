@@ -70,6 +70,7 @@
   ```
 # Code Quality
 - [ ] Kick tires on `:t` feature
+- [ ] Move `Data.whatever.Ext` to `Prettyprinter.Ext`
 # Debugging
 - [ ] Verbosity
 - [ ] Turn on sanity checking?
