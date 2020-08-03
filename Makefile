@@ -71,8 +71,8 @@ bins: bin/arm-linux-emd \
 %-dist.tar: $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) bin/%-emd
 	star -c -f $@ $^
 
-language-dickinson-src.pax: $(DCK_PRELUDE) $(DCK_LIB) $(HS_SRC)
-	cabal sdist --list-only | spax -w artype=pax -f $@
+language-dickinson-$(VERSION).tar: $(DCK_PRELUDE) $(DCK_LIB) $(HS_SRC)
+	cabal sdist --list-only | spax -w -f $@
 
 bin/x86_64-freebsd-emd:
 	@mkdir -p $(dir $@)
