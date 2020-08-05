@@ -449,6 +449,14 @@ The `:include` must come before the `%-`; definitions come after the
     ...
 ```
 
+### Third-Party Libraries
+
+Upon encountering `:include animals.mammal`, Dickinson looks for a file
+`animals/mammal.dck`.
+
+When invoking `emd`, we can use the `--include` flag to add directories to
+search.
+
 ## Writing Libraries
 
 Libraries can contain definitions and type declarations.
