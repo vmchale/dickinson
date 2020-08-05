@@ -549,7 +549,7 @@ emd> :type decline
 (-> (case, gender, number) text)
 ```
 
-## Shakespearen Insult Generator
+## Shakespearean Insult Generator
 
 Inspired by the [Shakespeare Insult
 Kit](http://web.mit.edu/dryfoo/Funny-pages/shakespeare-insult-kit.html)'s
