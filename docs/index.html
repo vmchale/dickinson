@@ -62,6 +62,7 @@
 <li><a href="#using-libraries">Using Libraries</a>
 <ul>
 <li><a href="#example-1">Example</a></li>
+<li><a href="#third-party-libraries">Third-Party Libraries</a></li>
 </ul></li>
 <li><a href="#writing-libraries">Writing Libraries</a></li>
 </ul></li>
@@ -70,7 +71,7 @@
 <ul>
 <li><a href="#cowsay">Cowsay</a></li>
 <li><a href="#noun-declension">Noun Declension</a></li>
-<li><a href="#shakespearen-insult-generator">Shakespearen Insult Generator</a></li>
+<li><a href="#shakespearean-insult-generator">Shakespearean Insult Generator</a></li>
 <li><a href="#lyrics-bot">Lyrics Bot</a></li>
 </ul></li>
 </ul>
@@ -312,6 +313,9 @@ GUILT AND SELF-LACERATION ARE INDULGENCES</code></pre>
     (| &quot;cerulean&quot;)
     (| &quot;azure&quot;)
     ...</code></pre>
+<h3 id="third-party-libraries">Third-Party Libraries</h3>
+<p>Upon encountering <code>:include animals.mammal</code>, Dickinson looks for a file <code>animals/mammal.dck</code>.</p>
+<p>When invoking <code>emd</code>, we can use the <code>--include</code> flag to add directories to search.</p>
 <h2 id="writing-libraries">Writing Libraries</h2>
 <p>Libraries can contain definitions and type declarations.</p>
 <p>You can run <code>emd check</code> on a library file to validate it.</p>
@@ -378,7 +382,7 @@ tydecl number = Singular | Plural
 <p>For guidance:</p>
 <pre><code>emd&gt; :type decline
 (-&gt; (case, gender, number) text)</code></pre>
-<h2 id="shakespearen-insult-generator">Shakespearen Insult Generator</h2>
+<h2 id="shakespearean-insult-generator">Shakespearean Insult Generator</h2>
 <p>Inspired by the <a href="http://web.mit.edu/dryfoo/Funny-pages/shakespeare-insult-kit.html">Shakespeare Insult Kit</a>’s insult table, we can generate our own insults.</p>
 <pre><code>%-
 
