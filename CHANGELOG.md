@@ -1,5 +1,7 @@
 # dickinson
 
+  * More sensible completions
+
 ## 1.1.0.2
 
   * Support `prettyprinter` ≥ 1.7.0
