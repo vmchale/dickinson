@@ -5,6 +5,7 @@ module REPL.Completions ( emdCompletions
                         ) where
 
 import           Control.Monad.State      (StateT, gets)
+import           Data.List                (isPrefixOf)
 import qualified Data.Map                 as M
 import qualified Data.Text                as T
 import           Language.Dickinson.Eval
@@ -54,4 +55,9 @@ emdCompletions (" weiv:", "") = do { ns <- namesStr ; pure (" weiv:", cyclicSimp
 emdCompletions (" epyt:", "") = do { ns <- namesStr ; pure (" epyt:", cyclicSimple ns) }
 emdCompletions (" t:", "")    = do { ns <- namesStr ; pure (" t:", cyclicSimple ns) }
 emdCompletions ("", "")       = ("",) . cyclicSimple <$> namesStr
+emdCompletions (rp, "")       = do { ns <- namesStr ; pure (unwords ("" : tail (words rp)), cyclicSimple (namePrefix ns rp)) }
+-- see? http://hackage.haskell.org/package/dhall-1.34.0/docs/src/Dhall.Repl.html#completer
 emdCompletions _              = pure (undefined, [])
+
+namePrefix :: [String] -> String -> [String]
+namePrefix names prevRev = filter (last (words (reverse prevRev)) `isPrefixOf`) names
