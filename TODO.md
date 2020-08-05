@@ -70,6 +70,14 @@
   emd> $decline (Feminine, Feminine, Singular)
   14:9 Constructor 'Nominative' has type 'case' but must be of type 'gender'
   ```
+  (REPL-only)
+- [ ]
+  ```
+  emd> :l examples/fortune.dck
+  emd> $ quote fortune
+  11:8 Malformed tuple
+  ```
+    - [ ] REPL-only -> because it resolves expression first
 ## Upstream
 - [ ] Add combinator to `prettyprinter`
 - [ ] for some reason prettyprinter 1.7.0 triggers a linker bug in aarch64 ld
