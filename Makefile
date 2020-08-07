@@ -11,8 +11,7 @@ DCK_PRELUDE := $(wildcard ./prelude/*.dck)
 
 HS_SRC := $(shell find run -type f) $(shell find src -type f) language-dickinson.cabal
 
-VERSION := $(shell grep -P -o '\d+\.\d+\.\d+\.\d+' language-dickinson.cabal | head -n1)
-MAC_VERSION := $(shell grep -E -o '\d+\.\d+\.\d+\.\d+' language-dickinson.cabal | head -n1)
+VERSION := $(shell grep -o '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*' language-dickinson.cabal | head -n1)
 
 GR_OPTIONS := -u vmchale -r dickinson -t $(VERSION)
 
@@ -68,9 +67,6 @@ bins: bin/arm-linux-emd \
     bin/sparc64-linux-emd \
     bin/x86_64-linux-emd \
     bin/x86_64-freebsd-emd
-
-x86_64-darwin-dist.tar: $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) bin/x86_64-darwin-emd
-	tar -c -s ,^,language-dickinson-$(MAC_VERSION)/, -f $@ $^
 
 %-dist.tar: $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) bin/%-emd
 	star -c -s ,^,language-dickinson-$(VERSION)/, -f $@ $^
