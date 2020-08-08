@@ -4,14 +4,20 @@ Dickinson is a text-generation language.
 
 ## Installation
 
-### Binaries
+### Binary Releases
 
 Binaries for some platforms are available on the [releases
 page](https://github.com/vmchale/dickinson/releases).
 
+Unpack the distribution, then:
+
+```
+make install
+```
+
 ### Source
 
-To install, first download [cabal-install](https://www.haskell.org/cabal/) and
+To install, get [cabal-install](https://www.haskell.org/cabal/) and
 [GHC](https://www.haskell.org/ghc/download.html). Then:
 
 ```
