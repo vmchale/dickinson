@@ -1,6 +1,6 @@
 # dickinson
 
-  * More sensible completions
+  * More sensible completions in REPL
 
 ## 1.1.0.2
 
