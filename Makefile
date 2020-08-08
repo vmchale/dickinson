@@ -68,8 +68,12 @@ bins: bin/arm-linux-emd \
     bin/x86_64-linux-emd \
     bin/x86_64-freebsd-emd
 
-%-dist.tar: $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) bin/%-emd
-	star -c -s ,^,language-dickinson-$(VERSION)/, -f $@ $^
+%-dist.tar: bin/%-emd $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) install.mk
+	star -c \
+	    -s ,$<,language-dickinson-$(VERSION)/bin/emd, \
+	    -s ,install.mk,language-dickinson-$(VERSION)/Makefile, \
+	    -s ,^,language-dickinson-$(VERSION)/, \
+	    -f $@ $^
 
 language-dickinson-$(VERSION).tar: $(DCK_PRELUDE) $(DCK_LIB) $(HS_SRC)
 	cabal sdist --list-only | spax -w -s ,^,language-dickinson-$(VERSION)/, -f $@
