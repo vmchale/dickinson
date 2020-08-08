@@ -1,31 +1,37 @@
-module Language.Dickinson.Pattern.Useless ( useful
+-- see Maranget, Warnings for Pattern Matching
+-- https://www.cambridge.org/core/journals/journal-of-functional-programming/article/warnings-for-pattern-matching/3165B75113781E2431E3856972940347
+module Language.Dickinson.Pattern.Useless ( matchToMatrix
+                                          , useful
                                           ) where
 
-import           Data.Array              (Array, bounds)
+-- TODO: unboxed?
+import           Data.Array              (bounds)
+import qualified Data.Array              as A
 import           Data.Foldable           (toList)
-import qualified Data.IntMap             as IM
-import qualified Data.IntSet             as IS
-import           Data.Maybe              (mapMaybe)
-import           Language.Dickinson.Name
+import           Data.List.NonEmpty      (NonEmpty)
 import           Language.Dickinson.Type
 
-data PatternEnv = PatternEnv { allCons :: IM.IntMap IS.IntSet -- ^ all constructors indexed by type
-                             , types   :: IM.IntMap Int -- ^ type indexed by constructor
-                             }
+wildcardVec :: a -> A.Array Int (Pattern a)
+wildcardVec loc = A.listArray (1,1) [Wildcard loc]
 
-extrCons :: [Pattern a] -> [TyName a]
-extrCons = concat . mapMaybe g where
-    g (PatternVar _ c) = Just [c]
-    g (OrPattern _ ps) = Just $ extrCons (toList ps)
-    g _                = Nothing
+matchToMatrix :: NonEmpty a -> A.Array (Int, Int) a
+matchToMatrix ps = A.listArray dim (toList ps)
+    where sz = length ps
+          dim = ((1,1), (sz,1))
 
--- specializied? lol -> array library?
+numRows :: A.Array (Int, Int) a -> Int
+numRows arr =
+    let ((_,_), (rows,_)) = bounds arr
+        in rows
 
-useful' :: [Pattern a] -> Pattern a -> Bool
-useful' [] _                 = True
-useful' ps (OrPattern _ ps') = any (useful' ps) ps' -- all?
-useful' ps (PatternCons _ c) = c `notElem` extrCons ps
+numColumns :: A.Array (Int, Int) a -> Int
+numColumns arr =
+    let ((_,_), (_,cols)) = bounds arr
+        in cols
 
-useful :: Array (Int, Int) (Pattern a) -> Array Int (Pattern a) -> Bool
-useful p _ | let (_,(_,n)) = bounds p in n == 0 = True
-useful p _ | let (_,(m,_)) = bounds p in m > 0 = False
+useful :: A.Array (Int, Int) (Pattern a) -> A.Array Int (Pattern a) -> Bool
+useful arr _ | numRows arr == 0 = True
+             | numColumns arr == 0 = False -- b/c numRows > 0
+
+-- specialized :: A.Array (Int, Int) (Pattern a) -> A.Array Int (Pattern a) -> A.Array (Int, Int) (Pattern a)
+-- specialized _ _ = undefined
