@@ -47,6 +47,7 @@ check:
 	emd check $(DCK_LIB) $(DCK_PRELUDE)
 
 release: dists
+	github-release release $(GR_OPTIONS)
 	for dist in $(DISTS) ; do \
 	    github-release upload $(GR_OPTIONS) -n $$dist -f $$dist --replace ; \
 	done
