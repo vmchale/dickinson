@@ -5,7 +5,7 @@ LIB_DIR := $$HOME/.emd
 
 install:
 	mkdir -p $$HOME/.local/bin
-	mkdir -p $HOME/.local/share/man/man1
+	mkdir -p $$HOME/.local/share/man/man1
 	mkdir -p $(LIB_DIR)/lib
 	mkdir -p $(LIB_DIR)/prelude
 	cp lib/* $(LIB_DIR)/lib/
