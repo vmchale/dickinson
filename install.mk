@@ -1,11 +1,11 @@
 .PHONY: install
 SHELL = bash
 
-LIB_DIR := $(shell ./bin/emd dir)
+LIB_DIR := $$HOME/.emd
 
 install:
 	mkdir -p $$HOME/.local/bin
-	mkdir -p $(LIB_DIR)/share/man
+	mkdir -p $HOME/.local/share/man/man1
 	mkdir -p $(LIB_DIR)/lib
 	mkdir -p $(LIB_DIR)/prelude
 	cp lib/* $(LIB_DIR)/lib/

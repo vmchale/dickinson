@@ -20,7 +20,6 @@ data Act = Run !FilePath ![FilePath]
          | Format !FilePath Bool
          | Man
          | Ide !FilePath ![FilePath]
-         | Dir
 
 main :: IO ()
 main = run =<< execParser wrapper
@@ -35,7 +34,6 @@ act = hsubparser
     <> command "man" (info (pure Man) (progDesc "Dump path to manpages"))
     <> command "ide" (info ide (progDesc "Run all checks and lints"))
     -- ide and dir should be hidden?
-    <> command "dir" (info (pure Dir) (progDesc "Show library install directory"))
     ) <|> runP
 
 formatP :: Parser Act
@@ -99,4 +97,3 @@ run (Format fp False) = fmtFile fp
 run (Format fp True)  = fmtInplace fp
 run Man               = putStrLn . (</> "emd.1") . (</> "man") =<< getDataDir
 run (Ide fp is)       = do { is' <- modIs is ; validateFile is' fp ; warnFile fp }
-run Dir               = putStrLn =<< getDataDir

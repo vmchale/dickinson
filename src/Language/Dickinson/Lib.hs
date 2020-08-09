@@ -13,9 +13,19 @@ dckPath = maybe [] splitEnv <$> lookupEnv "DCK_PATH"
 splitEnv :: String -> [FilePath]
 splitEnv = splitWhen (== ':')
 
+preludeLibPath :: FilePath -> [FilePath] -> [FilePath]
+preludeLibPath fp = (preludeDir :) . (libDir :)
+    where preludeDir = fp </> "prelude"
+          libDir = fp </> "lib"
+
+homeMod :: IO ([FilePath] -> [FilePath])
+homeMod = do
+    mHome <- lookupEnv "HOME"
+    pure $ case mHome of
+        Just h  -> preludeLibPath (h </> ".emd")
+        Nothing -> id
+
 defaultLibPath :: IO ([FilePath] -> [FilePath])
 defaultLibPath = do
     datadir <- getDataDir
-    let preludeDir = datadir </> "prelude"
-        libDir = datadir </> "lib"
-    pure $ (preludeDir :) . (libDir :)
+    (.) (preludeLibPath datadir) <$> homeMod
