@@ -1,7 +1,6 @@
 -- see Maranget, Warnings for Pattern Matching
 -- https://www.cambridge.org/core/journals/journal-of-functional-programming/article/warnings-for-pattern-matching/3165B75113781E2431E3856972940347
-module Language.Dickinson.Pattern.Useless ( matchToMatrix
-                                          , useful
+module Language.Dickinson.Pattern.Useless ( useful
                                           ) where
 
 -- TODO: unboxed?
@@ -32,6 +31,9 @@ numColumns arr =
 useful :: A.Array (Int, Int) (Pattern a) -> A.Array Int (Pattern a) -> Bool
 useful arr _ | numRows arr == 0 = True
              | numColumns arr == 0 = False -- b/c numRows > 0
+useful arr q =
+    case q A.! 0 of -- safe because n > 0, i.e. there are columns
+        _ -> undefined -- TODO: could use list for q
 
 -- specialized :: A.Array (Int, Int) (Pattern a) -> A.Array Int (Pattern a) -> A.Array (Int, Int) (Pattern a)
 -- specialized _ _ = undefined
