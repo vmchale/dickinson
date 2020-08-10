@@ -111,6 +111,7 @@ library dickinson
         Paths_language_dickinson
         Language.Dickinson.Lib.Get
         Language.Dickinson.Pattern
+        Language.Dickinson.Pattern.Useless
         Control.Monad.Ext
         Data.Foldable.Ext
 
