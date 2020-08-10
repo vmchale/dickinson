@@ -62,11 +62,11 @@ docs: man/emd.1 doc/user-guide.pdf docs/index.html
 
 dists: $(DISTS)
 
-bins: bin/arm-linux-emd \
+bins: bin/x86_64-linux-emd \
+    bin/arm-linux-emd \
     bin/aarch64-linux-emd \
     bin/powerpc64le-linux-emd \
     bin/sparc64-linux-emd \
-    bin/x86_64-linux-emd \
     bin/x86_64-freebsd-emd
 
 %-dist.tar: bin/%-emd $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) install.mk
