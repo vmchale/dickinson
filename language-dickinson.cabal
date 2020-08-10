@@ -114,6 +114,7 @@ library dickinson
         Language.Dickinson.Pattern.Useless
         Control.Monad.Ext
         Data.Foldable.Ext
+        Data.List.Ext
 
     autogen-modules:  Paths_language_dickinson
     default-language: Haskell2010
