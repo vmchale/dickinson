@@ -76,12 +76,12 @@ columinzeBlock = transpose . fmap columinzeExt
 -- relevant :: NonEmpty (Pattern a) ->
 
 isExhaustive :: [Pattern a] -> PatternM Bool
-isExhaustive ps                       | any isWildcard ps = pure True
-isExhaustive ps@((PatternCons _ c):_) = do
+isExhaustive ps                     | any isWildcard ps = pure True
+isExhaustive ps@(PatternCons _ c:_) = do
     let allUniques = unUnique . unique <$> extrCons ps
     pAll <- assocUniques c
     pure $ IS.null $ pAll IS.\\ (IS.fromList allUniques)
-isExhaustive ((OrPattern _ ps):ps')   = isExhaustive (toList ps ++ ps')
+isExhaustive (OrPattern _ ps:ps')   = isExhaustive (toList ps ++ ps')
 
 useful :: [Pattern a] -> Pattern a -> PatternM Bool
 useful [] _                    = pure True
