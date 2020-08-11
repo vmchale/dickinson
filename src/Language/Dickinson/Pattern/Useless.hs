@@ -64,17 +64,6 @@ assocUniques (Name _ (Unique i) _) = do
     let ty = findWithDefault (error "Internal error in pattern-match coverage checker.") i (types st)
     pure $ findWithDefault (error "Internal error in pattern-match coverage checker.") ty (allCons st)
 
--- make sure the input is not a wilcard/var!
-columinzeExt :: Pattern a -> [Pattern a]
-columinzeExt (PatternTuple _ ps) = toList ps
-columinzeExt OrPattern{}         = error "TODO not yet implemented."
-columinzeExt _                   = error "Pattern-match coverage checker does not work on ill-typed programs."
-
-columinzeBlock :: [Pattern a] -> [[Pattern a]]
-columinzeBlock = transpose . fmap columinzeExt
-
--- relevant :: NonEmpty (Pattern a) ->
-
 isExhaustive :: [Pattern a] -> PatternM Bool
 isExhaustive ps                     | any isWildcard ps = pure True
 isExhaustive ps@(PatternCons _ c:_) = do
@@ -86,7 +75,7 @@ isExhaustive (OrPattern _ ps:ps')   = isExhaustive (toList ps ++ ps')
 useful :: [Pattern a] -> Pattern a -> PatternM Bool
 useful [] _                    = pure True
 useful ps (OrPattern _ ps')    = anyA (useful ps) ps' -- all?
-useful ps PatternTuple{}       | any isWildcard ps = pure False -- so we can call columinzeBlock without fear
+useful ps PatternTuple{}       | any isWildcard ps = pure False
 useful ps Wildcard{}           = not <$> isExhaustive ps
 useful ps PatternVar{}         = not <$> isExhaustive ps
 useful ps (PatternCons _ c)    = pure $
