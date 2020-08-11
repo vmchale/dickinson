@@ -11,6 +11,8 @@ import           Data.IntMap               (findWithDefault)
 import qualified Data.IntMap               as IM
 import qualified Data.IntSet               as IS
 import           Data.List.Ext
+import           Data.List.NonEmpty        (NonEmpty ((:|)))
+import qualified Data.List.NonEmpty        as NE
 import           Data.Maybe                (mapMaybe)
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
@@ -50,33 +52,52 @@ isWildcard Wildcard{}   = True
 isWildcard PatternVar{} = True
 isWildcard _            = False
 
-extrCons :: [Pattern a] -> [TyName a]
+extrCons :: [Pattern a] -> [Name a]
 extrCons = concat . mapMaybe g where
     g (PatternCons _ c) = Just [c]
     g (OrPattern _ ps)  = Just $ extrCons (toList ps)
     g _                 = Nothing
 
+internalError :: a
+internalError = error "Internal error in pattern-match coverage checker."
+
 -- given a constructor name, get the IntSet of all constructors of that type
 assocUniques :: Name a -> PatternM IS.IntSet
 assocUniques (Name _ (Unique i) _) = do
     st <- get
-    let ty = findWithDefault (error "Internal error in pattern-match coverage checker.") i (types st)
-    pure $ findWithDefault (error "Internal error in pattern-match coverage checker.") ty (allCons st)
+    let ty = findWithDefault internalError i (types st)
+    pure $ findWithDefault internalError ty (allCons st)
 
 isExhaustive :: [Pattern a] -> PatternM Bool
-isExhaustive ps                     | any isWildcard ps = pure True
-isExhaustive ps@(PatternCons _ c:_) = do
-    let allUniques = unUnique . unique <$> extrCons ps
-    pAll <- assocUniques c
-    pure $ IS.null $ pAll IS.\\ (IS.fromList allUniques)
-isExhaustive (OrPattern _ ps:ps')   = isExhaustive (toList ps ++ ps')
+isExhaustive ps = not <$> (useful ps (Wildcard undefined))
+
+isCompleteSet :: [Name a] -> PatternM Bool
+isCompleteSet []       = pure False
+isCompleteSet ns@(n:_) = do
+    allU <- assocUniques n
+    let ty = unUnique . unique <$> ns
+    pure $ IS.null (allU IS.\\ IS.fromList ty)
 
 useful :: [Pattern a] -> Pattern a -> PatternM Bool
-useful [] _                    = pure True
-useful ps (OrPattern _ ps')    = anyA (useful ps) ps' -- all?
-useful ps PatternTuple{}       | any isWildcard ps = pure False -- so we can split it later
-useful ps Wildcard{}           = not <$> isExhaustive ps
-useful ps PatternVar{}         = not <$> isExhaustive ps
-useful ps (PatternCons _ c)    = pure $
-    not (any isWildcard ps)
-        && c `notElem` extrCons ps -- TODO: do this in one traversal
+useful [] _                                           = pure True
+useful ps (OrPattern _ ps')                           = anyA (useful ps) ps' -- all?
+useful ps _                                           | any isWildcard ps = pure False
+useful ps (PatternCons _ c)                           = pure $ c `notElem` extrCons ps -- already checked for wildcards
+useful _ (PatternTuple  _ (_ :| []))                  = error "Tuple must have at least two elements" -- TODO: loc
+useful ps (PatternTuple _ (Wildcard{} :| [p]))        = undefined
+useful ps (PatternTuple _ (PatternVar{} :| [p]))      = undefined
+useful ps (PatternTuple _ ((PatternCons _ c) :| [p])) = useful (mapMaybe (stripRelevant c) ps) p
+useful ps (PatternTuple l ((PatternCons _ c) :| ps')) = useful (mapMaybe (stripRelevant c) ps) (PatternTuple l $ NE.fromList ps')
+
+-- strip a pattern (presumed to be a constructor or or-pattern) to relevant parts
+stripRelevant :: Name a -> Pattern a -> Maybe (Pattern a)
+stripRelevant _ (PatternTuple _ (_ :| []))                   = error "Tuple must have at least two elements" -- TODO: loc
+stripRelevant c (PatternTuple _ ((PatternCons _ c') :| [p])) | c' == c = Just p
+stripRelevant c (PatternTuple _ (PatternVar{} :| [p]))       = undefined
+stripRelevant c (PatternTuple _ (Wildcard{} :| [p]))         = undefined
+stripRelevant c (PatternTuple _ ((OrPattern _ ps) :| [p]))   | c `elem` extrCons (toList ps) = Just p
+stripRelevant c (PatternTuple l ((PatternCons _ c') :| ps))  | c' == c = Just $ PatternTuple l (NE.fromList ps)
+stripRelevant c (PatternTuple l ((OrPattern _ ps) :| ps'))   | c `elem` extrCons (toList ps) = Just $ PatternTuple l (NE.fromList ps')
+stripRelevant c (PatternTuple l (PatternVar{} :| ps))        = undefined
+stripRelevant c (PatternTuple l (Wildcard{} :| ps))          = undefined
+stripRelevant _ _                                            = internalError
