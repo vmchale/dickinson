@@ -24,4 +24,3 @@ tydecl number = Singular | Plural
       [(Genitive, _, Plural) "þissa"]
       [(Dative, _, Plural) "þissum"]
       )))
-
