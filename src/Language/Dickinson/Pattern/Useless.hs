@@ -1,9 +1,13 @@
-module Language.Dickinson.Pattern.Useless ( useful
+module Language.Dickinson.Pattern.Useless ( PatternM
+                                          , runPatternM
+                                          , isExhaustive
+                                          , useful
+                                          , patternEnvDecls
                                           ) where
 
 import           Control.Monad             (forM_, zipWithM)
-import           Control.Monad.State       (State, get)
-import           Data.Foldable             (toList)
+import           Control.Monad.State       (State, evalState, get)
+import           Data.Foldable             (toList, traverse_)
 import           Data.IntMap               (findWithDefault)
 import qualified Data.IntMap               as IM
 import qualified Data.IntSet               as IS
@@ -29,11 +33,19 @@ typesLens f s = fmap (\x -> s { types = x }) (f (types s))
 
 declAdd :: Declaration a -> PatternM ()
 declAdd Define{}         = pure ()
-declAdd (TyDecl l tn@(Name _ (Unique i) _) cs) =
+declAdd (TyDecl _ (Name _ (Unique i) _) cs) = do
     forM_ cs $ \(Name _ (Unique j) _) ->
         modifying typesLens (IM.insert j i)
+    let cons = IS.fromList $ toList (unUnique . unique <$> cs)
+    modifying allConsLens (IM.insert i cons)
+
+patternEnvDecls :: [Declaration a] -> PatternM ()
+patternEnvDecls = traverse_ declAdd
 
 type PatternM = State PatternEnv
+
+runPatternM :: PatternM a -> a
+runPatternM = flip evalState (PatternEnv mempty mempty)
 
 isWildcard :: Pattern a -> Bool
 isWildcard Wildcard{}   = True

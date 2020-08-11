@@ -5,11 +5,12 @@ module Language.Dickinson.Check.Scope ( checkScope
                                       , checkScopeDeclWith
                                       ) where
 
-import           Control.Applicative              (Alternative, (<|>))
+import           Control.Applicative              ((<|>))
 import           Control.Monad.Except             (MonadError)
 import           Control.Monad.State              (State, evalState, get, modify)
-import           Data.Foldable                    (asum, traverse_)
+import           Data.Foldable                    (traverse_)
 import qualified Data.IntSet                      as IS
+import           Language.Dickinson.Check.Common
 import           Language.Dickinson.Check.Pattern
 import           Language.Dickinson.Error
 import           Language.Dickinson.Name
@@ -97,6 +98,3 @@ checkPair (p, e) = do
     let ns = traversePattern p
     traverse_ insertName ns
     checkExpr e <* traverse_ deleteName ns
-
-mapSumM :: (Traversable t, Alternative f, Applicative m) => (a -> m (f b)) -> t a -> m (f b)
-mapSumM = (fmap asum .) . traverse
