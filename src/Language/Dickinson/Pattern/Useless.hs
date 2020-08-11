@@ -73,20 +73,20 @@ columinzeExt _                   = error "Pattern-match coverage checker does no
 columinzeBlock :: [Pattern a] -> [[Pattern a]]
 columinzeBlock = transpose . fmap columinzeExt
 
+-- relevant :: NonEmpty (Pattern a) ->
+
 isExhaustive :: [Pattern a] -> PatternM Bool
 isExhaustive ps                       | any isWildcard ps = pure True
 isExhaustive ps@((PatternCons _ c):_) = do
     let allUniques = unUnique . unique <$> extrCons ps
     pAll <- assocUniques c
     pure $ IS.null $ pAll IS.\\ (IS.fromList allUniques)
--- isExhaustive ps@(PatternTuple{}:_)    = allA isExhaustive (columinzeBlock ps)
 isExhaustive ((OrPattern _ ps):ps')   = isExhaustive (toList ps ++ ps')
 
 useful :: [Pattern a] -> Pattern a -> PatternM Bool
 useful [] _                    = pure True
 useful ps (OrPattern _ ps')    = anyA (useful ps) ps' -- all?
 useful ps PatternTuple{}       | any isWildcard ps = pure False -- so we can call columinzeBlock without fear
--- useful ps (PatternTuple _ ps') = and <$> zipWithM useful (columinzeBlock ps) (toList ps')
 useful ps Wildcard{}           = not <$> isExhaustive ps
 useful ps PatternVar{}         = not <$> isExhaustive ps
 useful ps (PatternCons _ c)    = pure $
