@@ -4,13 +4,12 @@ module Language.Dickinson.Pattern.Useless ( PatternM
                                           , patternEnvDecls
                                           ) where
 
-import           Control.Monad             (forM_, zipWithM)
+import           Control.Monad             (forM_)
 import           Control.Monad.State       (State, evalState, get)
 import           Data.Foldable             (toList, traverse_)
 import           Data.IntMap               (findWithDefault)
 import qualified Data.IntMap               as IM
 import qualified Data.IntSet               as IS
-import           Data.List                 (transpose)
 import           Data.List.Ext
 import           Data.Maybe                (mapMaybe)
 import           Language.Dickinson.Name
@@ -75,7 +74,7 @@ isExhaustive (OrPattern _ ps:ps')   = isExhaustive (toList ps ++ ps')
 useful :: [Pattern a] -> Pattern a -> PatternM Bool
 useful [] _                    = pure True
 useful ps (OrPattern _ ps')    = anyA (useful ps) ps' -- all?
-useful ps PatternTuple{}       | any isWildcard ps = pure False
+useful ps PatternTuple{}       | any isWildcard ps = pure False -- so we can split it later
 useful ps Wildcard{}           = not <$> isExhaustive ps
 useful ps PatternVar{}         = not <$> isExhaustive ps
 useful ps (PatternCons _ c)    = pure $
