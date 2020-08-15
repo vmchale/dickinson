@@ -89,7 +89,7 @@ isCompleteSet ns@(n:_) = do
 useful :: [Pattern a] -> Pattern a -> PatternM Bool
 useful [] _                                           = pure True
 useful ps (OrPattern _ ps')                           = anyA (useful ps) ps' -- all?
-useful ps _                                           | any isWildcard ps = pure False
+useful ps _                                           | any isWildcard ps = pure False -- check for wildcards so that stripRelevant only gets tuples
 useful ps (PatternCons _ c)                           = pure $ c `notElem` extrCons ps -- already checked for wildcards
 useful _ (PatternTuple  _ (_ :| []))                  = error "Tuple must have at least two elements" -- TODO: loc
 useful ps@(PatternCons{}:_) Wildcard{}                = not <$> isCompleteSet (extrCons ps)
@@ -114,4 +114,4 @@ stripRelevant c (PatternTuple l ((PatternCons _ c') :| ps))  | c' == c = Just $ 
 stripRelevant c (PatternTuple l ((OrPattern _ ps) :| ps'))   | c `elem` extrCons (toList ps) = Just $ PatternTuple l (NE.fromList ps')
 stripRelevant c (PatternTuple l (PatternVar{} :| ps))        = Just $ PatternTuple l (NE.fromList ps)
 stripRelevant c (PatternTuple l (Wildcard{} :| ps))          = Just $ PatternTuple l (NE.fromList ps)
-stripRelevant _ _                                            = tyError
+stripRelevant _ _                                            = tyError -- if we call stripRelevant on a non-tuple, that means a constructor was "above" a tuple, which we don't want!
