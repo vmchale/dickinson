@@ -64,6 +64,9 @@ internalError = error "Internal error in pattern-match coverage checker."
 tyError :: a
 tyError = error "Exhaustiveness checker does not work on ill-typed programs."
 
+errTup :: a
+errTup = error "Tuple must have at least two elements."
+
 -- given a constructor name, get the IntSet of all constructors of that type
 assocUniques :: Name a -> PatternM IS.IntSet
 assocUniques (Name _ (Unique i) _) = do
@@ -100,18 +103,18 @@ useful ps@(PatternTuple{}:_) Wildcard{}               = undefined
 useful ps@(PatternTuple{}:_) PatternVar{}             = undefined
 useful ps (PatternTuple _ (Wildcard{} :| [p]))        = undefined
 useful ps (PatternTuple _ (PatternVar{} :| [p]))      = undefined
-useful ps (PatternTuple _ ((PatternCons _ c) :| [p])) = useful (mapMaybe (stripRelevant c) ps) p
-useful ps (PatternTuple l ((PatternCons _ c) :| ps')) = useful (mapMaybe (stripRelevant c) ps) (PatternTuple l $ NE.fromList ps')
+useful ps (PatternTuple _ ((PatternCons _ c) :| [p])) = useful (fmap (stripRelevant c) ps) p
+useful ps (PatternTuple l ((PatternCons _ c) :| ps')) = useful (fmap (stripRelevant c) ps) (PatternTuple l $ NE.fromList ps')
 
 -- strip a pattern (presumed to be a constructor or or-pattern) to relevant parts
-stripRelevant :: Name a -> Pattern a -> Maybe (Pattern a)
-stripRelevant _ (PatternTuple _ (_ :| []))                   = error "Tuple must have at least two elements" -- TODO: loc
-stripRelevant c (PatternTuple _ ((PatternCons _ c') :| [p])) | c' == c = Just p
-stripRelevant _ (PatternTuple _ (PatternVar{} :| [p]))       = Just p
-stripRelevant _ (PatternTuple _ (Wildcard{} :| [p]))         = Just p
-stripRelevant c (PatternTuple _ ((OrPattern _ ps) :| [p]))   | c `elem` extrCons (toList ps) = Just p
-stripRelevant c (PatternTuple l ((PatternCons _ c') :| ps))  | c' == c = Just $ PatternTuple l (NE.fromList ps)
-stripRelevant c (PatternTuple l ((OrPattern _ ps) :| ps'))   | c `elem` extrCons (toList ps) = Just $ PatternTuple l (NE.fromList ps')
-stripRelevant c (PatternTuple l (PatternVar{} :| ps))        = Just $ PatternTuple l (NE.fromList ps)
-stripRelevant c (PatternTuple l (Wildcard{} :| ps))          = Just $ PatternTuple l (NE.fromList ps)
-stripRelevant _ _                                            = tyError -- if we call stripRelevant on a non-tuple, that means a constructor was "above" a tuple, which we don't want!
+stripRelevant :: Name a -> Pattern a -> Pattern a
+stripRelevant _ (PatternTuple _ (_ :| []))                   = errTup -- TODO: loc
+stripRelevant c (PatternTuple _ ((PatternCons _ c') :| [p])) | c' == c = p
+stripRelevant _ (PatternTuple _ (PatternVar{} :| [p]))       = p
+stripRelevant _ (PatternTuple _ (Wildcard{} :| [p]))         = p
+stripRelevant c (PatternTuple _ ((OrPattern _ ps) :| [p]))   | c `elem` extrCons (toList ps) = p
+stripRelevant c (PatternTuple l ((PatternCons _ c') :| ps))  | c' == c = PatternTuple l (NE.fromList ps)
+stripRelevant c (PatternTuple l ((OrPattern _ ps) :| ps'))   | c `elem` extrCons (toList ps) = PatternTuple l (NE.fromList ps')
+stripRelevant c (PatternTuple l (PatternVar{} :| ps))        = PatternTuple l (NE.fromList ps)
+stripRelevant c (PatternTuple l (Wildcard{} :| ps))          = PatternTuple l (NE.fromList ps)
+stripRelevant _ _                                            = tyError -- if we call stripRelevant on a non-tuple, that means a constructor was "above" a tuple, which is ill-typed anyway
