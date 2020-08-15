@@ -1,0 +1,17 @@
+%-
+
+tydecl octit = Zero
+             | One
+             | Two
+             | Three
+             | Four
+             | Five
+             | Six
+             | Seven
+
+(:def match
+  (:lambda x octit
+    (:match x
+      [Zero "0"]
+      [One "1"]
+      [Two "2"])))
