@@ -61,6 +61,9 @@ extrCons = concat . mapMaybe g where
 internalError :: a
 internalError = error "Internal error in pattern-match coverage checker."
 
+tyError :: a
+tyError = error "Exhaustiveness checker does not work on ill-typed programs."
+
 -- given a constructor name, get the IntSet of all constructors of that type
 assocUniques :: Name a -> PatternM IS.IntSet
 assocUniques (Name _ (Unique i) _) = do
@@ -104,11 +107,11 @@ useful ps (PatternTuple l ((PatternCons _ c) :| ps')) = useful (mapMaybe (stripR
 stripRelevant :: Name a -> Pattern a -> Maybe (Pattern a)
 stripRelevant _ (PatternTuple _ (_ :| []))                   = error "Tuple must have at least two elements" -- TODO: loc
 stripRelevant c (PatternTuple _ ((PatternCons _ c') :| [p])) | c' == c = Just p
-stripRelevant c (PatternTuple _ (PatternVar{} :| [p]))       = undefined
-stripRelevant c (PatternTuple _ (Wildcard{} :| [p]))         = undefined
+stripRelevant _ (PatternTuple _ (PatternVar{} :| [p]))       = Just p
+stripRelevant _ (PatternTuple _ (Wildcard{} :| [p]))         = Just p
 stripRelevant c (PatternTuple _ ((OrPattern _ ps) :| [p]))   | c `elem` extrCons (toList ps) = Just p
 stripRelevant c (PatternTuple l ((PatternCons _ c') :| ps))  | c' == c = Just $ PatternTuple l (NE.fromList ps)
 stripRelevant c (PatternTuple l ((OrPattern _ ps) :| ps'))   | c `elem` extrCons (toList ps) = Just $ PatternTuple l (NE.fromList ps')
-stripRelevant c (PatternTuple l (PatternVar{} :| ps))        = undefined
-stripRelevant c (PatternTuple l (Wildcard{} :| ps))          = undefined
-stripRelevant _ _                                            = internalError
+stripRelevant c (PatternTuple l (PatternVar{} :| ps))        = Just $ PatternTuple l (NE.fromList ps)
+stripRelevant c (PatternTuple l (Wildcard{} :| ps))          = Just $ PatternTuple l (NE.fromList ps)
+stripRelevant _ _                                            = tyError
