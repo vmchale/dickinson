@@ -70,6 +70,7 @@ parserTests =
         , sanityCheckTest "test/data/adt.dck"
         , detectSuspiciousPattern "test/error/badMatch.dck"
         , detectInexhaustive "test/demo/inexhaustive.dck"
+        , noInexhaustive "test/demo/exhaustive.dck"
         , detectInexhaustive "test/error/inexhaustivePatternMatch.dck"
         , noInexhaustive "prelude/curry.dck"
         , thTests
