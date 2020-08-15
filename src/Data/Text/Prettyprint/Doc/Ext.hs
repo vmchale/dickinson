@@ -22,9 +22,8 @@ import           Data.List                 (intersperse)
 import           Data.Semigroup            ((<>))
 import qualified Data.Text                 as T
 import qualified Data.Text.Lazy            as TL
-import           Prettyprinter             (Doc, LayoutOptions (LayoutOptions), PageWidth (AvailablePerLine),
-                                            Pretty (pretty), SimpleDocStream, concatWith, flatAlt, hardline, indent,
-                                            layoutSmart, softline, vsep, (<+>))
+import           Prettyprinter             (Doc, LayoutOptions (LayoutOptions), PageWidth (AvailablePerLine), Pretty (pretty), SimpleDocStream, concatWith,
+                                            flatAlt, hardline, indent, layoutSmart, softline, vsep, (<+>))
 import           Prettyprinter.Render.Text (renderLazy, renderStrict)
 
 infixr 6 <#>
