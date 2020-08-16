@@ -50,6 +50,7 @@ runPatternM = flip evalState (PatternEnv mempty mempty)
 isWildcard :: Pattern a -> Bool
 isWildcard Wildcard{}   = True
 isWildcard PatternVar{} = True
+-- FIXME: or pattern containing wildcard? -> sketchy
 isWildcard _            = False
 
 extrCons :: [Pattern a] -> [Name a]
@@ -75,7 +76,7 @@ assocUniques (Name _ (Unique i) _) = do
     pure $ findWithDefault internalError ty (allCons st)
 
 isExhaustive :: [Pattern a] -> PatternM Bool
-isExhaustive ps = not <$> (useful ps (Wildcard undefined))
+isExhaustive ps = not <$> useful ps (Wildcard undefined)
 
 isCompleteSet :: [Name a] -> PatternM Bool
 isCompleteSet []       = pure False
@@ -84,10 +85,28 @@ isCompleteSet ns@(n:_) = do
     let ty = unUnique . unique <$> ns
     pure $ IS.null (allU IS.\\ IS.fromList ty)
 
+-- pattern equality; variables are wildcards in this scheme
+pEq :: Pattern a -> Pattern a -> Bool
+pEq (PatternCons _ c) (PatternCons _ c')     = c == c'
+pEq (OrPattern _ ps) (OrPattern _ ps')       = and (NE.zipWith pEq ps ps')
+pEq (PatternTuple _ ps) (PatternTuple _ ps') = and (NE.zipWith pEq ps ps')
+pEq PatternVar{} PatternVar{}                = True
+pEq PatternVar{} Wildcard{}                  = True
+pEq Wildcard{} PatternVar{}                  = True
+pEq Wildcard{} Wildcard{}                    = True
+pEq _ _                                      = False
+
 -- idea? if a wildcard is below a tuple, compute the "cross-complete set" of
 -- tuple maybe? or something like it...
 --
 -- that way we don't need to get the type! hopefully
+
+filterTailEq :: [Pattern a] -- ^ pattern stack
+             -> Pattern a -- ^ pattern tail
+             -> [Pattern a]
+filterTailEq ps p = filter q ps
+    where q (PatternTuple _ (_ :| [p'])) = pEq p p'
+          q _                            = tyError
 
 useful :: [Pattern a] -> Pattern a -> PatternM Bool
 useful [] _                                           = pure True
@@ -101,8 +120,8 @@ useful ps@(PatternCons{}:_) PatternVar{}              = not <$> isCompleteSet (e
 useful ps@(OrPattern{}:_) PatternVar{}                = not <$> isCompleteSet (extrCons ps)
 useful ps@(PatternTuple{}:_) Wildcard{}               = undefined
 useful ps@(PatternTuple{}:_) PatternVar{}             = undefined
-useful ps (PatternTuple _ (Wildcard{} :| [p]))        = undefined
-useful ps (PatternTuple _ (PatternVar{} :| [p]))      = undefined
+useful ps (PatternTuple _ (Wildcard{} :| ps'))        = undefined
+useful ps (PatternTuple _ (PatternVar{} :| ps'))      = undefined
 useful ps (PatternTuple _ ((PatternCons _ c) :| [p])) = useful (fmap (stripRelevant c) ps) p
 useful ps (PatternTuple l ((PatternCons _ c) :| ps')) = useful (fmap (stripRelevant c) ps) (PatternTuple l $ NE.fromList ps')
 
@@ -115,6 +134,8 @@ stripRelevant _ (PatternTuple _ (Wildcard{} :| [p]))         = p
 stripRelevant c (PatternTuple _ ((OrPattern _ ps) :| [p]))   | c `elem` extrCons (toList ps) = p
 stripRelevant c (PatternTuple l ((PatternCons _ c') :| ps))  | c' == c = PatternTuple l (NE.fromList ps)
 stripRelevant c (PatternTuple l ((OrPattern _ ps) :| ps'))   | c `elem` extrCons (toList ps) = PatternTuple l (NE.fromList ps')
-stripRelevant c (PatternTuple l (PatternVar{} :| ps))        = PatternTuple l (NE.fromList ps)
-stripRelevant c (PatternTuple l (Wildcard{} :| ps))          = PatternTuple l (NE.fromList ps)
-stripRelevant _ _                                            = tyError -- if we call stripRelevant on a non-tuple, that means a constructor was "above" a tuple, which is ill-typed anyway
+stripRelevant _ (PatternTuple l (PatternVar{} :| ps))        = PatternTuple l (NE.fromList ps)
+stripRelevant _ (PatternTuple l (Wildcard{} :| ps))          = PatternTuple l (NE.fromList ps)
+stripRelevant _ OrPattern{}                                  = undefined
+stripRelevant _ _                                            = tyError -- if we call stripRelevant on a non-tuple, that means a constructor was "above" a tuple, which is
+                                                                       -- ill-typed anyway. Also, we've already checked for wildcards/vars in useful ^
