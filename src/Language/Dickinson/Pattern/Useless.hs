@@ -102,7 +102,8 @@ useful ps (PatternTuple _ (PatternVar{} :| ps'))      = undefined
 useful ps (PatternTuple _ ((PatternCons _ c) :| [p])) = useful (fmap (stripRelevant c) ps) p
 useful ps (PatternTuple l ((PatternCons _ c) :| ps')) = useful (fmap (stripRelevant c) ps) (PatternTuple l $ NE.fromList ps')
 useful ps (PatternTuple _ (OrPattern{} :| ps'))       = undefined
-useful ps (PatternTuple _ (PatternTuple{} :| ps'))    = undefined
+useful ps (PatternTuple _ (PatternTuple _ p :| ps'))  = undefined
+useful ps@(OrPattern{}:_) PatternTuple{}              = undefined
 
 -- strip a pattern (presumed to be a constructor or or-pattern) to relevant parts
 stripRelevant :: Name a -> Pattern a -> Pattern a
