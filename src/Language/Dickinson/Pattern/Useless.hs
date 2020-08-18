@@ -85,25 +85,51 @@ isCompleteSet ns@(n:_) = do
     let ty = unUnique . unique <$> ns
     pure $ IS.null (allU IS.\\ IS.fromList ty)
 
+isComplete :: [Pattern a] -> PatternM Bool
+isComplete = isCompleteSet . extrCons
+
+-- do the first columns form a complete set?
+fstComplete :: [Pattern a] -> PatternM Bool
+fstComplete = isComplete . mapMaybe extrFst
+    where extrFst (PatternTuple _ (p :| _)) = Just p
+          extrFst _                         = Nothing
+
+-- Specialize a stack of patterns w.r.t. a constructor pattern
+specializeConstructor :: Pattern a -- ^ Constructor
+                      -> [Pattern a]
+                      -> [Pattern a]
+specializeConstructor (PatternCons _ c) = concatMap unstitch
+    where unstitch (PatternTuple _ (_ :| []))                   = errTup
+          unstitch (PatternTuple _ ((PatternCons _ c') :| [p])) | c' == c = [p]
+                                                                | otherwise = []
+          unstitch (PatternTuple _ (Wildcard{} :| [p]))         = [p]
+          unstitch (PatternTuple _ (PatternVar{} :| [p]))       = [p]
+          unstitch (PatternTuple l ((PatternCons _ c') :| ps))  | c == c' = [PatternTuple l $ NE.fromList ps]
+                                                                | otherwise = []
+          unstitch (PatternTuple l (Wildcard{} :| ps))          = [PatternTuple l $ NE.fromList ps]
+          unstitch (PatternTuple l (PatternVar{} :| ps))        = [PatternTuple l $ NE.fromList ps]
+          unstitch OrPattern{}                                  = undefined
+specializeConstructor _                  = internalError
+
+-- "un-stitch" or patterns... specialized matrix
 useful :: [Pattern a] -> Pattern a -> PatternM Bool
 useful [] _                                           = pure True
 useful ps (OrPattern _ ps')                           = anyA (useful ps) ps' -- all?
 useful ps _                                           | any isWildcard ps = pure False -- check for wildcards so that stripRelevant only gets tuples
 useful ps (PatternCons _ c)                           = pure $ c `notElem` extrCons ps -- already checked for wildcards
-useful _ (PatternTuple  _ (_ :| []))                  = error "Tuple must have at least two elements" -- TODO: loc
-useful ps@(PatternCons{}:_) Wildcard{}                = not <$> isCompleteSet (extrCons ps)
-useful ps@(PatternCons{}:_) PatternVar{}              = not <$> isCompleteSet (extrCons ps)
+useful _ (PatternTuple  _ (_ :| []))                  = errTup -- TODO: loc
+useful ps@(PatternCons{}:_) Wildcard{}                = not <$> isComplete ps
+useful ps@(PatternCons{}:_) PatternVar{}              = not <$> isComplete ps
+useful ps@(PatternTuple{}:_) Wildcard{}               = undefined -- "complete signature" in Maranget paper includes (,) as well as c_k
+useful ps@(PatternTuple{}:_) PatternVar{}             = undefined
 useful ps@(OrPattern{}:_) Wildcard{}                  = undefined
 useful ps@(OrPattern{}:_) PatternVar{}                = undefined
-useful ps@(PatternTuple{}:_) Wildcard{}               = undefined
-useful ps@(PatternTuple{}:_) PatternVar{}             = undefined
 useful ps (PatternTuple _ (Wildcard{} :| ps'))        = undefined
 useful ps (PatternTuple _ (PatternVar{} :| ps'))      = undefined
 useful ps (PatternTuple _ ((PatternCons _ c) :| [p])) = useful (fmap (stripRelevant c) ps) p
 useful ps (PatternTuple l ((PatternCons _ c) :| ps')) = useful (fmap (stripRelevant c) ps) (PatternTuple l $ NE.fromList ps')
 useful ps (PatternTuple _ (OrPattern{} :| ps'))       = undefined
 useful ps (PatternTuple _ (PatternTuple _ p :| ps'))  = undefined
-useful ps@(OrPattern{}:_) PatternTuple{}              = undefined
 
 -- strip a pattern (presumed to be a constructor or or-pattern) to relevant parts
 stripRelevant :: Name a -> Pattern a -> Pattern a
