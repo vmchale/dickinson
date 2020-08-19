@@ -1,4 +1,5 @@
 module Language.Dickinson.Check.Exhaustive ( checkExhaustive
+                                           , foliate
                                            ) where
 
 import           Control.Applicative                ((<|>))
@@ -37,10 +38,10 @@ uselessErr ps p = {-# SCC "uselessErr" #-} do
         else Just $ UselessPattern (patAnn p) p
 
 foliate :: [a] -> [([a], a)]
-foliate = mapMaybe split . inits . reverse
-    where split []     = Nothing
-          split [_]    = Nothing
-          split (x:xs) = Just (xs, x)
+foliate = mapMaybe split . inits
+    where split []  = Nothing
+          split [_] = Nothing
+          split xs  = Just (init xs, last xs)
 
 checkMatch :: [Pattern a] -> a -> PatternM (Maybe (DickinsonWarning a))
 checkMatch ps loc = {-# SCC "checkMatch" #-}

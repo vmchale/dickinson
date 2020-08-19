@@ -71,9 +71,9 @@ parserTests =
         , findPath
         , sanityCheckTest "test/data/adt.dck"
         , detectSuspiciousPattern "test/error/badMatch.dck"
-        , detectInexhaustive "test/demo/inexhaustive.dck"
+        , detectBadPattern "test/demo/inexhaustive.dck"
         , noInexhaustive "test/demo/exhaustive.dck"
-        , detectInexhaustive "test/error/inexhaustivePatternMatch.dck"
+        , detectBadPattern "test/error/inexhaustivePatternMatch.dck"
         , noInexhaustive "prelude/curry.dck"
         , thTests
         ]
@@ -136,8 +136,8 @@ noInexhaustive fp = testCase "Reports non-sketchy pattern matches" $ do
     (Dickinson _ ds) <- parseNoRename fp
     assertBool fp $ isNothing (checkExhaustive ds)
 
-detectInexhaustive :: FilePath -> TestTree
-detectInexhaustive fp = testCase "Detects inexhaustive pattern match" $ do
+detectBadPattern :: FilePath -> TestTree
+detectBadPattern fp = testCase "Detects sketchy pattern match" $ do
     (Dickinson _ ds) <- parseNoRename fp
     assertBool fp $ isJust (checkExhaustive ds)
 
