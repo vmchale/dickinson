@@ -102,6 +102,7 @@ library dickinson
         Language.Dickinson.Pipeline
         Language.Dickinson.Import
         Language.Dickinson.Lib
+        Language.Dickinson.Pattern.Useless
         Data.Tuple.Ext
         Control.Exception.Value
         Data.Text.Prettyprint.Doc.Ext
@@ -223,6 +224,7 @@ test-suite dickinson-test
     other-modules:
         Eval
         Golden
+        Pattern
         Roundtrip.Compare
         TypeCheck
         TH
