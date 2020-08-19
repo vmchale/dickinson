@@ -2,15 +2,16 @@
 
 module Main (main) where
 
-import           Control.Exception.Value            (eitherThrow)
-import qualified Data.ByteString.Lazy               as BSL
-import           Data.Either                        (isRight)
-import           Data.List.NonEmpty                 (NonEmpty (..))
-import           Data.Maybe                         (isJust, isNothing)
+import           Control.Exception.Value             (eitherThrow)
+import qualified Data.ByteString.Lazy                as BSL
+import           Data.Either                         (isRight)
+import           Data.List.NonEmpty                  (NonEmpty (..))
+import           Data.Maybe                          (isJust, isNothing)
 import           Eval
 import           Golden
 import           Language.Dickinson.Check
 import           Language.Dickinson.Check.Duplicate
+import           Language.Dickinson.Check.Exhaustive
 import           Language.Dickinson.Check.Internal
 import           Language.Dickinson.Check.Pattern
 import           Language.Dickinson.Check.Scope
@@ -129,3 +130,17 @@ sanityCheckTest fp = testCase fp $
     fmap eitherThrow $ evalIO $ do
         ds <- amalgamateRenameM [] fp
         sanityCheck ds
+
+noInexhaustive :: FilePath -> TestTree
+noInexhaustive fp = testCase "Reports non-sketchy pattern matches" $ do
+    (Dickinson _ ds) <- parseNoRename fp
+    assertBool fp $ isNothing (checkExhaustive ds)
+
+detectInexhaustive :: FilePath -> TestTree
+detectInexhaustive fp = testCase "Detects inexhaustive pattern match" $ do
+    (Dickinson _ ds) <- parseNoRename fp
+    assertBool fp $ isJust (checkExhaustive ds)
+
+
+parseNoRename :: FilePath -> IO (Dickinson AlexPosn)
+parseNoRename = fmap (eitherThrow . parse) . BSL.readFile

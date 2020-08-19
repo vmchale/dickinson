@@ -97,6 +97,7 @@ library dickinson
         Language.Dickinson.Check.Internal
         Language.Dickinson.Check.Pattern
         Language.Dickinson.Check.Duplicate
+        Language.Dickinson.Check.Exhaustive
         Language.Dickinson.Unique
         Language.Dickinson.File
         Language.Dickinson.Pipeline
