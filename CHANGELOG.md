@@ -1,5 +1,7 @@
 # dickinson
 
+  * Linter now reports inexhaustive pattern matches
+
 ## 1.2.0.0
 
   * Remove `dir` subcommand
