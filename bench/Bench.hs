@@ -1,14 +1,15 @@
 module Main (main) where
 
-import           Control.Exception                  (throw)
-import           Control.Exception.Value            (eitherThrow)
-import           Control.Monad                      (void)
+import           Control.Exception                   (throw)
+import           Control.Exception.Value             (eitherThrow)
+import           Control.Monad                       (void)
 import           Criterion.Main
-import           Data.Binary                        (decode, encode)
-import qualified Data.ByteString.Lazy               as BSL
-import qualified Data.Text                          as T
+import           Data.Binary                         (decode, encode)
+import qualified Data.ByteString.Lazy                as BSL
+import qualified Data.Text                           as T
 import           Language.Dickinson.Check
 import           Language.Dickinson.Check.Duplicate
+import           Language.Dickinson.Check.Exhaustive
 import           Language.Dickinson.Check.Internal
 import           Language.Dickinson.Check.Scope
 import           Language.Dickinson.Error
@@ -58,6 +59,10 @@ main =
                     [ bench "bench/data/multiple.dck" $ nf checkMultiple p
                     , bench "lib/adjectives.dck" $ nf checkMultiple p'
                     , bench "bench/data/multiple.dck" $ nf checkDuplicates p -- TODO: better example
+                    ]
+                , env patternEnv $ \ ~(Dickinson _ p) ->
+                  bgroup "pattern match exhaustiveness"
+                    [ bench "test/examples/declension.dck" $ nf checkExhaustive p
                     ]
                 , bgroup "pipeline"
                     [ benchPipeline "examples/shakespeare.dck"
@@ -112,6 +117,7 @@ main =
           checkEnv = (,)
             <$> multiParsed
             <*> libText
+          patternEnv = either throw id . parse <$> BSL.readFile "test/examples/declension.dck"
 
 plainExpr :: (UniqueCtx, Dickinson a) -> Dickinson a
 plainExpr = fst . uncurry renameDickinson
