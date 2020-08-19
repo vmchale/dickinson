@@ -6,6 +6,7 @@ module Language.Dickinson.Pattern.Useless ( PatternM
                                           , runPatternM
                                           , isExhaustive
                                           , patternEnvDecls
+                                          , useful
                                           -- * Exported for testing
                                           , specializeTuple
                                           , specializeTag
@@ -13,6 +14,7 @@ module Language.Dickinson.Pattern.Useless ( PatternM
 
 import           Control.Monad             (forM, forM_)
 import           Control.Monad.State       (State, evalState, get)
+import           Data.Coerce               (coerce)
 import           Data.Foldable             (toList, traverse_)
 import           Data.Functor              (void)
 import           Data.IntMap               (findWithDefault)
@@ -66,7 +68,7 @@ isCompleteSet :: [Name a] -> PatternM (Maybe [Name ()])
 isCompleteSet []       = pure Nothing
 isCompleteSet ns@(n:_) = do
     allU <- assocUniques n
-    let ty = unUnique . unique <$> ns
+    let ty = coerce (unique <$> ns)
     pure $
         if IS.null (allU IS.\\ IS.fromList ty)
             then Just ((\u -> (Name undefined (Unique u) ())) <$> IS.toList allU)
@@ -121,7 +123,7 @@ extrCons _                 = []
 
 -- Is the first column of the pattern matrix complete?
 fstComplete :: [[Pattern a]] -> PatternM (Complete ())
-fstComplete ps =
+fstComplete ps = {-# SCC "fstComplete" #-}
     if maxTupleLength > 0
         then pure $ CompleteTuple maxTupleLength
         else do
@@ -156,7 +158,7 @@ usefulMaranget ps (q@PatternVar{}:qs)     = do
         CompleteTags ns -> or <$> (forM ns $ \n -> usefulMaranget (specializeTag n (forget ps)) (fmap void qs))
 
 specializeTupleVector :: Int -> Pattern a -> [Pattern a] -> [Pattern a]
-specializeTupleVector n p ps = replicate n p ++ ps
+specializeTupleVector n p ps = {-# SCC "specializeTupleVector" #-} replicate n p ++ ps
 
 forget :: [[Pattern a]] -> [[Pattern ()]]
 forget = fmap (fmap void)
