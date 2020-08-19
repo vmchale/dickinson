@@ -54,7 +54,6 @@ release: dists
 
 lint:
 	hlint src bench run ./test
-	yamllint stack.yaml
 	yamllint .stylish-haskell.yaml
 	yamllint .hlint.yaml
 

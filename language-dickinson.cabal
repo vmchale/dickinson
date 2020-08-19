@@ -97,7 +97,6 @@ library dickinson
         Language.Dickinson.Check.Internal
         Language.Dickinson.Check.Pattern
         Language.Dickinson.Check.Duplicate
-        Language.Dickinson.Check.Exhaustive
         Language.Dickinson.Unique
         Language.Dickinson.File
         Language.Dickinson.Pipeline
@@ -112,7 +111,6 @@ library dickinson
         Paths_language_dickinson
         Language.Dickinson.Lib.Get
         Language.Dickinson.Pattern
-        Language.Dickinson.Pattern.Useless
         Language.Dickinson.Check.Common
         Control.Monad.Ext
         Data.Foldable.Ext

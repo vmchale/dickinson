@@ -1,5 +1,8 @@
 # dickinson
 
+  * Remove `dir` subcommand
+  * `emd` now looks for libraries in `$HOME/.emd` if extant
+
 ## 1.1.0.3
 
   * More sensible completions in REPL

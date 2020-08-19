@@ -26,7 +26,6 @@ import           Data.Functor                         (($>))
 import           Data.Text                            as T
 import           Language.Dickinson.Check
 import           Language.Dickinson.Check.Duplicate
-import           Language.Dickinson.Check.Exhaustive
 import           Language.Dickinson.Check.Scope
 import           Language.Dickinson.Error
 import           Language.Dickinson.Eval
@@ -89,7 +88,7 @@ validateAmalgamate is fp = do
 
 -- | Run some lints
 warnFile :: FilePath -> IO ()
-warnFile = maybeThrowIO . (\x -> checkDuplicates x <|> checkMultiple x <|> checkExhaustive x) . modDefs
+warnFile = maybeThrowIO . (\x -> checkDuplicates x <|> checkMultiple x) . modDefs
     <=< eitherThrowIO . parse
     <=< BSL.readFile
 

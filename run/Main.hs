@@ -32,9 +32,9 @@ act = hsubparser
     <> command "lint" (info lintP (progDesc "Examine a file for common errors."))
     <> command "fmt" (info formatP (progDesc "Format Dickinson code"))
     <> command "man" (info (pure Man) (progDesc "Dump path to manpages"))
-    <> command "ide" (info ide (progDesc "Run all checks and lints"))
-    -- ide and dir should be hidden?
-    ) <|> runP
+    )
+    <|> hsubparser (command "ide" (info ide (progDesc "Run all checks and lints")) <> internal)
+    <|> runP
 
 formatP :: Parser Act
 formatP = Format

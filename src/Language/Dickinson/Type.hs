@@ -26,9 +26,8 @@ import           Data.Text.Prettyprint.Doc.Ext (Debug (..), hardSep, (<#*>), (<#
 import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Lexer
 import           Language.Dickinson.Name
-import           Prettyprinter                 (Doc, Pretty (pretty), align, brackets, colon, concatWith, dquotes,
-                                                encloseSep, group, hardline, hsep, indent, lparen, parens, pipe, rangle,
-                                                rparen, tupled, vsep, (<+>))
+import           Prettyprinter                 (Doc, Pretty (pretty), align, brackets, colon, concatWith, dquotes, encloseSep, group, hardline, hsep, indent,
+                                                line, lparen, parens, pipe, rangle, rparen, tupled, vsep, (<+>))
 import           Prettyprinter.Internal        (unsafeTextWithoutNewlines)
 
 data Dickinson a = Dickinson { modImports :: [Import a]
@@ -109,7 +108,7 @@ instance Eq (DickinsonTy a) where
 
 instance Pretty (Declaration a) where
     pretty (Define _ n e)  = parens (":def" <+> pretty n <#> indent 2 (pretty e))
-    pretty (TyDecl _ n cs) = "tydecl" <+> pretty n <+> "=" <+> concatWith (\x y -> x <+> pipe <+> y) (toList (pretty <$> cs))
+    pretty (TyDecl _ n cs) = "tydecl" <+> pretty n <+> align ("=" <+> group (concatWith (\x y -> x <> line <> pipe <+> y) (toList (pretty <$> cs))))
 
 instance Pretty (Import a) where
     pretty = prettyImport pretty
