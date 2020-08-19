@@ -150,16 +150,20 @@ useful ps@(PatternTuple{}:_) Wildcard{}               = do
     comp <- fstComplete ps
     if comp
         then or <$> forM (extrSplit ps) -- FIXME: only works when constructor is a tag, not with tuples!
-            -- p must be a constructor (i.e. not an or-pattern) so it may be fed to
-            -- specializeConstructor (hence the weird nesting and the function
-            -- extrSplit)
-            (\(pcs, pt) -> or <$> forM pcs -- pt "pattern tail"
-                (\pc -> useful (specializeConstructor pc ps) pt))
+                -- p must be a constructor (i.e. not an or-pattern) so it may be fed to
+                -- specializeConstructor (hence the weird nesting and the function
+                -- extrSplit)
+                (\(pcs, pt) -> or <$> forM pcs -- pt "pattern tail" FIXME: S(c_k, q) here for pattern tail!
+                    (\pc -> useful (specializeConstructor pc ps) pt))
         else undefined
 useful ps@(PatternTuple{}:_) PatternVar{}             = undefined
 useful ps@(OrPattern{}:_) Wildcard{}                  = undefined
 useful ps@(OrPattern{}:_) PatternVar{}                = undefined
-useful ps (PatternTuple _ (Wildcard{} :| ps'))        = undefined
+useful ps (PatternTuple _ (Wildcard{} :| ps'))        = do
+    comp <- fstComplete ps
+    if comp
+        then undefined
+        else undefined
 useful ps (PatternTuple _ (PatternVar{} :| ps'))      = undefined
 useful ps (PatternTuple _ ((PatternCons _ c) :| [p])) = useful (mapMaybe (stripRelevant c) ps) p
 useful ps (PatternTuple l ((PatternCons _ c) :| ps')) = useful (mapMaybe (stripRelevant c) ps) (PatternTuple l $ NE.fromList ps')
