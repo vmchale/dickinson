@@ -3,6 +3,8 @@ module Language.Dickinson.Check.Exhaustive ( checkExhaustive
 
 import           Control.Applicative                ((<|>))
 import           Data.Foldable                      (toList)
+import           Data.List                          (inits)
+import           Data.Maybe                         (mapMaybe)
 import           Language.Dickinson.Check.Common
 import           Language.Dickinson.Error
 import           Language.Dickinson.Pattern.Useless
@@ -28,11 +30,23 @@ isExhaustiveM ps loc = do
         else Just $ InexhaustiveMatch loc
 
 uselessErr :: [Pattern a] -> Pattern a -> PatternM (Maybe (DickinsonWarning a))
-uselessErr ps p = do
+uselessErr ps p = {-# SCC "uselessErr" #-} do
     e <- useful ps p
     pure $ if e
         then Nothing
         else Just $ UselessPattern (patAnn p) p
+
+foliate :: [a] -> [([a], a)]
+foliate = mapMaybe split . inits . reverse
+    where split []     = Nothing
+          split [_]    = Nothing
+          split (x:xs) = Just (xs, x)
+
+checkMatch :: [Pattern a] -> a -> PatternM (Maybe (DickinsonWarning a))
+checkMatch ps loc = {-# SCC "checkMatch" #-}
+    (<|>)
+        <$> mapSumM (uncurry uselessErr) ({-# SCC "foliate" #-} foliate ps)
+        <*> isExhaustiveM ps loc
 
 checkExprM :: Expression a -> PatternM (Maybe (DickinsonWarning a))
 checkExprM Var{}              = pure Nothing
@@ -53,4 +67,4 @@ checkExprM (Tuple _ es)       = mapSumM checkExprM es
 checkExprM (Match l e brs)    =
     (<|>)
         <$> checkExprM e
-        <*> ((<|>) <$> isExhaustiveM (toList (fst <$> brs)) l <*> mapSumM checkExprM (snd <$> brs))
+        <*> ((<|>) <$> checkMatch (toList (fst <$> brs)) l <*> mapSumM checkExprM (snd <$> brs))
