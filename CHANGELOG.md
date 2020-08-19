@@ -1,5 +1,7 @@
 # dickinson
 
+## 1.2.0.0
+
   * Remove `dir` subcommand
   * `emd` now looks for libraries in `$HOME/.emd` if extant
 
