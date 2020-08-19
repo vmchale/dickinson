@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Language.Dickinson.Pattern.Useless ( PatternM
                                           , runPatternM
                                           , isExhaustive
@@ -60,28 +62,44 @@ assocUniques (Name _ (Unique i) _) = do
 isExhaustive :: [Pattern a] -> PatternM Bool
 isExhaustive ps = not <$> useful ps (Wildcard undefined)
 
-isCompleteSet :: [Name a] -> PatternM Bool
-isCompleteSet []       = pure False
+isCompleteSet :: [Name a] -> PatternM (Maybe [Name ()])
+isCompleteSet []       = pure Nothing
 isCompleteSet ns@(n:_) = do
     allU <- assocUniques n
     let ty = unUnique . unique <$> ns
-    pure $ IS.null (allU IS.\\ IS.fromList ty)
+    pure $
+        if IS.null (allU IS.\\ IS.fromList ty)
+            then Just ((\u -> Name ("(internal)" :| []) (Unique u) ()) <$> IS.toList allU)
+            else Nothing
 
 useful :: [Pattern a] -> Pattern a -> PatternM Bool
 useful ps p = usefulMaranget [[p'] | p' <- ps] [p]
+
+sanityFailed :: a
+sanityFailed = error "Sanity check failed! Perhaps you ran the pattern match exhaustiveness checker on an ill-typed program?"
 
 specializeTag :: Name a -> [[Pattern a]] -> [[Pattern a]]
 specializeTag c = concatMap withRow
     where withRow (PatternCons _ c':ps) | c' == c = [ps]
                                         | otherwise = []
+          withRow (PatternTuple{}:_)    = sanityFailed
           withRow (Wildcard{}:ps)       = [ps]
+          withRow (OrPattern _ rs:ps)   = specializeTag c [r:ps | r <- toList rs] -- TODO: unit test case for this
 
 -- TODO: unit test these to make sure they make sense w.r.t. dimensions & such?
 specializeTuple :: Int -> [[Pattern a]] -> [[Pattern a]]
 specializeTuple n = concatMap withRow
     where withRow (PatternTuple _ ps:ps') = [toList ps ++ ps']
           withRow (p@Wildcard{}:ps')      = [replicate n p ++ ps']
-          withRow (OrPattern _ rs:ps)     = [r:ps | r <- toList rs]
+          withRow (OrPattern _ rs:ps)     = specializeTuple n [r:ps | r <- toList rs]
+          withRow (PatternCons{}:_)       = sanityFailed
+
+-- | \\( \matcal(D) \\) in the Maranget paper
+defaultMatrix :: [[Pattern a]] -> [[Pattern a]]
+defaultMatrix = concatMap withRow where
+    withRow (PatternTuple{}:_) = []
+    withRow (PatternCons{}:_)  = []
+    withRow (Wildcard{}:ps)    = [ps]
 
 -- follows maranget paper
 usefulMaranget :: [[Pattern a]] -> [Pattern a] -> PatternM Bool
