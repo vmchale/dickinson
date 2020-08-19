@@ -1,5 +1,7 @@
 # dickinson
 
+## 1.3.0.0
+
   * Linter now reports inexhaustive pattern matches
   * Linter reports redundant patterns
 
