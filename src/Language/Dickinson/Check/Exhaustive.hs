@@ -27,6 +27,13 @@ isExhaustiveM ps loc = do
         then Nothing
         else Just $ InexhaustiveMatch loc
 
+uselessErr :: [Pattern a] -> Pattern a -> PatternM (Maybe (DickinsonWarning a))
+uselessErr ps p = do
+    e <- useful ps p
+    pure $ if e
+        then Nothing
+        else Just $ UselessPattern (patAnn p) p
+
 checkExprM :: Expression a -> PatternM (Maybe (DickinsonWarning a))
 checkExprM Var{}              = pure Nothing
 checkExprM Literal{}          = pure Nothing

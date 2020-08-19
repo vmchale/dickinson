@@ -37,6 +37,7 @@ data DickinsonError a = UnfoundName a (Name a)
 data DickinsonWarning a = MultipleNames a (Name a) -- TODO: throw both?
                         | DuplicateStr a T.Text
                         | InexhaustiveMatch a
+                        | UselessPattern a (Pattern a)
                         deriving (Generic, NFData)
 
 maybeThrow :: MonadError e m => Maybe e -> m ()
@@ -70,5 +71,6 @@ instance (Pretty a) => Pretty (DickinsonWarning a) where
     pretty (MultipleNames l n)   = pretty n <+> "at" <+> pretty l <+> "has already been defined"
     pretty (DuplicateStr l t)    = pretty l <+> "duplicate string" <+> dquotes (pretty t)
     pretty (InexhaustiveMatch l) = pretty l <+> "Inexhaustive match in expression"
+    pretty (UselessPattern l p)  = pretty l <+> "Pattern" <+> pretty p <+> "is redundant"
 
 instance (Pretty a, Typeable a) => Exception (DickinsonWarning a)
