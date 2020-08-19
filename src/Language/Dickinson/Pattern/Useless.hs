@@ -4,6 +4,7 @@ module Language.Dickinson.Pattern.Useless ( PatternM
                                           , patternEnvDecls
                                           -- * Exported for testing
                                           , specializeTuple
+                                          , specializeTag
                                           ) where
 
 import           Control.Monad             (forM, forM_)
@@ -72,6 +73,7 @@ useful ps p = usefulMaranget [[p'] | p' <- ps] [p]
 specializeTag :: Name a -> [[Pattern a]] -> [[Pattern a]]
 specializeTag c = concatMap withRow
     where withRow (PatternCons _ c':ps) | c' == c = [ps]
+                                        | otherwise = []
           withRow (Wildcard{}:ps)       = [ps]
 
 -- TODO: unit test these to make sure they make sense w.r.t. dimensions & such?
