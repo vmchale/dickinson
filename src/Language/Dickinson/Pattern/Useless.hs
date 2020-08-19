@@ -71,13 +71,15 @@ specializeTag :: Name a -> [[Pattern a]] -> [[Pattern a]]
 specializeTag c = concatMap withRow
     where withRow (PatternCons _ c':ps) | c' == c = [ps]
 
-specializeTuple :: [[Pattern a]] -> [[Pattern a]]
-specializeTuple = undefined
+specializeTuple :: Int -> [[Pattern a]] -> [[Pattern a]]
+specializeTuple n = concatMap withRow
+    where withRow (PatternTuple _ ps:ps') = [toList ps ++ ps']
+          withRow (p@Wildcard{}:ps')      = [replicate n p ++ ps']
 
 -- follows maranget paper
 usefulMaranget :: [[Pattern a]] -> [Pattern a] -> PatternM Bool
 usefulMaranget [] _                       = pure True
 usefulMaranget _ []                       = pure False
 usefulMaranget ps (PatternCons _ c:qs)    = usefulMaranget (specializeTag c ps) qs
-usefulMaranget ps (PatternTuple _ ps':qs) = usefulMaranget (specializeTuple ps) (toList ps' ++ qs)
+usefulMaranget ps (PatternTuple _ ps':qs) = usefulMaranget (specializeTuple (length ps') ps) (toList ps' ++ qs)
 usefulMaranget ps (OrPattern _ ps':qs)    = forAnyA ps' $ \p -> usefulMaranget ps (p:qs)
