@@ -4,7 +4,7 @@ module Language.Dickinson.Pattern.Useless ( PatternM
                                           , patternEnvDecls
                                           ) where
 
-import           Control.Monad             (forM_)
+import           Control.Monad             (forM, forM_)
 import           Control.Monad.State       (State, evalState, get)
 import           Data.Foldable             (toList, traverse_)
 import           Data.IntMap               (findWithDefault)
@@ -53,11 +53,18 @@ isWildcard PatternVar{} = True
 -- FIXME: or pattern containing wildcard? -> sketchy
 isWildcard _            = False
 
+isTuple :: Pattern a -> Bool
+isTuple PatternTuple{} = True
+isTuple _              = False
+
+extrConsPattern :: [Pattern a] -> [Pattern a]
+extrConsPattern = concat . mapMaybe g where
+    g p@PatternCons{}  = Just [p]
+    g (OrPattern _ ps) = Just $ extrConsPattern (toList ps)
+    g _                = Nothing
+
 extrCons :: [Pattern a] -> [Name a]
-extrCons = concat . mapMaybe g where
-    g (PatternCons _ c) = Just [c]
-    g (OrPattern _ ps)  = Just $ extrCons (toList ps)
-    g _                 = Nothing
+extrCons = fmap patCons . extrConsPattern
 
 internalError :: a
 internalError = error "Internal error in pattern-match coverage checker."
@@ -72,8 +79,8 @@ errTup = error "Tuple must have at least two elements."
 assocUniques :: Name a -> PatternM IS.IntSet
 assocUniques (Name _ (Unique i) _) = do
     st <- get
-    let ty = findWithDefault internalError i (types st)
-    pure $ findWithDefault internalError ty (allCons st)
+    let ty = findWithDefault undefined i (types st)
+    pure $ findWithDefault undefined ty (allCons st)
 
 isExhaustive :: [Pattern a] -> PatternM Bool
 isExhaustive ps = not <$> useful ps (Wildcard undefined)
@@ -86,30 +93,49 @@ isCompleteSet ns@(n:_) = do
     pure $ IS.null (allU IS.\\ IS.fromList ty)
 
 isComplete :: [Pattern a] -> PatternM Bool
-isComplete = isCompleteSet . extrCons
+isComplete = {-# SCC "isComplete" #-} isCompleteSet . extrCons
 
 -- do the first columns form a complete set?
 fstComplete :: [Pattern a] -> PatternM Bool
-fstComplete = isComplete . mapMaybe extrFst
-    where extrFst (PatternTuple _ (p :| _)) = Just p
-          extrFst _                         = Nothing
+fstComplete = pc . extrFst
+    where pc ps | any isTuple ps = pure True
+                | otherwise = isComplete ps
+
+-- Split pattern tuples into constructors (of the first argument) and its
+-- tails
+extrSplit :: [Pattern a] -> [([Pattern a], Pattern a)]
+extrSplit = mapMaybe g where
+    g (PatternTuple _ (p :| [p'])) = Just (extrConsPattern [p], p')
+    g (PatternTuple l (p :| ps))   = Just (extrConsPattern [p], PatternTuple l (NE.fromList ps))
+    g _                            = Nothing
+
+extrFst :: [Pattern a] -> [Pattern a]
+extrFst = mapMaybe g where
+    g (PatternTuple _ (p :| _)) = Just p
+    g _                         = Nothing
+
 
 -- Specialize a stack of patterns w.r.t. a constructor pattern
 specializeConstructor :: Pattern a -- ^ Constructor
                       -> [Pattern a]
                       -> [Pattern a]
-specializeConstructor (PatternCons _ c) = concatMap unstitch
+specializeConstructor p'@(PatternCons _ c) = {-# SCC "specializeConstructor" #-}concatMap unstitch
     where unstitch (PatternTuple _ (_ :| []))                   = errTup
           unstitch (PatternTuple _ ((PatternCons _ c') :| [p])) | c' == c = [p]
+                                                                | otherwise = []
+          unstitch (PatternTuple _ (OrPattern _ ps :| [p]))     | c `elem` extrCons (toList ps) = [p]
                                                                 | otherwise = []
           unstitch (PatternTuple _ (Wildcard{} :| [p]))         = [p]
           unstitch (PatternTuple _ (PatternVar{} :| [p]))       = [p]
           unstitch (PatternTuple l ((PatternCons _ c') :| ps))  | c == c' = [PatternTuple l $ NE.fromList ps]
                                                                 | otherwise = []
+          unstitch (PatternTuple l (OrPattern _ ps :| ps'))     | c `elem` extrCons (toList ps) = [PatternTuple l $ NE.fromList ps']
+                                                                | otherwise = []
           unstitch (PatternTuple l (Wildcard{} :| ps))          = [PatternTuple l $ NE.fromList ps]
           unstitch (PatternTuple l (PatternVar{} :| ps))        = [PatternTuple l $ NE.fromList ps]
-          unstitch OrPattern{}                                  = undefined
-specializeConstructor _                  = internalError
+          unstitch (OrPattern _ ps)                             = specializeConstructor p' $ toList ps
+          unstitch _                                            = internalError
+specializeConstructor _                    = internalError
 
 -- "un-stitch" or patterns... specialized matrix
 useful :: [Pattern a] -> Pattern a -> PatternM Bool
@@ -120,28 +146,41 @@ useful ps (PatternCons _ c)                           = pure $ c `notElem` extrC
 useful _ (PatternTuple  _ (_ :| []))                  = errTup -- TODO: loc
 useful ps@(PatternCons{}:_) Wildcard{}                = not <$> isComplete ps
 useful ps@(PatternCons{}:_) PatternVar{}              = not <$> isComplete ps
-useful ps@(PatternTuple{}:_) Wildcard{}               = undefined -- "complete signature" in Maranget paper includes (,) as well as c_k
+useful ps@(PatternTuple{}:_) Wildcard{}               = do
+    comp <- fstComplete ps
+    if comp
+        then or <$> forM (extrSplit ps) -- FIXME: only works when constructor is a tag, not with tuples!
+            -- p must be a constructor (i.e. not an or-pattern) so it may be fed to
+            -- specializeConstructor (hence the weird nesting and the function
+            -- extrSplit)
+            (\(pcs, pt) -> or <$> forM pcs -- pt "pattern tail"
+                (\pc -> useful (specializeConstructor pc ps) pt))
+        else undefined
 useful ps@(PatternTuple{}:_) PatternVar{}             = undefined
 useful ps@(OrPattern{}:_) Wildcard{}                  = undefined
 useful ps@(OrPattern{}:_) PatternVar{}                = undefined
 useful ps (PatternTuple _ (Wildcard{} :| ps'))        = undefined
 useful ps (PatternTuple _ (PatternVar{} :| ps'))      = undefined
-useful ps (PatternTuple _ ((PatternCons _ c) :| [p])) = useful (fmap (stripRelevant c) ps) p
-useful ps (PatternTuple l ((PatternCons _ c) :| ps')) = useful (fmap (stripRelevant c) ps) (PatternTuple l $ NE.fromList ps')
-useful ps (PatternTuple _ (OrPattern{} :| ps'))       = undefined
+useful ps (PatternTuple _ ((PatternCons _ c) :| [p])) = useful (mapMaybe (stripRelevant c) ps) p
+useful ps (PatternTuple l ((PatternCons _ c) :| ps')) = useful (mapMaybe (stripRelevant c) ps) (PatternTuple l $ NE.fromList ps')
+useful ps (PatternTuple l (OrPattern _ ps' :| ps''))    = anyA (useful ps) [PatternTuple l (p :| ps'') | p <- toList ps']
 useful ps (PatternTuple _ (PatternTuple _ p :| ps'))  = undefined
 
 -- strip a pattern (presumed to be a constructor or or-pattern) to relevant parts
-stripRelevant :: Name a -> Pattern a -> Pattern a
+stripRelevant :: Name a -> Pattern a -> Maybe (Pattern a)
 stripRelevant _ (PatternTuple _ (_ :| []))                   = errTup -- TODO: loc
-stripRelevant c (PatternTuple _ ((PatternCons _ c') :| [p])) | c' == c = p
-stripRelevant _ (PatternTuple _ (PatternVar{} :| [p]))       = p
-stripRelevant _ (PatternTuple _ (Wildcard{} :| [p]))         = p
-stripRelevant c (PatternTuple _ ((OrPattern _ ps) :| [p]))   | c `elem` extrCons (toList ps) = p
-stripRelevant c (PatternTuple l ((PatternCons _ c') :| ps))  | c' == c = PatternTuple l (NE.fromList ps)
-stripRelevant c (PatternTuple l ((OrPattern _ ps) :| ps'))   | c `elem` extrCons (toList ps) = PatternTuple l (NE.fromList ps')
-stripRelevant _ (PatternTuple l (PatternVar{} :| ps))        = PatternTuple l (NE.fromList ps)
-stripRelevant _ (PatternTuple l (Wildcard{} :| ps))          = PatternTuple l (NE.fromList ps)
+stripRelevant c (PatternTuple _ ((PatternCons _ c') :| [p])) | c' == c = Just p
+                                                             | otherwise = Nothing
+stripRelevant _ (PatternTuple _ (PatternVar{} :| [p]))       = Just p
+stripRelevant _ (PatternTuple _ (Wildcard{} :| [p]))         = Just p
+stripRelevant c (PatternTuple _ ((OrPattern _ ps) :| [p]))   | c `elem` extrCons (toList ps) = Just p
+                                                             | otherwise = Nothing
+stripRelevant c (PatternTuple l ((PatternCons _ c') :| ps))  | c' == c = Just $ PatternTuple l (NE.fromList ps)
+                                                             | otherwise = Nothing
+stripRelevant c (PatternTuple l ((OrPattern _ ps) :| ps'))   | c `elem` extrCons (toList ps) = Just $ PatternTuple l (NE.fromList ps')
+                                                             | otherwise = Nothing
+stripRelevant _ (PatternTuple l (PatternVar{} :| ps))        = Just $ PatternTuple l (NE.fromList ps)
+stripRelevant _ (PatternTuple l (Wildcard{} :| ps))          = Just $ PatternTuple l (NE.fromList ps)
 stripRelevant _ OrPattern{}                                  = undefined -- re-stitch it basically?
 stripRelevant _ _                                            = tyError -- if we call stripRelevant on a non-tuple, that means a constructor was "above" a tuple, which is
                                                                        -- ill-typed anyway. Also, we've already checked for wildcards/vars in useful ^
