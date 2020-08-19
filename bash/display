@@ -2,6 +2,6 @@
 
 set -e pipefail
 cabal build dickinson-bench --enable-profiling
-$(fd dickinson-bench -t x -I) -- rename +RTS -p
+$(fd dickinson-bench -t x -I) -- pattern +RTS -p
 ghc-prof-flamegraph dickinson-bench.prof
 firefox dickinson-bench.svg
