@@ -103,6 +103,7 @@ library dickinson
         Language.Dickinson.Pipeline
         Language.Dickinson.Import
         Language.Dickinson.Lib
+        Language.Dickinson.Pattern.Useless
         Data.Tuple.Ext
         Control.Exception.Value
         Data.Text.Prettyprint.Doc.Ext
@@ -112,7 +113,6 @@ library dickinson
         Paths_language_dickinson
         Language.Dickinson.Lib.Get
         Language.Dickinson.Pattern
-        Language.Dickinson.Pattern.Useless
         Language.Dickinson.Check.Common
         Control.Monad.Ext
         Data.Foldable.Ext
@@ -225,6 +225,7 @@ test-suite dickinson-test
     other-modules:
         Eval
         Golden
+        Pattern
         Roundtrip.Compare
         TypeCheck
         TH

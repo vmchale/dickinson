@@ -2,6 +2,8 @@ module Language.Dickinson.Pattern.Useless ( PatternM
                                           , runPatternM
                                           , isExhaustive
                                           , patternEnvDecls
+                                          -- * Exported for testing
+                                          , specializeTuple
                                           ) where
 
 import           Control.Monad             (forM, forM_)
@@ -70,11 +72,14 @@ useful ps p = usefulMaranget [[p'] | p' <- ps] [p]
 specializeTag :: Name a -> [[Pattern a]] -> [[Pattern a]]
 specializeTag c = concatMap withRow
     where withRow (PatternCons _ c':ps) | c' == c = [ps]
+          withRow (Wildcard{}:ps)       = [ps]
 
+-- TODO: unit test these to make sure they make sense w.r.t. dimensions & such?
 specializeTuple :: Int -> [[Pattern a]] -> [[Pattern a]]
 specializeTuple n = concatMap withRow
     where withRow (PatternTuple _ ps:ps') = [toList ps ++ ps']
           withRow (p@Wildcard{}:ps')      = [replicate n p ++ ps']
+          withRow (OrPattern _ rs:ps)     = [r:ps | r <- toList rs]
 
 -- follows maranget paper
 usefulMaranget :: [[Pattern a]] -> [Pattern a] -> PatternM Bool

@@ -23,6 +23,7 @@ import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
+import           Pattern
 import           Test.Tasty
 import           Test.Tasty.HUnit
 import           TH
@@ -36,6 +37,7 @@ main =
             , parserTests
             , evalTests
             , tcTests
+            , patternTests
             ]
 
 parserTests :: TestTree

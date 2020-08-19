@@ -54,7 +54,7 @@ data Pattern a = PatternVar { patAnn :: a, patName :: Name a }
                | PatternCons { patAnn :: a, patCons :: TyName a }
                | Wildcard { patAnn :: a }
                | OrPattern { patAnn :: a, patOr :: NonEmpty (Pattern a) }
-               deriving (Generic, NFData, Binary, Functor, Show, Data)
+               deriving (Generic, NFData, Binary, Functor, Eq, Show, Data)
 
 data Expression a = Literal { exprAnn :: a, litText :: T.Text }
                   | StrChunk { exprAnn :: a, chunkText :: T.Text }
