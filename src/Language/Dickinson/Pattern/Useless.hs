@@ -81,7 +81,7 @@ sanityFailed :: a
 sanityFailed = error "Sanity check failed! Perhaps you ran the pattern match exhaustiveness checker on an ill-typed program?"
 
 specializeTag :: Name a -> [[Pattern a]] -> [[Pattern a]]
-specializeTag c = {-# SCC "specializeTag" #-} concatMap withRow
+specializeTag c = concatMap withRow
     where withRow (PatternCons _ c':ps) | c' == c = [ps]
                                         | otherwise = []
           withRow (PatternTuple{}:_)    = sanityFailed
@@ -91,7 +91,7 @@ specializeTag c = {-# SCC "specializeTag" #-} concatMap withRow
           withRow []                    = emptySpecialize
 
 specializeTuple :: Int -> [[Pattern a]] -> [[Pattern a]]
-specializeTuple n = {-# SCC "specializeTuple" #-} concatMap withRow
+specializeTuple n = concatMap withRow
     where withRow (PatternTuple _ ps:ps') = [toList ps ++ ps']
           withRow (p@Wildcard{}:ps')      = [replicate n p ++ ps']
           withRow (p@PatternVar{}:ps')    = [replicate n p ++ ps']
@@ -104,7 +104,7 @@ emptySpecialize = error "Internal error: tried to take specialized matrix of an 
 
 -- | \\( \matcal(D) \\) in the Maranget paper
 defaultMatrix :: [[Pattern a]] -> [[Pattern a]]
-defaultMatrix = {-# SCC "defaultMatrix" #-} concatMap withRow where
+defaultMatrix = concatMap withRow where
     withRow []                  = error "Internal error: tried to take default matrix of an empty row"
     withRow (PatternTuple{}:_)  = error "Sanity check failed!" -- because a tuple would be complete by itself
     withRow (PatternCons{}:_)   = []
