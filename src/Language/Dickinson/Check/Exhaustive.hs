@@ -1,5 +1,4 @@
 module Language.Dickinson.Check.Exhaustive ( checkExhaustive
-                                           , foliate
                                            ) where
 
 import           Control.Applicative                ((<|>))
