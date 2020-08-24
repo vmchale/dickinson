@@ -36,12 +36,12 @@
 # Editor Integration
 - [x] Syntastic checker
 # Passes
-- [ ] Typechecker?
+- [x] Typechecker?
 - [x] Warn if a string is duplicate? (warn on duplicate branches)
 - [x] Make sure there are no top-level name clashes
 - [x] Scoping check (not lazy, like evaluation)
 - [ ] Error on negative numbers? (useful error)
-- [ ] Warn on or-patterns containing wildcards at the highest level
+- [x] Warn on or-patterns containing wildcards at the highest level
 # Library API
 - [x] Maybe spin out internal library?
 # Bugs
@@ -104,7 +104,7 @@
   - [x] Checkers should work with the module system
   - [ ] Modules don't give global uniqueness; fix scoping/deletions
 - [x] Sum types (`Boy | Girl`)
-  - [ ] Exhaustiveness checker
+  - [x] Exhaustiveness checker
 - [x] Tuples/multi-return & agreement.
   - [ ] Def need product types...
     - [x] Dog example?
@@ -112,7 +112,7 @@
   - [ ] typechecker that works (with mutual recursion)
 - [ ] let-bindings are kind of painful to use
 - [x] Interpolated strings
-- [ ] Builtins
+- [x] Builtins
   - [ ] Alliteration
   - [ ] Capitalization lol
 - [x] Escapes
@@ -122,7 +122,7 @@
 - [x] Only allow imports at the beginning
 - [ ] Install files globally?
 ## Distribution
-- [ ] Binary distribution with `make install`? `language_dickinson_datadir`
+- [x] Binary distribution with `make install`? `language_dickinson_datadir`
 - [ ] Debianization?
 # Tooling
 - [x] REPL
@@ -131,12 +131,12 @@
   - [ ] Completions!
   - [ ] linting within the REPL?
 # Tests
-- [ ] Nested interpolated strings
 - [ ] Renamer + pattern matching
 - [x] `examples/shakespeare.dck`
 - [x] golden tests via pretty-simple packages (debug output?)
 - [ ] golden tests for error messages
 ## Test cases
+- [x] Nested interpolated strings
 - [x] `test/eval/tyAnnot.dck` in the test suite
 - [ ] Lexer (fail) tests
   - [ ] Capital type names...
@@ -144,7 +144,7 @@
   - [x] Pretty-print
 - [ ] name shadowing & such
 - [ ] property test -> generate, pretty-print, parse
-- [ ] Interleaved multi-line string interpolations/strings/string interpolations
+- [x] Interleaved multi-line string interpolations/strings/string interpolations
 - [ ] Something that kicks the tires on `tryEval` being called on `let` and
   `match`?
 # Libraries
