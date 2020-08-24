@@ -7,7 +7,7 @@ module Language.Dickinson.Check.Scope ( checkScope
 
 import           Control.Applicative              ((<|>))
 import           Control.Monad.Except             (MonadError)
-import           Control.Monad.State              (State, evalState, get, modify)
+import           Control.Monad.State.Strict       (State, evalState, get, modify)
 import           Data.Foldable                    (traverse_)
 import qualified Data.IntSet                      as IS
 import           Language.Dickinson.Check.Common

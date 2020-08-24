@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
--- | This module is loosely based off _Warnings for pattern matching_ by Luc
+-- | This module is loosely based off *Warnings for pattern matching* by Luc
 -- Maranget
 module Language.Dickinson.Pattern.Useless ( PatternM
                                           , runPatternM
@@ -12,20 +12,20 @@ module Language.Dickinson.Pattern.Useless ( PatternM
                                           , specializeTag
                                           ) where
 
-import           Control.Monad             (forM, forM_)
-import           Control.Monad.State       (State, evalState, get)
-import           Data.Coerce               (coerce)
-import           Data.Foldable             (toList, traverse_)
-import           Data.Functor              (void)
-import           Data.IntMap               (findWithDefault)
-import qualified Data.IntMap               as IM
-import qualified Data.IntSet               as IS
+import           Control.Monad              (forM, forM_)
+import           Control.Monad.State.Strict (State, evalState, get)
+import           Data.Coerce                (coerce)
+import           Data.Foldable              (toList, traverse_)
+import           Data.Functor               (void)
+import           Data.IntMap.Strict         (findWithDefault)
+import qualified Data.IntMap.Strict         as IM
+import qualified Data.IntSet                as IS
 import           Data.List.Ext
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
-import           Lens.Micro                (Lens')
-import           Lens.Micro.Mtl            (modifying)
+import           Lens.Micro                 (Lens')
+import           Lens.Micro.Mtl             (modifying)
 
 -- all constructors of a
 data PatternEnv = PatternEnv { allCons :: IM.IntMap IS.IntSet -- ^ all constructors indexed by type
@@ -49,6 +49,7 @@ declAdd (TyDecl _ (Name _ (Unique i) _) cs) = do
 patternEnvDecls :: [Declaration a] -> PatternM ()
 patternEnvDecls = traverse_ declAdd
 
+-- TODO: just reader monad... writer at beginning?
 type PatternM = State PatternEnv
 
 runPatternM :: PatternM a -> a

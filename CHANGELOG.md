@@ -1,5 +1,9 @@
 # dickinson
 
+  * Make some stuff in the pattern match exhaustiveness checker strict for
+    better performance
+  * Use strict `State` monad in the scope checker for better performance
+
 ## 1.3.0.0
 
   * Linter now reports inexhaustive pattern matches
