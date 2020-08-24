@@ -1,5 +1,7 @@
 # dickinson
 
+## 1.3.0.1
+
   * Make some stuff in the pattern match exhaustiveness checker strict for
     better performance
   * Use strict `State` monad in the scope checker for better performance
