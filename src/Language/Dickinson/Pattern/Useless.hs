@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
--- | This module is loosely based off *Warnings for pattern matching* by Luc
+-- | This module is loosely based off /Warnings for pattern matching/ by Luc
 -- Maranget
 module Language.Dickinson.Pattern.Useless ( PatternM
                                           , runPatternM

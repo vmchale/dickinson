@@ -17,6 +17,8 @@ matches (PatternTuple _ ps) (Tuple _ es)       = and (NE.zipWith matches ps es) 
 matches (OrPattern _ ps) e                     = any (`matches` e) ps
 matches _ _                                    = False
 
+-- | Given an expression, find the first pattern it matches, failing if it
+-- matches nothing.
 matchPattern :: MonadError (DickinsonError a) m => a -> Expression a -> [(Pattern a, Expression a)] -> m (Pattern a, Expression a)
 matchPattern l e (p:ps) | matches (fst p) e = pure p
                         | otherwise = matchPattern l e ps
