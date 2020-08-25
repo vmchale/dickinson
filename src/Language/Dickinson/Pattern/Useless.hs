@@ -72,7 +72,7 @@ isCompleteSet ns@(n:_) = do
     let ty = coerce (unique <$> ns)
     pure $
         if IS.null (allU IS.\\ IS.fromList ty)
-            then Just ((\u -> (Name undefined (Unique u) ())) <$> IS.toList allU)
+            then Just ((\u -> Name undefined (Unique u) ()) <$> IS.toList allU)
             else Nothing
 
 useful :: [Pattern a] -> Pattern a -> PatternM Bool
@@ -127,11 +127,8 @@ fstComplete :: [[Pattern a]] -> PatternM (Complete ())
 fstComplete ps = {-# SCC "fstComplete" #-}
     if maxTupleLength > 0
         then pure $ CompleteTuple maxTupleLength
-        else do
-            res <- isCompleteSet (concatMap extrCons fstColumn)
-            pure $ case res of
-                Just ns -> CompleteTags ns
-                Nothing -> NotComplete
+        else maybe NotComplete CompleteTags
+                <$> isCompleteSet (concatMap extrCons fstColumn)
     where fstColumn = fmap head ps
           tuple (PatternTuple _ ps') = length ps'
           tuple (OrPattern _ ps')    = maximum (tuple <$> ps')
@@ -150,7 +147,7 @@ usefulMaranget ps (q:qs)                  = do -- pattern var or wildcard
     case cont of
         NotComplete     -> usefulMaranget (defaultMatrix ps) qs
         CompleteTuple n -> usefulMaranget (specializeTuple n ps) (specializeTupleVector n q qs)
-        CompleteTags ns -> or <$> (forM ns $ \n -> usefulMaranget (specializeTag n (forget ps)) (fmap void qs))
+        CompleteTags ns -> or <$> forM ns (\n -> usefulMaranget (specializeTag n (forget ps)) (fmap void qs))
 
 specializeTupleVector :: Int -> Pattern a -> [Pattern a] -> [Pattern a]
 specializeTupleVector n p ps = {-# SCC "specializeTupleVector" #-} replicate n p ++ ps
