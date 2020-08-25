@@ -92,6 +92,11 @@ To get shell completions in your current session:
 
 Put this in your `~/.bashrc` or `~/.bash_profile` to install them.
 
+Shell completions are also available for fish and zsh; to get them:
+
+`emd --fish-completion-script emd`
+`emd --zsh-completion-script emd`
+
 # BUGS
 
 Please report any bugs you may come across to
