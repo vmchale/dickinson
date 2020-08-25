@@ -142,7 +142,7 @@ usefulMaranget _ []                       = pure False
 usefulMaranget ps (PatternCons _ c:qs)    = usefulMaranget (specializeTag c ps) qs
 usefulMaranget ps (PatternTuple _ ps':qs) = usefulMaranget (specializeTuple (length ps') ps) (toList ps' ++ qs)
 usefulMaranget ps (OrPattern _ ps':qs)    = forAnyA ps' $ \p -> usefulMaranget ps (p:qs)
-usefulMaranget ps (q:qs)                  = do -- pattern var or wildcard
+usefulMaranget ps (q:qs)                  = do -- var or wildcard
     cont <- fstComplete ps
     case cont of
         NotComplete     -> usefulMaranget (defaultMatrix ps) qs
