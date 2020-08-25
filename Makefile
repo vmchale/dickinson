@@ -68,6 +68,13 @@ bins: bin/x86_64-linux-emd \
     bin/sparc64-linux-emd \
     bin/x86_64-freebsd-emd
 
+x86_64-darwin-dist.tar: bin/x86_64-darwin-emd $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) install.mk
+	bsdtar -c \
+	    -s ,^,language-dickinson-$(VERSION)/, \
+	    -s ,$<,bin/emd, \
+	    -s ,install.mk,Makefile, \
+	    -f $@ $^
+
 %-dist.tar: bin/%-emd $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) install.mk
 	star -c \
 	    -s ,$<,language-dickinson-$(VERSION)/bin/emd, \
