@@ -100,35 +100,35 @@ bin/x86_64-darwin-emd: $(HS_SRC)
 # might be slower b/c static but
 bin/x86_64-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
-	cabal build exe:emd --enable-executable-static
+	cabal build exe:emd --enable-executable-static --builddir=dist-newstyle/x86-linux
 	export BIN=$$(fd 'x86_64-linux.*emd$$' dist-newstyle -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    strip $@
 
 bin/sparc64-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
-	@cabal build --with-ghc sparc64-linux-gnu-ghc --with-ghc-pkg sparc64-linux-gnu-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static
+	@cabal build --with-ghc sparc64-linux-gnu-ghc --with-ghc-pkg sparc64-linux-gnu-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static --builddir=dist-newstyle/sparc64-linux
 	export BIN=$$(fd 'sparc-linux.*emd$$' dist-newstyle -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    sparc64-linux-gnu-strip $@
 
 bin/powerpc64le-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
-	@cabal build --with-ghc powerpc64le-linux-gnu-ghc --with-ghc-pkg powerpc64le-linux-gnu-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static
+	@cabal build --with-ghc powerpc64le-linux-gnu-ghc --with-ghc-pkg powerpc64le-linux-gnu-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static --builddir=dist-newstyle/powerpc64le-linux
 	export BIN=$$(fd 'ppc64-linux.*emd$$' dist-newstyle -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    powerpc64le-linux-gnu-strip $@
 
 bin/aarch64-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
-	@cabal build --with-ghc aarch64-linux-gnu-ghc --with-ghc-pkg aarch64-linux-gnu-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static
+	@cabal build --with-ghc aarch64-linux-gnu-ghc --with-ghc-pkg aarch64-linux-gnu-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static --builddir=dist-newstyle/aarch64-linux
 	export BIN=$$(fd 'aarch64-linux.*emd$$' dist-newstyle -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    aarch64-linux-gnu-strip $@
 
 bin/arm-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
-	@cabal build --with-ghc arm-linux-gnueabihf-ghc --with-ghc-pkg arm-linux-gnueabihf-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static
+	@cabal build --with-ghc arm-linux-gnueabihf-ghc --with-ghc-pkg arm-linux-gnueabihf-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static --builddir=dist-newstyle/arm-linux
 	export BIN=$$(fd 'arm-linux.*emd$$' dist-newstyle -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    arm-linux-gnueabihf-strip $@
