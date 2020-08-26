@@ -83,7 +83,7 @@ x86_64-darwin-dist.tar: bin/x86_64-darwin-emd $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) 
 	    -f $@ $^
 
 language-dickinson-$(VERSION).tar: $(DCK_PRELUDE) $(DCK_LIB) $(HS_SRC)
-	cabal sdist --list-only | spax -w -s ,^,language-dickinson-$(VERSION)/, -f $@
+	cabal sdist --list-only | pax -w -s ,^,language-dickinson-$(VERSION)/, -f $@
 
 bin/x86_64-freebsd-emd:
 	@mkdir -p $(dir $@)
