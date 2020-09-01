@@ -59,8 +59,11 @@ runPatternM = flip evalState (PatternEnv mempty mempty)
 assocUniques :: Name a -> PatternM IS.IntSet
 assocUniques (Name _ (Unique i) _) = {-# SCC "assocUniques" #-} do
     st <- get
-    let ty = findWithDefault undefined i (types st)
-    pure $ findWithDefault undefined ty (allCons st)
+    let ty = findWithDefault internalError i (types st)
+    pure $ findWithDefault internalError ty (allCons st)
+
+internalError :: a
+internalError = error "Internal error: lookup in a PatternEnv failed"
 
 isExhaustive :: [Pattern a] -> PatternM Bool
 isExhaustive ps = {-# SCC "isExhaustive" #-} not <$> useful ps (Wildcard undefined)
