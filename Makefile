@@ -89,6 +89,7 @@ bin/x86_64-freebsd-emd:
 	@mkdir -p $(dir $@)
 	vagrant ssh --command 'set -x \
 	    cabal update \
+	    rm -rf language-dickinson-$(VERSION) \
 	    cabal unpack language-dickinson \
 	    cd language-dickinson-$(VERSION) \
 	    cabal build exe:emd --constraint="language-dickinson -zstd" --enable-executable-static \
