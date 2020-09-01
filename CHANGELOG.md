@@ -1,5 +1,8 @@
 # dickinson
 
+  * Sanity checks in pattern match exhaustiveness checker
+  * Mildly improved performance
+
 ## 1.3.0.1
 
   * Make some stuff in the pattern match exhaustiveness checker strict for
