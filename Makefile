@@ -42,13 +42,18 @@ DISTS := x86_64-linux-dist.tar.lz \
     x86_64-freebsd-dist.tar.bz2 \
     x86_64-freebsd-dist.tar.gz
 
+SRC_DISTS := language-dickinson-$(VERSION).tar.lz \
+    language-dickinson-$(VERSION).tar.zst \
+    language-dickinson-$(VERSION).tar.gz \
+    language-dickinson-$(VERSION).tar.bz2
+
 check:
 	emd lint $(DCK_LIB) $(DCK_PRELUDE)
 	emd check $(DCK_LIB) $(DCK_PRELUDE)
 
-release: dists
+release: $(DISTS) $(SRC_DISTS)
 	github-release release $(GR_OPTIONS)
-	for dist in $(DISTS) ; do \
+	for dist in $^ ; do \
 	    github-release upload $(GR_OPTIONS) -n $$dist -f $$dist --replace ; \
 	done
 
@@ -60,6 +65,8 @@ lint:
 docs: man/emd.1 doc/user-guide.pdf docs/index.html
 
 dists: $(DISTS)
+
+srcdists: $(SRC_DISTS)
 
 bins: bin/x86_64-linux-emd \
     bin/arm-linux-emd \
