@@ -10,4 +10,4 @@
 	sak compress $< $@ --best
 
 %.bz2: %
-	bzip2 -k -f $< --best
+	sak compress $< $@ --best
