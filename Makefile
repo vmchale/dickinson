@@ -85,6 +85,9 @@ x86_64-darwin-dist.tar: bin/x86_64-darwin-emd $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) 
 language-dickinson-$(VERSION).tar: $(DCK_PRELUDE) $(DCK_LIB) $(HS_SRC)
 	cabal sdist --list-only | pax -w -s ,^,language-dickinson-$(VERSION)/, -f $@
 
+moddeps.svg: $(HS_SRC)
+	graphmod -i src | dot -Tsvg -o $@
+
 bin/x86_64-freebsd-emd:
 	@mkdir -p $(dir $@)
 	vagrant ssh --command 'set -x \
