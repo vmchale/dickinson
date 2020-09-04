@@ -15,6 +15,15 @@ Unpack the distribution, then:
 make install
 ```
 
+### Script
+
+You can try an install script if you are on a Unix:
+
+```bash
+
+curl -sSl https://raw.githubusercontent.com/vmchale/dickinson/master/bash/install.sh | sh -s
+```
+
 ### Source
 
 To install, get [cabal-install](https://www.haskell.org/cabal/) and
