@@ -18,7 +18,7 @@ make install
 ### Script
 
 There is an install script which will try to download the right release for your
-computer and install it:
+computer:
 
 ```bash
 
@@ -70,3 +70,7 @@ Try
 ```
 emd run examples/fortune.dck
 ```
+
+Other examples are in the
+[`examples`](https://github.com/vmchale/dickinson/tree/master/examples)
+directory.

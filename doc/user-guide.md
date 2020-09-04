@@ -14,10 +14,22 @@ program](https://en.wikipedia.org/wiki/Fortune_%28Unix%29).
 
 ## Distributions
 
-Distributions are available for various Unixes on the [releases page](https:
-//github.com/vmchale/dickinson/releases).
+Distributions for some platforms are available on the [releases page](https://github.com/vmchale/dickinson/releases).
 
-Un-tar the package, and run `make install`.
+Un-tar the package, then:
+
+```
+make install
+```
+
+## Script
+
+There is an install script which will try to download the right release for your
+computer:
+
+```bash
+curl -sSl https://raw.githubusercontent.com/vmchale/dickinson/master/bash/install.sh | sh -s
+```
 
 ## Source
 
@@ -41,6 +53,12 @@ emd man
 
 A [vim plugin](https://github.com/vmchale/dickinson/tree/master/vim) is
 available.
+
+To install with [vim-plug](https://github.com/junegunn/vim-plug):
+
+```vimscript
+Plug 'vmchale/dickinson' , { 'rtp' : 'vim' }
+```
 
 # Program Structure
 
