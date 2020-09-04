@@ -22,15 +22,6 @@ Un-tar the package, then:
 make install
 ```
 
-## Script
-
-There is an install script which will try to download the right release for your
-computer:
-
-```bash
-curl -sSl https://raw.githubusercontent.com/vmchale/dickinson/master/bash/install.sh | sh -s
-```
-
 ## Source
 
 First, install [cabal](https://www.haskell.org/cabal/download.html) and
