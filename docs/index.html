@@ -75,6 +75,7 @@
 <li><a href="#noun-declension">Noun Declension</a></li>
 <li><a href="#shakespearean-insult-generator">Shakespearean Insult Generator</a></li>
 <li><a href="#lyrics-bot">Lyrics Bot</a></li>
+<li><a href="#magical-realism-bot">Magical Realism Bot</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -436,5 +437,49 @@ tydecl number = Singular | Plural
 (:def main
   fiona)</code></pre>
 <p>See the full example in <code>examples/fionaBot.dck</code></p>
+<h2 id="magical-realism-bot">Magical Realism Bot</h2>
+<p>We can write our own minimal magical realism bot using builtin libraries:</p>
+<pre><code>(:include profession)
+(:include geography)
+
+%-
+
+(:def main
+  (:oneof
+    (|
+      (:let 
+        [accomplishment
+          (:oneof
+            (|
+              (:let
+                [txt
+                  (:oneof
+                    (| &quot;Excel spreadsheet&quot;)
+                    (| &quot;palimpsest&quot;))]
+                [power
+                  (:oneof
+                    (| &quot;comfort animals&quot;)
+                    (| &quot;practice bilocation&quot;))]
+                (:oneof
+                  (| &quot;discovers a ${txt} that allows her to ${power}&quot;))))
+            (| 
+              (:let
+                [topic
+                  (:oneof
+                    (| &quot;balneology&quot;)
+                    (| &quot;nephrology&quot;)
+                    (| &quot;orgonomy&quot;))]
+                &quot;writes a monograph on ${topic}&quot;))
+            (|
+              (:let 
+                [secret
+                  (:oneof
+                    (| &quot;immortality&quot;)
+                    (| &quot;happiness&quot;))]
+              &quot;discovers the secret to ${secret}&quot;)
+          ))]
+      &quot;A ${profession} in ${bigCity} ${accomplishment}&quot;))))</code></pre>
+<p>This reuses the <code>bigCity</code> definition from the <code>geography</code> library and <code>profession</code> from the <code>proffesion</code> library.</p>
+<p>This is not as sophisticated as the <a href="https://twitter.com/MagicRealismBot">twitter bot</a> but it is quite concise thanks to the libraries we used.</p>
 </body>
 </html>

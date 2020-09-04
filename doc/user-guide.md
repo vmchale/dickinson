@@ -639,3 +639,57 @@ We can make our own Fiona Apple bot, viz.
 ```
 
 See the full example in `examples/fionaBot.dck`
+
+## Magical Realism Bot
+
+We can write our own minimal magical realism bot using builtin libraries:
+
+```
+(:include profession)
+(:include geography)
+
+%-
+
+(:def main
+  (:oneof
+    (|
+      (:let 
+        [accomplishment
+          (:oneof
+            (|
+              (:let
+                [txt
+                  (:oneof
+                    (| "Excel spreadsheet")
+                    (| "palimpsest"))]
+                [power
+                  (:oneof
+                    (| "comfort animals")
+                    (| "practice bilocation"))]
+                (:oneof
+                  (| "discovers a ${txt} that allows her to ${power}"))))
+            (| 
+              (:let
+                [topic
+                  (:oneof
+                    (| "balneology")
+                    (| "nephrology")
+                    (| "orgonomy"))]
+                "writes a monograph on ${topic}"))
+            (|
+              (:let 
+                [secret
+                  (:oneof
+                    (| "immortality")
+                    (| "happiness"))]
+              "discovers the secret to ${secret}")
+          ))]
+      "A ${profession} in ${bigCity} ${accomplishment}"))))
+```
+
+This reuses the `bigCity` definition from the `geography` library and `profession`
+from the `proffesion` library.
+
+This is not as sophisticated as the [twitter
+bot](https://twitter.com/MagicRealismBot) but it is quite concise thanks to the
+libraries we used.
