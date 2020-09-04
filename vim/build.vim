@@ -2,4 +2,4 @@
 :o plugin.txt
 :%MkVimball dickinson
 <return>
-:q
+:q!
