@@ -11,3 +11,4 @@ install:
 	cp lib/* $(LIB_DIR)/lib/
 	cp prelude/* $(LIB_DIR)/prelude
 	cp bin/emd $$HOME/.local/bin
+	cp man/emd.1 $$HOME/.local/share/man/man1
