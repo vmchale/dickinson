@@ -20,3 +20,5 @@ stack.yaml.lock
 *.fls
 *.log
 *.synctex.gz
+*.vmb
+*.vmb.gz

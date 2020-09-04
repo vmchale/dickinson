@@ -64,6 +64,9 @@ lint:
 
 docs: man/emd.1 doc/user-guide.pdf docs/index.html
 
+vim/dickinson.vmb: vim/build.vim vim/syntax/dickinson.vim vim/ftplugin/dickinson.vim vim/ftdetect/dickinson.vim vim/syntax_checkers/dickinson/emd.vim vim/plugin.txt
+	cd vim && vim -s $(notdir $<)
+
 dists: $(DISTS)
 
 srcdists: $(SRC_DISTS)

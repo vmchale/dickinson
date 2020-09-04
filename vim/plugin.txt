@@ -1,0 +1,4 @@
+ftdetect/dickinson.vim
+ftplugin/dickinson.vim
+syntax/dickinson.vim
+syntax_checkers/dickinson/emd.vim
