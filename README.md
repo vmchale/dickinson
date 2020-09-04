@@ -17,7 +17,8 @@ make install
 
 ### Script
 
-You can try an install script if you are on a Unix:
+There is an install script which will try to download the right release for your
+computer and install it:
 
 ```bash
 
