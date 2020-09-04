@@ -12,6 +12,15 @@ program](https://en.wikipedia.org/wiki/Fortune_%28Unix%29).
 
 # Installing Dickinson
 
+## Distributions
+
+Distributions are available for various Unixes on the [releases page](https:
+//github.com/vmchale/dickinson/releases).
+
+Un-tar the package, and run `make install`.
+
+## Source
+
 First, install [cabal](https://www.haskell.org/cabal/download.html) and
 [GHC](https://www.haskell.org/ghc/download.html). Then:
 
