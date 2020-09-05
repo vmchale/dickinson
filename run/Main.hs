@@ -10,6 +10,8 @@ import           Language.Dickinson.Lib
 import           Options.Applicative
 import           Paths_language_dickinson (getDataDir)
 import           REPL
+import           System.Directory         (doesFileExist)
+import           System.Environment       (lookupEnv)
 import           System.FilePath          ((</>))
 
 -- TODO debug/verbosity options...
@@ -88,6 +90,18 @@ modIs :: [FilePath] -> IO [FilePath]
 modIs is =
     defaultLibPath <*> ((++) <$> dckPath <*> pure is)
 
+manFind :: IO FilePath
+manFind = do
+    cabalData <- (</> "emd.1") . (</> "man") <$> getDataDir
+    cabalInstall <- doesFileExist cabalData
+    if cabalInstall
+        then pure $ cabalData
+        else do
+            mHome <- lookupEnv "HOME"
+            case mHome of
+                Just h  -> pure $ h </> ".local" </> "share" </> "man" </> "man1" </> "emd.1"
+                Nothing -> error "Could not determine home directory! I don't know where your manpages are installed!"
+
 run :: Act -> IO ()
 run (Run fp is)       = do { is' <- modIs is ; TIO.putStrLn =<< pipeline is' fp }
 run (REPL fps)        = dickinsonRepl fps
@@ -95,5 +109,5 @@ run (Check fs i)      = do { is' <- modIs i ; traverse_ (validateFile is') fs }
 run (Lint fs)         = traverse_ warnFile fs
 run (Format fp False) = fmtFile fp
 run (Format fp True)  = fmtInplace fp
-run Man               = putStrLn . (</> "emd.1") . (</> "man") =<< getDataDir
+run Man               = putStrLn =<< manFind
 run (Ide fp is)       = do { is' <- modIs is ; validateFile is' fp ; warnFile fp }

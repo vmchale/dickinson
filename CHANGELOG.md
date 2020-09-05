@@ -1,5 +1,8 @@
 # dickinson
 
+  * Fall back onto `$HOME/.local/share/man/man1` if manpages were not found in
+    cabal data-dir.
+
 ## 1.3.0.2
 
   * Sanity checks in pattern match exhaustiveness checker
