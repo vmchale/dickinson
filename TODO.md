@@ -33,6 +33,7 @@
 - [ ] Florence Welch bot
 - [x] Cowsay-as-a-function
 - [ ] jenny holzer bot https://www.tate.org.uk/art/artworks/holzer-truisms-t03959 https://wordsofwomen.com/jenny-holzers-list-of-truisms/ https://www.moma.org/collection/works/63755
+- [ ] https://twitter.com/philosophersbot
 # Editor Integration
 - [x] Syntastic checker
 # Passes
