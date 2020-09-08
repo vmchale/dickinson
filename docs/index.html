@@ -447,7 +447,7 @@ tydecl number = Singular | Plural
 (:def main
   (:oneof
     (|
-      (:let 
+      (:let
         [accomplishment
           (:oneof
             (|
@@ -462,7 +462,7 @@ tydecl number = Singular | Plural
                     (| &quot;practice bilocation&quot;))]
                 (:oneof
                   (| &quot;discovers a ${txt} that allows her to ${power}&quot;))))
-            (| 
+            (|
               (:let
                 [topic
                   (:oneof
@@ -471,7 +471,7 @@ tydecl number = Singular | Plural
                     (| &quot;orgonomy&quot;))]
                 &quot;writes a monograph on ${topic}&quot;))
             (|
-              (:let 
+              (:let
                 [secret
                   (:oneof
                     (| &quot;immortality&quot;)
@@ -479,7 +479,7 @@ tydecl number = Singular | Plural
               &quot;discovers the secret to ${secret}&quot;)
           ))]
       &quot;A ${profession} in ${bigCity} ${accomplishment}&quot;))))</code></pre>
-<p>This reuses the <code>bigCity</code> definition from the <code>geography</code> library and <code>profession</code> from the <code>proffesion</code> library.</p>
+<p>This reuses the <code>bigCity</code> definition from the <code>geography</code> library and <code>profession</code> from the <code>profesion</code> library.</p>
 <p>This is not as sophisticated as the <a href="https://twitter.com/MagicRealismBot">twitter bot</a> but it is quite concise thanks to the libraries we used.</p>
 </body>
 </html>
