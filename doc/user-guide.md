@@ -653,7 +653,7 @@ We can write our own minimal magical realism bot using builtin libraries:
 (:def main
   (:oneof
     (|
-      (:let 
+      (:let
         [accomplishment
           (:oneof
             (|
@@ -668,7 +668,7 @@ We can write our own minimal magical realism bot using builtin libraries:
                     (| "practice bilocation"))]
                 (:oneof
                   (| "discovers a ${txt} that allows her to ${power}"))))
-            (| 
+            (|
               (:let
                 [topic
                   (:oneof
@@ -677,7 +677,7 @@ We can write our own minimal magical realism bot using builtin libraries:
                     (| "orgonomy"))]
                 "writes a monograph on ${topic}"))
             (|
-              (:let 
+              (:let
                 [secret
                   (:oneof
                     (| "immortality")
@@ -688,7 +688,7 @@ We can write our own minimal magical realism bot using builtin libraries:
 ```
 
 This reuses the `bigCity` definition from the `geography` library and `profession`
-from the `proffesion` library.
+from the `profesion` library.
 
 This is not as sophisticated as the [twitter
 bot](https://twitter.com/MagicRealismBot) but it is quite concise thanks to the
