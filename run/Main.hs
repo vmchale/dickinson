@@ -95,7 +95,7 @@ manFind = do
     cabalData <- (</> "emd.1") . (</> "man") <$> getDataDir
     cabalInstall <- doesFileExist cabalData
     if cabalInstall
-        then pure $ cabalData
+        then pure cabalData
         else do
             mHome <- lookupEnv "HOME"
             case mHome of
