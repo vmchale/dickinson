@@ -18,14 +18,16 @@ import           Language.Dickinson.Parser
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 
+-- this one is faster with (*>) than 'do'
 checkEvalM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => [Declaration a] -> m T.Text
-checkEvalM ds = do
-    validateDecl ds
+checkEvalM ds =
+    validateDecl ds *>
     evalDickinsonAsMain ds
 
 format :: BSL.ByteString -> T.Text
 format = prettyText . eitherThrow . parse
 
+-- the 'do'-notation is faster than using *>
 validateDecl :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m) => [Declaration a] -> m ()
 validateDecl d = do
     maybeThrow $ checkScope d
