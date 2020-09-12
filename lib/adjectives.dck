@@ -1,4 +1,5 @@
 ; augmented version of madlang library
+; English language adjectives
 
 (:include color)
 
