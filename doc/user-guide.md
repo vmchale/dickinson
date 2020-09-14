@@ -673,6 +673,7 @@ We can write our own minimal magical realism bot using builtin libraries:
                 [topic
                   (:oneof
                     (| "balneology")
+                    (| "teleology")
                     (| "nephrology")
                     (| "orgonomy"))]
                 "writes a monograph on ${topic}"))
@@ -681,6 +682,9 @@ We can write our own minimal magical realism bot using builtin libraries:
                 [secret
                   (:oneof
                     (| "immortality")
+                    (| "heliophagy")
+                    (| "levitation")
+                    (| "good skin")
                     (| "happiness"))]
               "discovers the secret to ${secret}")
           ))]
