@@ -5,14 +5,16 @@ Dickinson
       { declAnn = ()
       , defName = Name
         { name = "greeter" :| []
-        , unique = Unique { unUnique = 5 }
+        , unique = Unique
+          { unUnique = 5 }
         , loc = ()
         }
       , defExpr = Lambda
         { exprAnn = ()
         , lambdaVar = Name
           { name = "name" :| []
-          , unique = Unique { unUnique = 7 }
+          , unique = Unique
+            { unUnique = 7 }
           , loc = ()
           }
         , lambdaTy = TyText ()
@@ -27,7 +29,8 @@ Dickinson
               { exprAnn = ()
               , exprVar = Name
                 { name = "name" :| []
-                , unique = Unique { unUnique = 7 }
+                , unique = Unique
+                  { unUnique = 7 }
                 , loc = ()
                 }
               }
@@ -43,7 +46,8 @@ Dickinson
       { declAnn = ()
       , defName = Name
         { name = "main" :| []
-        , unique = Unique { unUnique = 6 }
+        , unique = Unique
+          { unUnique = 6 }
         , loc = ()
         }
       , defExpr = Let
@@ -51,7 +55,8 @@ Dickinson
         , letBinds =
           ( Name
             { name = "boy" :| []
-            , unique = Unique { unUnique = 8 }
+            , unique = Unique
+              { unUnique = 8 }
             , loc = ()
             }
           , Choice
@@ -79,7 +84,8 @@ Dickinson
             { exprAnn = ()
             , exprVar = Name
               { name = "greeter" :| []
-              , unique = Unique { unUnique = 5 }
+              , unique = Unique
+                { unUnique = 5 }
               , loc = ()
               }
             }
@@ -87,7 +93,8 @@ Dickinson
             { exprAnn = ()
             , exprVar = Name
               { name = "boy" :| []
-              , unique = Unique { unUnique = 8 }
+              , unique = Unique
+                { unUnique = 8 }
               , loc = ()
               }
             }

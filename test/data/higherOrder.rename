@@ -5,24 +5,29 @@ Dickinson
       { declAnn = ()
       , defName = Name
         { name = "top" :| []
-        , unique = Unique { unUnique = 6 }
+        , unique = Unique
+          { unUnique = 6 }
         , loc = ()
         }
       , defExpr = Lambda
         { exprAnn = ()
         , lambdaVar = Name
           { name = "f" :| []
-          , unique = Unique { unUnique = 8 }
+          , unique = Unique
+            { unUnique = 8 }
           , loc = ()
           }
-        , lambdaTy = TyFun () ( TyText () ) ( TyText () )
+        , lambdaTy = TyFun ()
+          ( TyText () )
+          ( TyText () )
         , lambdaExpr = Apply
           { exprAnn = ()
           , exprFun = Var
             { exprAnn = ()
             , exprVar = Name
               { name = "f" :| []
-              , unique = Unique { unUnique = 8 }
+              , unique = Unique
+                { unUnique = 8 }
               , loc = ()
               }
             }
@@ -37,7 +42,8 @@ Dickinson
       { declAnn = ()
       , defName = Name
         { name = "main" :| []
-        , unique = Unique { unUnique = 7 }
+        , unique = Unique
+          { unUnique = 7 }
         , loc = ()
         }
       , defExpr = Let
@@ -45,14 +51,16 @@ Dickinson
         , letBinds =
           ( Name
             { name = "fun" :| []
-            , unique = Unique { unUnique = 9 }
+            , unique = Unique
+              { unUnique = 9 }
             , loc = ()
             }
           , Lambda
             { exprAnn = ()
             , lambdaVar = Name
               { name = "a" :| []
-              , unique = Unique { unUnique = 10 }
+              , unique = Unique
+                { unUnique = 10 }
               , loc = ()
               }
             , lambdaTy = TyText ()
@@ -67,7 +75,8 @@ Dickinson
                   { exprAnn = ()
                   , exprVar = Name
                     { name = "a" :| []
-                    , unique = Unique { unUnique = 10 }
+                    , unique = Unique
+                      { unUnique = 10 }
                     , loc = ()
                     }
                   }
@@ -81,7 +90,8 @@ Dickinson
             { exprAnn = ()
             , exprVar = Name
               { name = "top" :| []
-              , unique = Unique { unUnique = 6 }
+              , unique = Unique
+                { unUnique = 6 }
               , loc = ()
               }
             }
@@ -89,7 +99,8 @@ Dickinson
             { exprAnn = ()
             , exprVar = Name
               { name = "fun" :| []
-              , unique = Unique { unUnique = 9 }
+              , unique = Unique
+                { unUnique = 9 }
               , loc = ()
               }
             }

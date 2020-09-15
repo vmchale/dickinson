@@ -5,7 +5,8 @@ Dickinson
       { declAnn = ()
       , defName = Name
         { name = "letBinding" :| []
-        , unique = Unique { unUnique = 4 }
+        , unique = Unique
+          { unUnique = 4 }
         , loc = ()
         }
       , defExpr = Let
@@ -13,7 +14,8 @@ Dickinson
         , letBinds =
           ( Name
             { name = "a" :| []
-            , unique = Unique { unUnique = 5 }
+            , unique = Unique
+              { unUnique = 5 }
             , loc = ()
             }
           , Literal
@@ -24,7 +26,8 @@ Dickinson
           [
             ( Name
               { name = "b" :| []
-              , unique = Unique { unUnique = 6 }
+              , unique = Unique
+                { unUnique = 6 }
               , loc = ()
               }
             , Literal
@@ -41,7 +44,8 @@ Dickinson
               { exprAnn = ()
               , exprVar = Name
                 { name = "a" :| []
-                , unique = Unique { unUnique = 5 }
+                , unique = Unique
+                  { unUnique = 5 }
                 , loc = ()
                 }
               }
@@ -52,7 +56,8 @@ Dickinson
                 { exprAnn = ()
                 , exprVar = Name
                   { name = "b" :| []
-                  , unique = Unique { unUnique = 6 }
+                  , unique = Unique
+                    { unUnique = 6 }
                   , loc = ()
                   }
                 }

@@ -684,8 +684,7 @@ We can write our own minimal magical realism bot using builtin libraries:
                     (| "immortality")
                     (| "heliophagy")
                     (| "levitation")
-                    (| "good skin")
-                    (| "happiness"))]
+                    (| "good skin"))]
               "discovers the secret to ${secret}")
           ))]
       "A ${profession} in ${bigCity} ${accomplishment}"))))

@@ -5,14 +5,16 @@ Dickinson
       { declAnn = ()
       , defName = Name
         { name = "quote" :| []
-        , unique = Unique { unUnique = 5 }
+        , unique = Unique
+          { unUnique = 5 }
         , loc = ()
         }
       , defExpr = Lambda
         { exprAnn = ()
         , lambdaVar = Name
           { name = "qu" :| []
-          , unique = Unique { unUnique = 7 }
+          , unique = Unique
+            { unUnique = 7 }
           , loc = ()
           }
         , lambdaTy = TyText ()
@@ -20,7 +22,8 @@ Dickinson
           { exprAnn = ()
           , lambdaVar = Name
             { name = "name" :| []
-            , unique = Unique { unUnique = 8 }
+            , unique = Unique
+              { unUnique = 8 }
             , loc = ()
             }
           , lambdaTy = TyText ()
@@ -31,20 +34,22 @@ Dickinson
                 { exprAnn = ()
                 , exprVar = Name
                   { name = "qu" :| []
-                  , unique = Unique { unUnique = 7 }
+                  , unique = Unique
+                    { unUnique = 7 }
                   , loc = ()
                   }
                 }
               , StrChunk
                 { exprAnn = ()
                 , chunkText = "
-        — "
+                      — "
                 }
               , Var
                 { exprAnn = ()
                 , exprVar = Name
                   { name = "name" :| []
-                  , unique = Unique { unUnique = 8 }
+                  , unique = Unique
+                    { unUnique = 8 }
                   , loc = ()
                   }
                 }
@@ -57,7 +62,8 @@ Dickinson
       { declAnn = ()
       , defName = Name
         { name = "main" :| []
-        , unique = Unique { unUnique = 6 }
+        , unique = Unique
+          { unUnique = 6 }
         , loc = ()
         }
       , defExpr = Choice
@@ -72,7 +78,8 @@ Dickinson
                 { exprAnn = ()
                 , exprVar = Name
                   { name = "quote" :| []
-                  , unique = Unique { unUnique = 5 }
+                  , unique = Unique
+                    { unUnique = 5 }
                   , loc = ()
                   }
                 }

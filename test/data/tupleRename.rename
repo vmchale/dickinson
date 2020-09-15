@@ -5,7 +5,8 @@ Dickinson
       { declAnn = ()
       , defName = Name
         { name = "prolix" :| []
-        , unique = Unique { unUnique = 4 }
+        , unique = Unique
+          { unUnique = 4 }
         , loc = ()
         }
       , defExpr = Let
@@ -13,7 +14,8 @@ Dickinson
         , letBinds =
           ( Name
             { name = "xy" :| []
-            , unique = Unique { unUnique = 5 }
+            , unique = Unique
+              { unUnique = 5 }
             , loc = ()
             }
           , Literal
@@ -25,18 +27,22 @@ Dickinson
           { exprAnn = ()
           , lambdaVar = Name
             { name = "xy" :| []
-            , unique = Unique { unUnique = 6 }
+            , unique = Unique
+              { unUnique = 6 }
             , loc = ()
             }
           , lambdaTy = TyTuple ()
-            ( TyText () :| [ TyText () ] )
+            ( TyText () :|
+              [ TyText () ]
+            )
           , lambdaExpr = Match
             { exprAnn = ()
             , exprMatch = Var
               { exprAnn = ()
               , exprVar = Name
                 { name = "xy" :| []
-                , unique = Unique { unUnique = 6 }
+                , unique = Unique
+                  { unUnique = 6 }
                 , loc = ()
                 }
               }
@@ -47,17 +53,21 @@ Dickinson
                   { patAnn = ()
                   , patName = Name
                     { name = "x" :| []
-                    , unique = Unique { unUnique = 7 }
+                    , unique = Unique
+                      { unUnique = 7 }
                     , loc = ()
                     }
                   } :|
-                  [ Wildcard { patAnn = () } ]
+                  [ Wildcard
+                    { patAnn = () }
+                  ]
                 }
               , Var
                 { exprAnn = ()
                 , exprVar = Name
                   { name = "x" :| []
-                  , unique = Unique { unUnique = 7 }
+                  , unique = Unique
+                    { unUnique = 7 }
                   , loc = ()
                   }
                 }

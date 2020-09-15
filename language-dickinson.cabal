@@ -245,7 +245,7 @@ test-suite dickinson-test
         text -any,
         filepath -any,
         tasty-golden -any,
-        pretty-simple -any,
+        pretty-simple >=4.0.0.0,
         language-dickinson -any
 
     if impl(ghc >=8.0)

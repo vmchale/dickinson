@@ -5,25 +5,30 @@ Dickinson
       { declAnn = ()
       , defName = Name
         { name = "fst" :| []
-        , unique = Unique { unUnique = 11 }
+        , unique = Unique
+          { unUnique = 11 }
         , loc = ()
         }
       , defExpr = Lambda
         { exprAnn = ()
         , lambdaVar = Name
           { name = "xy" :| []
-          , unique = Unique { unUnique = 15 }
+          , unique = Unique
+            { unUnique = 15 }
           , loc = ()
           }
         , lambdaTy = TyTuple ()
-          ( TyText () :| [ TyText () ] )
+          ( TyText () :|
+            [ TyText () ]
+          )
         , lambdaExpr = Match
           { exprAnn = ()
           , exprMatch = Var
             { exprAnn = ()
             , exprVar = Name
               { name = "xy" :| []
-              , unique = Unique { unUnique = 15 }
+              , unique = Unique
+                { unUnique = 15 }
               , loc = ()
               }
             }
@@ -34,17 +39,21 @@ Dickinson
                 { patAnn = ()
                 , patName = Name
                   { name = "x" :| []
-                  , unique = Unique { unUnique = 16 }
+                  , unique = Unique
+                    { unUnique = 16 }
                   , loc = ()
                   }
                 } :|
-                [ Wildcard { patAnn = () } ]
+                [ Wildcard
+                  { patAnn = () }
+                ]
               }
             , Var
               { exprAnn = ()
               , exprVar = Name
                 { name = "x" :| []
-                , unique = Unique { unUnique = 16 }
+                , unique = Unique
+                  { unUnique = 16 }
                 , loc = ()
                 }
               }
@@ -56,37 +65,44 @@ Dickinson
       { declAnn = ()
       , defName = Name
         { name = "snd" :| []
-        , unique = Unique { unUnique = 12 }
+        , unique = Unique
+          { unUnique = 12 }
         , loc = ()
         }
       , defExpr = Lambda
         { exprAnn = ()
         , lambdaVar = Name
           { name = "xy" :| []
-          , unique = Unique { unUnique = 17 }
+          , unique = Unique
+            { unUnique = 17 }
           , loc = ()
           }
         , lambdaTy = TyTuple ()
-          ( TyText () :| [ TyText () ] )
+          ( TyText () :|
+            [ TyText () ]
+          )
         , lambdaExpr = Match
           { exprAnn = ()
           , exprMatch = Var
             { exprAnn = ()
             , exprVar = Name
               { name = "xy" :| []
-              , unique = Unique { unUnique = 17 }
+              , unique = Unique
+                { unUnique = 17 }
               , loc = ()
               }
             }
           , exprBranch =
             ( PatternTuple
               { patAnn = ()
-              , patTup = Wildcard { patAnn = () } :|
+              , patTup = Wildcard
+                { patAnn = () } :|
                 [ PatternVar
                   { patAnn = ()
                   , patName = Name
                     { name = "y" :| []
-                    , unique = Unique { unUnique = 18 }
+                    , unique = Unique
+                      { unUnique = 18 }
                     , loc = ()
                     }
                   }
@@ -96,7 +112,8 @@ Dickinson
               { exprAnn = ()
               , exprVar = Name
                 { name = "y" :| []
-                , unique = Unique { unUnique = 18 }
+                , unique = Unique
+                  { unUnique = 18 }
                 , loc = ()
                 }
               }
@@ -108,24 +125,29 @@ Dickinson
       { declAnn = ()
       , defName = Name
         { name = "greeter" :| []
-        , unique = Unique { unUnique = 13 }
+        , unique = Unique
+          { unUnique = 13 }
         , loc = ()
         }
       , defExpr = Lambda
         { exprAnn = ()
         , lambdaVar = Name
           { name = "dog" :| []
-          , unique = Unique { unUnique = 19 }
+          , unique = Unique
+            { unUnique = 19 }
           , loc = ()
           }
         , lambdaTy = TyTuple ()
-          ( TyText () :| [ TyText () ] )
+          ( TyText () :|
+            [ TyText () ]
+          )
         , lambdaExpr = Let
           { exprAnn = ()
           , letBinds =
             ( Name
               { name = "name" :| []
-              , unique = Unique { unUnique = 20 }
+              , unique = Unique
+                { unUnique = 20 }
               , loc = ()
               }
             , Apply
@@ -134,7 +156,8 @@ Dickinson
                 { exprAnn = ()
                 , exprVar = Name
                   { name = "fst" :| []
-                  , unique = Unique { unUnique = 11 }
+                  , unique = Unique
+                    { unUnique = 11 }
                   , loc = ()
                   }
                 }
@@ -142,7 +165,8 @@ Dickinson
                 { exprAnn = ()
                 , exprVar = Name
                   { name = "dog" :| []
-                  , unique = Unique { unUnique = 19 }
+                  , unique = Unique
+                    { unUnique = 19 }
                   , loc = ()
                   }
                 }
@@ -151,7 +175,8 @@ Dickinson
             [
               ( Name
                 { name = "pronoun" :| []
-                , unique = Unique { unUnique = 21 }
+                , unique = Unique
+                  { unUnique = 21 }
                 , loc = ()
                 }
               , Apply
@@ -160,7 +185,8 @@ Dickinson
                   { exprAnn = ()
                   , exprVar = Name
                     { name = "snd" :| []
-                    , unique = Unique { unUnique = 12 }
+                    , unique = Unique
+                      { unUnique = 12 }
                     , loc = ()
                     }
                   }
@@ -168,7 +194,8 @@ Dickinson
                   { exprAnn = ()
                   , exprVar = Name
                     { name = "dog" :| []
-                    , unique = Unique { unUnique = 19 }
+                    , unique = Unique
+                      { unUnique = 19 }
                     , loc = ()
                     }
                   }
@@ -186,7 +213,8 @@ Dickinson
                     { exprAnn = ()
                     , exprVar = Name
                       { name = "name" :| []
-                      , unique = Unique { unUnique = 20 }
+                      , unique = Unique
+                        { unUnique = 20 }
                       , loc = ()
                       }
                     }
@@ -206,7 +234,8 @@ Dickinson
                       { exprAnn = ()
                       , exprVar = Name
                         { name = "name" :| []
-                        , unique = Unique { unUnique = 20 }
+                        , unique = Unique
+                          { unUnique = 20 }
                         , loc = ()
                         }
                       }
@@ -226,7 +255,8 @@ Dickinson
                       { exprAnn = ()
                       , exprVar = Name
                         { name = "name" :| []
-                        , unique = Unique { unUnique = 20 }
+                        , unique = Unique
+                          { unUnique = 20 }
                         , loc = ()
                         }
                       }
@@ -238,7 +268,8 @@ Dickinson
                       { exprAnn = ()
                       , exprVar = Name
                         { name = "pronoun" :| []
-                        , unique = Unique { unUnique = 21 }
+                        , unique = Unique
+                          { unUnique = 21 }
                         , loc = ()
                         }
                       }
@@ -258,7 +289,8 @@ Dickinson
       { declAnn = ()
       , defName = Name
         { name = "main" :| []
-        , unique = Unique { unUnique = 14 }
+        , unique = Unique
+          { unUnique = 14 }
         , loc = ()
         }
       , defExpr = Apply
@@ -267,7 +299,8 @@ Dickinson
           { exprAnn = ()
           , exprVar = Name
             { name = "greeter" :| []
-            , unique = Unique { unUnique = 13 }
+            , unique = Unique
+              { unUnique = 13 }
             , loc = ()
             }
           }
