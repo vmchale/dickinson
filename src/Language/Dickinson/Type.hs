@@ -117,7 +117,24 @@ prettyImport :: (Name a -> Doc b) -> Import a -> Doc b
 prettyImport pn (Import _ n) = parens (":include" <+> pn n)
 
 instance Pretty (Dickinson a) where
-    pretty (Dickinson is ds) = concatWith (\x y -> x <> hardline <> hardline <> y) (fmap pretty is <> ["%-"] <> fmap pretty ds)
+    pretty (Dickinson [] ds) =
+           "%-"
+        <> hardline
+        <> hardline
+        <> concatWith (\x y -> x <> hardline <> hardline <> y) (fmap pretty ds)
+    pretty (Dickinson is []) =
+           concatWith (\x y -> x <> hardline <> y) (fmap pretty is)
+        <> hardline
+        <> hardline
+        <> "%-"
+    pretty (Dickinson is ds) =
+           concatWith (\x y -> x <> hardline <> y) (fmap pretty is)
+        <> hardline
+        <> hardline
+        <> "%-"
+        <> hardline
+        <> hardline
+        <> concatWith (\x y -> x <> hardline <> hardline <> y) (fmap pretty ds)
 
 prettyLetLeaf :: Pretty t => (t, Expression a) -> Doc b
 prettyLetLeaf (n, e@MultiInterp{}) = group (brackets (pretty n <^> pretty e))

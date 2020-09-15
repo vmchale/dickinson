@@ -1,5 +1,7 @@
 # dickinson
 
+  * Change `emd fmt` behavior around imports.
+
 ## 1.3.0.3
 
   * Fall back onto `$HOME/.local/share/man/man1` if manpages were not found in
