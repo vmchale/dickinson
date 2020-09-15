@@ -1,7 +1,10 @@
 # dickinson
 
+## 1.3.0.3
+
   * Fall back onto `$HOME/.local/share/man/man1` if manpages were not found in
     cabal data-dir.
+  * Bump pretty-simple dependency in test suite
 
 ## 1.3.0.2
 
