@@ -18,6 +18,7 @@ data-files:
     man/emd.1
     lib/*.dck
     prelude/*.dck
+    lib/grammar/*.dck
 
 extra-source-files:
     test/data/*.pretty

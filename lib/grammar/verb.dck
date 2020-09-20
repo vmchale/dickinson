@@ -1,0 +1,9 @@
+; https://en.wikipedia.org/wiki/Grammatical_tense#English
+
+(:include grammar.common)
+
+%-
+
+tydecl tense = Present | Past | Future
+
+tydecl mood = Indicative | Subjunctive | Conditional | Imperative

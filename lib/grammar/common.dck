@@ -1,0 +1,5 @@
+%-
+
+tydecl person = First | Second | Third
+
+tydecl number = Singular | Plural

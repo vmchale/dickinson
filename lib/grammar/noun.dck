@@ -1,0 +1,9 @@
+; types for noun declension
+
+(:include grammar.common)
+
+%-
+
+tydecl case = Subjective | Objective | DependentPossessive | IndependentPossessive
+
+tydecl gender = Masculine | Feminine | Neuter
