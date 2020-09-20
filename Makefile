@@ -6,7 +6,7 @@ MAKEFLAGS += --warn-undefined-variables --no-builtin-rules
 
 include mk/compress.mk
 
-DCK_LIB := $(wildcard ./lib/*.dck)
+DCK_LIB := $(wildcard ./lib/*.dck) $(wildcard ./lib/grammar/*.dck)
 DCK_PRELUDE := $(wildcard ./prelude/*.dck)
 
 HS_SRC := $(shell find run -type f) $(shell find src -type f) language-dickinson.cabal
