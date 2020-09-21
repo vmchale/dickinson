@@ -99,7 +99,9 @@ in the project .ctags
 
 To get shell completions in your current session:
 
-`eval "$(emd --bash-completion-script emd)"`
+```
+eval "$(emd --bash-completion-script emd)"
+```
 
 Put this in your `~/.bashrc` or `~/.bash_profile` to install them.
 
