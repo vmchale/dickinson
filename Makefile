@@ -155,7 +155,7 @@ bin/arm-linux-emd: $(HS_SRC)
 	    arm-linux-gnueabihf-strip $@
 
 clean:
-	rm -rf dist-newstyle .stack-work *.svg stack.yaml.lock doc/user-guide.html *.hp *.prof dist *.emdi bin *.pax* *.tar* vim/*.vmb* vim/tags
+	rm -rf dist-newstyle .stack-work *.svg stack.yaml.lock doc/user-guide.html *.hp *.prof dist *.emdi bin *.pax* *.tar* vim/*.vmb* vim/tags tags
 
 docs/index.html: doc/user-guide.html
 	@mkdir -p $(dir $@)
