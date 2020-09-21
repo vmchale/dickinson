@@ -31,7 +31,10 @@
 <ul>
 <li><a href="#distributions">Distributions</a></li>
 <li><a href="#source">Source</a></li>
-<li><a href="#editor-integration">Editor Integration</a></li>
+<li><a href="#editor-integration">Editor Integration</a>
+<ul>
+<li><a href="#tags">Tags</a></li>
+</ul></li>
 </ul></li>
 <li><a href="#program-structure">Program Structure</a>
 <ul>
@@ -49,7 +52,7 @@
 <ul>
 <li><a href="#lambdas">Lambdas</a></li>
 <li><a href="#matches-tuples">Matches &amp; Tuples</a></li>
-<li><a href="#tags">Tags</a></li>
+<li><a href="#tags-1">Tags</a></li>
 </ul></li>
 <li><a href="#types">Types</a></li>
 </ul></li>
@@ -97,6 +100,16 @@
 <p>A <a href="https://github.com/vmchale/dickinson/tree/master/vim">vim plugin</a> is available.</p>
 <p>To install with <a href="https://github.com/junegunn/vim-plug">vim-plug</a>:</p>
 <pre class="vimscript"><code>Plug &#39;vmchale/dickinson&#39; , { &#39;rtp&#39; : &#39;vim&#39; }</code></pre>
+<h3 id="tags">Tags</h3>
+<p>To configure Dickinson with <a href="http://ctags.sourceforge.net/">exuberant ctags</a> or <a href="https://ctags.io/">universal ctags</a>, put the following in a file named <code>.ctags</code>:</p>
+<pre><code>--langdef=DICKINSON
+--langmap=DICKINSON:.dck
+--regex-DICKINSON=/:def *([[:lower:]][[:alnum:]]+)/\1/f,function/
+--regex-DICKINSON=/tydecl *([[:lower:]][[:alnum:]]+) *=/\1/t,type/</code></pre>
+<p>I have the following in my <code>~/.vimrc</code> to keep tags updated:</p>
+<pre><code>augroup ctags
+    autocmd BufWritePost *.dck :silent !ctags -R .
+augroup END</code></pre>
 <h1 id="program-structure">Program Structure</h1>
 <p>Dickinson files begin with <code>%-</code>, followed by definitions.</p>
 <h2 id="example">Example</h2>
@@ -235,7 +248,7 @@
 <pre><code>&quot;You forgot the difference between equanimity and passivity.&quot;
     — Fiona Apple</code></pre>
 <p>Note the use of the <code>:lambda</code> in <code>formatQuote</code>; we specify the type <code>(text, text)</code>.</p>
-<h3 id="tags">Tags</h3>
+<h3 id="tags-1">Tags</h3>
 <p>Tags can be used to split things based on cases.</p>
 <pre><code>tydecl number = Singular | Plural
 

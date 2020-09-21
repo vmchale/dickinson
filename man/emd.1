@@ -78,6 +78,20 @@ Directory to search for libraries
 A vim plugin is available; see
 .PP
 https://github.com/vmchale/dickinson/tree/master/vim
+.SS CTAGS
+.PP
+To configure exuberant ctags or universal ctags, put
+.IP
+.nf
+\f[C]
+--langdef=DICKINSON
+--langmap=DICKINSON:.dck
+--regex-DICKINSON=/:def *([[:lower:]][[:alnum:]]+)/\[rs]1/f,function/
+--regex-DICKINSON=/tydecl *([[:lower:]][[:alnum:]]+) *=/\[rs]1/t,type/
+\f[R]
+.fi
+.PP
+in the project .ctags
 .SH SHELL COMPLETIONS
 .PP
 To get shell completions in your current session:

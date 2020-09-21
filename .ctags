@@ -1,0 +1,4 @@
+--langdef=DICKINSON
+--langmap=DICKINSON:.dck
+--regex-DICKINSON=/:def *([[:lower:]][[:alnum:]]+)/\1/f,function/
+--regex-DICKINSON=/tydecl *([[:lower:]][[:alnum:]]+) *=/\1/t,type/

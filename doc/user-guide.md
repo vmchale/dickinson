@@ -51,6 +51,27 @@ To install with [vim-plug](https://github.com/junegunn/vim-plug):
 Plug 'vmchale/dickinson' , { 'rtp' : 'vim' }
 ```
 
+### Tags
+
+To configure Dickinson with [exuberant ctags](http://ctags.sourceforge.net/) or
+[universal ctags](https://ctags.io/), put the following in a file named
+`.ctags`:
+
+```
+--langdef=DICKINSON
+--langmap=DICKINSON:.dck
+--regex-DICKINSON=/:def *([[:lower:]][[:alnum:]]+)/\1/f,function/
+--regex-DICKINSON=/tydecl *([[:lower:]][[:alnum:]]+) *=/\1/t,type/
+```
+
+I have the following in my `~/.vimrc` to keep tags updated:
+
+```
+augroup ctags
+    autocmd BufWritePost *.dck :silent !ctags -R .
+augroup END
+```
+
 # Program Structure
 
 Dickinson files begin with `%-`, followed by definitions.
