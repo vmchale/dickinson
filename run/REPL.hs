@@ -38,8 +38,8 @@ import           Prettyprinter                  (Pretty (pretty), hardline)
 import           Prettyprinter.Render.Text      (putDoc)
 import           REPL.Completions
 import           REPL.Save
-import           System.Console.Haskeline       (InputT, completeFilename, defaultSettings, fallbackCompletion,
-                                                 getInputLine, historyFile, runInputT, setComplete)
+import           System.Console.Haskeline       (InputT, completeFilename, defaultSettings, fallbackCompletion, getInputLine, historyFile, runInputT,
+                                                 setComplete)
 import           System.Directory               (getHomeDirectory)
 import           System.FilePath                ((</>))
 import           System.Random                  (newStdGen, randoms)
@@ -71,6 +71,8 @@ loop = do
         Just (":help":_)              -> showHelp *> loop
         Just (":save":[fp])           -> saveReplSt fp *> loop
         Just (":save":_)              -> liftIO (putStrLn ":save takes one argument") *> loop
+        Just [":l"]                   -> liftIO (putStrLn "nothing loaded!") *> loop
+        Just [":load"]                -> liftIO (putStrLn "nothing loaded!") *> loop
         Just (":l":fs)                -> traverse loadFile fs *> loop
         Just (":load":fs)             -> traverse loadFile fs *> loop
         Just (":r":[fp])              -> loadReplSt fp *> loop
