@@ -1,6 +1,6 @@
 # dickinson
 
-  * Add some libraries for declesion and conjugation in English
+  * Add some libraries for declension and conjugation in English
   * Change `emd fmt` behavior around imports.
   * Manpage example
 
