@@ -19,6 +19,7 @@
   - [ ] Matching
 - [ ] Library documentation
 ## Examples
+- [ ] https://twitter.com/folklorebot
 - [ ] Poetry bot...? Rumi?
 - [ ] bi update bot &c. -> show how to lazily reuse libraries
 - [x] Fiona bot?
@@ -34,6 +35,7 @@
 - [x] Cowsay-as-a-function
 - [ ] jenny holzer bot https://www.tate.org.uk/art/artworks/holzer-truisms-t03959 https://wordsofwomen.com/jenny-holzers-list-of-truisms/ https://www.moma.org/collection/works/63755
 - [ ] https://twitter.com/philosophersbot
+- [ ] https://twitter.com/gardenexperienc?lang=en
 # Editor Integration
 - [x] Syntastic checker
 # Passes
@@ -46,6 +48,9 @@
 # Library API
 - [x] Maybe spin out internal library?
 # Bugs
+- [ ] The way `:include`s and tag uniques are handled generates a morass
+- [x] Pattern match exhaustiveness checker needs to run after `:include`s are
+  accounted for
 - [x] `examples/fortune.dck` fails in repl
 - [x] Bug in `test/demo/animal.dck` - doesn't ever produce a bird?
 - [ ] Running `examples/doggo.dck` `main` - `pick` seems to be called by `probabilities` state doesn't seem to change?
@@ -89,6 +94,7 @@
 - [ ] Verbosity
 - [ ] Turn on sanity checking?
 # Features
+- [ ] Library exploration (installed)
 - [ ] Warn on redundant `:include`s
 - [x] Polyglot integration!
 - [x] Turn off zstd saving with a flag (for freebsd)

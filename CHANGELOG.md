@@ -3,6 +3,8 @@
   * Add some libraries for declension and conjugation in English
   * Change `emd fmt` behavior around imports.
   * Manpage example
+  * Fix bug where pattern match exhaustiveness checking failed when the
+    constructor in question was defined in another file
 
 ## 1.3.0.3
 
