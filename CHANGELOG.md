@@ -1,5 +1,7 @@
 # dickinson
 
+## 1.3.0.4
+
   * Add some libraries for declension and conjugation in English
   * Change `emd fmt` behavior around imports.
   * Manpage example
