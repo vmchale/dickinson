@@ -18,7 +18,7 @@ import           System.FilePath          ((</>))
 data Act = Run !FilePath ![FilePath]
          | REPL ![FilePath]
          | Check ![FilePath] ![FilePath]
-         | Lint ![FilePath]
+         | Lint ![FilePath] ![FilePath]
          | Format !FilePath Bool
          | Man
          | Ide !FilePath ![FilePath]
@@ -56,7 +56,7 @@ checkP :: Parser Act
 checkP = Check <$> some dckFile <*> includes
 
 lintP :: Parser Act
-lintP = Lint <$> some dckFile
+lintP = Lint <$> some dckFile <*> includes
 
 dckFile :: Parser FilePath
 dckFile = argument str
@@ -106,8 +106,8 @@ run :: Act -> IO ()
 run (Run fp is)       = do { is' <- modIs is ; TIO.putStrLn =<< pipeline is' fp }
 run (REPL fps)        = dickinsonRepl fps
 run (Check fs i)      = do { is' <- modIs i ; traverse_ (validateFile is') fs }
-run (Lint fs)         = traverse_ warnFile fs
+run (Lint fs is)      = do { is' <- modIs is ; traverse_ warnFile fs ; traverse_ (patternExhaustivenessFile is') fs }
 run (Format fp False) = fmtFile fp
 run (Format fp True)  = fmtInplace fp
 run Man               = putStrLn =<< manFind
-run (Ide fp is)       = do { is' <- modIs is ; validateFile is' fp ; warnFile fp }
+run (Ide fp is)       = do { is' <- modIs is ; validateFile is' fp ; warnFile fp ; patternExhaustivenessFile is' fp }

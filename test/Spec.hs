@@ -74,6 +74,7 @@ parserTests =
         , detectBadPattern "test/demo/inexhaustive.dck"
         , noInexhaustive "test/demo/exhaustive.dck"
         , detectBadPattern "test/error/inexhaustivePatternMatch.dck"
+        , checkImportedPattern "test/data/pathologicalImports.dck"
         , noInexhaustive "prelude/curry.dck"
         , thTests
         ]
@@ -130,6 +131,13 @@ sanityCheckTest fp = testCase fp $
     fmap eitherThrow $ evalIO $ do
         ds <- amalgamateRenameM [] fp
         sanityCheck ds
+
+checkImportedPattern :: FilePath -> TestTree
+checkImportedPattern fp = testCase fp $ do
+    res <- fmap eitherThrow $ evalIO $ do
+        ds <- amalgamateRenameM ["lib"] fp
+        pure $ checkExhaustive ds
+    assertBool fp $ (res `seq` True)
 
 noInexhaustive :: FilePath -> TestTree
 noInexhaustive fp = testCase "Reports non-sketchy pattern matches" $ do

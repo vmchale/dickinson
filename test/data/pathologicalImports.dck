@@ -1,0 +1,11 @@
+(:include grammar.verb)
+(:include grammar.noun)
+
+%-
+
+(:def pronoun
+  (:lambda x (case, person)
+    (:match x
+      [(Subjective, First) "I"]
+      [(Objective, First) "me"]
+      )))

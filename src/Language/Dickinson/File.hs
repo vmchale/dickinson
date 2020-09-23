@@ -6,6 +6,7 @@ module Language.Dickinson.File ( evalIO
                                , validateFile
                                , validateAmalgamate
                                , warnFile
+                               , patternExhaustivenessFile
                                , tcFile
                                , amalgamateRename
                                , amalgamateRenameM
@@ -89,7 +90,7 @@ validateAmalgamate is fp = do
 
 -- | Run some lints
 warnFile :: FilePath -> IO ()
-warnFile = maybeThrowIO . (\x -> checkDuplicates x <|> checkMultiple x <|> checkExhaustive x) . modDefs
+warnFile = maybeThrowIO . (\x -> checkDuplicates x <|> checkMultiple x) . modDefs
     <=< eitherThrowIO . parse
     <=< BSL.readFile
 
@@ -98,6 +99,9 @@ ioChecker checker is = maybeThrowIO . checker <=< amalgamateRename is
 
 tcFile :: [FilePath] -> FilePath -> IO ()
 tcFile is = eitherThrowIO . tyRun <=< amalgamateRename is
+
+patternExhaustivenessFile :: [FilePath] -> FilePath -> IO ()
+patternExhaustivenessFile is = maybeThrowIO . checkExhaustive <=< amalgamateRename is
 
 evalFile :: [FilePath] -> FilePath -> IO T.Text
 evalFile is fp = (\g -> evalFileGen g is fp) =<< newStdGen
