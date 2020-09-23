@@ -51,6 +51,14 @@ To install with [vim-plug](https://github.com/junegunn/vim-plug):
 Plug 'vmchale/dickinson' , { 'rtp' : 'vim' }
 ```
 
+To automaticall enable spellchecking where appropriate put
+
+```
+autocmd BufNewFile,BufRead *.dck setlocal spell spelllang=en_us
+```
+
+in your `~/.vimrc`.
+
 ### Tags
 
 To configure Dickinson with [exuberant ctags](http://ctags.sourceforge.net/) or

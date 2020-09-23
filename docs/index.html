@@ -100,6 +100,9 @@
 <p>A <a href="https://github.com/vmchale/dickinson/tree/master/vim">vim plugin</a> is available.</p>
 <p>To install with <a href="https://github.com/junegunn/vim-plug">vim-plug</a>:</p>
 <pre class="vimscript"><code>Plug &#39;vmchale/dickinson&#39; , { &#39;rtp&#39; : &#39;vim&#39; }</code></pre>
+<p>To automaticall enable spellchecking where appropriate put</p>
+<pre><code>autocmd BufNewFile,BufRead *.dck setlocal spell spelllang=en_us</code></pre>
+<p>in your <code>~/.vimrc</code>.</p>
 <h3 id="tags">Tags</h3>
 <p>To configure Dickinson with <a href="http://ctags.sourceforge.net/">exuberant ctags</a> or <a href="https://ctags.io/">universal ctags</a>, put the following in a file named <code>.ctags</code>:</p>
 <pre><code>--langdef=DICKINSON
