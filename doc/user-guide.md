@@ -51,7 +51,7 @@ To install with [vim-plug](https://github.com/junegunn/vim-plug):
 Plug 'vmchale/dickinson' , { 'rtp' : 'vim' }
 ```
 
-To automaticall enable spellchecking where appropriate put
+To automatically enable spellchecking where appropriate put
 
 ```
 autocmd BufNewFile,BufRead *.dck setlocal spell spelllang=en_us
