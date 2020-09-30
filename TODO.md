@@ -145,7 +145,7 @@
 - [x] golden tests via pretty-simple packages (debug output?)
 - [ ] golden tests for error messages
 ## Test cases
-- [ ] `:oneof` returning a function
+- [x] `:oneof` returning a function
 - [ ] kick tires on `:match` and such and results of `:pick`?
 - [x] Nested interpolated strings
 - [x] `test/eval/tyAnnot.dck` in the test suite
