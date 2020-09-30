@@ -45,6 +45,7 @@ maxUniqueType (TyNamed _ (Name _ (Unique k) _)) = k
 maxUniqueExpression :: Expression a -> Int
 maxUniqueExpression BuiltinFn{}                           = 0
 maxUniqueExpression Literal{}                             = 0
+maxUniqueExpression (Random _ (Name _ (Unique k) _))      = k
 maxUniqueExpression (Constructor _ (Name _ (Unique k) _)) = k
 maxUniqueExpression StrChunk{}                            = 0
 maxUniqueExpression (Var _ (Name _ (Unique i) _))         = i

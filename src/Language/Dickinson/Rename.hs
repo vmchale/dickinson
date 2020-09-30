@@ -19,7 +19,6 @@ module Language.Dickinson.Rename ( renameDickinson
 
 import           Control.Composition           (thread)
 import           Control.Monad                 (forM, (<=<))
-import           Control.Monad.Ext             (zipWithM)
 import           Control.Monad.State           (MonadState, State, runState)
 import           Data.Bifunctor                (second)
 import           Data.Binary                   (Binary)
@@ -189,3 +188,4 @@ renameExpressionM (Annot l e ty) =
     Annot l <$> renameExpressionM e <*> pure ty
 renameExpressionM c@Constructor{} = pure c
 renameExpressionM c@BuiltinFn{} = pure c
+renameExpressionM c@Random{} = pure c

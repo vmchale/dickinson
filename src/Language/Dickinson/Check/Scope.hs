@@ -92,6 +92,8 @@ checkExpr (Let _ bs e) = do
         <* traverse_ deleteName ns
 checkExpr (Match _ e brs) =
     ((<|>) <$> checkExpr e) <*> mapSumM checkPair brs
+checkExpr (Random l n) =
+    checkType (TyNamed l n)
 
 checkPair :: (Pattern a, Expression a) -> CheckM (Maybe (DickinsonError a))
 checkPair (p, e) = do

@@ -54,6 +54,7 @@ checkExprM Literal{}          = pure Nothing
 checkExprM StrChunk{}         = pure Nothing
 checkExprM Constructor{}      = pure Nothing
 checkExprM BuiltinFn{}        = pure Nothing
+checkExprM Random{}           = pure Nothing
 checkExprM (Flatten _ e)      = checkExprM e
 checkExprM (Annot _ e _)      = checkExprM e
 checkExprM (Lambda _ _ _ e)   = checkExprM e

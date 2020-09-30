@@ -90,6 +90,7 @@ data Expression a = Literal { exprAnn :: a, litText :: T.Text }
                           }
                   | Constructor { exprAnn :: a, constructorName :: TyName a }
                   | BuiltinFn { exprAnn :: a, exprBuiltin :: Builtin }
+                  | Random { exprAnn :: a, tySelName :: Name a }
                   deriving (Generic, NFData, Binary, Functor, Show, Data)
                   -- TODO: builtins?
 
@@ -203,6 +204,7 @@ instance Pretty (Expression a) where
     pretty (Annot _ e ty)     = pretty e <+> colon <+> pretty ty
     pretty (Constructor _ tn) = pretty tn
     pretty (BuiltinFn _ b)    = pretty b
+    pretty (Random _ tn)      = group (parens (":pick" <+> pretty tn))
 
 instance Pretty (DickinsonTy a) where
     pretty = prettyType pretty

@@ -52,7 +52,7 @@ evalIO me = (\g -> evalAllWithGen g me) =<< newStdGen
 evalAllWithGen :: StdGen
                -> AllM x
                -> IO (Either (DickinsonError AlexPosn) x)
-evalAllWithGen g me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty initRenames mempty alexInitUserState emptyTyEnv)
+evalAllWithGen g me = runExceptT $ evalStateT me (EvalSt (randoms g) mempty initRenames mempty alexInitUserState emptyTyEnv mempty)
 
 initAmalgamateSt :: AmalgamateSt
 initAmalgamateSt = AmalgamateSt initRenames alexInitUserState

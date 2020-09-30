@@ -51,3 +51,4 @@ checkExprDuplicates (Flatten _ e)      = checkExprDuplicates e
 checkExprDuplicates (Annot _ e _)      = checkExprDuplicates e
 checkExprDuplicates Constructor{}      = Nothing
 checkExprDuplicates BuiltinFn{}        = Nothing
+checkExprDuplicates Random{}           = Nothing

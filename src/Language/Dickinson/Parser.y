@@ -3,7 +3,6 @@
     {-# LANGUAGE DeriveAnyClass #-}
     {-# LANGUAGE DeriveGeneric #-}
     {-# LANGUAGE OverloadedStrings #-}
-    {-# LANGUAGE TupleSections #-}
     module Language.Dickinson.Parser ( parse
                                      , parseWithMax
                                      , parseWithCtx
@@ -32,6 +31,7 @@ import Data.Typeable (Typeable)
 import GHC.Generics (Generic)
 import Language.Dickinson.Lexer
 import Language.Dickinson.Name hiding (loc)
+import Language.Dickinson.Probability
 import Language.Dickinson.Type
 import Language.Dickinson.Unique
 
@@ -77,6 +77,7 @@ import Language.Dickinson.Unique
     match { TokKeyword $$ KwMatch }
     flatten { TokKeyword $$ KwFlatten }
     tydecl { TokKeyword $$ KwTyDecl }
+    random { TokKeyword $$ KwRand }
 
     builtin { $$@(TokBuiltin _ _) }
 
@@ -164,6 +165,7 @@ Expression :: { Expression AlexPosn }
            | lparen sepBy(Expression,comma) rparen { Tuple $1 (NE.reverse $2) }
            | match Expression some(brackets(PatternBind)) { Match $1 $2 (NE.reverse $3) }
            | flatten Expression { Flatten $1 $2 }
+           | random ident { Random $1 (ident $2) }
            | Expression colon Type { Annot $2 $1 $3 }
            | tyIdent { Constructor (loc $1) (tyIdent $1) }
            | parens(Expression) { $1 }
@@ -210,10 +212,6 @@ processMultiChunks es = {-# SCC "processMultiChunks" #-}
     let toStrip = minIndentChunks es
         in let needle = "\n" <> T.replicate toStrip " "
             in mapStrChunk (T.replace needle "\n") <$> es
-
-weight :: NonEmpty (Expression a) -> NonEmpty (Double, Expression a)
-weight es = (recip, ) <$> es
-    where recip = 1 / (fromIntegral $ length es)
 
 parseError :: Token AlexPosn -> Parse a
 parseError = throwError . Unexpected

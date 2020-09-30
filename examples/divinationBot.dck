@@ -1,8 +1,9 @@
 %-
 
 ; @botmancy from twitter but more sensical
+; https://en.wikipedia.org/wiki/Methods_of_divination
 ; bones, oneiro-, topo-, xylo-, crytallo-
-tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals
+tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals | Lips | Dreams | Fire
 
 (:def prefix
   (:lambda x means
@@ -14,7 +15,10 @@ tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals
       [Birds "ornitho"]
       [Snakes "ophio"]
       [Sun "helio"]
-      [Animals "zoo"])))
+      [Animals "zoo"]
+      [Lips "labio"]
+      [Dreams "oneiro"]
+      [Fire "pyro"])))
 
 (:def english
   (:lambda x means
@@ -26,18 +30,13 @@ tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals
       [Birds "birds"]
       [Snakes "snakes"]
       [Sun "sun"]
-      [Animals "animals"])))
+      [Animals "animals"]
+      [Lips "lips"]
+      [Dreams "dreams"]
+      [Fire "fire"])))
 
 (:def means
-  (:oneof
-    (| Fish)
-    (| Stars)
-    (| Plants)
-    (| Books)
-    (| Birds)
-    (| Snakes)
-    (| Sun)
-    (| Animals)))
+  (:pick means))
 
 (:def postfix
   (:oneof

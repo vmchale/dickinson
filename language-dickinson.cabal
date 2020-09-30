@@ -115,6 +115,7 @@ library dickinson
         Language.Dickinson.Lib.Get
         Language.Dickinson.Pattern
         Language.Dickinson.Check.Common
+        Language.Dickinson.Probability
         Control.Monad.Ext
         Data.Foldable.Ext
         Data.List.Ext

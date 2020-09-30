@@ -20,6 +20,7 @@ syntax match dickinsonKeyword ":lambda"
 syntax match dickinsonKeyword ":match"
 syntax match dickinsonKeyword ":flatten"
 syntax match dickinsonKeyword "tydecl"
+syntax match dickinsonKeyword ":pick"
 
 syntax match dickinsonEsc +\\["\\n]+
 

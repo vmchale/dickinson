@@ -53,3 +53,4 @@ checkMultipleExpr (Let _ bs e)       =
     <|> checkMultipleExpr e
 checkMultipleExpr (Annot _ e _)    = checkMultipleExpr e
 checkMultipleExpr Constructor{}    = Nothing
+checkMultipleExpr Random{}         = Nothing

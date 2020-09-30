@@ -31,14 +31,16 @@ getReplState ds =
         <*> get
         <*> (addScd <$> get)
         <*> get
+        <*> get
 
 putReplState :: Binary a => EvalSt a -> Put
-putReplState (EvalSt _ be rs t lSt ty) =
+putReplState (EvalSt _ be rs t lSt ty cons) =
        put be
     <> put rs
     <> put t
     <> put (dropScd lSt)
     <> put ty
+    <> put cons
 
 decodeReplSt :: Binary a => [Double] -> BSL.ByteString -> EvalSt a
 #ifdef ZSTD

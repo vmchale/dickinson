@@ -15,30 +15,31 @@ module Language.Dickinson.Eval ( EvalSt (..)
                                , balanceMax
                                ) where
 
-import           Control.Composition           (thread)
-import           Control.Monad                 ((<=<))
-import           Control.Monad.Except          (MonadError, throwError)
-import qualified Control.Monad.Ext             as Ext
-import           Control.Monad.State.Lazy      (MonadState, get, gets, modify, put)
-import           Data.Char                     (toUpper)
-import           Data.Foldable                 (toList, traverse_)
-import qualified Data.IntMap                   as IM
-import           Data.List.NonEmpty            (NonEmpty, (<|))
-import qualified Data.List.NonEmpty            as NE
-import qualified Data.Map                      as M
-import qualified Data.Text                     as T
+import           Control.Composition            (thread)
+import           Control.Monad                  ((<=<))
+import           Control.Monad.Except           (MonadError, throwError)
+import qualified Control.Monad.Ext              as Ext
+import           Control.Monad.State.Lazy       (MonadState, get, gets, modify, put)
+import           Data.Char                      (toUpper)
+import           Data.Foldable                  (toList, traverse_)
+import qualified Data.IntMap                    as IM
+import           Data.List.NonEmpty             (NonEmpty, (<|))
+import qualified Data.List.NonEmpty             as NE
+import qualified Data.Map                       as M
+import qualified Data.Text                      as T
 import           Data.Text.Prettyprint.Doc.Ext
 import           Language.Dickinson.Error
-import           Language.Dickinson.Lexer
+import           Language.Dickinson.Lexer       hiding (loc)
 import           Language.Dickinson.Name
 import           Language.Dickinson.Pattern
+import           Language.Dickinson.Probability
 import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
-import           Lens.Micro                    (Lens', over, set, _1)
-import           Lens.Micro.Mtl                (use, (.=))
-import           Prettyprinter                 (Doc, Pretty (..), vsep, (<+>))
+import           Lens.Micro                     (Lens', over, set, _1)
+import           Lens.Micro.Mtl                 (modifying, use, (.=))
+import           Prettyprinter                  (Doc, Pretty (..), vsep, (<+>))
 
 -- | The state during evaluation
 data EvalSt a = EvalSt
@@ -52,6 +53,8 @@ data EvalSt a = EvalSt
     , lexerState    :: AlexUserState
     -- For error messages
     , tyEnv         :: TyEnv a
+    -- For :pick expressions
+    , constructors  :: IM.IntMap (NonEmpty (TyName a))
     }
 
 instance HasLexerState (EvalSt a) where
@@ -64,7 +67,7 @@ prettyTl :: (T.Text, Unique) -> Doc a
 prettyTl (t, i) = pretty t <+> ":" <+> pretty i
 
 instance Pretty (EvalSt a) where
-    pretty (EvalSt _ b r t st _) =
+    pretty (EvalSt _ b r t st _ _) =
         "bound expressions:" <#> vsep (prettyBound <$> IM.toList b)
             <#> pretty r
             <#> "top-level names:" <#> vsep (prettyTl <$> M.toList t)
@@ -86,6 +89,9 @@ probabilitiesLens f s = fmap (\x -> s { probabilities = x }) (f (probabilities s
 
 boundExprLens :: Lens' (EvalSt a) (IM.IntMap (Expression a))
 boundExprLens f s = fmap (\x -> s { boundExpr = x }) (f (boundExpr s))
+
+constructorsLens :: Lens' (EvalSt a) (IM.IntMap (NonEmpty (TyName a)))
+constructorsLens f s = fmap (\x -> s { constructors = x }) (f (constructors s))
 
 topLevelLens :: Lens' (EvalSt a) (M.Map T.Text Unique)
 topLevelLens f s = fmap (\x -> s { topLevel = x }) (f (topLevel s))
@@ -160,8 +166,8 @@ balanceMax = do
 addDecl :: (MonadState (EvalSt a) m)
         => Declaration a
         -> m ()
-addDecl (Define _ n e) = bindName n e *> topLevelAdd n
-addDecl TyDecl{}       = pure ()
+addDecl (Define _ n e)                      = bindName n e *> topLevelAdd n
+addDecl (TyDecl _ (Name _ (Unique k) _) cs) = modifying constructorsLens (IM.insert k cs)
 
 extrText :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m) => Expression a -> m T.Text
 extrText (Literal _ t)  = pure t
@@ -259,6 +265,14 @@ evalExpressionM (Flatten _ e) = do
     e' <- resolveFlattenM e
     evalExpressionM ({-# SCC "mapChoice.setFrequency" #-} mapChoice setFrequency e')
 evalExpressionM (Annot _ e _) = evalExpressionM e
+evalExpressionM (Random _ n@(Name _ (Unique k) l)) = do
+    cs <- gets constructors
+    case IM.lookup k cs of
+        Just ns -> pick (asConstructors ns)
+        Nothing -> throwError (UnfoundType l n)
+
+asConstructors :: NonEmpty (Name a) -> NonEmpty (Double, Expression a)
+asConstructors ns = weight ((\n -> Constructor (loc n) n) <$> ns)
 
 mapChoice :: (NonEmpty (Double, Expression a) -> NonEmpty (Double, Expression a)) -> Expression a -> Expression a
 mapChoice f (Choice l pes)     = Choice l (f pes)

@@ -57,7 +57,7 @@ runRepl :: Repl a x -> IO x
 runRepl x = do
     g <- newStdGen
     emdDir <- (</> ".emd_history") <$> getHomeDirectory
-    let initSt = EvalSt (randoms g) mempty initRenames mempty alexInitUserState emptyTyEnv
+    let initSt = EvalSt (randoms g) mempty initRenames mempty alexInitUserState emptyTyEnv mempty
     let myCompleter = emdCompletions `fallbackCompletion` completeFilename
     let emdSettings = setComplete myCompleter $ defaultSettings { historyFile = Just emdDir }
     flip evalStateT initSt $ runInputT emdSettings x

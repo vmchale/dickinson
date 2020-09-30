@@ -62,6 +62,7 @@ checkPatternExpr (Flatten _ e)      = checkPatternExpr e
 checkPatternExpr (Let _ bs e)       = foldMapAlternative (checkPatternExpr . snd) bs <|> checkPatternExpr e
 checkPatternExpr (Annot _ e _)      = checkPatternExpr e
 checkPatternExpr Constructor{}      = Nothing
+checkPatternExpr Random{}           = Nothing
 
 checkPatternDecl :: [Declaration a] -> Maybe (DickinsonError a)
 checkPatternDecl ds =
