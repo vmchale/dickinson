@@ -3,7 +3,23 @@
 ; @botmancy from twitter but more sensical
 ; https://en.wikipedia.org/wiki/Methods_of_divination
 ; bones, oneiro-, topo-, xylo-, crytallo-
-tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals | Lips | Dreams | Fire | Air | Placenta | Poo | Fingers | Cat | Number
+tydecl means = Fish
+             | Stars
+             | Plants
+             | Books
+             | Birds
+             | Snakes
+             | Sun
+             | Animals
+             | Lips
+             | Dreams
+             | Fire
+             | Air
+             | Placenta
+             | Poo
+             | Fingers
+             | Cat
+             | Number
 
 (:def prefix
   (:lambda x means
