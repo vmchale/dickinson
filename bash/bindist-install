@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+make x86_64-linux-dist.tar.lz
+mv x86_64-linux-dist.tar.lz /tmp
+cd /tmp
+star xvf x86_64-linux-dist.tar.lz
+cd language-dickinson-*
+make install
