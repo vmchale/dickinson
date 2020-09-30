@@ -677,7 +677,7 @@ tydecl means = Fish
       "${$prefix means}${postfix} - divination by ${$english means}"))
 ```
 
-`:pick` is a builtin construct which randomly selects one of the tags of type `means`.
+`:pick` is a builtin construct which randomly selects a tag of type `means`.
 
 So the Tracery bot might produce
 
