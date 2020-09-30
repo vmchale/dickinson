@@ -34,6 +34,7 @@ evalTests = testGroup "Evaluation test"
     , resultCase "test/error/scoping.dck"
     , resultCase "examples/divinationBot.dck"
     -- , resultCase "test/error/mutual.dck"
+    , resultCase "test/eval/chooseHigherOrder.dck""
     ]
 
 forceResult :: a -> Assertion

@@ -1,0 +1,9 @@
+%-
+
+(:def mod
+  (:oneof
+    (| :lambda x text x)
+    (| :lambda x text "a ${x}")))
+
+(:def main
+  $mod "b")
