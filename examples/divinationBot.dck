@@ -3,7 +3,7 @@
 ; @botmancy from twitter but more sensical
 ; https://en.wikipedia.org/wiki/Methods_of_divination
 ; bones, oneiro-, topo-, xylo-, crytallo-
-tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals | Lips | Dreams | Fire | Air | Placenta
+tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals | Lips | Dreams | Fire | Air | Placenta | Poo | Fingers | Cat | Number
 
 (:def prefix
   (:lambda x means
@@ -20,7 +20,11 @@ tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals | 
       [Dreams "oneiro"]
       [Fire "pyro"]
       [Air "aero"]
-      [Placenta "amnio"])))
+      [Placenta "amnio"]
+      [Poo "scato"]
+      [Fingers "dactylo"]
+      [Cat "ailuro"]
+      [Number "numer"])))
 
 (:def english
   (:lambda x means
@@ -28,7 +32,7 @@ tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals | 
       [Fish "fish"]
       [Stars "stars"]
       [Plants "plants"]
-      [Books "books"]
+      [Books "the Bible"]
       [Birds "birds"]
       [Snakes "snakes"]
       [Sun "sun"]
@@ -37,7 +41,16 @@ tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals | 
       [Dreams "dreams"]
       [Fire "fire"]
       [Air "atmospheric conditions"]
-      [Placenta "placenta"])))
+      [Placenta "placenta"]
+      [Poo "excrement"]
+      [Fingers "finger movements"]
+      [Cat "cats"]
+      [Number "numbers"])))
+
+(:def mod
+  (:branch
+    (| 1.0 :lambda x text x)
+    (| 0.3 :lambda x text "means of ${x}")))
 
 (:def means
   (:pick means))
@@ -45,9 +58,11 @@ tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals | 
 (:def postfix
   (:branch
     (| 1.0 "mancy")
-    (| 0.05 "scopy")))
+    (| 0.065 "scopy")
+    (| 0.03 "spication")
+    (| 0.015 "logy")))
 
 (:def main
   (:bind
     [means means]
-      "${$prefix means}${postfix} - divination by ${$english means}"))
+      "${$prefix means}${postfix} - divination by ${$mod $english means}"))
