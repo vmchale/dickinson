@@ -212,7 +212,9 @@ tryEvalExpressionM (MultiInterp l es) = MultiInterp l <$> traverse tryEvalExpres
 tryEvalExpressionM (Concat l es)      = Concat l <$> traverse tryEvalExpressionM es
 tryEvalExpressionM c@Constructor{}    = pure c
 tryEvalExpressionM (Let _ bs e)       = do
-    let stMod = thread $ fmap (uncurry nameMod) bs
+    let ns = fst <$> bs
+    newBs <- traverse tryEvalExpressionM (snd <$> bs)
+    let stMod = thread $ fmap (uncurry nameMod) (NE.zip ns newBs)
     withSt stMod $
         tryEvalExpressionM e
 tryEvalExpressionM (Match l e brs) = do
@@ -232,7 +234,9 @@ evalExpressionM (Interp l es)   = concatOrFail id l es
 evalExpressionM (Concat l es)   = concatOrFail id l es
 evalExpressionM (Tuple l es)    = Tuple l <$> traverse evalExpressionM es
 evalExpressionM (Let _ bs e) = do
-    let stMod = thread $ fmap (uncurry nameMod) bs
+    let ns = fst <$> bs
+    newBs <- traverse evalExpressionM (snd <$> bs)
+    let stMod = thread $ fmap (uncurry nameMod) (NE.zip ns newBs)
     withSt stMod $
         evalExpressionM e
 evalExpressionM (Apply _ e e') = do
@@ -321,7 +325,9 @@ resolveFlattenM (MultiInterp l es) = MultiInterp l <$> traverse resolveFlattenM 
 resolveFlattenM (Concat l es)      = Concat l <$> traverse resolveFlattenM es
 resolveFlattenM (Tuple l es)       = Tuple l <$> traverse resolveFlattenM es
 resolveFlattenM (Let _ bs e)       = do
-    let stMod = thread $ fmap (uncurry nameMod) bs
+    let ns = fst <$> bs
+    newBs <- traverse resolveFlattenM (snd <$> bs)
+    let stMod = thread $ fmap (uncurry nameMod) (NE.zip ns newBs)
     withSt stMod $
         resolveFlattenM e
 resolveFlattenM (Apply _ e e') = do
@@ -360,7 +366,9 @@ resolveExpressionM (MultiInterp l es) = MultiInterp l <$> traverse resolveExpres
 resolveExpressionM (Concat l es) = Concat l <$> traverse resolveExpressionM es
 resolveExpressionM (Tuple l es) = Tuple l <$> traverse resolveExpressionM es
 resolveExpressionM (Let _ bs e) = do
-    let stMod = thread $ fmap (uncurry nameMod) bs
+    let ns = fst <$> bs
+    newBs <- traverse resolveExpressionM (snd <$> bs)
+    let stMod = thread $ fmap (uncurry nameMod) (NE.zip ns newBs)
     withSt stMod $
         resolveExpressionM e
 resolveExpressionM (Apply l e e') = do

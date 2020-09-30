@@ -1,5 +1,7 @@
 # dickinson
 
+  * Make `:let` bindings strict
+
 ## 1.3.0.4
 
   * Add some libraries for declension and conjugation in English
