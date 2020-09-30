@@ -51,6 +51,10 @@ checkMultipleExpr (Let _ bs e)       =
         checkNames (toList $ fmap fst bs)
     <|> foldMapAlternative (checkMultipleExpr . snd) bs
     <|> checkMultipleExpr e
-checkMultipleExpr (Annot _ e _)    = checkMultipleExpr e
-checkMultipleExpr Constructor{}    = Nothing
-checkMultipleExpr Random{}         = Nothing
+checkMultipleExpr (Bind _ bs e)      =
+        checkNames (toList $ fmap fst bs)
+    <|> foldMapAlternative (checkMultipleExpr . snd) bs
+    <|> checkMultipleExpr e
+checkMultipleExpr (Annot _ e _)      = checkMultipleExpr e
+checkMultipleExpr Constructor{}      = Nothing
+checkMultipleExpr Random{}           = Nothing

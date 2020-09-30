@@ -60,6 +60,7 @@ checkExprM (Annot _ e _)      = checkExprM e
 checkExprM (Lambda _ _ _ e)   = checkExprM e
 checkExprM (Choice _ brs)     = mapSumM checkExprM (snd <$> brs)
 checkExprM (Let _ brs e)      = (<|>) <$> mapSumM checkExprM (snd <$> brs) <*> checkExprM e
+checkExprM (Bind _ brs e)     = (<|>) <$> mapSumM checkExprM (snd <$> brs) <*> checkExprM e
 checkExprM (Interp _ es)      = mapSumM checkExprM es
 checkExprM (MultiInterp _ es) = mapSumM checkExprM es
 checkExprM (Apply _ e e')     = (<|>) <$> checkExprM e <*> checkExprM e'
