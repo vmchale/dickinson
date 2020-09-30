@@ -2,6 +2,7 @@
 
   * Make `:let` bindings strict
   * Fix renamer bug
+  * Add `:pick` builtin construct
 
 ## 1.3.0.4
 
