@@ -11,6 +11,7 @@
     (| "simile")
     (| "alliteration")
     (| "synecdoche")
+    (| "zeugma")
     (| "metonymy")))
 
 (:def nounPhrase
@@ -33,6 +34,7 @@
       (| "valetudinarian")
       (| "car")
       (| "head")
+      (| "punnet")
       (| "sitophobia")
       (| "tail")
       (| "joke")
