@@ -1,8 +1,9 @@
 %-
 
-; @botmancy from twitter but more sensical
+; @botmancy from twitter but more sensical\
+; http://phrontistery.info/divine.html
 ; https://en.wikipedia.org/wiki/Methods_of_divination
-; bones, oneiro-, topo-, xylo-, crytallo-
+; bones, topo-, xylo-, crystallo-
 tydecl means = Fish
              | Stars
              | Plants
@@ -20,6 +21,7 @@ tydecl means = Fish
              | Fingers
              | Cat
              | Number
+             | Wood
 
 (:def prefix
   (:lambda x means
@@ -40,7 +42,8 @@ tydecl means = Fish
       [Poo "scato"]
       [Fingers "dactylo"]
       [Cat "ailuro"]
-      [Number "numer"])))
+      [Number "numero"]
+      [Wood "xylo"])))
 
 (:def english
   (:lambda x means
@@ -61,12 +64,15 @@ tydecl means = Fish
       [Poo "excrement"]
       [Fingers "finger movements"]
       [Cat "cats"]
-      [Number "numbers"])))
+      [Number "numbers"]
+      [Wood "pieces of wood"])))
 
 (:def mod
   (:branch
-    (| 1.0 :lambda x text x)
-    (| 0.3 :lambda x text "means of ${x}")))
+    (| 1.0 "")
+    (| 0.2 "inspection of ")
+    (| 0.2 "observation of ") ; observing?
+    (| 0.3 "means of ")))
 
 (:def means
   (:pick means))
@@ -81,4 +87,4 @@ tydecl means = Fish
 (:def main
   (:bind
     [means means]
-      "${$prefix means}${postfix} - divination by ${$mod $english means}"))
+      "${$prefix means}${postfix} - divination by ${mod}${$english means}"))
