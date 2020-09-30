@@ -3,6 +3,7 @@
   * Add `:bind` construct, like `:let` but stricter
   * Fix renamer bug, hopefully
   * Add `:pick` builtin construct
+  * Fix bug in `install.mk`
 
 ## 1.3.0.4
 
