@@ -1,6 +1,7 @@
 # dickinson
 
   * Make `:let` bindings strict
+  * Fix renamer bug
 
 ## 1.3.0.4
 

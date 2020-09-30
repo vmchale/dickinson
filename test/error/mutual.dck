@@ -1,0 +1,7 @@
+%-
+
+(:def main
+  (:let
+    [a "hello"]
+    [b a]
+    b))
