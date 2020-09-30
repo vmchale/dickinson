@@ -22,6 +22,16 @@ tydecl means = Fish
              | Cat
              | Number
              | Wood
+             | Walk
+             | Anthro
+             | Bark
+             | Rock
+             | Large
+             | Pearl
+             | Small
+             | Teeth
+             | Bones
+             | Land
 
 (:def prefix
   (:lambda x means
@@ -43,7 +53,17 @@ tydecl means = Fish
       [Fingers "dactylo"]
       [Cat "ailuro"]
       [Number "numero"]
-      [Wood "xylo"])))
+      [Wood "xylo"]
+      [Walk "ambulo"]
+      [Anthro "anthro"]
+      [Bark "ololyg"]
+      [Rock "litho"]
+      [Large "marco"]
+      [Pearl "margarito"]
+      [Small "micro"]
+      [Teeth "odonto"]
+      [Bones "osteo"]
+      [Land "topo"])))
 
 (:def english
   (:lambda x means
@@ -59,13 +79,23 @@ tydecl means = Fish
       [Lips "lips"]
       [Dreams "dreams"]
       [Fire "fire"]
-      [Air "atmospheric conditions"]
+      [Air "the weather"]
       [Placenta "placenta"]
       [Poo "excrement"]
       [Fingers "finger movements"]
       [Cat "cats"]
       [Number "numbers"]
-      [Wood "pieces of wood"])))
+      [Wood "pieces of wood"]
+      [Walk "walking"]
+      [Anthro "human entrails"]
+      [Bark "howling of dogs"]
+      [Rock "rocks"]
+      [Large "large objects"]
+      [Pearl "pearls"]
+      [Small "micro"]
+      [Teeth "teeth"]
+      [Bones "bones"]
+      [Land "landforms"])))
 
 (:def mod
   (:branch
