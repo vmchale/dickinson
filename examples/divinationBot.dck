@@ -45,5 +45,5 @@ tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals
 
 (:def main
   (:let
-    [method means]
-      "${$prefix method}${postfix} - divination by ${$english method}"))
+    [means means]
+      "${$prefix means}${postfix} - divination by ${$english means}"))

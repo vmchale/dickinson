@@ -180,7 +180,7 @@ renameExpressionM (Let p bs e) = do
         newNames = fst <$> newBs
         preNewBound = snd <$> bs
     newBound <-
-        zipWithM (\r e' -> withRenames r (renameExpressionM e')) localRenames preNewBound
+        traverse renameExpressionM preNewBound
     withRenames newBinds $
         Let p (NE.zip newNames newBound) <$> renameExpressionM e
 renameExpressionM (Flatten l e) =
