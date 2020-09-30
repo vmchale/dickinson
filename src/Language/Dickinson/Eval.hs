@@ -227,6 +227,11 @@ tryEvalExpressionM (Match l e brs) = do
     let ps = fst <$> brs
     es <- traverse (tryEvalExpressionM . snd) brs
     Match l <$> tryEvalExpressionM e <*> pure (NE.zip ps es)
+tryEvalExpressionM (Random _ n@(Name _ (Unique k) l)) = do
+    cs <- gets constructors
+    case IM.lookup k cs of
+        Just ns -> pick (asConstructors ns)
+        Nothing -> throwError (UnfoundType l n)
 
 evalExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
 evalExpressionM e@Literal{}     = pure e
@@ -363,6 +368,11 @@ resolveFlattenM (Match l e brs) = do
 resolveFlattenM (Flatten l e) =
     Flatten l <$> resolveFlattenM e
 resolveFlattenM (Annot _ e _) = resolveFlattenM e
+resolveFlattenM (Random l n@(Name _ (Unique k) l')) = do
+    cs <- gets constructors
+    case IM.lookup k cs of
+        Just ns -> pure $ Choice l (asConstructors ns)
+        Nothing -> throwError (UnfoundType l' n)
 
 -- | Resolve let bindings and such; do not perform choices or concatenations.
 resolveExpressionM :: (MonadState (EvalSt a) m, MonadError (DickinsonError a) m) => Expression a -> m (Expression a)
@@ -400,6 +410,11 @@ resolveExpressionM (Match l e brs) = do
 resolveExpressionM (Flatten l e) =
     Flatten l <$> resolveExpressionM e
 resolveExpressionM (Annot _ e _) = resolveExpressionM e
+resolveExpressionM (Random l n@(Name _ (Unique k) l')) = do
+    cs <- gets constructors
+    case IM.lookup k cs of
+        Just ns -> pure $ Choice l (asConstructors ns)
+        Nothing -> throwError (UnfoundType l' n)
 
 applyBuiltin :: Builtin -> T.Text -> T.Text
 applyBuiltin AllCaps    = T.toUpper
