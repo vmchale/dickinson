@@ -604,6 +604,99 @@ emd> :type decline
 (-> (case, gender, number) text)
 ```
 
+## Divination Bot
+
+This is a more sophisticated version of Maja Bäckvall's [divination
+bot](https://twitter.com/botmancy). The novelty is that by using tags,
+we get agreement between the Greek root and the definition.
+
+```
+%-
+
+tydecl means = Fish
+             | Stars
+             | Snakes
+             | Sun
+             | Animals
+             | Lips
+             | Dreams
+             | Placenta
+             | Poo
+             | Fingers
+             | Number
+             ...
+
+(:def prefix
+  (:lambda x means
+    (:match x
+      [Fish "ichthyo"]
+      [Stars "astro"]
+      [Snakes "ophio"]
+      [Sun "helio"]
+      [Animals "zoo"]
+      [Lips "labio"]
+      [Dreams "oneiro"]
+      [Placenta "amnio"]
+      [Poo "scato"]
+      [Fingers "dactylo"]
+      [Number "numero"]
+      ...
+      )))
+
+(:def english
+  (:lambda x means
+    (:match x
+      [Fish "fish"]
+      [Stars "stars"]
+      [Birds "birds"]
+      [Snakes "snakes"]
+      [Sun "sun"]
+      [Animals "animals"]
+      [Lips "lips"]
+      [Dreams "dreams"]
+      [Placenta "placenta"]
+      [Poo "excrement"]
+      [Fingers "finger movements"]
+      [Number "numbers"]
+      ...
+      )))
+
+(:def means
+  (:pick means))
+
+(:def postfix
+  (:branch
+    (| 1.0 "mancy")
+    (| 0.065 "scopy")
+    (| 0.03 "spication")
+    (| 0.015 "logy")))
+
+(:def main
+  (:bind
+    [means means]
+      "${$prefix means}${postfix} - divination by ${$english means}"))
+```
+
+`:pick` is a builtin construct which randomly selects one of the tags of type `means`.
+
+So the Tracery bot might produce
+
+```
+uranospication
+
+Divination using the appearance of proper names.
+```
+
+but ours produces results like
+
+```
+amniomancy - divination by placenta
+```
+
+We've also weighted `postfix` so that the more common suffixes (such as '-mancy') occur more often.
+
+See the full example in `examples/divinationBot.dck`
+
 ## Shakespearean Insult Generator
 
 Inspired by the [Shakespeare Insult
@@ -671,7 +764,7 @@ See the full example in `examples/fionaBot.dck`
 
 ## Magical Realism Bot
 
-We can write our own minimal magical realism bot using builtin libraries:
+We can write our own magical realism bot using builtin libraries:
 
 ```
 (:include profession)

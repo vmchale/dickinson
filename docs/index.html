@@ -76,6 +76,7 @@
 <ul>
 <li><a href="#cowsay">Cowsay</a></li>
 <li><a href="#noun-declension">Noun Declension</a></li>
+<li><a href="#divination-bot">Divination Bot</a></li>
 <li><a href="#shakespearean-insult-generator">Shakespearean Insult Generator</a></li>
 <li><a href="#lyrics-bot">Lyrics Bot</a></li>
 <li><a href="#magical-realism-bot">Magical Realism Bot</a></li>
@@ -408,6 +409,81 @@ tydecl number = Singular | Plural
 <p>For guidance:</p>
 <pre><code>emd&gt; :type decline
 (-&gt; (case, gender, number) text)</code></pre>
+<h2 id="divination-bot">Divination Bot</h2>
+<p>This is a more sophisticated version of Maja Bäckvall’s <a href="https://twitter.com/botmancy">divination bot</a>. The novelty is that by using tags, we get agreement between the Greek root and the definition.</p>
+<pre><code>%-
+
+tydecl means = Fish
+             | Stars
+             | Snakes
+             | Sun
+             | Animals
+             | Lips
+             | Dreams
+             | Placenta
+             | Poo
+             | Fingers
+             | Number
+             ...
+
+(:def prefix
+  (:lambda x means
+    (:match x
+      [Fish &quot;ichthyo&quot;]
+      [Stars &quot;astro&quot;]
+      [Snakes &quot;ophio&quot;]
+      [Sun &quot;helio&quot;]
+      [Animals &quot;zoo&quot;]
+      [Lips &quot;labio&quot;]
+      [Dreams &quot;oneiro&quot;]
+      [Placenta &quot;amnio&quot;]
+      [Poo &quot;scato&quot;]
+      [Fingers &quot;dactylo&quot;]
+      [Number &quot;numero&quot;]
+      ...
+      )))
+
+(:def english
+  (:lambda x means
+    (:match x
+      [Fish &quot;fish&quot;]
+      [Stars &quot;stars&quot;]
+      [Birds &quot;birds&quot;]
+      [Snakes &quot;snakes&quot;]
+      [Sun &quot;sun&quot;]
+      [Animals &quot;animals&quot;]
+      [Lips &quot;lips&quot;]
+      [Dreams &quot;dreams&quot;]
+      [Placenta &quot;placenta&quot;]
+      [Poo &quot;excrement&quot;]
+      [Fingers &quot;finger movements&quot;]
+      [Number &quot;numbers&quot;]
+      ...
+      )))
+
+(:def means
+  (:pick means))
+
+(:def postfix
+  (:branch
+    (| 1.0 &quot;mancy&quot;)
+    (| 0.065 &quot;scopy&quot;)
+    (| 0.03 &quot;spication&quot;)
+    (| 0.015 &quot;logy&quot;)))
+
+(:def main
+  (:bind
+    [means means]
+      &quot;${$prefix means}${postfix} - divination by ${$english means}&quot;))</code></pre>
+<p><code>:pick</code> is a builtin construct which randomly selects one of the tags of type <code>means</code>.</p>
+<p>So the Tracery bot might produce</p>
+<pre><code>uranospication
+
+Divination using the appearance of proper names.</code></pre>
+<p>but ours produces results like</p>
+<pre><code>amniomancy - divination by placenta</code></pre>
+<p>We’ve also weighted <code>postfix</code> so that the more common suffixes (such as ‘-mancy’) occur more often.</p>
+<p>See the full example in <code>examples/divinationBot.dck</code></p>
 <h2 id="shakespearean-insult-generator">Shakespearean Insult Generator</h2>
 <p>Inspired by the <a href="http://web.mit.edu/dryfoo/Funny-pages/shakespeare-insult-kit.html">Shakespeare Insult Kit</a>’s insult table, we can generate our own insults.</p>
 <pre><code>%-
@@ -454,7 +530,7 @@ tydecl number = Singular | Plural
   fiona)</code></pre>
 <p>See the full example in <code>examples/fionaBot.dck</code></p>
 <h2 id="magical-realism-bot">Magical Realism Bot</h2>
-<p>We can write our own minimal magical realism bot using builtin libraries:</p>
+<p>We can write our own magical realism bot using builtin libraries:</p>
 <pre><code>(:include profession)
 (:include geography)
 
