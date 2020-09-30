@@ -1,0 +1,48 @@
+%-
+
+; bones, oneiro-, topo-, xylo-, crytallo-
+tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals
+
+(:def prefix
+  (:lambda x means
+    (:match x
+      [Fish "ichthyo"]
+      [Stars "astro"]
+      [Plants "botano"]
+      [Books "biblio"]
+      [Birds "ornitho"]
+      [Snakes "ophio"]
+      [Sun "helio"]
+      [Animals "zoo"])))
+
+(:def english
+  (:lambda x means
+    (:match x
+      [Fish "fish"]
+      [Stars "stars"]
+      [Plants "plants"]
+      [Books "books"]
+      [Birds "birds"]
+      [Snakes "snakes"]
+      [Sun "sun"]
+      [Animals "animals"])))
+
+(:def means
+  (:oneof
+    (| Fish)
+    (| Stars)
+    (| Plants)
+    (| Books)
+    (| Birds)
+    (| Snakes)
+    (| Sun)
+    (| Animals)))
+
+(:def postfix
+  (:oneof
+    (| "mancy")))
+
+(:def main
+  (:let
+    [method means]
+      "${$prefix method}${postfix} - divination by ${$english method}"))
