@@ -74,6 +74,12 @@ maxUniqueExpression (Let _ bs e) =
         , maximum (maxUniqueExpression . snd <$> bs)
         , maximum (unUnique . unique . fst <$> bs)
         ]
+maxUniqueExpression (Bind _ bs e) =
+    maximum
+        [ maxUniqueExpression e
+        , maximum (maxUniqueExpression . snd <$> bs)
+        , maximum (unUnique . unique . fst <$> bs)
+        ]
 
 maxUniquePattern :: Pattern a -> Int
 maxUniquePattern (PatternVar _ (Name _ (Unique i) _))  = i
