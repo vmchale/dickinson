@@ -1,5 +1,7 @@
 # dickinson
 
+## 1.4.0.0
+
   * Add `:bind` construct, like `:let` but stricter
   * Fix renamer bug, hopefully
   * Add `:pick` builtin construct
