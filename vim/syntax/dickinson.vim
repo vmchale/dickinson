@@ -21,6 +21,7 @@ syntax match dickinsonKeyword ":match"
 syntax match dickinsonKeyword ":flatten"
 syntax match dickinsonKeyword "tydecl"
 syntax match dickinsonKeyword ":pick"
+syntax match dickinsonKeyword ":bind"
 
 syntax match dickinsonEsc +\\["\\n]+
 

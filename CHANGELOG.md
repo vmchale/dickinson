@@ -1,7 +1,7 @@
 # dickinson
 
-  * Make `:let` bindings strict
-  * Fix renamer bug
+  * Add `:bind` construct, like `:let` but stricter
+  * Fix renamer bug, hopefully
   * Add `:pick` builtin construct
 
 ## 1.3.0.4

@@ -217,10 +217,14 @@ tryEvalExpressionM (Interp l es)      = Interp l <$> traverse tryEvalExpressionM
 tryEvalExpressionM (MultiInterp l es) = MultiInterp l <$> traverse tryEvalExpressionM es
 tryEvalExpressionM (Concat l es)      = Concat l <$> traverse tryEvalExpressionM es
 tryEvalExpressionM c@Constructor{}    = pure c
-tryEvalExpressionM (Let _ bs e)       = do
+tryEvalExpressionM (Bind _ bs e)       = do
     let ns = fst <$> bs
     newBs <- traverse tryEvalExpressionM (snd <$> bs)
     let stMod = thread $ fmap (uncurry nameMod) (NE.zip ns newBs)
+    withSt stMod $
+        tryEvalExpressionM e
+tryEvalExpressionM (Let _ bs e)       = do
+    let stMod = thread $ fmap (uncurry nameMod) bs
     withSt stMod $
         tryEvalExpressionM e
 tryEvalExpressionM (Match l e brs) = do
@@ -245,6 +249,10 @@ evalExpressionM (Interp l es)   = concatOrFail id l es
 evalExpressionM (Concat l es)   = concatOrFail id l es
 evalExpressionM (Tuple l es)    = Tuple l <$> traverse evalExpressionM es
 evalExpressionM (Let _ bs e) = do
+    let stMod = thread $ fmap (uncurry nameMod) bs
+    withSt stMod $
+        evalExpressionM e
+evalExpressionM (Bind _ bs e) = do
     let ns = fst <$> bs
     newBs <- traverse evalExpressionM (snd <$> bs)
     let stMod = thread $ fmap (uncurry nameMod) (NE.zip ns newBs)
@@ -343,10 +351,14 @@ resolveFlattenM (Interp l es)      = Interp l <$> traverse resolveFlattenM es
 resolveFlattenM (MultiInterp l es) = MultiInterp l <$> traverse resolveFlattenM es
 resolveFlattenM (Concat l es)      = Concat l <$> traverse resolveFlattenM es
 resolveFlattenM (Tuple l es)       = Tuple l <$> traverse resolveFlattenM es
-resolveFlattenM (Let _ bs e)       = do
+resolveFlattenM (Bind _ bs e)       = do
     let ns = fst <$> bs
     newBs <- traverse resolveFlattenM (snd <$> bs)
     let stMod = thread $ fmap (uncurry nameMod) (NE.zip ns newBs)
+    withSt stMod $
+        resolveFlattenM e
+resolveFlattenM (Let _ bs e)       = do
+    let stMod = thread $ fmap (uncurry nameMod) bs
     withSt stMod $
         resolveFlattenM e
 resolveFlattenM (Apply _ e e') = do
@@ -389,10 +401,14 @@ resolveExpressionM (Interp l es) = Interp l <$> traverse resolveExpressionM es
 resolveExpressionM (MultiInterp l es) = MultiInterp l <$> traverse resolveExpressionM es
 resolveExpressionM (Concat l es) = Concat l <$> traverse resolveExpressionM es
 resolveExpressionM (Tuple l es) = Tuple l <$> traverse resolveExpressionM es
-resolveExpressionM (Let _ bs e) = do
+resolveExpressionM (Bind _ bs e) = do
     let ns = fst <$> bs
     newBs <- traverse resolveExpressionM (snd <$> bs)
     let stMod = thread $ fmap (uncurry nameMod) (NE.zip ns newBs)
+    withSt stMod $
+        resolveExpressionM e
+resolveExpressionM (Let _ bs e) = do
+    let stMod = thread $ fmap (uncurry nameMod) bs
     withSt stMod $
         resolveExpressionM e
 resolveExpressionM (Apply l e e') = do

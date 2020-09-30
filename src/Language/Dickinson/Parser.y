@@ -78,6 +78,7 @@ import Language.Dickinson.Unique
     flatten { TokKeyword $$ KwFlatten }
     tydecl { TokKeyword $$ KwTyDecl }
     random { TokKeyword $$ KwRand }
+    bind { TokKeyword $$ KwBind }
 
     builtin { $$@(TokBuiltin _ _) }
 
@@ -154,6 +155,7 @@ Expression :: { Expression AlexPosn }
            : branch some(parens(WeightedLeaf)) { Choice $1 (NE.reverse $2) }
            | oneof some(parens(Leaf)) { Choice $1 (NE.reverse (weight $2)) }
            | let some(brackets(Bind)) Expression { Let $1 (NE.reverse $2) $3 }
+           | bind some(brackets(Bind)) Expression { Bind $1 (NE.reverse $2) $3 }
            | lambda Name Type Expression { Lambda $1 $2 $3 $4 }
            | ident { Var (loc $1) (ident $1) }
            | builtin { BuiltinFn (loc $1) (builtin $1) }

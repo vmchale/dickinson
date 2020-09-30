@@ -126,6 +126,11 @@ typeOf (Let _ bs e) = do
     let ns = fst <$> bs
     Ext.zipWithM_ tyInsert ns es'
     typeOf e
+typeOf (Bind _ bs e) = do
+    es' <- traverse typeOf (snd <$> bs)
+    let ns = fst <$> bs
+    Ext.zipWithM_ tyInsert ns es'
+    typeOf e
 typeOf (Match _ e brs@((_,e') :| _)) = do
     ty <- typeOf e
     forM_ (fst <$> brs) $ \p ->

@@ -19,6 +19,7 @@ module Language.Dickinson.Rename ( renameDickinson
 
 import           Control.Composition           (thread)
 import           Control.Monad                 (forM, (<=<))
+import           Control.Monad.Ext             (zipWithM)
 import           Control.Monad.State           (MonadState, State, runState)
 import           Data.Bifunctor                (second)
 import           Data.Binary                   (Binary)
@@ -172,6 +173,16 @@ renameExpressionM (Match l e brs) = do
         (modP, p') <- renamePatternM p
         (p' ,) <$> withRenames modP (renameExpressionM e')
     pure $ Match l preE brs'
+renameExpressionM (Bind p bs e) = do
+    newBs <- traverse withName (fst <$> bs)
+    let localRenames = snd <$> newBs
+        newBinds = thread localRenames
+        newNames = fst <$> newBs
+        preNewBound = snd <$> bs
+    newBound <-
+        traverse renameExpressionM preNewBound
+    withRenames newBinds $
+        Bind p (NE.zip newNames newBound) <$> renameExpressionM e
 renameExpressionM (Let p bs e) = do
     newBs <- traverse withName (fst <$> bs)
     let localRenames = snd <$> newBs

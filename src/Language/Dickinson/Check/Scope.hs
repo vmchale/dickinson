@@ -90,6 +90,11 @@ checkExpr (Let _ bs e) = do
     traverse_ insertName ns
     (<|>) <$> checkExpr e <*> mapSumM checkExpr (snd <$> bs)
         <* traverse_ deleteName ns
+checkExpr (Bind _ bs e) = do
+    let ns = fst <$> bs
+    traverse_ insertName ns
+    (<|>) <$> checkExpr e <*> mapSumM checkExpr (snd <$> bs)
+        <* traverse_ deleteName ns
 checkExpr (Match _ e brs) =
     ((<|>) <$> checkExpr e) <*> mapSumM checkPair brs
 checkExpr (Random l n) =

@@ -60,6 +60,7 @@ checkPatternExpr (Tuple _ es)       = foldMapAlternative checkPatternExpr es
 checkPatternExpr (Lambda _ _ _ e)   = checkPatternExpr e
 checkPatternExpr (Flatten _ e)      = checkPatternExpr e
 checkPatternExpr (Let _ bs e)       = foldMapAlternative (checkPatternExpr . snd) bs <|> checkPatternExpr e
+checkPatternExpr (Bind _ bs e)      = foldMapAlternative (checkPatternExpr . snd) bs <|> checkPatternExpr e
 checkPatternExpr (Annot _ e _)      = checkPatternExpr e
 checkPatternExpr Constructor{}      = Nothing
 checkPatternExpr Random{}           = Nothing

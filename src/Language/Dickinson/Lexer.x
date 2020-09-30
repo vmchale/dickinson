@@ -108,6 +108,7 @@ tokens :-
         ":flatten"                 { mkKeyword KwFlatten }
         "tydecl"                   { mkKeyword KwTyDecl }
         ":pick"                    { mkKeyword KwRand }
+        ":bind"                    { mkKeyword KwBind }
 
         -- builtins
         capitalize                 { mkBuiltin Capitalize }
@@ -294,6 +295,7 @@ data Keyword = KwDef
              | KwFlatten
              | KwTyDecl
              | KwRand
+             | KwBind
              deriving (Eq, Generic, NFData)
 
 instance Pretty Builtin where
@@ -314,6 +316,7 @@ instance Pretty Keyword where
     pretty KwFlatten = ":flatten"
     pretty KwTyDecl  = "tydecl"
     pretty KwRand    = ":pick"
+    pretty KwBind    = ":bind"
 
 instance Pretty AlexPosn where
     pretty (AlexPn _ line col) = pretty line <> colon <> pretty col

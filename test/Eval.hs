@@ -33,6 +33,7 @@ evalTests = testGroup "Evaluation test"
     , testCase "Escapes even stripped multiline strings" cowsayEval
     , resultCase "test/error/scoping.dck"
     , resultCase "examples/divinationBot.dck"
+    -- , resultCase "test/error/mutual.dck"
     ]
 
 forceResult :: a -> Assertion

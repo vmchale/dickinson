@@ -65,6 +65,10 @@ data Expression a = Literal { exprAnn :: a, litText :: T.Text }
                         , letBinds :: NonEmpty (Name a, Expression a)
                         , letExpr  :: Expression a
                         }
+                  | Bind { exprAnn :: a
+                        , letBinds :: NonEmpty (Name a, Expression a)
+                        , letExpr  :: Expression a
+                        }
                   | Var { exprAnn :: a, exprVar :: Name a }
                   | Interp { exprAnn :: a, exprInterp :: [Expression a] }
                   | MultiInterp { exprAnn :: a, exprMultiInterp :: [Expression a] }
@@ -187,6 +191,7 @@ instance Pretty (Expression a) where
     pretty (Var _ n)          = pretty n
     pretty (Literal _ l)      = dquotes $ pretty (escReplace l)
     pretty (Let _ ls e)       = group (parens (":let" <^> vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e])))
+    pretty (Bind _ ls e)      = group (parens (":bind" <^> vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e])))
     -- also comments lol
     pretty (Choice _ brs)
         | allEq (fst <$> brs) = parens (":oneof" <#> indent 2 (hardSep (toList $ fmap prettyChoiceOneof (snd <$> brs))))

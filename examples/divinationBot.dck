@@ -3,7 +3,7 @@
 ; @botmancy from twitter but more sensical
 ; https://en.wikipedia.org/wiki/Methods_of_divination
 ; bones, oneiro-, topo-, xylo-, crytallo-
-tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals | Lips | Dreams | Fire
+tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals | Lips | Dreams | Fire | Air | Placenta
 
 (:def prefix
   (:lambda x means
@@ -18,7 +18,9 @@ tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals | 
       [Animals "zoo"]
       [Lips "labio"]
       [Dreams "oneiro"]
-      [Fire "pyro"])))
+      [Fire "pyro"]
+      [Air "aero"]
+      [Placenta "amnio"])))
 
 (:def english
   (:lambda x means
@@ -33,16 +35,19 @@ tydecl means = Fish | Stars | Plants | Books | Birds | Snakes | Sun | Animals | 
       [Animals "animals"]
       [Lips "lips"]
       [Dreams "dreams"]
-      [Fire "fire"])))
+      [Fire "fire"]
+      [Air "atmospheric conditions"]
+      [Placenta "placenta"])))
 
 (:def means
   (:pick means))
 
 (:def postfix
-  (:oneof
-    (| "mancy")))
+  (:branch
+    (| 1.0 "mancy")
+    (| 0.05 "scopy")))
 
 (:def main
-  (:let
+  (:bind
     [means means]
       "${$prefix means}${postfix} - divination by ${$english means}"))
