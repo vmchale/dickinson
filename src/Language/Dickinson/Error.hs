@@ -48,7 +48,7 @@ instance (Pretty a) => Show (DickinsonError a) where
     show = show . pretty
 
 instance (Pretty a) => Pretty (DickinsonError a) where
-    pretty (UnfoundName l n)         = pretty l <+> pretty n <+> "is not in scope."
+    pretty (UnfoundName l n)         = pretty l <+> squotes (pretty n) <+> "is not in scope."
     pretty (NoText t)                = squotes (pretty t) <+> "not defined"
     pretty (ParseErr _ e)            = pretty e
     pretty (TypeMismatch e ty ty')   = pretty (exprAnn e) <+> "Expected" <+> pretty e <+> "to have type" <+> squotes (pretty ty) <> ", found type" <+> squotes (pretty ty')
