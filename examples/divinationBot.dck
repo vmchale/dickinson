@@ -94,7 +94,7 @@ tydecl means = Fish
       [Rock "rocks"]
       [Large "large objects"]
       [Pearl "pearls"]
-      [Small "micro"]
+      [Small "small objects"]
       [Teeth "teeth"]
       [Bones "bones"]
       [Land "landforms"]
