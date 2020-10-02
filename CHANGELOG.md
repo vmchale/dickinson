@@ -1,5 +1,10 @@
 # dickinson
 
+## 1.4.1.0
+
+  * Export `dckPath` and `defaultLibPath`
+  * Add `pipelineBSL`, `validateBSL`, `patternExhaustivenessBSL`, and `warnBSL`
+
 ## 1.4.0.0
 
   * Add `:bind` construct, like `:let` but stricter
