@@ -2,11 +2,18 @@ module Format ( fmtFile
               , fmtInplace
               ) where
 
-import           Control.Monad               ((<=<))
-import qualified Data.ByteString             as BS
-import qualified Data.ByteString.Lazy        as BSL
-import           Data.Text.IO                as TIO
+import           Control.Exception.Value       (eitherThrow)
+import           Control.Monad                 ((<=<))
+import qualified Data.ByteString               as BS
+import qualified Data.ByteString.Lazy          as BSL
+import qualified Data.Text                     as T
+import           Data.Text.IO                  as TIO
+import           Data.Text.Prettyprint.Doc.Ext (prettyText)
+import           Language.Dickinson.Parser
 import           Language.Dickinson.Pipeline
+
+format :: BSL.ByteString -> T.Text
+format = prettyText . eitherThrow . parse
 
 fmtFile :: FilePath -> IO ()
 fmtFile = TIO.putStrLn . format <=< BSL.readFile
