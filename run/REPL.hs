@@ -133,6 +133,9 @@ dumpSt = do
 listNames :: Repl AlexPosn ()
 listNames = liftIO . traverse_ TIO.putStrLn =<< names
 
+namesState :: StateT (EvalSt a) IO [T.Text]
+namesState = gets (M.keys . topLevel)
+
 names :: Repl AlexPosn [T.Text]
 names = appendBuiltins <$> lift namesState
     where appendBuiltins =

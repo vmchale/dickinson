@@ -1,7 +1,6 @@
 {-# LANGUAGE TupleSections #-}
 
 module REPL.Completions ( emdCompletions
-                        , namesState
                         ) where
 
 import           Control.Monad.State      (StateT, gets)
@@ -10,9 +9,6 @@ import qualified Data.Map                 as M
 import qualified Data.Text                as T
 import           Language.Dickinson.Eval
 import           System.Console.Haskeline (Completion, CompletionFunc, simpleCompletion)
-
-namesState :: StateT (EvalSt a) IO [T.Text]
-namesState = gets (M.keys . topLevel)
 
 namesStr :: StateT (EvalSt a) IO [String]
 namesStr = gets (fmap T.unpack . M.keys . topLevel)
