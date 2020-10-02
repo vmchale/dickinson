@@ -10,7 +10,6 @@ import qualified Data.Text                     as T
 import           Data.Text.IO                  as TIO
 import           Data.Text.Prettyprint.Doc.Ext (prettyText)
 import           Language.Dickinson.Parser
-import           Language.Dickinson.Pipeline
 
 format :: BSL.ByteString -> T.Text
 format = prettyText . eitherThrow . parse
