@@ -2,12 +2,15 @@
 
 module Language.Dickinson.Rename.Amalgamate ( amalgamateM
                                             , fileDecls
+                                            , bslDecls
                                             ) where
 
+import           Control.Composition              ((<=*<))
 import           Control.Monad                    ((<=<))
 import           Control.Monad.Except             (MonadError)
 import           Control.Monad.IO.Class           (MonadIO)
 import           Control.Monad.State              (MonadState)
+import qualified Data.ByteString.Lazy             as BSL
 import           Data.Functor                     (($>))
 import           Data.Semigroup                   ((<>))
 import           Language.Dickinson.Check.Pattern
@@ -39,3 +42,10 @@ fileDecls :: (HasLexerState s, MonadIO m, MonadError (DickinsonError AlexPosn) m
           -> FilePath -- ^ Source file
           -> m [Declaration AlexPosn]
 fileDecls is = amalgamateM is <=< parseFpM
+
+bslDecls :: (HasLexerState s, MonadIO m, MonadError (DickinsonError AlexPosn) m, MonadState s m)
+          => [FilePath] -- ^ Includes
+          -> FilePath -- ^ Source file (for reporting errors)
+          -> BSL.ByteString
+          -> m [Declaration AlexPosn]
+bslDecls is = amalgamateM is <=*< parseBSLM

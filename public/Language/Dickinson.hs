@@ -20,14 +20,24 @@ module Language.Dickinson ( -- * Parser
                           , renameExpressionM
                           -- * Imports
                           , resolveImport
+                          -- * Evaluation
+                          , pipelineBSL
+                          , validateBSL
+                          , patternExhaustivenessBSL
+                          , warnBSL
+                          -- * Path
+                          , defaultLibPath
+                          , dckPath
                           -- * Version info
                           , dickinsonVersion
                           , dickinsonVersionString
                           ) where
 
 import qualified Data.Version              as V
+import           Language.Dickinson.File
 import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
+import           Language.Dickinson.Lib
 import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Rename

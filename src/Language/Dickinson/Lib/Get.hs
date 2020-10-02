@@ -2,6 +2,7 @@
 
 module Language.Dickinson.Lib.Get ( parseImportM
                                   , parseFpM
+                                  , parseBSLM
                                   ) where
 
 import           Control.Composition       ((.*))
@@ -43,17 +44,31 @@ parseImport is (Import l n) lSt = do
         Just fp -> parseFp fp lSt
         Nothing -> throwError $ ModuleNotFound l n
 
+parseBSL :: (MonadError (DickinsonError AlexPosn) m)
+         => FilePath
+         -> BSL.ByteString
+         -> AlexUserState
+         -> m (AlexUserState, Dickinson AlexPosn)
+parseBSL fp bsl lSt =
+    case parseWithCtx bsl lSt of
+        Right x  -> pure x
+        Left err -> throwError (ParseErr fp err)
+
 parseFp :: (MonadError (DickinsonError AlexPosn) m, MonadIO m)
         => FilePath -- ^ Source file
         -> AlexUserState -- ^ Lexer state
         -> m (AlexUserState, Dickinson AlexPosn)
 parseFp fp lSt = do
     bsl <- liftIO $ BSL.readFile fp
-    case parseWithCtx bsl lSt of
-        Right x  -> pure x
-        Left err -> throwError (ParseErr fp err)
+    parseBSL fp bsl lSt
 
 parseFpM :: (HasLexerState s, MonadState s m, MonadError (DickinsonError AlexPosn) m, MonadIO m)
         => FilePath -- ^ Source file
         -> m (Dickinson AlexPosn)
 parseFpM fp = liftLexerState (parseFp fp)
+
+parseBSLM :: (HasLexerState s, MonadState s m, MonadError (DickinsonError AlexPosn) m)
+        => FilePath -- ^ Source file name (for error reporting)
+        -> BSL.ByteString
+        -> m (Dickinson AlexPosn)
+parseBSLM fp bsl = liftLexerState (parseBSL fp bsl)
