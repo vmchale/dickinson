@@ -44,7 +44,8 @@ import           System.Directory               (getHomeDirectory)
 import           System.FilePath                ((</>))
 import           System.Random                  (newStdGen, randoms)
 
-dickinsonRepl :: [FilePath] -> IO ()
+dickinsonRepl :: [FilePath] -- ^ Files to be loaded beforehand
+              -> IO ()
 dickinsonRepl fps = runRepl (traverse_ loadFile fps *> loop)
 
 type Repl a = InputT (StateT (EvalSt a) IO)
