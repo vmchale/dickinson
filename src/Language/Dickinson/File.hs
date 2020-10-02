@@ -100,7 +100,9 @@ ioChecker checker is = maybeThrowIO . checker <=< amalgamateRename is
 tcFile :: [FilePath] -> FilePath -> IO ()
 tcFile is = eitherThrowIO . tyRun <=< amalgamateRename is
 
-patternExhaustivenessFile :: [FilePath] -> FilePath -> IO ()
+patternExhaustivenessFile :: [FilePath] -- ^ Includes
+                          -> FilePath
+                          -> IO ()
 patternExhaustivenessFile is = maybeThrowIO . checkExhaustive <=< amalgamateRename is
 
 evalFile :: [FilePath] -> FilePath -> IO T.Text

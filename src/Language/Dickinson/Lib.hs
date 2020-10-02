@@ -7,6 +7,7 @@ import           Paths_language_dickinson (getDataDir)
 import           System.Environment       (lookupEnv)
 import           System.FilePath          ((</>))
 
+-- | Parsed @DCK_PATH@ environment variable
 dckPath :: IO [FilePath]
 dckPath = maybe [] splitEnv <$> lookupEnv "DCK_PATH"
 

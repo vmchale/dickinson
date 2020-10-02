@@ -51,10 +51,8 @@ data EvalSt a = EvalSt
     , topLevel      :: M.Map T.Text Unique
     -- Used in the REPL, for instance
     , lexerState    :: AlexUserState
-    -- For error messages
-    , tyEnv         :: TyEnv a
-    -- For :pick expressions
-    , constructors  :: IM.IntMap (NonEmpty (TyName a))
+    , tyEnv         :: TyEnv a -- ^ For error messages
+    , constructors  :: IM.IntMap (NonEmpty (TyName a)) -- ^ This is used for @:pick@ expressions.
     }
 
 instance HasLexerState (EvalSt a) where

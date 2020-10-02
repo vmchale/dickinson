@@ -207,6 +207,7 @@ mkSym = constructor TokSym
 
 doSym t act = tok (\p _ -> TokSym p t <$ act)
 
+-- | Used to track nesting level for string interpolations
 data ScdState = InStr
               | InMultiStr
 

@@ -10,6 +10,8 @@ import           Language.Dickinson.Error
 import           Language.Dickinson.Pattern.Useless
 import           Language.Dickinson.Type
 
+-- | Check that there are no useless pattern clauses and check that the pattern
+-- matches are exhaustive
 checkExhaustive :: [Declaration a] -> Maybe (DickinsonWarning a)
 checkExhaustive ds = runPatternM (checkDeclsM ds)
 

@@ -31,6 +31,7 @@ sanityCheck d = do
 
 -- TODO: see http://hackage.haskell.org/package/uniplate-1.6.12/docs/Data-Generics-Uniplate-Operations.html
 -- TODO: recursion schemes? would need benchmark...
+-- | I exported this so I could benchmark it
 maxUniqueDeclaration :: Declaration a -> Int
 maxUniqueDeclaration (Define _ (Name _ (Unique i) _) e)   = max i (maxUniqueExpression e)
 maxUniqueDeclaration (TyDecl _ (Name _ (Unique i) _) tns) =
