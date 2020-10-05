@@ -10,7 +10,6 @@ import           GI.Gtk                        (Button (..), Window (..), window
 import           GI.Gtk.Declarative            (Attribute ((:=)), bin, notebook, on, page, widget)
 import           GI.Gtk.Declarative.App.Simple (App (..), AppView, Transition, run)
 
--- https://haskell-at-work.com/episodes/2018-11-13-gtk-programming-with-haskell.html
 -- https://github.com/owickstrom/gi-gtk-declarative/blob/master/examples/MenuBar.hs
 
 data State = Inp !T.Text
@@ -30,7 +29,7 @@ view' _ = bin Window
             ]
 
 update' :: State -> Event -> Transition State Event
-update' = undefined
+update' _ = undefined
 
 main :: IO ()
 main = void $ run App
