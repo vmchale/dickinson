@@ -669,7 +669,7 @@ tydecl means = Fish
     (| 1.0 "mancy")
     (| 0.065 "scopy")
     (| 0.03 "spication")
-    (| 0.015 "logy")))
+    (| 0.06 "logy")))
 
 (:def main
   (:bind
