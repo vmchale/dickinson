@@ -1,9 +1,9 @@
 %-
 
-; @botmancy from twitter but more sensical\
+; @botmancy from twitter but more sensical
 ; http://phrontistery.info/divine.html
 ; https://en.wikipedia.org/wiki/Methods_of_divination
-; bones, topo-, xylo-, crystallo-
+; crystallo-
 tydecl means = Fish
              | Stars
              | Plants
@@ -115,7 +115,7 @@ tydecl means = Fish
     (| 1.0 "mancy")
     (| 0.065 "scopy")
     (| 0.03 "spication")
-    (| 0.015 "logy")))
+    (| 0.06 "logy")))
 
 (:def main
   (:bind
