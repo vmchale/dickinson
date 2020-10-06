@@ -9,6 +9,8 @@
 - [x] manpages
   - [x] Document shebang trick
 - [ ] `:flatten`
+- [ ] `:pick`
+- [ ] let-bindings
 - [ ] Tutorial/walkthrough?
   - [ ] Getting started?
 - [x] User guide (see happy?)
