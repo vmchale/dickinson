@@ -11,6 +11,7 @@
 - [ ] `:flatten`
 - [ ] `:pick`
 - [ ] let-bindings
+  - [ ] Explain difference between `:let` and `:bind`
 - [ ] Tutorial/walkthrough?
   - [ ] Getting started?
 - [x] User guide (see happy?)
