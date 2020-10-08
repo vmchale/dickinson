@@ -1,6 +1,7 @@
-\documentclass{book}
+\documentclass{report}
 
 \usepackage{amsmath}
+\usepackage{syntax}
 
 \begin{document}
 
@@ -25,6 +26,7 @@ Dickinson programs have the following lexical structure:
     identifier &=: {\tt [a-z][a-zA-Z0-9]}^* \\
     typeIdentifier &=: {\tt [A-Z][a-zA-Z0-9]}^* \\
     moduleIdentifier &=: (identifier.)^* identifier \\
+    wildcard &=: \_ \\
     include &=: {\tt :include} \\
     let &=: {\tt :let} \\
     match &=: {\tt :match} \\
@@ -43,10 +45,16 @@ Dickinson programs have the following lexical structure:
 
 \subsection{Syntax Tree}
 
-\begin{align*}
-    expression =: &( ({\tt :let} identifier expression) \\
-               &| string \\
-               &)
-\end{align*}
+\setlength{\grammarparsep}{20pt plus 1pt minus 1pt} % increase separation between rules
+\setlength{\grammarindent}{12em} % increase separation between LHS/RHS
+
+\begin{grammar}
+<pattern> ::= <wildcard>
+          \alt <identifier>
+          \alt <typeIdentifier>
+
+<expression> ::= <string>
+             \alt ("let:" <identifier> <expression>)
+\end{grammar}
 
 \end{document}
