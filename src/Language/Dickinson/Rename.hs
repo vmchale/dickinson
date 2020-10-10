@@ -172,26 +172,8 @@ renameExpressionM (Match l e brs) = do
         (modP, p') <- renamePatternM p
         (p' ,) <$> withRenames modP (renameExpressionM e')
     pure $ Match l preE brs'
-renameExpressionM (Bind p bs e) = do
-    newBs <- traverse withName (fst <$> bs)
-    let localRenames = snd <$> newBs
-        newBinds = thread localRenames
-        newNames = fst <$> newBs
-        preNewBound = snd <$> bs
-    newBound <-
-        traverse renameExpressionM preNewBound
-    withRenames newBinds $
-        Bind p (NE.zip newNames newBound) <$> renameExpressionM e
-renameExpressionM (Let p bs e) = do
-    newBs <- traverse withName (fst <$> bs)
-    let localRenames = snd <$> newBs
-        newBinds = thread localRenames
-        newNames = fst <$> newBs
-        preNewBound = snd <$> bs
-    newBound <-
-        traverse renameExpressionM preNewBound
-    withRenames newBinds $
-        Let p (NE.zip newNames newBound) <$> renameExpressionM e
+renameExpressionM (Bind p bs e) = renameLet Bind p bs e
+renameExpressionM (Let p bs e) = renameLet Let p bs e
 renameExpressionM (Flatten l e) =
     Flatten l <$> renameExpressionM e
 renameExpressionM (Annot l e ty) =
@@ -199,3 +181,21 @@ renameExpressionM (Annot l e ty) =
 renameExpressionM c@Constructor{} = pure c
 renameExpressionM c@BuiltinFn{} = pure c
 renameExpressionM c@Random{} = pure c
+
+-- since bind/let are the same at this stage
+renameLet :: (MonadState s m, HasRenames s)
+          => (a -> NE.NonEmpty (Name a, Expression a) -> Expression a -> Expression a)
+          -> a
+          -> NE.NonEmpty (Name a, Expression a)
+          -> Expression a
+          -> m (Expression a)
+renameLet constructor p bs e = do
+    newBs <- traverse withName (fst <$> bs)
+    let localRenames = snd <$> newBs
+        newBinds = thread localRenames
+        newNames = fst <$> newBs
+        preNewBound = snd <$> bs
+    newBound <-
+        traverse renameExpressionM preNewBound
+    withRenames newBinds $
+        constructor p (NE.zip newNames newBound) <$> renameExpressionM e

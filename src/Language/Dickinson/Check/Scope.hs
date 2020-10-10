@@ -10,6 +10,7 @@ import           Control.Monad.Except             (MonadError)
 import           Control.Monad.State.Strict       (State, evalState, get, modify)
 import           Data.Foldable                    (traverse_)
 import qualified Data.IntSet                      as IS
+import           Data.List.NonEmpty               (NonEmpty)
 import           Language.Dickinson.Check.Common
 import           Language.Dickinson.Check.Pattern
 import           Language.Dickinson.Error
@@ -85,20 +86,22 @@ checkExpr (Var _ n@(Name _ (Unique i) l)) = do
     if i `IS.member` b
         then pure Nothing
         else pure $ Just (UnfoundName l n)
-checkExpr (Let _ bs e) = do
-    let ns = fst <$> bs
-    traverse_ insertName ns
-    (<|>) <$> checkExpr e <*> mapSumM checkExpr (snd <$> bs)
-        <* traverse_ deleteName ns
-checkExpr (Bind _ bs e) = do
-    let ns = fst <$> bs
-    traverse_ insertName ns
-    (<|>) <$> checkExpr e <*> mapSumM checkExpr (snd <$> bs)
-        <* traverse_ deleteName ns
+checkExpr (Let _ bs e) = checkLet bs e
+checkExpr (Bind _ bs e) = checkLet bs e
 checkExpr (Match _ e brs) =
     ((<|>) <$> checkExpr e) <*> mapSumM checkPair brs
 checkExpr (Random l n) =
     checkType (TyNamed l n)
+
+-- @:let@s and @:bind@s are the same here
+checkLet :: NonEmpty (Name a, Expression a)
+         -> Expression a
+         -> CheckM (Maybe (DickinsonError a))
+checkLet bs e = do
+    let ns = fst <$> bs
+    traverse_ insertName ns
+    (<|>) <$> checkExpr e <*> mapSumM checkExpr (snd <$> bs)
+        <* traverse_ deleteName ns
 
 checkPair :: (Pattern a, Expression a) -> CheckM (Maybe (DickinsonError a))
 checkPair (p, e) = do

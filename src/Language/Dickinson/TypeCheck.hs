@@ -121,16 +121,8 @@ typeOf (Apply _ e e') = do
             tyAssert ty' e'
             pure ty''
         _ -> throwError $ ExpectedLambda e ty
-typeOf (Let _ bs e) = do
-    es' <- traverse typeOf (snd <$> bs)
-    let ns = fst <$> bs
-    Ext.zipWithM_ tyInsert ns es'
-    typeOf e
-typeOf (Bind _ bs e) = do
-    es' <- traverse typeOf (snd <$> bs)
-    let ns = fst <$> bs
-    Ext.zipWithM_ tyInsert ns es'
-    typeOf e
+typeOf (Let _ bs e) = tyLet bs e
+typeOf (Bind _ bs e) = tyLet bs e
 typeOf (Match _ e brs@((_,e') :| _)) = do
     ty <- typeOf e
     forM_ (fst <$> brs) $ \p ->
@@ -149,3 +141,14 @@ typeOf (Constructor l tn@(Name _ (Unique k) _)) = do
 typeOf (BuiltinFn l _) = pure $ -- all builtins have type (-> text text)
     TyFun l (TyText l) (TyText l)
 typeOf (Random l n) = pure $ TyNamed l n
+
+-- since :let and :bind are the same in this scheme
+tyLet :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m)
+      => NonEmpty (Name a, Expression a)
+      -> Expression a
+      -> m (DickinsonTy a)
+tyLet bs e = do
+    es' <- traverse typeOf (snd <$> bs)
+    let ns = fst <$> bs
+    Ext.zipWithM_ tyInsert ns es'
+    typeOf e
