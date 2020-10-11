@@ -13,7 +13,7 @@
 
 \section{Introduction}
 
-Dickinson is a language for generative literature targeting English. This reference specifies the syntax and semantics of the language.
+Dickinson is a language for generative literature targeting English. This reference specifies the syntax of the language.
 
 \section{Syntax}
 
@@ -30,7 +30,6 @@ Dickinson programs have the following lexical structure:
     def &=: {\tt :def} \\
     lambda &=: {\tt :lambda} \\
     tydecl &=: {\tt tydecl} \\
-    arrow &=: (\rightarrow | {\tt ->}) \\
     probability &=: ({\tt [0-9]}^+| {\tt [0-9]}^+.{\tt [0-9]}^*)
 \end{align*}
 
@@ -41,11 +40,13 @@ Dickinson programs have the following lexical structure:
 
 \begin{grammar}
 <pattern> ::= "_"
-          \alt <identifier>
-          \alt <typeIdentifier>
+\alt <identifier>
+\alt <typeIdentifier>
+\alt <pattern> ("|" <pattern>)+
+\alt (<pattern> ("," <pattern>)+)
 
 <type> ::= "text"
-\alt $\rightarrow$ <type> <type>
+\alt ($\rightarrow$ <type> <type>)
 \alt (<type> (, <type>)*)
 \alt <identifier>
 
@@ -60,6 +61,15 @@ Dickinson programs have the following lexical structure:
 \alt (">" <expression>*)
 \alt (":oneof" ("|" <expression>)+)
 \alt (":branch" ("|" <probability> <expression>)+)
+\alt ("$" <expression> <expression>)
+\alt (":match" <expression> [(<pattern> <expression>)+])
+
+<declaration> ::= (":def" <identifier> <expression>)
+\alt "tydecl" <identifier> "=" <typeIdentifier> ("|" <typeIdentifier>)+
+
+<import> ::= (":import" <moduleIdentifier>)
+
+<module> ::= <import>* "%-" <declaration>*
 \end{grammar}
 
 \end{document}
