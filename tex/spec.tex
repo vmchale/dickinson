@@ -26,18 +26,9 @@ Dickinson programs have the following lexical structure:
     identifier &=: {\tt [a-z][a-zA-Z0-9]}^* \\
     typeIdentifier &=: {\tt [A-Z][a-zA-Z0-9]}^* \\
     moduleIdentifier &=: (identifier.)^* identifier \\
-    wildcard &=: \_ \\
     include &=: {\tt :include} \\
-    let &=: {\tt :let} \\
-    match &=: {\tt :match} \\
-    branch &=: {\tt :branch} \\
-    oneof &=: {\tt :oneof} \\
     def &=: {\tt :def} \\
     lambda &=: {\tt :lambda} \\
-    flatten &=: {\tt :flatten} \\
-    pick &=: {\tt :pick} \\
-    bind &=: {\tt :bind} \\
-    text &=: {\tt text} \\
     tydecl &=: {\tt tydecl} \\
     arrow &=: (\rightarrow | {\tt ->}) \\
     probability &=: ({\tt [0-9]}^+| {\tt [0-9]}^+.{\tt [0-9]}^*)
@@ -45,16 +36,30 @@ Dickinson programs have the following lexical structure:
 
 \subsection{Syntax Tree}
 
-\setlength{\grammarparsep}{20pt plus 1pt minus 1pt} % increase separation between rules
-\setlength{\grammarindent}{12em} % increase separation between LHS/RHS
+\setlength{\grammarparsep}{20pt plus 1pt minus 1pt}
+\setlength{\grammarindent}{12em}
 
 \begin{grammar}
-<pattern> ::= <wildcard>
+<pattern> ::= "_"
           \alt <identifier>
           \alt <typeIdentifier>
 
+<type> ::= "text"
+\alt $\rightarrow$ <type> <type>
+\alt (<type> (, <type>)*)
+\alt <identifier>
+
 <expression> ::= <string>
-             \alt ("let:" <identifier> <expression>)
+\alt ("let:" [(<identifier> <expression>)+] <expression>)
+\alt ("bind:" [(<identifier> <expression>)+] <expression>)
+\alt (<expression> (, <expression>)*)
+\alt (":flatten" <expression>)
+\alt (<expression> : <type>)
+\alt <typeIdentifier>
+\alt (":pick" <identifier>)
+\alt (">" <expression>*)
+\alt (":oneof" ("|" <expression>)+)
+\alt (":branch" ("|" <probability> <expression>)+)
 \end{grammar}
 
 \end{document}
