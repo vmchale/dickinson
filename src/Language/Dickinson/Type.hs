@@ -65,10 +65,10 @@ data Expression a = Literal { exprAnn :: a, litText :: T.Text }
                         , letBinds :: NonEmpty (Name a, Expression a)
                         , letExpr  :: Expression a
                         }
-                  | Bind { exprAnn :: a
-                        , letBinds :: NonEmpty (Name a, Expression a)
-                        , letExpr  :: Expression a
-                        }
+                  | Bind { exprAnn  :: a
+                         , letBinds :: NonEmpty (Name a, Expression a)
+                         , letExpr  :: Expression a
+                         }
                   | Var { exprAnn :: a, exprVar :: Name a }
                   | Interp { exprAnn :: a, exprInterp :: [Expression a] }
                   | MultiInterp { exprAnn :: a, exprMultiInterp :: [Expression a] }
