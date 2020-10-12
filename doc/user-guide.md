@@ -679,6 +679,9 @@ tydecl means = Fish
 
 `:pick` is a builtin construct which randomly selects a tag of type `means`.
 
+Note also `:bind` in place of `:let` --- this construct resolves all randomness
+before bringing `means` into scope.
+
 So the Tracery bot might produce
 
 ```
