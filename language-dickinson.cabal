@@ -19,6 +19,7 @@ data-files:
     lib/*.dck
     prelude/*.dck
     lib/grammar/*.dck
+    lib/fun/*.dck
 
 extra-source-files:
     test/data/*.pretty

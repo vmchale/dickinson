@@ -1,0 +1,25 @@
+%-
+
+tydecl bool = True | False
+
+(:def and
+  (:lambda x bool
+    (:lambda y bool
+      (:match (x, y)
+        [(True, True) True]
+        [_ False]
+        ))))
+
+(:def or
+  (:lambda x bool
+    (:lambda y bool
+      (:match (x, y)
+        [(False, False) False]
+        [_ True]
+        ))))
+
+(:def not
+  (:lambda x bool
+    (:match x 
+      [True False]
+      [False True])))
