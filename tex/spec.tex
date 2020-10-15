@@ -21,22 +21,26 @@ Dickinson is a language for generative literature targeting English. This refere
 
 Dickinson programs have the following lexical structure:
 
-\begin{align*}
-    comment &=: {\tt ; .}^*\$ \\
-    identifier &=: {\tt [a-z][a-zA-Z0-9]}^* \\
-    typeIdentifier &=: {\tt [A-Z][a-zA-Z0-9]}^* \\
-    moduleIdentifier &=: (identifier.)^* identifier \\
-    include &=: {\tt :include} \\
-    def &=: {\tt :def} \\
-    lambda &=: {\tt :lambda} \\
-    tydecl &=: {\tt tydecl} \\
-    probability &=: ({\tt [0-9]}^+| {\tt [0-9]}^+.{\tt [0-9]}^*)
-\end{align*}
+\begin{grammar}
+
+    <comment> ::= ";."*"\$"
+
+    <identifier> ::= ["a"-"z"]["A"-"Za"-"z0"-"9"]*
+
+    <typeIdentifier> ::= ["A"-"Z"]["A"-"Za"-"z0"-"9"]*
+
+    <moduleIdentifier> ::= (<identifier>".")* <identifier>
+
+    <probability> ::= (["0"-"9"]+|["0"-"9"]+"."["0"-"9"]*)
+
+\end{grammar}
 
 \subsection{Syntax Tree}
 
 \setlength{\grammarparsep}{20pt plus 1pt minus 1pt}
 \setlength{\grammarindent}{12em}
+
+% how does dhall do it?
 
 \begin{grammar}
 <pattern> ::= "_"
@@ -67,9 +71,9 @@ Dickinson programs have the following lexical structure:
 <declaration> ::= (":def" <identifier> <expression>)
 \alt "tydecl" <identifier> "=" <typeIdentifier> ("|" <typeIdentifier>)+
 
-<import> ::= (":import" <moduleIdentifier>)
+<include> ::= (":include" <moduleIdentifier>)
 
-<module> ::= <import>* "%-" <declaration>*
+<module> ::= <include>* "%-" <declaration>*
 \end{grammar}
 
 \end{document}
