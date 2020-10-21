@@ -1,3 +1,0 @@
-- [ ] reflex + gtk?
-- [ ] https://hackage.haskell.org/package/gi-gtk-declarative-app-simple-0.6.3/docs/GI-Gtk-Declarative-App-Simple.html
-- [ ] https://hackage.haskell.org/package/gi-gtk-declarative

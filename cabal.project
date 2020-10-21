@@ -1,5 +1,4 @@
 packages: ./
-          -- ./dickinson-gtk
 
 program-options
   alex-options: -g
