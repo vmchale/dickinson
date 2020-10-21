@@ -20,6 +20,6 @@ tydecl bool = True | False
 
 (:def not
   (:lambda x bool
-    (:match x 
+    (:match x
       [True False]
       [False True])))
