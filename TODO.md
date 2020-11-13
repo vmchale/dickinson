@@ -51,6 +51,7 @@
 # Library API
 - [x] Maybe spin out internal library?
 # Bugs
+- [ ] Completions hang on `:`?
 - [x] Fix the way `:let` bindings work, can't bind local `a` to global `a`
 - [ ] The way `:include`s and tag uniques are handled generates a morass
 - [x] Pattern match exhaustiveness checker needs to run after `:include`s are
