@@ -1,5 +1,9 @@
 # dickinson
 
+## 1.4.1.1
+
+  * Bundle `user-guide.pdf` in tarball
+
 ## 1.4.1.0
 
   * Export `dckPath` and `defaultLibPath`
