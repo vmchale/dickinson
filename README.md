@@ -21,7 +21,6 @@ There is an install script which will try to download the right release for your
 computer:
 
 ```bash
-
 curl -sSl https://raw.githubusercontent.com/vmchale/dickinson/master/bash/install.sh | sh -s
 ```
 
