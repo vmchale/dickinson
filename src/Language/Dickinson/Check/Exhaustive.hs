@@ -3,9 +3,9 @@ module Language.Dickinson.Check.Exhaustive ( checkExhaustive
 
 import           Control.Applicative                ((<|>))
 import           Data.Foldable                      (toList)
+import           Data.Foldable.Ext
 import           Data.List                          (inits)
 import           Data.Maybe                         (mapMaybe)
-import           Language.Dickinson.Check.Common
 import           Language.Dickinson.Error
 import           Language.Dickinson.Pattern.Useless
 import           Language.Dickinson.Type
@@ -13,28 +13,26 @@ import           Language.Dickinson.Type
 -- | Check that there are no useless pattern clauses and check that the pattern
 -- matches are exhaustive
 checkExhaustive :: [Declaration a] -> Maybe (DickinsonWarning a)
-checkExhaustive ds = runPatternM (checkDeclsM ds)
+checkExhaustive = checkDeclsM
 
-checkDeclsM :: [Declaration a] -> PatternM (Maybe (DickinsonWarning a))
+checkDeclsM :: [Declaration a] -> Maybe (DickinsonWarning a)
 checkDeclsM ds =
-    patternEnvDecls ds *>
-    mapSumM checkDeclM ds
+    let pEnv = runPatternM $ patternEnvDecls ds in
+        foldMapAlternative (checkDecl pEnv) ds
 
-checkDeclM :: Declaration a -> PatternM (Maybe (DickinsonWarning a))
-checkDeclM TyDecl{}       = pure Nothing
-checkDeclM (Define _ _ e) = checkExprM e
+checkDecl :: PatternEnv -> Declaration a -> Maybe (DickinsonWarning a)
+checkDecl _ TyDecl{}         = Nothing
+checkDecl env (Define _ _ e) = checkExpr env e
 
-isExhaustiveM :: [Pattern a] -> a -> PatternM (Maybe (DickinsonWarning a))
-isExhaustiveM ps loc = do
-    e <- isExhaustive ps
-    pure $ if e
+isExhaustiveErr :: PatternEnv -> [Pattern a] -> a -> Maybe (DickinsonWarning a)
+isExhaustiveErr env ps loc =
+    if isExhaustive env ps
         then Nothing
         else Just $ InexhaustiveMatch loc
 
-uselessErr :: [Pattern a] -> Pattern a -> PatternM (Maybe (DickinsonWarning a))
-uselessErr ps p = {-# SCC "uselessErr" #-} do
-    e <- useful ps p
-    pure $ if e
+uselessErr :: PatternEnv -> [Pattern a] -> Pattern a -> Maybe (DickinsonWarning a)
+uselessErr env ps p = {-# SCC "uselessErr" #-}
+    if useful env ps p
         then Nothing
         else Just $ UselessPattern (patAnn p) p
 
@@ -44,31 +42,29 @@ foliate = mapMaybe split . inits
           split [_] = Nothing
           split xs  = Just (init xs, last xs)
 
-checkMatch :: [Pattern a] -> a -> PatternM (Maybe (DickinsonWarning a))
-checkMatch ps loc = {-# SCC "checkMatch" #-}
-    (<|>)
-        <$> mapSumM (uncurry uselessErr) ({-# SCC "foliate" #-} foliate ps)
-        <*> isExhaustiveM ps loc
+checkMatch :: PatternEnv -> [Pattern a] -> a -> Maybe (DickinsonWarning a)
+checkMatch env ps loc = {-# SCC "checkMatch" #-}
+    foldMapAlternative (uncurry (uselessErr env)) ({-# SCC "foliate" #-} foliate ps)
+    <|> isExhaustiveErr env ps loc
 
-checkExprM :: Expression a -> PatternM (Maybe (DickinsonWarning a))
-checkExprM Var{}              = pure Nothing
-checkExprM Literal{}          = pure Nothing
-checkExprM StrChunk{}         = pure Nothing
-checkExprM Constructor{}      = pure Nothing
-checkExprM BuiltinFn{}        = pure Nothing
-checkExprM Random{}           = pure Nothing
-checkExprM (Flatten _ e)      = checkExprM e
-checkExprM (Annot _ e _)      = checkExprM e
-checkExprM (Lambda _ _ _ e)   = checkExprM e
-checkExprM (Choice _ brs)     = mapSumM checkExprM (snd <$> brs)
-checkExprM (Let _ brs e)      = (<|>) <$> mapSumM checkExprM (snd <$> brs) <*> checkExprM e
-checkExprM (Bind _ brs e)     = (<|>) <$> mapSumM checkExprM (snd <$> brs) <*> checkExprM e
-checkExprM (Interp _ es)      = mapSumM checkExprM es
-checkExprM (MultiInterp _ es) = mapSumM checkExprM es
-checkExprM (Apply _ e e')     = (<|>) <$> checkExprM e <*> checkExprM e'
-checkExprM (Concat _ es)      = mapSumM checkExprM es
-checkExprM (Tuple _ es)       = mapSumM checkExprM es
-checkExprM (Match l e brs)    =
-    (<|>)
-        <$> checkExprM e
-        <*> ((<|>) <$> checkMatch (toList (fst <$> brs)) l <*> mapSumM checkExprM (snd <$> brs))
+checkExpr :: PatternEnv -> Expression a -> Maybe (DickinsonWarning a)
+checkExpr _ Var{}                = Nothing
+checkExpr _ Literal{}            = Nothing
+checkExpr _ StrChunk{}           = Nothing
+checkExpr _ Constructor{}        = Nothing
+checkExpr _ BuiltinFn{}          = Nothing
+checkExpr _ Random{}             = Nothing
+checkExpr env (Flatten _ e)      = checkExpr env e
+checkExpr env (Annot _ e _)      = checkExpr env e
+checkExpr env (Lambda _ _ _ e)   = checkExpr env e
+checkExpr env (Choice _ brs)     = foldMapAlternative (checkExpr env) (snd <$> brs)
+checkExpr env (Let _ brs e)      = foldMapAlternative (checkExpr env) (snd <$> brs) <|> checkExpr env e
+checkExpr env (Bind _ brs e)     = foldMapAlternative (checkExpr env) (snd <$> brs) <|> checkExpr env e
+checkExpr env (Interp _ es)      = foldMapAlternative (checkExpr env) es
+checkExpr env (MultiInterp _ es) = foldMapAlternative (checkExpr env) es
+checkExpr env (Apply _ e e')     = checkExpr env e <|> checkExpr env e'
+checkExpr env (Concat _ es)      = foldMapAlternative (checkExpr env) es
+checkExpr env (Tuple _ es)       = foldMapAlternative (checkExpr env) es
+checkExpr env (Match l e brs)    =
+    checkExpr env e
+        <|> checkMatch env (toList (fst <$> brs)) l <|> foldMapAlternative (checkExpr env) (snd <$> brs)

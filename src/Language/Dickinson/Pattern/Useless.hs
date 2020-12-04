@@ -3,6 +3,7 @@
 -- | This module is loosely based off /Warnings for pattern matching/ by Luc
 -- Maranget
 module Language.Dickinson.Pattern.Useless ( PatternM
+                                          , PatternEnv
                                           , runPatternM
                                           , isExhaustive
                                           , patternEnvDecls
@@ -12,15 +13,14 @@ module Language.Dickinson.Pattern.Useless ( PatternM
                                           , specializeTag
                                           ) where
 
-import           Control.Monad              (forM, forM_)
-import           Control.Monad.State.Strict (State, evalState, get)
+import           Control.Monad              (forM_)
+import           Control.Monad.State.Strict (State, execState)
 import           Data.Coerce                (coerce)
 import           Data.Foldable              (toList, traverse_)
 import           Data.Functor               (void)
 import           Data.IntMap.Strict         (findWithDefault)
 import qualified Data.IntMap.Strict         as IM
 import qualified Data.IntSet                as IS
-import           Data.List.Ext
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
@@ -52,34 +52,32 @@ patternEnvDecls = traverse_ declAdd
 -- TODO: just reader monad... writer at beginning?
 type PatternM = State PatternEnv
 
-runPatternM :: PatternM a -> a
-runPatternM = flip evalState (PatternEnv mempty mempty)
+runPatternM :: PatternM a -> PatternEnv
+runPatternM = flip execState (PatternEnv mempty mempty)
 
 -- given a constructor name, get the IntSet of all constructors of that type
-assocUniques :: Name a -> PatternM IS.IntSet
-assocUniques (Name _ (Unique i) _) = {-# SCC "assocUniques" #-} do
-    st <- get
-    let ty = findWithDefault internalError i (types st)
-    pure $ findWithDefault internalError ty (allCons st)
+assocUniques :: PatternEnv -> Name a -> IS.IntSet
+assocUniques env (Name _ (Unique i) _) = {-# SCC "assocUniques" #-}
+    let ty = findWithDefault internalError i (types env)
+        in findWithDefault internalError ty (allCons env)
 
 internalError :: a
 internalError = error "Internal error: lookup in a PatternEnv failed"
 
-isExhaustive :: [Pattern a] -> PatternM Bool
-isExhaustive ps = {-# SCC "isExhaustive" #-} not <$> useful ps (Wildcard undefined)
+isExhaustive :: PatternEnv -> [Pattern a] -> Bool
+isExhaustive env ps = {-# SCC "isExhaustive" #-} not $ useful env ps (Wildcard undefined)
 
-isCompleteSet :: [Name a] -> PatternM (Maybe [Name ()])
-isCompleteSet []       = pure Nothing
-isCompleteSet ns@(n:_) = do
-    allU <- assocUniques n
-    let ty = coerce (unique <$> ns)
-    pure $
-        if IS.null (allU IS.\\ IS.fromList ty)
+isCompleteSet :: PatternEnv -> [Name a] -> Maybe [Name ()]
+isCompleteSet _ []       = Nothing
+isCompleteSet env ns@(n:_) =
+    let allU = assocUniques env n
+        ty = coerce (unique <$> ns)
+        in if IS.null (allU IS.\\ IS.fromList ty)
             then Just ((\u -> Name undefined (Unique u) ()) <$> IS.toList allU)
             else Nothing
 
-useful :: [Pattern a] -> Pattern a -> PatternM Bool
-useful ps p = usefulMaranget [[p'] | p' <- ps] [p]
+useful :: PatternEnv -> [Pattern a] -> Pattern a -> Bool
+useful env ps p = usefulMaranget env [[p'] | p' <- ps] [p]
 
 sanityFailed :: a
 sanityFailed = error "Sanity check failed! Perhaps you ran the pattern match exhaustiveness checker on an ill-typed program?"
@@ -126,12 +124,12 @@ extrCons (OrPattern _ ps)  = concatMap extrCons (toList ps)
 extrCons _                 = []
 
 -- Is the first column of the pattern matrix complete?
-fstComplete :: [[Pattern a]] -> PatternM (Complete ())
-fstComplete ps = {-# SCC "fstComplete" #-}
+fstComplete :: PatternEnv -> [[Pattern a]] -> Complete ()
+fstComplete env ps = {-# SCC "fstComplete" #-}
     if maxTupleLength > 0
-        then pure $ CompleteTuple maxTupleLength
+        then CompleteTuple maxTupleLength
         else maybe NotComplete CompleteTags
-                <$> isCompleteSet (concatMap extrCons fstColumn)
+                $ isCompleteSet env (concatMap extrCons fstColumn)
     where fstColumn = fmap head ps
           tuple (PatternTuple _ ps') = length ps'
           tuple (OrPattern _ ps')    = maximum (tuple <$> ps')
@@ -139,18 +137,18 @@ fstComplete ps = {-# SCC "fstComplete" #-}
           maxTupleLength = maximum (tuple <$> fstColumn)
 
 -- follows maranget paper
-usefulMaranget :: [[Pattern a]] -> [Pattern a] -> PatternM Bool
-usefulMaranget [] _                       = pure True
-usefulMaranget _ []                       = pure False
-usefulMaranget ps (PatternCons _ c:qs)    = usefulMaranget (specializeTag c ps) qs
-usefulMaranget ps (PatternTuple _ ps':qs) = usefulMaranget (specializeTuple (length ps') ps) (toList ps' ++ qs)
-usefulMaranget ps (OrPattern _ ps':qs)    = forAnyA ps' $ \p -> usefulMaranget ps (p:qs)
-usefulMaranget ps (q:qs)                  = do -- var or wildcard
-    cont <- fstComplete ps
+usefulMaranget :: PatternEnv -> [[Pattern a]] -> [Pattern a] -> Bool
+usefulMaranget _ [] _                       = True
+usefulMaranget _ _ []                       = False
+usefulMaranget env ps (PatternCons _ c:qs)    = usefulMaranget env (specializeTag c ps) qs
+usefulMaranget env ps (PatternTuple _ ps':qs) = usefulMaranget env (specializeTuple (length ps') ps) (toList ps' ++ qs)
+usefulMaranget env ps (OrPattern _ ps':qs)    = any (\p -> usefulMaranget env ps (p:qs)) ps'
+usefulMaranget env ps (q:qs)                  = -- var or wildcard
+    let cont = fstComplete env ps in
     case cont of
-        NotComplete     -> usefulMaranget (defaultMatrix ps) qs
-        CompleteTuple n -> usefulMaranget (specializeTuple n ps) (specializeTupleVector n q qs)
-        CompleteTags ns -> or <$> forM ns (\n -> usefulMaranget (specializeTag n (forget ps)) (fmap void qs))
+        NotComplete     -> usefulMaranget env (defaultMatrix ps) qs
+        CompleteTuple n -> usefulMaranget env (specializeTuple n ps) (specializeTupleVector n q qs)
+        CompleteTags ns -> or $ fmap (\n -> usefulMaranget env (specializeTag n (forget ps)) (fmap void qs)) ns
 
 specializeTupleVector :: Int -> Pattern a -> [Pattern a] -> [Pattern a]
 specializeTupleVector n p ps = {-# SCC "specializeTupleVector" #-} replicate n p ++ ps
