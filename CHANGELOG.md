@@ -1,5 +1,9 @@
 # dickinson
 
+## 1.4.1.2
+
+  * Performance improvements in the pattern match exhaustiveness checker
+
 ## 1.4.1.1
 
   * Bundle `user-guide.pdf` in tarball
