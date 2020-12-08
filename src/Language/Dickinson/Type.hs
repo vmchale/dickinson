@@ -29,6 +29,7 @@ import           Language.Dickinson.Name
 import           Prettyprinter                 (Doc, Pretty (pretty), align, brackets, colon, concatWith, dquotes, encloseSep, group, hardline, hsep, indent,
                                                 line, lparen, parens, pipe, rangle, rparen, tupled, vsep, (<+>))
 import           Prettyprinter.Internal        (unsafeTextWithoutNewlines)
+import           Test.QuickCheck
 
 data Dickinson a = Dickinson { modImports :: [Import a]
                              , modDefs    :: [Declaration a]
@@ -49,12 +50,28 @@ data Import a = Import { importAnn :: a
                        }
                        deriving (Generic, NFData, Binary, Functor, Show)
 
+instance Arbitrary a => Arbitrary (Import a) where
+    arbitrary = Import <$> arbitrary <*> arbitrary
+
 data Pattern a = PatternVar { patAnn :: a, patName :: Name a }
                | PatternTuple { patAnn :: a, patTup :: NonEmpty (Pattern a) }
                | PatternCons { patAnn :: a, patCons :: TyName a }
                | Wildcard { patAnn :: a }
                | OrPattern { patAnn :: a, patOr :: NonEmpty (Pattern a) }
                deriving (Generic, NFData, Binary, Functor, Eq, Show, Data)
+
+instance Arbitrary a => Arbitrary (Pattern a) where
+    arbitrary =
+        frequency
+            [ (2, PatternVar <$> arbitrary <*> arbitrary)
+            , (1, PatternTuple <$> arbitrary <*> nonEmptyArbitrary)
+            , (2, PatternCons <$> arbitrary <*> arbitrary)
+            , (2, Wildcard <$> arbitrary)
+            , (1, OrPattern <$> arbitrary <*> nonEmptyArbitrary)
+            ]
+
+nonEmptyArbitrary :: Arbitrary a => Gen (NonEmpty a)
+nonEmptyArbitrary = NE.fromList . getNonEmpty <$> arbitrary
 
 data Expression a = Literal { exprAnn :: a, litText :: T.Text }
                   | StrChunk { exprAnn :: a, chunkText :: T.Text }
@@ -103,6 +120,15 @@ data DickinsonTy a = TyText a
                    | TyTuple a (NonEmpty (DickinsonTy a))
                    | TyNamed a (Name a)
                    deriving (Generic, NFData, Binary, Show, Functor, Data)
+
+instance Arbitrary a => Arbitrary (DickinsonTy a) where
+    arbitrary =
+        frequency
+            [ (2, TyText <$> arbitrary)
+            , (1, TyFun <$> arbitrary <*> arbitrary <*> arbitrary)
+            , (1, TyTuple <$> arbitrary <*> nonEmptyArbitrary)
+            , (2, TyNamed <$> arbitrary <*> arbitrary)
+            ]
 
 instance Eq (DickinsonTy a) where
     (==) TyText{} TyText{}                     = True

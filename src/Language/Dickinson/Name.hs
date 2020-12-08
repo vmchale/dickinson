@@ -10,18 +10,20 @@ module Language.Dickinson.Name ( TyName
                                , isMain
                                ) where
 
-import           Control.DeepSeq               (NFData (..))
-import           Data.Binary                   (Binary (..))
-import           Data.Data                     (Data)
-import           Data.Foldable                 (toList)
-import qualified Data.IntMap                   as IM
-import           Data.List.NonEmpty            (NonEmpty (..))
-import           Data.Semigroup                ((<>))
-import qualified Data.Text                     as T
-import           Data.Text.Prettyprint.Doc.Ext (Debug (..), intercalate)
-import           GHC.Generics                  (Generic)
+import           Control.DeepSeq                (NFData (..))
+import           Data.Binary                    (Binary (..))
+import           Data.Data                      (Data)
+import           Data.Foldable                  (toList)
+import qualified Data.IntMap                    as IM
+import           Data.List.NonEmpty             (NonEmpty (..))
+import           Data.Semigroup                 ((<>))
+import qualified Data.Text                      as T
+import           Data.Text.Prettyprint.Doc.Ext  (Debug (..), intercalate)
+import           GHC.Generics                   (Generic)
 import           Language.Dickinson.Unique
-import           Prettyprinter                 (Pretty (pretty))
+import           Prettyprinter                  (Pretty (pretty))
+import           Test.QuickCheck                (Arbitrary (..))
+import           Test.QuickCheck.Instances.Text ()
 
 type TyName a = Name a
 
@@ -31,6 +33,10 @@ data Name a = Name { name   :: NonEmpty T.Text
                    , unique :: !Unique
                    , loc    :: a
                    } deriving (Functor, Generic, Binary, Show, Data)
+
+instance Arbitrary a => Arbitrary (Name a) where
+    arbitrary = Name <$> fmap singleton arbitrary <*> arbitrary <*> arbitrary
+        where singleton = (:| [])
 
 instance NFData a => NFData (Name a) where
     rnf (Name _ u x) = rnf x `seq` u `seq` ()

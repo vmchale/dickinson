@@ -147,7 +147,9 @@ library dickinson
         binary >=0.8.4.0,
         filepath -any,
         directory -any,
-        split -any
+        split -any,
+        QuickCheck -any,
+        quickcheck-instances -any
 
     if !flag(cross)
         build-tool-depends: alex:alex -any, happy:happy -any
