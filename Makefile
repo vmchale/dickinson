@@ -51,9 +51,6 @@ check:
 	emd lint $(DCK_LIB) $(DCK_PRELUDE)
 	emd check $(DCK_LIB) $(DCK_PRELUDE)
 
-moddeps.svg: $(HS_SRC)
-	cd src && graphmod --no-cabal Language.Dickinson.File | dot -Tsvg -o ../$@
-
 release: $(DISTS) $(SRC_DISTS)
 	github-release release $(GR_OPTIONS)
 	for dist in $^ ; do \
