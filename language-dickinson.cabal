@@ -129,7 +129,7 @@ library dickinson
         FlexibleInstances GeneralizedNewtypeDeriving OverloadedStrings
         StandaloneDeriving TupleSections DeriveDataTypeable
 
-    ghc-options:      -Wall -O2 -fstatic-argument-transformation
+    ghc-options:      -Wall -O2 -fstatic-argument-transformation -j +RTS -A32m -RTS
     build-depends:
         base >=4.9 && <5,
         array -any,
@@ -183,7 +183,7 @@ executable emd
     default-language: Haskell2010
     other-extensions: FlexibleContexts OverloadedStrings TupleSections
     ghc-options:
-        -Wall -rtsopts -with-rtsopts=-A4M -fstatic-argument-transformation
+        -Wall -rtsopts -with-rtsopts=-A4M -fstatic-argument-transformation -j +RTS -A32m -RTS
 
     build-depends:
         base -any,
