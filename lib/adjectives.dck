@@ -15,6 +15,7 @@
       (| "limpid")
       (| "plain")
       (| "splenetic")
+      (| "auxetic")
       (| "bromide")
       (| "murine")
       (| "banal")

@@ -20,6 +20,7 @@
     (| "litotes")
     (| "understatement")
     (| "irony")
+    (| "afflatus")
     (| "paradox")
     (| "hyperbole")
     (| "epizeuxis")
