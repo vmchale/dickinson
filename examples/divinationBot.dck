@@ -111,6 +111,7 @@ tydecl means = Fish
     (| 0.3 "means of ")))
 
 (:def means
+  ; :pick refers to a type
   (:pick means))
 
 (:def postfix
