@@ -33,6 +33,7 @@ tydecl means = Fish
              | Bones
              | Land
              | Nails
+             | Entrails
 
 (:def prefix
   (:lambda x means
@@ -65,7 +66,8 @@ tydecl means = Fish
       [Teeth "odonto"]
       [Bones "osteo"]
       [Land "topo"]
-      [Nails "onycho"])))
+      [Nails "onycho"]
+      [Entrails "haru"])))
 
 (:def english
   (:lambda x means
@@ -98,7 +100,8 @@ tydecl means = Fish
       [Teeth "teeth"]
       [Bones "bones"]
       [Land "landforms"]
-      [Nails "fingernails"])))
+      [Nails "fingernails"]
+      [Entrails "entrails"])))
 
 (:def mod
   (:branch
