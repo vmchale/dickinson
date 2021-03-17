@@ -1,0 +1,7 @@
+(:include grammar.verb)
+
+%-
+
+(:def verb
+  (:oneof
+    (| "trundle")))
