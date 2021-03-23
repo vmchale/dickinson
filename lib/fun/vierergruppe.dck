@@ -1,0 +1,11 @@
+%-
+
+tydecl element = E | A | B | C
+
+(:def mult
+  (:lambda x element
+    (:lambda y element
+      (:match (x, y)
+        [(E, x) x]
+        [(x, E) x]
+        ))))
