@@ -1,5 +1,6 @@
 %-
 
+; Klein 4-group
 tydecl element = E | A | B | C
 
 (:def mult
