@@ -8,4 +8,13 @@ tydecl element = E | A | B | C
       (:match (x, y)
         [(E, x) x]
         [(x, E) x]
+        [(A, A) E]
+        [(A, B) C]
+        [(A, C) B]
+        [(B, A) C]
+        [(B, B) E]
+        [(B, C) A]
+        [(C, A) B]
+        [(C, B) A]
+        [(C, C) E]
         ))))
