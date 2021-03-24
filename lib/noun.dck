@@ -57,6 +57,8 @@
       (| "flagellant")
       (| "solecism")
       (| "sillage")
+      (| "elegy")
+      (| "eulogy")
       (| "coterie")
       (| "head")
       (| "punnet")
