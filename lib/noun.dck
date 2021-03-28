@@ -12,6 +12,8 @@
     (| "antimetabole")
     (| "adnomination")
     (| "anaphora")
+    (| "metalepsis")
+    (| "kenning")
     (| "parataxis")
     (| "assonance")
     (| "asyndeton")
@@ -30,6 +32,8 @@
     (| "simile")
     (| "alliteration")
     (| "synecdoche")
+    (| "catachresis")
+    (| "bahuvrihi")
     (| "zeugma")
     (| "metonymy")))
 
