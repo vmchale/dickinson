@@ -3,6 +3,7 @@
 
 %-
 
+; see: http://rhetoric.byu.edu/default.htm
 (:def rhetoricalDevice
   (:oneof
     (| "stichomythia")
@@ -16,11 +17,15 @@
     (| "kenning")
     (| "parataxis")
     (| "assonance")
+    (| "adynaton")
+    (| "aposiopesis")
     (| "asyndeton")
     (| "consilience")
     (| "polysyndeton")
     (| "sarcasm")
     (| "litotes")
+    (| "chiasmus")
+    (| "isocolon")
     (| "understatement")
     (| "irony")
     (| "afflatus")
@@ -33,6 +38,19 @@
     (| "alliteration")
     (| "synecdoche")
     (| "catachresis")
+    (| "anapodoton")
+    (| "anacoluthon")
+    (| "anadiplosis")
+    (| "meiosis")
+    (| "tapinosis")
+    (| "auxesis")
+    (| "cacemphaton")
+    (| "epanalepsis")
+    (| "antonomasia")
+    (| "paroemion")
+    (| "homoeoprophoron")
+    (| "cacozelia")
+    (| "soraismus")
     (| "bahuvrihi")
     (| "zeugma")
     (| "metonymy")))
