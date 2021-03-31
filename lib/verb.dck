@@ -4,4 +4,5 @@
 
 (:def verb
   (:oneof
-    (| "trundle")))
+    (| "trundle")
+    (| "boke")))
