@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+set -e
+
 make x86_64-linux-dist.tar.lz
 mv x86_64-linux-dist.tar.lz /tmp
 cd /tmp
