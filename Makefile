@@ -36,11 +36,7 @@ DISTS := x86_64-linux-dist.tar.lz \
     powerpc64le-linux-dist.tar.lz \
     powerpc64le-linux-dist.tar.zst \
     powerpc64le-linux-dist.tar.bz2 \
-    powerpc64le-linux-dist.tar.gz \
-    x86_64-freebsd-dist.tar.lz \
-    x86_64-freebsd-dist.tar.zst \
-    x86_64-freebsd-dist.tar.bz2 \
-    x86_64-freebsd-dist.tar.gz
+    powerpc64le-linux-dist.tar.gz
 
 SRC_DISTS := language-dickinson-$(VERSION).tar.lz \
     language-dickinson-$(VERSION).tar.zst \
@@ -75,8 +71,7 @@ bins: bin/x86_64-linux-emd \
     bin/arm-linux-emd \
     bin/aarch64-linux-emd \
     bin/powerpc64le-linux-emd \
-    bin/sparc64-linux-emd \
-    bin/x86_64-freebsd-emd
+    bin/sparc64-linux-emd
 
 x86_64-darwin-dist.tar: bin/x86_64-darwin-emd $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) install.mk
 	bsdtar -c \
