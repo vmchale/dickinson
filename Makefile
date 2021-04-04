@@ -116,7 +116,7 @@ bin/x86_64-darwin-emd: $(HS_SRC)
 # might be slower b/c static but
 bin/x86_64-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
-	cabal build exe:emd --enable-executable-static --builddir=dist-newstyle/x86-linux
+	cabal build exe:emd --builddir=dist-newstyle/x86-linux
 	export BIN=$$(fd 'x86_64-linux.*emd$$' dist-newstyle -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    strip $@
