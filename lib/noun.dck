@@ -388,4 +388,5 @@
       (| "bevel")
       (| "thurible")
       (| "perihelion")
+      (| "cabochon")
       (| "folderol"))))
