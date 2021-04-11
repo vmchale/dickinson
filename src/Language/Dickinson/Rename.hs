@@ -24,7 +24,6 @@ import           Data.Bifunctor                (second)
 import           Data.Binary                   (Binary)
 import qualified Data.IntMap                   as IM
 import qualified Data.List.NonEmpty            as NE
-import           Data.Semigroup                (Semigroup (..))
 import           Data.Text.Prettyprint.Doc.Ext
 import           GHC.Generics                  (Generic)
 import           Language.Dickinson.Name
@@ -53,13 +52,6 @@ class HasRenames a where
 
 instance HasRenames Renames where
     rename = id
-
-instance Semigroup Renames where
-    (<>) (Renames m1 b1) (Renames m2 b2) = Renames (max m1 m2) (b1 <> b2)
-
-instance Monoid Renames where
-    mempty = Renames 0 mempty
-    mappend = (<>)
 
 type RenameM a = State Renames
 
