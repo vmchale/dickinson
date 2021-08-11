@@ -1,4 +1,5 @@
 packages: ./
+        , ./dickinson-monomer
 
 program-options
   alex-options: -g
