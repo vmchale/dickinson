@@ -6,4 +6,5 @@
   (:oneof
     (| "trundle")
     (| "avulse")
+    (| "subluxate")
     (| "boke")))
