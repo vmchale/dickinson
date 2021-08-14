@@ -1,4 +1,8 @@
 packages: ./
+        , ./dickinson-fltk
+
+constraints:
+  fltkhs +bundled
 
 program-options
   alex-options: -g
