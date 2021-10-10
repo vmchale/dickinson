@@ -3,14 +3,13 @@
 -- from documentation here: https://github.com/deech/fltkhs-demos
 module Main (main) where
 
-import qualified Data.ByteString.Lazy                      as BSL
-import           Data.Functor                              (void)
-import           Data.Text.Encoding                        (encodeUtf8)
-import qualified Graphics.UI.FLTK.LowLevel.FL              as FL
-import           Graphics.UI.FLTK.LowLevel.FLTKHS          (toPosition, toRectangle, toSize)
-import qualified Graphics.UI.FLTK.LowLevel.FLTKHS          as FL
-import qualified Graphics.UI.FLTK.LowLevel.Fl_Enumerations as FL
-import           Language.Dickinson                        (pipelineBSLErr)
+import qualified Data.ByteString.Lazy             as BSL
+import           Data.Functor                     (void)
+import           Data.Text.Encoding               (encodeUtf8)
+import qualified Graphics.UI.FLTK.LowLevel.FL     as FL
+import           Graphics.UI.FLTK.LowLevel.FLTKHS (toPosition, toRectangle, toSize)
+import qualified Graphics.UI.FLTK.LowLevel.FLTKHS as FL
+import           Language.Dickinson               (pipelineBSLErr)
 
 
 main :: IO ()
@@ -24,11 +23,10 @@ main = do
   button <- FL.buttonNew (FL.Rectangle (toPosition (20, 480)) (toSize (60, 20))) (Just "Run")
 
   FL.setBuffer edit (Just inp)
+  -- FL.flcSetFont FL.screen (FL.FontSize 14)
   FL.setText inp "%-\n\n(:def main \n  (:oneof\n    (| \"heads\")\n    (| \"tails\")))"
   display <- FL.textDisplayNew (FL.Rectangle (toPosition (20, 480+40)) (toSize (480-40, 80))) Nothing
   FL.setBuffer display (Just out)
-
-  FL.flcSetFont FL.screen (FL.FontSize 14)
 
   FL.setCallback button (\_ -> wireUp inp out)
 
