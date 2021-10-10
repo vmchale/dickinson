@@ -9,3 +9,9 @@ program-options
   happy-options: -gcsa
 
 haddock-internal: true
+
+source-repository-package
+  type: git
+  tag: 272d225e641e9b6161df82066e9a4b919c0e812a
+  location: https://github.com/deech/fltkhs.git
+  subdir: fltkhs
