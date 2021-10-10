@@ -19,6 +19,8 @@ executable dickinson-gui
   build-depends:       base
                      , fltkhs
                      , language-dickinson
+                     , text
+                     , bytestring
   default-language:    Haskell2010
   if impl(ghc >= 8.0)
     ghc-options:       -Wincomplete-uni-patterns -Wincomplete-record-updates -Wredundant-constraints -Widentities
