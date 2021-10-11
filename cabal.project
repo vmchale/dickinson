@@ -2,7 +2,7 @@ packages: ./
         , ./dickinson-fltk
 
 constraints:
-  fltkhs +bundled
+  fltkhs +bundled +opengl
 
 program-options
   alex-options: -g
