@@ -11,5 +11,5 @@ cradle:
       component: "bench:dickinson-bench"
     - path: "./run/Main.hs"
       component: "exe:emd"
-    - path: "./dickinson-fltk/src/Main.hs"
+    - path: "./dickinson-fltk/src/"
       component: "exe:dickinson-gui"
