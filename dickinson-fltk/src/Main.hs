@@ -3,6 +3,8 @@
 -- from documentation here: https://github.com/deech/fltkhs-demos
 module Main (main) where
 
+-- TODO: REPL alongside file browser
+
 import qualified Data.ByteString.Lazy                      as BSL
 import           Data.Functor                              (void)
 import           Data.Text.Encoding                        (encodeUtf8)
