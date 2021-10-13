@@ -33,7 +33,7 @@ main = do
 
   FL.setCallback button (\_ -> wireUp inp out)
 
-  FL.highlightData display highlightBuff styles Nothing
+  FL.highlightData edit highlightBuff styles Nothing
 
   -- FL.addModifyCallback inp (\_ _ _ _ _ -> highlight inp highlightBuff)
   -- highlight inp highlightBuff
