@@ -7,6 +7,5 @@ program-options
 haddock-internal: true
 
 allow-newer:
-    cpphs-1.20.9.1:base
-  , polyparse-1.13:base
+    polyparse-1.13:base
   , polyparse-1.13:bytestring
