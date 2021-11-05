@@ -73,6 +73,7 @@
 (:def nounPhrase
   (:oneof
     (| "sheela na gig")
+    (| "barn burner")
     (| "roach clip")))
 
 (:def subjectDiscipline
