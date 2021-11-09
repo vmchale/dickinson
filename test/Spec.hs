@@ -24,9 +24,9 @@ import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
 import           Pattern
+import           TH
 import           Test.Tasty
 import           Test.Tasty.HUnit
-import           TH
 import           TypeCheck
 
 main :: IO ()
@@ -43,21 +43,16 @@ main =
 parserTests :: TestTree
 parserTests =
     testGroup "Parser tests"
-        [ lexNoError "test/data/let.dck"
-        , parseNoError "test/data/const.dck"
+        [ parseNoError "test/data/const.dck"
         , parseNoError "test/data/let.dck"
         , parseNoError "test/data/nestLet.dck"
         , parseNoError "lib/color.dck"
         , parseNoError "lib/birds.dck"
-        , lexNoError "test/data/import.dck"
-        , lexNoError "test/data/lexDollarSign.dck"
         , parseNoError "test/data/import.dck"
         , detectDuplicate "test/data/multiple.dck"
         , detectDuplicate "test/error/double.dck"
         , detectDuplicate "test/error/tyDouble.dck"
         , detectDuplicate "test/error/tyConsDouble.dck"
-        , lexNoError "examples/shakespeare.dck"
-        , lexNoError "test/data/multiStr.dck"
         , parseNoError "test/data/multiStr.dck"
         , parseNoError "examples/shakespeare.dck"
         , detectScopeError "test/demo/improbableScope.dck"
@@ -66,7 +61,6 @@ parserTests =
         , noScopeError "test/data/adt.dck"
         , detectScopeError "test/error/tyScope.dck"
         , detectScopeError "test/error/constructorScope.dck"
-        , lexNoError "test/data/multiQuoteify.dck"
         , parseNoError "test/data/multiQuoteify.dck"
         , findPath
         , sanityCheckTest "test/data/adt.dck"
@@ -115,11 +109,6 @@ parseNoError :: FilePath -> TestTree
 parseNoError fp = testCase ("Parsing doesn't fail (" ++ fp ++ ")") $ do
     contents <- BSL.readFile fp
     assertBool "Doesn't fail parsing" $ isRight (parse contents)
-
-lexNoError :: FilePath -> TestTree
-lexNoError fp = testCase ("Lexing doesn't fail (" ++ fp ++ ")") $ do
-    contents <- BSL.readFile fp
-    assertBool "Doesn't fail lexing" $ isRight (lexDickinson contents)
 
 parseRename :: FilePath -> IO (Dickinson AlexPosn)
 parseRename = fmap (fst . uncurry renameDickinson . eitherThrow . parseWithMax) . BSL.readFile
