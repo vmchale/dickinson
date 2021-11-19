@@ -231,7 +231,6 @@ test-suite dickinson-test
     other-modules:
         Eval
         Golden
-        Pattern
         Roundtrip.Compare
         TypeCheck
         TH
