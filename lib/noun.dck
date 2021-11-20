@@ -53,6 +53,7 @@
     (| "alliteration")
     (| "synecdoche")
     (| "catachresis")
+    (| "guff")
     (| "anapodoton")
     (| "anacoluthon")
     (| "anadiplosis")
