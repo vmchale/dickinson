@@ -5,6 +5,7 @@
 (:def verb
   (:oneof
     (| "trundle")
+    (| "loll")
     (| "avulse")
     (| "subluxate")
     (| "remonstrate")
