@@ -53,12 +53,12 @@ class HasRenames a where
 instance HasRenames Renames where
     rename = id
 
-type RenameM a = State Renames
+type RenameM = State Renames
 
 initRenames :: Renames
 initRenames = Renames 0 mempty
 
-runRenameM :: Int -> RenameM a x -> (x, UniqueCtx)
+runRenameM :: Int -> RenameM x -> (x, UniqueCtx)
 runRenameM i x = second max_ (runState x (Renames i mempty))
 
 -- Make sure you don't have cycles in the renames map!
