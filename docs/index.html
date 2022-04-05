@@ -31,6 +31,9 @@
         font-size: 0.9em;
         padding: 1em;
       }
+      h1 {
+        font-size: 1.8em;
+      }
     }
     @media print {
       body {
@@ -135,6 +138,12 @@
     #TOC li {
       list-style: none;
     }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
     #TOC a:not(:hover) {
       text-decoration: none;
     }
@@ -157,96 +166,129 @@
 </header>
 <nav id="TOC" role="doc-toc">
 <ul>
-<li><a href="#introduction">Introduction</a></li>
-<li><a href="#installing-dickinson">Installing Dickinson</a>
+<li><a href="#introduction" id="toc-introduction">Introduction</a></li>
+<li><a href="#installing-dickinson"
+id="toc-installing-dickinson">Installing Dickinson</a>
 <ul>
-<li><a href="#distributions">Distributions</a></li>
-<li><a href="#source">Source</a></li>
-<li><a href="#editor-integration">Editor Integration</a>
+<li><a href="#distributions"
+id="toc-distributions">Distributions</a></li>
+<li><a href="#source" id="toc-source">Source</a></li>
+<li><a href="#editor-integration" id="toc-editor-integration">Editor
+Integration</a>
 <ul>
-<li><a href="#tags">Tags</a></li>
+<li><a href="#tags" id="toc-tags">Tags</a></li>
 </ul></li>
 </ul></li>
-<li><a href="#program-structure">Program Structure</a>
+<li><a href="#program-structure" id="toc-program-structure">Program
+Structure</a>
 <ul>
-<li><a href="#example">Example</a>
+<li><a href="#example" id="toc-example">Example</a>
 <ul>
-<li><a href="#comments">Comments</a></li>
+<li><a href="#comments" id="toc-comments">Comments</a></li>
 </ul></li>
-<li><a href="#definitions-names">Definitions &amp; Names</a></li>
-<li><a href="#branching">Branching</a></li>
-<li><a href="#interpolation">Interpolation</a>
+<li><a href="#definitions-names" id="toc-definitions-names">Definitions
+&amp; Names</a></li>
+<li><a href="#branching" id="toc-branching">Branching</a></li>
+<li><a href="#interpolation" id="toc-interpolation">Interpolation</a>
 <ul>
-<li><a href="#multi-line-strings">Multi-Line Strings</a></li>
+<li><a href="#multi-line-strings" id="toc-multi-line-strings">Multi-Line
+Strings</a></li>
 </ul></li>
-<li><a href="#expressions">Expressions</a>
+<li><a href="#expressions" id="toc-expressions">Expressions</a>
 <ul>
-<li><a href="#lambdas">Lambdas</a></li>
-<li><a href="#matches-tuples">Matches &amp; Tuples</a></li>
-<li><a href="#tags-1">Tags</a></li>
+<li><a href="#lambdas" id="toc-lambdas">Lambdas</a></li>
+<li><a href="#matches-tuples" id="toc-matches-tuples">Matches &amp;
+Tuples</a></li>
+<li><a href="#tags-1" id="toc-tags-1">Tags</a></li>
 </ul></li>
-<li><a href="#types">Types</a></li>
+<li><a href="#types" id="toc-types">Types</a></li>
 </ul></li>
-<li><a href="#repl">REPL</a>
+<li><a href="#repl" id="toc-repl">REPL</a>
 <ul>
-<li><a href="#saving-restoring-states">Saving &amp; Restoring States</a></li>
-<li><a href="#builtins">Builtins</a></li>
+<li><a href="#saving-restoring-states"
+id="toc-saving-restoring-states">Saving &amp; Restoring States</a></li>
+<li><a href="#builtins" id="toc-builtins">Builtins</a></li>
 </ul></li>
-<li><a href="#lints">Lints</a></li>
-<li><a href="#libraries">Libraries</a>
+<li><a href="#lints" id="toc-lints">Lints</a></li>
+<li><a href="#libraries" id="toc-libraries">Libraries</a>
 <ul>
-<li><a href="#using-libraries">Using Libraries</a>
+<li><a href="#using-libraries" id="toc-using-libraries">Using
+Libraries</a>
 <ul>
-<li><a href="#example-1">Example</a></li>
-<li><a href="#third-party-libraries">Third-Party Libraries</a></li>
+<li><a href="#example-1" id="toc-example-1">Example</a></li>
+<li><a href="#third-party-libraries"
+id="toc-third-party-libraries">Third-Party Libraries</a></li>
 </ul></li>
-<li><a href="#writing-libraries">Writing Libraries</a></li>
+<li><a href="#writing-libraries" id="toc-writing-libraries">Writing
+Libraries</a></li>
 </ul></li>
-<li><a href="#scripting">Scripting</a></li>
-<li><a href="#examples">Examples</a>
+<li><a href="#scripting" id="toc-scripting">Scripting</a></li>
+<li><a href="#examples" id="toc-examples">Examples</a>
 <ul>
-<li><a href="#cowsay">Cowsay</a></li>
-<li><a href="#noun-declension">Noun Declension</a></li>
-<li><a href="#divination-bot">Divination Bot</a></li>
-<li><a href="#shakespearean-insult-generator">Shakespearean Insult Generator</a></li>
-<li><a href="#lyrics-bot">Lyrics Bot</a></li>
-<li><a href="#magical-realism-bot">Magical Realism Bot</a></li>
+<li><a href="#cowsay" id="toc-cowsay">Cowsay</a></li>
+<li><a href="#noun-declension" id="toc-noun-declension">Noun
+Declension</a></li>
+<li><a href="#divination-bot" id="toc-divination-bot">Divination
+Bot</a></li>
+<li><a href="#shakespearean-insult-generator"
+id="toc-shakespearean-insult-generator">Shakespearean Insult
+Generator</a></li>
+<li><a href="#lyrics-bot" id="toc-lyrics-bot">Lyrics Bot</a></li>
+<li><a href="#magical-realism-bot" id="toc-magical-realism-bot">Magical
+Realism Bot</a></li>
 </ul></li>
 </ul>
 </nav>
 <h1 id="introduction">Introduction</h1>
-<p>Dickinson is a text-generation language for generative literature. Each time you run your code, you get back randomly generated text.</p>
-<p>It provides a language to define random texts like the <a href="https://twitter.com/MagicRealismBot">Magical Realism Bot</a> or <a href="https://en.wikipedia.org/wiki/Fortune_%28Unix%29">fortune program</a>.</p>
+<p>Dickinson is a text-generation language for generative literature.
+Each time you run your code, you get back randomly generated text.</p>
+<p>It provides a language to define random texts like the <a
+href="https://twitter.com/MagicRealismBot">Magical Realism Bot</a> or <a
+href="https://en.wikipedia.org/wiki/Fortune_%28Unix%29">fortune
+program</a>.</p>
 <h1 id="installing-dickinson">Installing Dickinson</h1>
 <h2 id="distributions">Distributions</h2>
-<p>Distributions for some platforms are available on the <a href="https://github.com/vmchale/dickinson/releases">releases page</a>.</p>
+<p>Distributions for some platforms are available on the <a
+href="https://github.com/vmchale/dickinson/releases">releases
+page</a>.</p>
 <p>Un-tar the package, then:</p>
 <pre><code>make install</code></pre>
 <h2 id="source">Source</h2>
-<p>First, install <a href="https://www.haskell.org/cabal/download.html">cabal</a> and <a href="https://www.haskell.org/ghc/download.html">GHC</a>. Then:</p>
+<p>First, install <a
+href="https://www.haskell.org/cabal/download.html">cabal</a> and <a
+href="https://www.haskell.org/ghc/download.html">GHC</a>. Then:</p>
 <pre><code>cabal install language-dickinson</code></pre>
-<p>This provides <code>emd</code>, the command-line interface to the Dickinson language.</p>
-<p>You may also wish to install manpages for reference information about <code>emd</code>. Manpages are installed at</p>
+<p>This provides <code>emd</code>, the command-line interface to the
+Dickinson language.</p>
+<p>You may also wish to install manpages for reference information about
+<code>emd</code>. Manpages are installed at</p>
 <pre><code>emd man</code></pre>
 <h2 id="editor-integration">Editor Integration</h2>
-<p>A <a href="https://github.com/vmchale/dickinson/tree/master/vim">vim plugin</a> is available.</p>
-<p>To install with <a href="https://github.com/junegunn/vim-plug">vim-plug</a>:</p>
+<p>A <a href="https://github.com/vmchale/dickinson/tree/master/vim">vim
+plugin</a> is available.</p>
+<p>To install with <a
+href="https://github.com/junegunn/vim-plug">vim-plug</a>:</p>
 <pre class="vimscript"><code>Plug &#39;vmchale/dickinson&#39; , { &#39;rtp&#39; : &#39;vim&#39; }</code></pre>
 <p>To automatically enable spellchecking where appropriate put</p>
 <pre><code>autocmd BufNewFile,BufRead *.dck setlocal spell spelllang=en_us</code></pre>
 <p>in your <code>~/.vimrc</code>.</p>
 <h3 id="tags">Tags</h3>
-<p>To configure Dickinson with <a href="http://ctags.sourceforge.net/">exuberant ctags</a> or <a href="https://ctags.io/">universal ctags</a>, put the following in a file named <code>.ctags</code>:</p>
+<p>To configure Dickinson with <a
+href="http://ctags.sourceforge.net/">exuberant ctags</a> or <a
+href="https://ctags.io/">universal ctags</a>, put the following in a
+file named <code>.ctags</code>:</p>
 <pre><code>--langdef=DICKINSON
 --langmap=DICKINSON:.dck
 --regex-DICKINSON=/:def *([[:lower:]][[:alnum:]]+)/\1/f,function/
 --regex-DICKINSON=/tydecl *([[:lower:]][[:alnum:]]+) *=/\1/t,type/</code></pre>
-<p>I have the following in my <code>~/.vimrc</code> to keep tags updated:</p>
+<p>I have the following in my <code>~/.vimrc</code> to keep tags
+updated:</p>
 <pre><code>augroup ctags
     autocmd BufWritePost *.dck :silent !ctags -R .
 augroup END</code></pre>
 <h1 id="program-structure">Program Structure</h1>
-<p>Dickinson files begin with <code>%-</code>, followed by definitions.</p>
+<p>Dickinson files begin with <code>%-</code>, followed by
+definitions.</p>
 <h2 id="example">Example</h2>
 <p>Here is a simple Dickinson program:</p>
 <pre><code>%-
@@ -257,11 +299,15 @@ augroup END</code></pre>
     (| &quot;tails&quot;)))</code></pre>
 <p>Save this as <code>gambling.dck</code>. Then:</p>
 <pre><code>emd run gambling.dck</code></pre>
-<p>which will display either <code>heads</code> or <code>tails</code>.</p>
-<p>The <code>:oneof</code> construct selects one of its branches with equal probability.</p>
-<p>In general, when you <code>emd run</code> code, you’ll see the result of evaluating <code>main</code>.</p>
+<p>which will display either <code>heads</code> or
+<code>tails</code>.</p>
+<p>The <code>:oneof</code> construct selects one of its branches with
+equal probability.</p>
+<p>In general, when you <code>emd run</code> code, you’ll see the result
+of evaluating <code>main</code>.</p>
 <h3 id="comments">Comments</h3>
-<p>Comments are indicated with a <code>;</code> at the beginning of the line. Anything to the right of the <code>;</code> is ignored. So</p>
+<p>Comments are indicated with a <code>;</code> at the beginning of the
+line. Anything to the right of the <code>;</code> is ignored. So</p>
 <pre><code>%-
 
 ; This returns one of &#39;heads&#39; or &#39;tails&#39;
@@ -269,7 +315,8 @@ augroup END</code></pre>
   (:oneof
     (| &quot;heads&quot;)
     (| &quot;tails&quot;)))</code></pre>
-<p>is perfectly valid code and is functionally the same as the above.</p>
+<p>is perfectly valid code and is functionally the same as the
+above.</p>
 <h2 id="definitions-names">Definitions &amp; Names</h2>
 <p>We can define names and reference them later:</p>
 <pre><code>%-
@@ -281,9 +328,12 @@ augroup END</code></pre>
 
 (:def main
   gambling)</code></pre>
-<p>We can <code>emd run</code> this and it will give the same results as above.</p>
+<p>We can <code>emd run</code> this and it will give the same results as
+above.</p>
 <h2 id="branching">Branching</h2>
-<p>When you use <code>:oneof</code>, Dickinson picks one of the branches with equal probability. If this is not what you want, you can use <code>:branch</code>:</p>
+<p>When you use <code>:oneof</code>, Dickinson picks one of the branches
+with equal probability. If this is not what you want, you can use
+<code>:branch</code>:</p>
 <pre><code>%-
 
 (:def unfairCoin
@@ -293,7 +343,8 @@ augroup END</code></pre>
 
 (:def main
   unfairCoin)</code></pre>
-<p>This will scale things so that picking <code>"tails"</code> is a little more likely.</p>
+<p>This will scale things so that picking <code>"tails"</code> is a
+little more likely.</p>
 <h2 id="interpolation">Interpolation</h2>
 <p>We can recombine past definitions via string interpolation:</p>
 <pre><code>%-
@@ -315,7 +366,8 @@ augroup END</code></pre>
   &#39;&#39;&#39;)</code></pre>
 <p>Multiline strings begin and end with <code>'''</code>.</p>
 <h2 id="expressions">Expressions</h2>
-<p>Branches, strings, and interpolations are expressions. A <code>:def</code> can attach an expression to a name.</p>
+<p>Branches, strings, and interpolations are expressions. A
+<code>:def</code> can attach an expression to a name.</p>
 <pre><code>%-
 
 (:def color
@@ -331,14 +383,18 @@ augroup END</code></pre>
 
 (:def main
   &quot;What a ${adjective}, ${adjective} day!&quot;)</code></pre>
-<p>Branches can contain any expression, including names that have been defined previously (such as <code>color</code> in the example above).</p>
+<p>Branches can contain any expression, including names that have been
+defined previously (such as <code>color</code> in the example
+above).</p>
 <h3 id="lambdas">Lambdas</h3>
 <p>Lambdas are how we introduce functions in Dickinson.</p>
 <pre><code>(:def sayHello
   (:lambda name text
     &quot;Hello, ${name}.&quot;))</code></pre>
-<p>Note that we have to specify the type of <code>name</code> - here, it stands in for some string, so it is of type <code>text</code>.</p>
-<p>We can use <code>sayHello</code> with <code>$</code> (pronounced “apply”).</p>
+<p>Note that we have to specify the type of <code>name</code> - here, it
+stands in for some string, so it is of type <code>text</code>.</p>
+<p>We can use <code>sayHello</code> with <code>$</code> (pronounced
+“apply”).</p>
 <pre><code>(:def name
   (:oneof
     (| &quot;Alice&quot;)
@@ -350,7 +406,8 @@ augroup END</code></pre>
 <pre><code>Hello, Bob.</code></pre>
 <p><code>$ f x</code> corresponds to <code>f x</code> in ML.</p>
 <h3 id="matches-tuples">Matches &amp; Tuples</h3>
-<p>Suppose we want to randomly pick quotes. First we define a function to return a quote by Fiona Apple:</p>
+<p>Suppose we want to randomly pick quotes. First we define a function
+to return a quote by Fiona Apple:</p>
 <pre><code>(:def fionaAppleQuote
   (:oneof
     (|
@@ -361,13 +418,15 @@ augroup END</code></pre>
       &#39;&#39;&#39;
       &quot;You forgot the difference between equanimity and passivity.&quot;
       &#39;&#39;&#39;)))</code></pre>
-<p>Then we can define <code>quote</code>, which returns a quote as well as the person who said it.</p>
+<p>Then we can define <code>quote</code>, which returns a quote as well
+as the person who said it.</p>
 <pre><code>(:def quote
   (:oneof
     (| (&quot;« Le beau est ce qu&#39;on désire sans vouloir le manger. »&quot;, &quot;Simone Weil&quot;))
     (| (fionaAppleQuote, &quot;Fiona Apple&quot;))))</code></pre>
 <p>Each branch returns a tuple.</p>
-<p>We can use the <code>:match</code> construct to format the result of <code>quote</code>, viz.</p>
+<p>We can use the <code>:match</code> construct to format the result of
+<code>quote</code>, viz.</p>
 <pre><code>(:def formatQuote
   (:lambda q (text, text)
     (:match q
@@ -382,7 +441,8 @@ augroup END</code></pre>
 <p>We can <code>emd run</code> this:</p>
 <pre><code>&quot;You forgot the difference between equanimity and passivity.&quot;
     — Fiona Apple</code></pre>
-<p>Note the use of the <code>:lambda</code> in <code>formatQuote</code>; we specify the type <code>(text, text)</code>.</p>
+<p>Note the use of the <code>:lambda</code> in <code>formatQuote</code>;
+we specify the type <code>(text, text)</code>.</p>
 <h3 id="tags-1">Tags</h3>
 <p>Tags can be used to split things based on cases.</p>
 <pre><code>tydecl number = Singular | Plural
@@ -392,8 +452,10 @@ augroup END</code></pre>
     (:match n
       [Singular &quot;a&quot;]
       [Plural &quot;some&quot;])))</code></pre>
-<p>Note that we specify the type <code>number</code> in <code>(:lambda n number ...)</code>.</p>
-<p>Tags themselves must begin with a capital letter while types begin with a lowercase letter.</p>
+<p>Note that we specify the type <code>number</code> in
+<code>(:lambda n number ...)</code>.</p>
+<p>Tags themselves must begin with a capital letter while types begin
+with a lowercase letter.</p>
 <p>Tags are a restricted form of sum types.</p>
 <h2 id="types">Types</h2>
 <h1 id="repl">REPL</h1>
@@ -425,7 +487,8 @@ text</code></pre>
 emd&gt; :type Nominative
 case</code></pre>
 <h2 id="saving-restoring-states">Saving &amp; Restoring States</h2>
-<p>We can save the REPL state, including any definitions we’ve declared during the session.</p>
+<p>We can save the REPL state, including any definitions we’ve declared
+during the session.</p>
 <pre><code>emd&gt; :save replSt.emdi</code></pre>
 <p>If we exit the session we can restore the save definitions with</p>
 <pre><code>emd&gt; :r replSt.emdi
@@ -433,7 +496,8 @@ emd&gt; announcer</code></pre>
 <p>For reference information about the Dickinson REPL:</p>
 <pre><code>:help</code></pre>
 <h2 id="builtins">Builtins</h2>
-<p>Dickinson has several builtin functions. You can see all names in scope (including builtins) with <code>:list</code>, viz.</p>
+<p>Dickinson has several builtin functions. You can see all names in
+scope (including builtins) with <code>:list</code>, viz.</p>
 <pre><code>emd&gt; :list
 oulipo
 allCaps
@@ -446,10 +510,12 @@ titleCase</code></pre>
 <pre><code>emd&gt; $ allCaps &quot;Guilt and self-laceration are indulgences&quot;
 GUILT AND SELF-LACERATION ARE INDULGENCES</code></pre>
 <h1 id="lints">Lints</h1>
-<p><code>emd</code> has a linter which can make suggestions based on probable mistakes. We can invoke it with <code>emd lint</code>:</p>
+<p><code>emd</code> has a linter which can make suggestions based on
+probable mistakes. We can invoke it with <code>emd lint</code>:</p>
 <pre><code>emd lint silly.dck</code></pre>
 <h1 id="libraries">Libraries</h1>
-<p>Dickinson allows pulling in definitions from other files with <code>:include</code>.</p>
+<p>Dickinson allows pulling in definitions from other files with
+<code>:include</code>.</p>
 <h2 id="using-libraries">Using Libraries</h2>
 <h3 id="example-1">Example</h3>
 <p>The <code>color</code> module is bundled by default:</p>
@@ -461,7 +527,8 @@ GUILT AND SELF-LACERATION ARE INDULGENCES</code></pre>
   &quot;Today&#39;s mood is ${color}&quot;)</code></pre>
 <p>Which gives:</p>
 <pre><code>Today&#39;s mood is citron</code></pre>
-<p>The <code>:include</code> must come before the <code>%-</code>; definitions come after the <code>%-</code>.</p>
+<p>The <code>:include</code> must come before the <code>%-</code>;
+definitions come after the <code>%-</code>.</p>
 <p><code>color.dck</code> contains:</p>
 <pre><code>%-
 
@@ -472,15 +539,21 @@ GUILT AND SELF-LACERATION ARE INDULGENCES</code></pre>
     (| &quot;azure&quot;)
     ...</code></pre>
 <h3 id="third-party-libraries">Third-Party Libraries</h3>
-<p>Upon encountering <code>:include animals.mammal</code>, Dickinson looks for a file <code>animals/mammal.dck</code>.</p>
-<p>When invoking <code>emd</code>, we can use the <code>--include</code> flag to add directories to search.</p>
+<p>Upon encountering <code>:include animals.mammal</code>, Dickinson
+looks for a file <code>animals/mammal.dck</code>.</p>
+<p>When invoking <code>emd</code>, we can use the <code>--include</code>
+flag to add directories to search.</p>
 <h2 id="writing-libraries">Writing Libraries</h2>
 <p>Libraries can contain definitions and type declarations.</p>
-<p>You can run <code>emd check</code> on a library file to validate it.</p>
+<p>You can run <code>emd check</code> on a library file to validate
+it.</p>
 <h1 id="scripting">Scripting</h1>
-<p><code>emd</code> ignores any lines staring with <code>#!</code>; put</p>
+<p><code>emd</code> ignores any lines staring with <code>#!</code>;
+put</p>
 <pre><code>#!/usr/bin/env emd</code></pre>
-<p>and the top of a file to use <code>emd</code> as an interpreter. As an example, here is an implementation of the Unix fortune program as a script:</p>
+<p>and the top of a file to use <code>emd</code> as an interpreter. As
+an example, here is an implementation of the Unix fortune program as a
+script:</p>
 <pre><code>#!/usr/bin/env emd
 
 %-
@@ -536,12 +609,16 @@ tydecl number = Singular | Plural
 <p>In the REPL:</p>
 <pre><code>emd&gt; $ decline (Nominative, Feminine, Singular)
 þeos</code></pre>
-<p>This actually has no element of randomness but such capabilities are important for agreement in longer generative texts.</p>
+<p>This actually has no element of randomness but such capabilities are
+important for agreement in longer generative texts.</p>
 <p>For guidance:</p>
 <pre><code>emd&gt; :type decline
 (-&gt; (case, gender, number) text)</code></pre>
 <h2 id="divination-bot">Divination Bot</h2>
-<p>This is a more sophisticated version of Maja Bäckvall’s <a href="https://twitter.com/botmancy">divination bot</a>. The novelty is that by using tags, we get agreement between the Greek root and the definition.</p>
+<p>This is a more sophisticated version of Maja Bäckvall’s <a
+href="https://twitter.com/botmancy">divination bot</a>. The novelty is
+that by using tags, we get agreement between the Greek root and the
+definition.</p>
 <pre><code>%-
 
 tydecl means = Fish
@@ -606,18 +683,25 @@ tydecl means = Fish
   (:bind
     [means means]
       &quot;${$prefix means}${postfix} - divination by ${$english means}&quot;))</code></pre>
-<p><code>:pick</code> is a builtin construct which randomly selects a tag of type <code>means</code>.</p>
-<p>Note also <code>:bind</code> in place of <code>:let</code> — this construct resolves all randomness before bringing <code>means</code> into scope.</p>
+<p><code>:pick</code> is a builtin construct which randomly selects a
+tag of type <code>means</code>.</p>
+<p>Note also <code>:bind</code> in place of <code>:let</code> — this
+construct resolves all randomness before bringing <code>means</code>
+into scope.</p>
 <p>So the Tracery bot might produce</p>
 <pre><code>uranospication
 
 Divination using the appearance of proper names.</code></pre>
 <p>but ours produces results like</p>
 <pre><code>amniomancy - divination by placenta</code></pre>
-<p>We’ve also weighted <code>postfix</code> so that the more common suffixes (such as ‘-mancy’) occur more often.</p>
+<p>We’ve also weighted <code>postfix</code> so that the more common
+suffixes (such as ‘-mancy’) occur more often.</p>
 <p>See the full example in <code>examples/divinationBot.dck</code></p>
-<h2 id="shakespearean-insult-generator">Shakespearean Insult Generator</h2>
-<p>Inspired by the <a href="http://web.mit.edu/dryfoo/Funny-pages/shakespeare-insult-kit.html">Shakespeare Insult Kit</a>’s insult table, we can generate our own insults.</p>
+<h2 id="shakespearean-insult-generator">Shakespearean Insult
+Generator</h2>
+<p>Inspired by the <a
+href="http://web.mit.edu/dryfoo/Funny-pages/shakespeare-insult-kit.html">Shakespeare
+Insult Kit</a>’s insult table, we can generate our own insults.</p>
 <pre><code>%-
 
 (:def adjective
@@ -642,7 +726,9 @@ Divination using the appearance of proper names.</code></pre>
 <pre><code>Thou beslubbering clouted hedge-pig!</code></pre>
 <p>See the full example in <code>examples/shakespeare.dck</code>.</p>
 <h2 id="lyrics-bot">Lyrics Bot</h2>
-<p>Lyrics bots sample lyrics from some particular artist; see the <a href="https://twitter.com/africabytotobot">africa by toto bot</a> for an example.</p>
+<p>Lyrics bots sample lyrics from some particular artist; see the <a
+href="https://twitter.com/africabytotobot">africa by toto bot</a> for an
+example.</p>
 <p>We can make our own Fiona Apple bot, viz.</p>
 <pre><code>%-
 
@@ -706,7 +792,11 @@ Divination using the appearance of proper names.</code></pre>
               &quot;discovers the secret to ${secret}&quot;)
           ))]
       &quot;A ${profession} in ${bigCity} ${accomplishment}&quot;))))</code></pre>
-<p>This reuses the <code>bigCity</code> definition from the <code>geography</code> library and <code>profession</code> from the <code>profesion</code> library.</p>
-<p>This is not as sophisticated as the <a href="https://twitter.com/MagicRealismBot">twitter bot</a> but it is quite concise thanks to the libraries we used.</p>
+<p>This reuses the <code>bigCity</code> definition from the
+<code>geography</code> library and <code>profession</code> from the
+<code>profesion</code> library.</p>
+<p>This is not as sophisticated as the <a
+href="https://twitter.com/MagicRealismBot">twitter bot</a> but it is
+quite concise thanks to the libraries we used.</p>
 </body>
 </html>
