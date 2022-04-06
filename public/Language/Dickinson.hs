@@ -22,6 +22,7 @@ module Language.Dickinson ( -- * Parser
                           , resolveImport
                           -- * Evaluation
                           , pipelineBSL
+                          , pipelineBSLErr
                           , validateBSL
                           , patternExhaustivenessBSL
                           , warnBSL
