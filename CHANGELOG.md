@@ -1,5 +1,9 @@
 # dickinson
 
+## 1.4.2.0
+
+  * Export `pipelineBSLErr`
+
 ## 1.4.1.2
 
   * Performance improvements in the pattern match exhaustiveness checker

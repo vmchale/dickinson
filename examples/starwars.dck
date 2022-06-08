@@ -1,0 +1,58 @@
+%-
+
+(:def main
+  (:let
+    [firstname
+      (:oneof
+        (| "Yert")
+        (| "Wam")
+        (| "Pommet")
+        (| "Hodnar")
+        (| "Po")
+        (| "Boba")
+        (| "Orchi")
+        (| "Zorn")
+        (| "Moth")
+        (| "Djam")
+        (| "Lozenge")
+        (| "Jerek")
+        (| "Marasmus")
+        (| "Bolt")
+        (| "Aura")
+        (| "Sonta")
+        (| "Slan") ; slang? lol
+        (| "Gorp")
+        (| "Ferryk")
+        (| "Ren")
+        (| "Hurx")
+        (| "Sheera")
+        (| "Sorkin")
+        (| "Jenk")
+        (| "Tarp")
+        (| "Benzine")
+        (| "Nuva")
+        (| "Corbin")
+        (| "Zara")
+        (| "Korra")
+        (| "Lud"))]
+    [lastname
+      (:oneof
+        (| "Grinell")
+        (| "Frik")
+        (| "Agate")
+        (| "Jekku")
+        (| "Ackbar")
+        (| "Vos")
+        (| "Bum")
+        (| "Holo")
+        (| "Gallus")
+        (| "Scarf")
+        (| "Quarrel")
+        (| "Pyce")
+        (| "Blink")
+        (| "Phanto")
+        (| "Bliss")
+        (| "Festoon")
+        (| "Wet")
+        (| "Gorpax"))]
+  "${firstname} ${lastname}"))

@@ -15,6 +15,7 @@ module Language.Dickinson.File ( evalIO
                                , amalgamateRenameM
                                , pipeline
                                , pipelineBSL
+                               , pipelineBSLErr
                                , resolveFile
                                ) where
 
@@ -26,9 +27,11 @@ import           Control.Monad                        (void, (<=<))
 import           Control.Monad.Except                 (ExceptT, MonadError, runExceptT)
 import           Control.Monad.IO.Class               (MonadIO)
 import           Control.Monad.State                  (MonadState, StateT, evalStateT)
+import           Data.Bifunctor                       (first)
 import qualified Data.ByteString.Lazy                 as BSL
 import           Data.Functor                         (($>))
 import           Data.Text                            as T
+import           Data.Text.Prettyprint.Doc.Ext        (prettyText)
 import           Language.Dickinson.Check
 import           Language.Dickinson.Check.Duplicate
 import           Language.Dickinson.Check.Exhaustive
@@ -42,6 +45,7 @@ import           Language.Dickinson.Rename
 import           Language.Dickinson.Rename.Amalgamate
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
+import           Prettyprinter                        (pretty)
 import           System.Random                        (StdGen, newStdGen, randoms)
 
 data AmalgamateSt = AmalgamateSt { amalgamateRenames    :: Renames
@@ -157,6 +161,14 @@ resolveFile is = fmap eitherThrow . evalIO . (traverse resolveDeclarationM <=< a
 pipeline :: [FilePath] -> FilePath -> IO T.Text
 pipeline is fp = fmap eitherThrow $ evalIO $
     checkEvalM =<< amalgamateRenameM is fp
+
+-- | @since 1.4.2.0
+pipelineBSLErr :: [FilePath]
+               -> FilePath -- ^ For error reporting
+               -> BSL.ByteString
+               -> IO (Either T.Text T.Text)
+pipelineBSLErr is fp bsl = fmap (first prettyText) $ evalIO $
+    checkEvalM =<< amalgamateRenameInpM is fp bsl
 
 -- | @since 1.4.1.0
 pipelineBSL :: [FilePath]
