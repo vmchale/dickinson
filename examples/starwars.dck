@@ -1,3 +1,5 @@
+#!/usr/bin/env emd
+
 %-
 
 (:def main
@@ -17,6 +19,7 @@
         (| "Lozenge")
         (| "Jerek")
         (| "Marasmus")
+        (| "Jegg")
         (| "Bolt")
         (| "Aura")
         (| "Sonta")
@@ -26,10 +29,13 @@
         (| "Ren")
         (| "Hurx")
         (| "Sheera")
+        (| "Jekku")
         (| "Sorkin")
         (| "Jenk")
         (| "Tarp")
         (| "Benzine")
+        (| "Fleet")
+        (| "Slurp")
         (| "Nuva")
         (| "Corbin")
         (| "Zara")
@@ -40,11 +46,12 @@
         (| "Grinell")
         (| "Frik")
         (| "Agate")
-        (| "Jekku")
         (| "Ackbar")
+        (| "Boll")
         (| "Vos")
         (| "Bum")
         (| "Holo")
+        (| "Cathar")
         (| "Gallus")
         (| "Scarf")
         (| "Quarrel")
