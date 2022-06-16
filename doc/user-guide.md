@@ -700,6 +700,43 @@ We've also weighted `postfix` so that the more common suffixes (such as '-mancy'
 
 See the full example in `examples/divinationBot.dck`
 
+## Star Wars Name Generator
+
+As an example, consider a Star Wars name generator:
+
+```
+%-
+
+(:def main
+  (:let
+    [either
+      (:oneof
+        (| "Quarrel")
+        (| "Vult")
+        ...
+        (| "Blot"))]
+    (:let
+      [firstname
+        (:oneof
+          (| "Yert")
+          (| "Wam")
+          (| "Pommet")
+          ...
+          (| either))]
+      [lastname
+        (:oneof
+          (| "Grinell")
+          (| "Gorpax")
+          ...
+          (| either))]
+      "${(:flatten firstname)} ${(:flatten lastname)}")))
+```
+
+The `:flatten` builtin makes all child outcomes equally likely. So `(:flatten firstname)`
+will sample "Quarrel", "Yert" with equal probability.
+
+See the full example in `examples/starwars.dck`
+
 ## Shakespearean Insult Generator
 
 Inspired by the [Shakespeare Insult
