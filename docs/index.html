@@ -230,6 +230,8 @@ Libraries</a></li>
 Declension</a></li>
 <li><a href="#divination-bot" id="toc-divination-bot">Divination
 Bot</a></li>
+<li><a href="#star-wars-name-generator"
+id="toc-star-wars-name-generator">Star Wars Name Generator</a></li>
 <li><a href="#shakespearean-insult-generator"
 id="toc-shakespearean-insult-generator">Shakespearean Insult
 Generator</a></li>
@@ -697,6 +699,37 @@ Divination using the appearance of proper names.</code></pre>
 <p>We’ve also weighted <code>postfix</code> so that the more common
 suffixes (such as ‘-mancy’) occur more often.</p>
 <p>See the full example in <code>examples/divinationBot.dck</code></p>
+<h2 id="star-wars-name-generator">Star Wars Name Generator</h2>
+<p>As an example, consider a Star Wars name generator:</p>
+<pre><code>%-
+
+(:def main
+  (:let
+    [either
+      (:oneof
+        (| &quot;Quarrel&quot;)
+        (| &quot;Vult&quot;)
+        ...
+        (| &quot;Blot&quot;))]
+    (:let
+      [firstname
+        (:oneof
+          (| &quot;Yert&quot;)
+          (| &quot;Wam&quot;)
+          (| &quot;Pommet&quot;)
+          ...
+          (| either))]
+      [lastname
+        (:oneof
+          (| &quot;Grinell&quot;)
+          (| &quot;Gorpax&quot;)
+          ...
+          (| either))]
+      &quot;${(:flatten firstname)} ${(:flatten lastname)}&quot;)))</code></pre>
+<p>The <code>:flatten</code> builtin makes all child outcomes equally
+likely. So <code>(:flatten firstname)</code> will sample “Quarrel”,
+“Yert” with equal probability.</p>
+<p>See the full example in <code>examples/starwars.dck</code></p>
 <h2 id="shakespearean-insult-generator">Shakespearean Insult
 Generator</h2>
 <p>Inspired by the <a

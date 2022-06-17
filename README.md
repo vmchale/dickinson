@@ -4,6 +4,10 @@ Dickinson is a text-generation language.
 
 ## Installation
 
+### Web
+
+You can try out the language [on the web](http://vmchale.com/static/dickinson-web/) without installing anything.
+
 ### Binary Releases
 
 Binaries for some platforms are available on the [releases
