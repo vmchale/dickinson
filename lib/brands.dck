@@ -1,0 +1,18 @@
+%-
+
+; chinchilla...
+(:def brand
+  (:oneof
+    (| "Sak's")
+    (| "Bloomingdale's")
+    (| "Fendi")
+    (| "Cartier")
+    (| "Gucci")
+    (| "Neiman Marcus")
+    (| "Chanel")
+    (| "Margiela")
+    (| "Louis Vuitton")
+    (| "Juicy Couture")
+    (| "Dior")
+    (| "Yves St. Laurent")))
+
