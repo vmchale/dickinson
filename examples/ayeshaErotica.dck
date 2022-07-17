@@ -5,6 +5,7 @@
 (:def slayyyter
   (:oneof
     (| "I'm blowing all my money right up my nose")
+    (| "I let him eat the fish like Nobu")
     (|
       '''
       He's watching how far I can go
@@ -18,9 +19,27 @@
     (| "rhinoplasty forever")
     (| "Razor blades and rubbers in my Yves St. Laurent")
     (| "I want a hard facefucking in your '82 DeLorean")
+    (| "My tampon is small")
+    (| "I wanna look like the magazines")
+    (|
+      '''
+      I wanna let my hair down
+      ''')
     (| "I got a thin waist, model legs, looking pussy in the face")
     (| "If he's not a millionaire then I've gots to go")
     (| "I'm 5'7\", he's alive")
+    (| "suicide on my wishlist")
+    (|
+      '''
+      I love robbery and fraud
+      I'm a shoplifting God
+      ''')
+    (| "I'm a self-made thousandaire")
+    (|
+      '''
+      Now, you don't have to hate me
+      I do that enough myself
+      ''')
     (|
       '''
       Preventing teen pregnancy is easy as can be
