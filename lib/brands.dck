@@ -1,0 +1,48 @@
+%-
+
+(:def car
+  (:oneof
+    (| "Mercedes")
+    (| "Hummer")
+    (| "Cadillac")
+    (| "Porsche")
+    (| "Ferrari")
+    (| "Bentley")
+    (| "BMW")))
+
+; chinchilla...
+(:def brand
+  (:oneof
+    (| "Sak's")
+    (| "Bloomingdale's")
+    (| "Birkin")
+    (| "McQueen")
+    (| "Fendi")
+    (| "Cartier")
+    (| "Ferragamo")
+    (| "J. Crew")
+    (| "Vineyard Vines")
+    (| "Moncler")
+    (| "Versace")
+    (| "Valentino")
+    (| "Moschino")
+    (| "Nike")
+    (| "Armani")
+    (| "Patagonia")
+    (| "Miu miu")
+    (| "Ralph Lauren")
+    (| "Calvin Klein")
+    (| "Prada")
+    ; blackglama
+    (| "Balmain")
+    (| "Balenciaga")
+    (| "Gucci")
+    (| "Comme des Garçons")
+    (| "Neiman Marcus")
+    (| "Chanel")
+    (| "Margiela")
+    (| "Louis Vuitton")
+    (| "Juicy Couture")
+    (| "Valentino")
+    (| "Dior")
+    (| "Yves St. Laurent")))

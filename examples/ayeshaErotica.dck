@@ -1,0 +1,184 @@
+#!/usr/bin/env emd
+
+%-
+
+(:def slayyyter
+  (:oneof
+    (| "I'm blowing all my money right up my nose")
+    (| "I let him eat the fish like Nobu")
+    (|
+      '''
+      He's watching how far I can go
+      Erupts like a volcano
+      ''')
+    (| "Baby let me swallow them kids")
+    (| "my coat chinchilla")))
+
+(:def ayesha
+  (:oneof
+    (| "rhinoplasty forever")
+    (| "Razor blades and rubbers in my Yves St. Laurent")
+    (| "I want a hard facefucking in your '82 DeLorean")
+    (| "My tampon is small")
+    (| "I wanna look like the magazines")
+    (|
+      '''
+      I wanna let my hair down
+      ''')
+    (| "I got a thin waist, model legs, looking pussy in the face")
+    (| "If he's not a millionaire then I've gots to go")
+    (| "I'm 5'7\", he's alive")
+    (| "suicide on my wishlist")
+    (|
+      '''
+      I love robbery and fraud
+      I'm a shoplifting God
+      ''')
+    (| "I'm a self-made thousandaire")
+    (|
+      '''
+      Now, you don't have to hate me
+      I do that enough myself
+      ''')
+    (|
+      '''
+      Preventing teen pregnancy is easy as can be
+      Just put on your condom and follow me
+      ''')
+    (|
+      '''
+      Instead of liquor
+      I drink some cleaner
+      ''')
+    (| "Pound me til you're out of breath")
+    (|
+      '''
+      Since fourteen
+      I've been making football players cream
+      ''')
+    (| "Don't touch me I'm expensive")
+    (| "Grab these tits and pull that hair")
+    (|
+      '''
+      blunt on my lip
+      fanny pack on my hip
+      ''')
+    (| "I don't want Gucci I want trashy")
+    (| "I like hard dick and an even harder fist")
+    (|
+      '''
+      I can meet you after the show
+      In the parking lot next to the Super Eight Motel
+      ''')
+    (| "Long dreads, snapback")
+    (| "I hope I'm turning you on")
+    (| "Feel that estrogen")
+    (|
+      '''
+      I like it rough, yeah, put it in my butt
+      ''')
+    (| "I'll blow your dick while you drive to the beach.")
+    (| "Leave a cock blowing up like the world trade")
+    (| "I love doing crack")
+    (| "You can call me a slut bitch I get paid")
+    (| "Suck you dry like a fucking leech")
+    (| "If I want to fuck a teacher? I will.")
+    (| "When you talk business it makes me wet")
+    (| "Whose pussy smells like rosebush?")
+    (| "I need 15k for a pair of new tits")
+    (| "I chew more meat than Burger King")
+    (| "Flip me around and come get some")
+    (|
+      '''
+      Pills are so sweet
+      I love all the things that are sweet
+      How many pills shall I eat
+      ''')
+    (| "pulling on the nipples and he gets you real wet")
+    (| "Let your white studded belt hit the ground")
+    (| "I'm wearing fur to the pussy colored strawberry blonde")
+    (| "We're barely legal teen queens who love a mouth full of cock")
+    (| "if the hole’s empty then fill it")
+    (| "Put addys in my slurpee")
+    (| "I'm a valley girl fuckdoll living in the trash")
+    (| "I wanna be synthetic")
+    (|
+      '''
+      Then his tongue starts movin' down to somewhere new
+      He pulls his dick out and before you can ask
+      He slides ten inches in your pretty little ass
+      ''')
+    (|
+      '''
+      I wanna get fucked with a beer bottle
+      Break it, watch me bleed out
+      ''')
+    (| "bloody's how I like it, with an extra side of hate")
+    (| "Never drink anything under 10 grand")
+    (| "Don't tell anybody about your flaws")
+    (| "you gotta be ready for tons of oral")
+    (|
+      '''
+      I'm a young, rich, skinny bitch
+      And that's what fucking matters
+      ''')
+    (|
+      '''
+      Chopping up in the Mercedes
+      Snort it straight off of the dash
+      ''')
+    (| "You get ignored cause you're poor")
+    (|
+      '''
+      He's thin, tall, pale and frail
+      He's got no money, fresh out of jail
+      ''')
+    (| "My pussy tastes like Apple Jacks")
+    (| "I'm the First Lady of Juicy Couture")
+    (| "Sorry can't take your call cause I'm catching kids")
+    (|
+      '''
+      I sleep with guys
+      Just for fun and drugs
+      ''')
+    (|
+      '''
+      Breakfast at Tiffany's, lunch we're heading to Sak's
+      Dinner will be Balenciaga, Chanel will be a snack
+      ''')
+    (|
+      '''
+      All I want for Christmas is
+      An 8 ball of blow and a pair of new tits
+      ''')
+    (|
+      '''
+      One skin, two skin, three skin, four
+      ''')
+    (|
+      '''
+      Gag reflex? Bitch, think again
+      ''')
+    (|
+      '''
+      he loves me but he fucks me like he hates my guts
+      ''')
+    (|
+      '''
+      Honk the horn with ya big old breasts
+      ''')
+    (|
+      '''
+      Who put my baby in the oven?
+      ''')
+    (|
+      '''
+      Don't like relaxin' so I don't smoke pot
+      ''')
+    (|
+      '''
+      They say sex doesn’t sell anymore, but how come it's still selling in hotel rooms I go to?
+      ''')))
+
+(:def main
+  ayesha)
