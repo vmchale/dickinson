@@ -45,7 +45,6 @@ import           Language.Dickinson.Rename
 import           Language.Dickinson.Rename.Amalgamate
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
-import           Prettyprinter                        (pretty)
 import           System.Random                        (StdGen, newStdGen, randoms)
 
 data AmalgamateSt = AmalgamateSt { amalgamateRenames    :: Renames
