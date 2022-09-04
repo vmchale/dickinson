@@ -166,5 +166,5 @@ man/emd.1: man/MANPAGE.md
 	pandoc $< -s -t man -o $@
 
 install: man/emd.1
-	@cabal install exe:emd --overwrite-policy=always -w ghc-9.2.3
+	@cabal install exe:emd --overwrite-policy=always -w ghc-9.4.2
 	cp man/emd.1 $(HOME)/.local/share/man/man1

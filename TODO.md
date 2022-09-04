@@ -143,6 +143,8 @@
   - [x] `:t` thing?
   - [ ] Completions!
   - [ ] linting within the REPL?
+- [ ] GUI
+  - [ ] https://github.com/fjvallarino/monomer
 # Tests
 - [ ] Renamer + pattern matching
 - [x] `examples/shakespeare.dck`
