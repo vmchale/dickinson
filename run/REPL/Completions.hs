@@ -14,8 +14,7 @@ namesStr :: StateT (EvalSt a) IO [String]
 namesStr = gets (fmap T.unpack . M.keys . topLevel)
 
 cyclicSimple :: [String] -> [Completion]
-cyclicSimple [] = []
-cyclicSimple xs = cycle $ fmap simpleCompletion xs
+cyclicSimple = fmap simpleCompletion
 
 emdCompletions :: CompletionFunc (StateT (EvalSt a) IO)
 emdCompletions (":","")       = pure (":", cyclicSimple [ "help", "h", "save", "load", "l", "r", "type", "t", "view", "quit", "q", "list" ])
