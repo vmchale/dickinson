@@ -1,9 +1,9 @@
 cabal-version:      2.0
 name:               language-dickinson
-version:            1.4.2.0
+version:            1.4.3.0
 license:            BSD3
 license-file:       LICENSE
-copyright:          Copyright: (c) 2020 Vanessa McHale
+copyright:          Copyright: (c) 2020, 2022 Vanessa McHale
 maintainer:         vamchale@gmail.com
 author:             Vanessa McHale
 tested-with:

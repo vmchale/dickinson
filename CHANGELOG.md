@@ -1,5 +1,9 @@
 # dickinson
 
+## 1.4.3.0
+
+  * REPL tab-completions no longer hang indefinitely
+
 ## 1.4.2.0
 
   * Export `pipelineBSLErr`
