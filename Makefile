@@ -28,15 +28,7 @@ DISTS := x86_64-linux-dist.tar.lz \
     aarch64-linux-dist.tar.lz \
     aarch64-linux-dist.tar.zst \
     aarch64-linux-dist.tar.bz2 \
-    aarch64-linux-dist.tar.gz \
-    sparc64-linux-dist.tar.lz \
-    sparc64-linux-dist.tar.zst \
-    sparc64-linux-dist.tar.bz2 \
-    sparc64-linux-dist.tar.gz \
-    powerpc64le-linux-dist.tar.lz \
-    powerpc64le-linux-dist.tar.zst \
-    powerpc64le-linux-dist.tar.bz2 \
-    powerpc64le-linux-dist.tar.gz
+    aarch64-linux-dist.tar.gz
 
 SRC_DISTS := language-dickinson-$(VERSION).tar.lz \
     language-dickinson-$(VERSION).tar.zst \
@@ -69,9 +61,7 @@ srcdists: $(SRC_DISTS)
 
 bins: bin/x86_64-linux-emd \
     bin/arm-linux-emd \
-    bin/aarch64-linux-emd \
-    bin/powerpc64le-linux-emd \
-    bin/sparc64-linux-emd
+    bin/aarch64-linux-emd
 
 x86_64-darwin-dist.tar: bin/x86_64-darwin-emd $(DCK_PRELUDE) $(DCK_LIB) $(DOCS) install.mk
 	bsdtar -c \
@@ -123,28 +113,28 @@ bin/x86_64-linux-emd: $(HS_SRC)
 
 bin/sparc64-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
-	@cabal build --with-ghc sparc64-linux-gnu-ghc --with-ghc-pkg sparc64-linux-gnu-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static --builddir=dist-newstyle/sparc64-linux
+	@cabal build --with-ghc sparc64-linux-gnu-ghc-9.2.2 --with-ghc-pkg sparc64-linux-gnu-ghc-pkg-9.2.2 --constraint='language-dickinson +cross' exe:emd --enable-executable-static --builddir=dist-newstyle/sparc64-linux
 	export BIN=$$(fd 'sparc-linux.*emd$$' dist-newstyle -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    sparc64-linux-gnu-strip $@
 
 bin/powerpc64le-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
-	@cabal build --with-ghc powerpc64le-linux-gnu-ghc --with-ghc-pkg powerpc64le-linux-gnu-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static --builddir=dist-newstyle/powerpc64le-linux
+	@cabal build --with-ghc powerpc64le-linux-gnu-ghc-9.2 --with-ghc-pkg powerpc64le-linux-gnu-ghc-pkg-9.2 --constraint='language-dickinson +cross' exe:emd --enable-executable-static --builddir=dist-newstyle/powerpc64le-linux
 	export BIN=$$(fd 'ppc64-linux.*emd$$' dist-newstyle -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    powerpc64le-linux-gnu-strip $@
 
 bin/aarch64-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
-	@cabal build --with-ghc aarch64-linux-gnu-ghc --with-ghc-pkg aarch64-linux-gnu-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static --builddir=dist-newstyle/aarch64-linux
+	@cabal build --with-ghc aarch64-linux-gnu-ghc-9.2 --with-ghc-pkg aarch64-linux-gnu-ghc-pkg-9.2 --constraint='language-dickinson +cross' exe:emd --enable-executable-static --builddir=dist-newstyle/aarch64-linux
 	export BIN=$$(fd 'aarch64-linux.*emd$$' dist-newstyle -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    aarch64-linux-gnu-strip $@
 
 bin/arm-linux-emd: $(HS_SRC)
 	@mkdir -p $(dir $@)
-	@cabal build --with-ghc arm-linux-gnueabihf-ghc --with-ghc-pkg arm-linux-gnueabihf-ghc-pkg --constraint='language-dickinson +cross' exe:emd --enable-executable-static --builddir=dist-newstyle/arm-linux
+	@cabal build --with-ghc arm-linux-gnueabihf-ghc-9.2 --with-ghc-pkg arm-linux-gnueabihf-ghc-pkg-9.2 --constraint='language-dickinson +cross' exe:emd --enable-executable-static --builddir=dist-newstyle/arm-linux
 	export BIN=$$(fd 'arm-linux.*emd$$' dist-newstyle -t x -p -I); \
 	    cp $$BIN $@ ; \
 	    arm-linux-gnueabihf-strip $@
