@@ -367,6 +367,7 @@
       (| "piano")
       (| "roke")
       (| "shebang")
+      (| "gonif")
       (| "sheet")
       (| "cornice")
       (| "chancroid")
