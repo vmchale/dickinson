@@ -18,9 +18,12 @@
         (:oneof
           (| "Yert")
           (| "Wam")
+          (| "Cass")
+          (| "Jetta")
           (| "Pommet")
           (| "Hodnar")
           (| "Po")
+          (| "Bik")
           (| "Jelk")
           (| "Boba")
           (| "Orchi")
