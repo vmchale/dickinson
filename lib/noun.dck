@@ -336,6 +336,7 @@
       (| "murmuration")
       (| "Lagrangian")
       (| "Hamiltonian")
+      (| "hamartia")
       (| "aneurysm")
       (| "gleet")
       (| "synagogue")
@@ -431,6 +432,8 @@
       (| "perihelion")
       (| "bleb")
       (| "quean")
+      (| "apophenia")
+      (| "tacenda") ; plural only
       (| "cabochon")
       (| "sortition")
       (| "stotting")
