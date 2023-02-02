@@ -1,0 +1,10 @@
+%-
+
+(:def axolotlsay
+  (:lambda txt text
+    '''
+            ${txt}
+            ----
+            /
+    ≽(◕ ᴗ ◕)≼
+    '''))
