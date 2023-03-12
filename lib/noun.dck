@@ -318,6 +318,7 @@
       (| "baculum")
       (| "skeuomorphism")
       (| "epitaph")
+      (| "fiacre")
       (| "tensor")
       (| "hypotaxis")
       (| "parataxis")
@@ -435,6 +436,7 @@
       (| "bleb")
       (| "quean")
       (| "apophenia")
+      (| "declivity")
       (| "tacenda") ; plural only
       (| "cabochon")
       (| "sortition")
