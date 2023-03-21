@@ -128,6 +128,7 @@ library dickinson
         DeriveAnyClass DeriveFunctor DeriveGeneric FlexibleContexts
         FlexibleInstances GeneralizedNewtypeDeriving OverloadedStrings
         StandaloneDeriving TupleSections DeriveDataTypeable
+        TransformListComp
 
     ghc-options:      -Wall -O2 -fstatic-argument-transformation
     build-depends:
