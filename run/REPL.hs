@@ -17,8 +17,6 @@ import           Data.Maybe                     (fromJust)
 import           Data.Semigroup                 ((<>))
 import qualified Data.Text                      as T
 import qualified Data.Text.IO                   as TIO
-import qualified Data.Text.Lazy                 as TL
-import           Data.Text.Lazy.Encoding        (encodeUtf8)
 import           Data.Text.Prettyprint.Doc.Ext  (prettyText)
 import           Data.Tuple.Ext                 (fst4)
 import           Language.Dickinson.Check.Scope
@@ -165,8 +163,8 @@ setSt newSt = lift $ do
     lexerStateLens._1 .= newM
     rename.maxLens .= newM
 
-strBytes :: String -> BSL.ByteString
-strBytes = encodeUtf8 . TL.pack
+strBytes :: String -> T.Text
+strBytes = T.pack
 
 typeExpr :: String -> Repl AlexPosn ()
 typeExpr str = do

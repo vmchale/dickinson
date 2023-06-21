@@ -28,9 +28,9 @@ import           Control.Monad.Except                 (ExceptT, MonadError, runE
 import           Control.Monad.IO.Class               (MonadIO)
 import           Control.Monad.State                  (MonadState, StateT, evalStateT)
 import           Data.Bifunctor                       (first)
-import qualified Data.ByteString.Lazy                 as BSL
 import           Data.Functor                         (($>))
 import           Data.Text                            as T
+import qualified Data.Text.IO                         as TIO
 import           Data.Text.Prettyprint.Doc.Ext        (prettyText)
 import           Language.Dickinson.Check
 import           Language.Dickinson.Check.Duplicate
@@ -79,7 +79,7 @@ amalgamateRenameM is = (balanceMax *>) . renameDeclarationsM <=< fileDecls is
 amalgamateRenameInpM :: (HasRenames s, HasLexerState s, MonadIO m, MonadError (DickinsonError AlexPosn) m, MonadState s m)
                      => [FilePath]
                      -> FilePath -- ^ For error reporting
-                     -> BSL.ByteString
+                     -> T.Text
                      -> m [Declaration AlexPosn]
 amalgamateRenameInpM is = (balanceMax *>) . renameDeclarationsM <=*< bslDecls is
 
@@ -90,7 +90,7 @@ amalgamateRename is fp = flip evalStateT initAmalgamateSt $ fmap eitherThrow $ r
 
 amalgamateRenameBSL :: [FilePath]
                     -> FilePath -- ^ For error reporting
-                    -> BSL.ByteString
+                    -> T.Text
                     -> IO [Declaration AlexPosn]
 amalgamateRenameBSL is fp bsl = flip evalStateT initAmalgamateSt $ fmap eitherThrow $ runExceptT $ amalgamateRenameInpM is fp bsl
 
@@ -105,7 +105,7 @@ validateFile = void .* validateAmalgamate
 -- | Check scoping and types
 --
 -- @since 1.4.1.0
-validateBSL :: [FilePath] -> FilePath -> BSL.ByteString -> IO ()
+validateBSL :: [FilePath] -> FilePath -> T.Text -> IO ()
 validateBSL = void .** validateAmalgamateBSL
 
 validateAmalgamate :: [FilePath] -> FilePath -> IO [Declaration AlexPosn]
@@ -114,19 +114,19 @@ validateAmalgamate is fp = do
     maybeThrowIO $ checkScope d
     eitherThrowIO (tyRun d) $> d
 
-validateAmalgamateBSL :: [FilePath] -> FilePath -> BSL.ByteString -> IO [Declaration AlexPosn]
+validateAmalgamateBSL :: [FilePath] -> FilePath -> T.Text -> IO [Declaration AlexPosn]
 validateAmalgamateBSL is fp bsl = do
     d <- amalgamateRenameBSL is fp bsl
     maybeThrowIO $ checkScope d
     eitherThrowIO (tyRun d) $> d
 
 warnFile :: FilePath -> IO ()
-warnFile = warnBSL <=< BSL.readFile
+warnFile = warnBSL <=< TIO.readFile
 
 -- | Run some lints
 --
 -- @since 1.4.2.0
-warnBSL :: BSL.ByteString -> IO ()
+warnBSL :: T.Text -> IO ()
 warnBSL = maybeThrowIO . (\x -> checkDuplicates x <|> checkMultiple x) . modDefs
     <=< eitherThrowIO . parse
 
@@ -144,7 +144,7 @@ patternExhaustivenessFile is = maybeThrowIO . checkExhaustive <=< amalgamateRena
 -- | @since 1.4.1.0
 patternExhaustivenessBSL :: [FilePath] -- ^ Includes
                          -> FilePath -- ^ Source file (for error reporting)
-                         -> BSL.ByteString
+                         -> T.Text
                          -> IO ()
 patternExhaustivenessBSL is = maybeThrowIO . checkExhaustive <=*< amalgamateRenameBSL is
 
@@ -164,7 +164,7 @@ pipeline is fp = fmap eitherThrow $ evalIO $
 -- | @since 1.4.2.0
 pipelineBSLErr :: [FilePath]
                -> FilePath -- ^ For error reporting
-               -> BSL.ByteString
+               -> T.Text
                -> IO (Either T.Text T.Text)
 pipelineBSLErr is fp bsl = fmap (first prettyText) $ evalIO $
     checkEvalM =<< amalgamateRenameInpM is fp bsl
@@ -172,7 +172,7 @@ pipelineBSLErr is fp bsl = fmap (first prettyText) $ evalIO $
 -- | @since 1.4.1.0
 pipelineBSL :: [FilePath]
             -> FilePath -- ^ For error reporting
-            -> BSL.ByteString
+            -> T.Text
             -> IO T.Text
 pipelineBSL is fp bsl = fmap eitherThrow $ evalIO $
     checkEvalM =<< amalgamateRenameInpM is fp bsl

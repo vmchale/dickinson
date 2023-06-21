@@ -10,9 +10,9 @@ import           Control.Monad                    ((<=<))
 import           Control.Monad.Except             (MonadError)
 import           Control.Monad.IO.Class           (MonadIO)
 import           Control.Monad.State              (MonadState)
-import qualified Data.ByteString.Lazy             as BSL
 import           Data.Functor                     (($>))
 import           Data.Semigroup                   ((<>))
+import qualified Data.Text                        as T
 import           Language.Dickinson.Check.Pattern
 import           Language.Dickinson.Error
 import           Language.Dickinson.Lexer
@@ -46,6 +46,6 @@ fileDecls is = amalgamateM is <=< parseFpM
 bslDecls :: (HasLexerState s, MonadIO m, MonadError (DickinsonError AlexPosn) m, MonadState s m)
           => [FilePath] -- ^ Includes
           -> FilePath -- ^ Source file (for reporting errors)
-          -> BSL.ByteString
+          -> T.Text
           -> m [Declaration AlexPosn]
 bslDecls is = amalgamateM is <=*< parseBSLM

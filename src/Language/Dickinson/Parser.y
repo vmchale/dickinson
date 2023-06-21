@@ -233,31 +233,31 @@ instance (Pretty a, Typeable a) => Exception (ParseError a)
 
 type Parse = ExceptT (ParseError AlexPosn) Alex
 
-parse :: BSL.ByteString -> Either (ParseError AlexPosn) (Dickinson AlexPosn)
+parse :: T.Text -> Either (ParseError AlexPosn) (Dickinson AlexPosn)
 parse = fmap snd . parseWithMax
 
-parseReplWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Either (Declaration AlexPosn) (Expression AlexPosn))
+parseReplWithCtx :: T.Text -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Either (Declaration AlexPosn) (Expression AlexPosn))
 parseReplWithCtx = parseWithInitSt parseRepl
 
-parseExpressionWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Expression AlexPosn)
+parseExpressionWithCtx :: T.Text -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Expression AlexPosn)
 parseExpressionWithCtx = parseWithInitSt parseExpression
 
-parseWithInitCtx :: BSL.ByteString -> Either (ParseError AlexPosn) (AlexUserState, Dickinson AlexPosn)
+parseWithInitCtx :: T.Text -> Either (ParseError AlexPosn) (AlexUserState, Dickinson AlexPosn)
 parseWithInitCtx bsl = parseWithCtx bsl alexInitUserState
 
-parseWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Dickinson AlexPosn)
+parseWithCtx :: T.Text -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Dickinson AlexPosn)
 parseWithCtx = parseWithInitSt parseDickinson
 
-parseWithMax :: BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, Dickinson AlexPosn)
+parseWithMax :: T.Text -> Either (ParseError AlexPosn) (UniqueCtx, Dickinson AlexPosn)
 parseWithMax = parseWrapper parseDickinson
 
-parseWithInitSt :: Parse a -> BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, a)
+parseWithInitSt :: Parse a -> T.Text -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, a)
 parseWithInitSt parser str st = liftErr $ withAlexSt str st (runExceptT parser)
     where liftErr (Left err)            = Left (LexErr err)
           liftErr (Right (_, Left err)) = Left err
           liftErr (Right (i, Right x))  = Right (i, x)
 
-parseWrapper :: Parse a -> BSL.ByteString -> Either (ParseError AlexPosn) (UniqueCtx, a)
+parseWrapper :: Parse a -> T.Text -> Either (ParseError AlexPosn) (UniqueCtx, a)
 parseWrapper parser str = fmap (first fst4) $ liftErr $ runAlexSt str (runExceptT parser)
 
 liftErr :: Either String (b, Either (ParseError a) c) -> Either (ParseError a) (b, c)
