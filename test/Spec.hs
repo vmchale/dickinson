@@ -3,10 +3,10 @@
 module Main (main) where
 
 import           Control.Exception.Value            (eitherThrow)
+import qualified Data.ByteString.Lazy               as BSL
 import           Data.Either                        (isRight)
 import           Data.List.NonEmpty                 (NonEmpty (..))
 import           Data.Maybe                         (isJust)
-import qualified Data.Text.IO                       as TIO
 import           Eval
 import           Golden
 import           Language.Dickinson.Check.Duplicate
@@ -18,9 +18,9 @@ import           Language.Dickinson.Name
 import           Language.Dickinson.Parser
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
+import           TH
 import           Test.Tasty
 import           Test.Tasty.HUnit
-import           TH
 import           TypeCheck
 
 main :: IO ()
@@ -57,7 +57,7 @@ findPath = testCase "Finds import at correct path" $ do
     res @?= Just "lib/color.dck"
 
 readNoFail :: FilePath -> IO (Dickinson AlexPosn)
-readNoFail = fmap (eitherThrow . parse) . TIO.readFile
+readNoFail = fmap (eitherThrow . parse) . BSL.readFile
 
 detectBadBranch :: FilePath -> TestTree
 detectBadBranch fp = testCase "Detects suspicious branch" $ do
@@ -66,7 +66,7 @@ detectBadBranch fp = testCase "Detects suspicious branch" $ do
 
 parseNoError :: FilePath -> TestTree
 parseNoError fp = testCase ("Parsing doesn't fail (" ++ fp ++ ")") $ do
-    contents <- TIO.readFile fp
+    contents <- BSL.readFile fp
     assertBool "Doesn't fail parsing" $ isRight (parse contents)
 
 -- sanity check the renamer

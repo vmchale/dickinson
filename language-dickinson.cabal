@@ -8,7 +8,7 @@ maintainer:         vamchale@gmail.com
 author:             Vanessa McHale
 tested-with:
     ghc ==8.0.2 ghc ==8.2.2 ghc ==8.4.4 ghc ==8.6.5 ghc ==8.8.4
-    ghc ==8.10.7 ghc ==9.0.2 ghc ==9.2.7 ghc ==9.4.5 ghc ==9.6.2
+    ghc ==8.10.7 ghc ==9.0.2 ghc ==9.2.2
 
 synopsis:           A language for generative literature
 description:        Dickinson is a language for generative (random) literature
@@ -151,7 +151,7 @@ library dickinson
         split
 
     if !flag(cross)
-        build-tool-depends: alex:alex >=3.4.0.0, happy:happy
+        build-tool-depends: alex:alex, happy:happy
 
     if !impl(ghc >=8.0)
         build-depends: semigroups

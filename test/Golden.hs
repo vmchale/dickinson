@@ -4,7 +4,6 @@ module Golden ( goldenTests
 import           Control.Exception.Value       (eitherThrow)
 import qualified Data.ByteString.Lazy          as BSL
 import           Data.Functor                  (void)
-import qualified Data.Text.IO                  as TIO
 import           Data.Text.Lazy.Encoding       (encodeUtf8)
 import           Data.Text.Prettyprint.Doc.Ext
 import           Language.Dickinson.Parser
@@ -55,10 +54,10 @@ withDckFile :: FilePath -> TestTree
 withDckFile fp =
     goldenVsString ("Matches golden output " ++ fp) (fp -<.> "pretty") act
 
-    where act = prettyBSL . eitherThrow . parse <$> TIO.readFile fp
+    where act = prettyBSL . eitherThrow . parse <$> BSL.readFile fp
 
 renameDckFile :: FilePath -> TestTree
 renameDckFile fp =
     goldenVsString ("Matches golden output " ++ fp) (fp -<.> "rename") act
 
-    where act = debugBSL . void . fst . uncurry renameDickinson . eitherThrow . parseWithMax <$> TIO.readFile fp
+    where act = debugBSL . void . fst . uncurry renameDickinson . eitherThrow . parseWithMax <$> BSL.readFile fp

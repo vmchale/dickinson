@@ -37,7 +37,7 @@ import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
-import           Lens.Micro                     (Lens', _1, over, set)
+import           Lens.Micro                     (Lens', over, set, _1)
 import           Lens.Micro.Mtl                 (modifying, use, (.=))
 import           Prettyprinter                  (Doc, Pretty (..), vsep, (<+>))
 

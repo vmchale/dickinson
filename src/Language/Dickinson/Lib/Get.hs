@@ -9,9 +9,8 @@ import           Control.Composition       ((.*))
 import           Control.Monad.Except      (MonadError, throwError)
 import           Control.Monad.IO.Class    (MonadIO (..))
 import           Control.Monad.State       (MonadState)
+import qualified Data.ByteString.Lazy      as BSL
 import           Data.Functor              (($>))
-import qualified Data.Text                 as T
-import qualified Data.Text.IO              as TIO
 import           Language.Dickinson.Error
 import           Language.Dickinson.Import
 import           Language.Dickinson.Lexer
@@ -47,7 +46,7 @@ parseImport is (Import l n) lSt = do
 
 parseBSL :: (MonadError (DickinsonError AlexPosn) m)
          => FilePath
-         -> T.Text
+         -> BSL.ByteString
          -> AlexUserState
          -> m (AlexUserState, Dickinson AlexPosn)
 parseBSL fp bsl lSt =
@@ -60,7 +59,7 @@ parseFp :: (MonadError (DickinsonError AlexPosn) m, MonadIO m)
         -> AlexUserState -- ^ Lexer state
         -> m (AlexUserState, Dickinson AlexPosn)
 parseFp fp lSt = do
-    bsl <- liftIO $ TIO.readFile fp
+    bsl <- liftIO $ BSL.readFile fp
     parseBSL fp bsl lSt
 
 parseFpM :: (HasLexerState s, MonadState s m, MonadError (DickinsonError AlexPosn) m, MonadIO m)
@@ -70,6 +69,6 @@ parseFpM fp = liftLexerState (parseFp fp)
 
 parseBSLM :: (HasLexerState s, MonadState s m, MonadError (DickinsonError AlexPosn) m)
         => FilePath -- ^ Source file name (for error reporting)
-        -> T.Text
+        -> BSL.ByteString
         -> m (Dickinson AlexPosn)
 parseBSLM fp bsl = liftLexerState (parseBSL fp bsl)

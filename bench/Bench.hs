@@ -7,7 +7,6 @@ import           Criterion.Main
 import           Data.Binary                         (decode, encode)
 import qualified Data.ByteString.Lazy                as BSL
 import qualified Data.Text                           as T
-import qualified Data.Text.IO                        as TIO
 import           Language.Dickinson.Check
 import           Language.Dickinson.Check.Duplicate
 import           Language.Dickinson.Check.Exhaustive
@@ -98,12 +97,12 @@ main =
                     [ bench "bench/data/multiple.dck" $ nf maxUniqueDickinson p ]
                 ]
 
-    where libFile = TIO.readFile "lib/color.dck"
-          shakespeare = TIO.readFile "examples/shakespeare.dck"
+    where libFile = BSL.readFile "lib/color.dck"
+          shakespeare = BSL.readFile "examples/shakespeare.dck"
           parses = (,) <$> libFile <*> shakespeare
-          libParsed = either throw id . parseWithMax <$> TIO.readFile "bench/data/nestLet.dck"
-          multiParsed = either throw id . parse <$> TIO.readFile "bench/data/multiple.dck"
-          libText = either throw id . parse <$> TIO.readFile "lib/adjectives.dck"
+          libParsed = either throw id . parseWithMax <$> BSL.readFile "bench/data/nestLet.dck"
+          multiParsed = either throw id . parse <$> BSL.readFile "bench/data/multiple.dck"
+          libText = either throw id . parse <$> BSL.readFile "lib/adjectives.dck"
           encoded = encode . void <$> multiParsed
           encodeShakespeare = encode . void . either throw id . parse <$> shakespeare
           encodeEnv = (,) <$> encoded <*> encodeShakespeare
@@ -118,7 +117,7 @@ main =
           checkEnv = (,)
             <$> multiParsed
             <*> libText
-          patternEnv = either throw id . parse <$> TIO.readFile "test/examples/declension.dck"
+          patternEnv = either throw id . parse <$> BSL.readFile "test/examples/declension.dck"
 
 plainExpr :: (UniqueCtx, Dickinson a) -> Dickinson a
 plainExpr = fst . uncurry renameDickinson
