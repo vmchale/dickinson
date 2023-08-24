@@ -4,7 +4,6 @@
 {-# LANGUAGE TupleSections     #-}
 
 module Language.Dickinson.Rename ( renameDickinson
-                                 , renameDickinsonM
                                  , renameDeclarationsM
                                  , renameDeclarationM
                                  , renameExpressionM
