@@ -25,4 +25,4 @@ resolveImport incl n = liftIO
     . fmap (</> getFileName n) $ incl
 
 getFileName :: Name a -> FilePath
-getFileName = (<> ".dck") . foldr (</>) mempty . fmap T.unpack . name
+getFileName = (<> ".dck") . foldr (((</>)) . T.unpack) mempty . name
