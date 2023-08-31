@@ -529,5 +529,6 @@
       (| "zesty")
       (| "pithy")
       (| "diaphanous")
+      (| "nugatory")
       (| "orotund")
       (| "stentorian"))))
