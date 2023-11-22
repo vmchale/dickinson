@@ -36,8 +36,8 @@ SRC_DISTS := language-dickinson-$(VERSION).tar.lz \
     language-dickinson-$(VERSION).tar.bz2
 
 check:
-	emd lint $(DCK_LIB) $(DCK_PRELUDE)
-	emd check $(DCK_LIB) $(DCK_PRELUDE)
+	cabal run emd -- lint $(DCK_LIB) $(DCK_PRELUDE)
+	cabal run emd -- check $(DCK_LIB) $(DCK_PRELUDE)
 
 release: $(DISTS) $(SRC_DISTS)
 	github-release release $(GR_OPTIONS)
@@ -156,5 +156,5 @@ man/emd.1: man/MANPAGE.md
 	pandoc $< -s -t man -o $@
 
 install: man/emd.1
-	@cabal install exe:emd --overwrite-policy=always -w ghc-9.4
+	@cabal install exe:emd --overwrite-policy=always -w ghc-9.6
 	cp man/emd.1 $(HOME)/.local/share/man/man1

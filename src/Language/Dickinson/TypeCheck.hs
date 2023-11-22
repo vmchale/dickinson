@@ -128,7 +128,7 @@ typeOf (Match _ e brs@((_,e') :| _)) = do
     forM_ (fst <$> brs) $ \p ->
         {-# SCC "bindPattern" #-} bindPattern p ty
     res <- typeOf e'
-    traverse_ (tyAssert res) (snd <$> brs)
+    traverse_ (tyAssert res.snd) brs
     pure res
 typeOf (Flatten _ e) = typeOf e
 typeOf (Annot _ e ty) =
@@ -148,7 +148,7 @@ tyLet :: (HasTyEnv s, MonadState (s a) m, MonadError (DickinsonError a) m)
       -> Expression a
       -> m (DickinsonTy a)
 tyLet bs e = do
-    es' <- traverse typeOf (snd <$> bs)
+    es' <- traverse (typeOf.snd) bs
     let ns = fst <$> bs
     Ext.zipWithM_ tyInsert ns es'
     typeOf e

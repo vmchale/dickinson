@@ -37,7 +37,7 @@ import           Language.Dickinson.Rename
 import           Language.Dickinson.Type
 import           Language.Dickinson.TypeCheck
 import           Language.Dickinson.Unique
-import           Lens.Micro                     (Lens', over, set, _1)
+import           Lens.Micro                     (Lens', _1, over, set)
 import           Lens.Micro.Mtl                 (modifying, use, (.=))
 import           Prettyprinter                  (Doc, Pretty (..), vsep, (<+>))
 
@@ -217,7 +217,7 @@ tryEvalExpressionM (Concat l es)      = Concat l <$> traverse tryEvalExpressionM
 tryEvalExpressionM c@Constructor{}    = pure c
 tryEvalExpressionM (Bind _ bs e)       = do
     let ns = fst <$> bs
-    newBs <- traverse tryEvalExpressionM (snd <$> bs)
+    newBs <- traverse (tryEvalExpressionM.snd) bs
     let stMod = thread $ fmap (uncurry nameMod) (NE.zip ns newBs)
     withSt stMod $
         tryEvalExpressionM e
@@ -252,7 +252,7 @@ evalExpressionM (Let _ bs e) = do
         evalExpressionM e
 evalExpressionM (Bind _ bs e) = do
     let ns = fst <$> bs
-    newBs <- traverse evalExpressionM (snd <$> bs)
+    newBs <- traverse (evalExpressionM.snd) bs
     let stMod = thread $ fmap (uncurry nameMod) (NE.zip ns newBs)
     withSt stMod $
         evalExpressionM e
@@ -343,7 +343,7 @@ resolveFlattenM e@BuiltinFn{}   = pure e
 resolveFlattenM (Var _ n)       = resolveFlattenM =<< lookupName n
 resolveFlattenM (Choice l pes) = do
     let ps = fst <$> pes -- TODO: do these need to be renamed
-    es <- traverse resolveFlattenM (snd <$> pes)
+    es <- traverse (resolveFlattenM.snd) pes
     pure $ Choice l (NE.zip ps es)
 resolveFlattenM (Interp l es)      = Interp l <$> traverse resolveFlattenM es
 resolveFlattenM (MultiInterp l es) = MultiInterp l <$> traverse resolveFlattenM es
@@ -351,7 +351,7 @@ resolveFlattenM (Concat l es)      = Concat l <$> traverse resolveFlattenM es
 resolveFlattenM (Tuple l es)       = Tuple l <$> traverse resolveFlattenM es
 resolveFlattenM (Bind _ bs e)       = do
     let ns = fst <$> bs
-    newBs <- traverse resolveFlattenM (snd <$> bs)
+    newBs <- traverse (resolveFlattenM.snd) bs
     let stMod = thread $ fmap (uncurry nameMod) (NE.zip ns newBs)
     withSt stMod $
         resolveFlattenM e
@@ -393,7 +393,7 @@ resolveExpressionM e@Constructor{} = pure e
 resolveExpressionM v@(Var _ n)     = maybe (pure v) resolveExpressionM =<< tryLookupName n
 resolveExpressionM (Choice l pes) = do
     let ps = fst <$> pes
-    es <- traverse resolveExpressionM (snd <$> pes)
+    es <- traverse (resolveExpressionM.snd) pes
     pure $ Choice l (NE.zip ps es)
 resolveExpressionM (Interp l es) = Interp l <$> traverse resolveExpressionM es
 resolveExpressionM (MultiInterp l es) = MultiInterp l <$> traverse resolveExpressionM es
@@ -401,7 +401,7 @@ resolveExpressionM (Concat l es) = Concat l <$> traverse resolveExpressionM es
 resolveExpressionM (Tuple l es) = Tuple l <$> traverse resolveExpressionM es
 resolveExpressionM (Bind _ bs e) = do
     let ns = fst <$> bs
-    newBs <- traverse resolveExpressionM (snd <$> bs)
+    newBs <- traverse (resolveExpressionM.snd) bs
     let stMod = thread $ fmap (uncurry nameMod) (NE.zip ns newBs)
     withSt stMod $
         resolveExpressionM e

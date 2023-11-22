@@ -4,7 +4,6 @@
 {-# LANGUAGE TupleSections     #-}
 
 module Language.Dickinson.Rename ( renameDickinson
-                                 , renameDickinsonM
                                  , renameDeclarationsM
                                  , renameDeclarationM
                                  , renameExpressionM
@@ -182,7 +181,7 @@ renameLet :: (MonadState s m, HasRenames s)
           -> Expression a
           -> m (Expression a)
 renameLet constructor p bs e = do
-    newBs <- traverse withName (fst <$> bs)
+    newBs <- traverse (withName.fst) bs
     let localRenames = snd <$> newBs
         newBinds = thread localRenames
         newNames = fst <$> newBs

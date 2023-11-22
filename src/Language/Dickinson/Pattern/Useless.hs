@@ -148,7 +148,7 @@ usefulMaranget env ps (q:qs)                  = -- var or wildcard
     case cont of
         NotComplete     -> usefulMaranget env (defaultMatrix ps) qs
         CompleteTuple n -> usefulMaranget env (specializeTuple n ps) (specializeTupleVector n q qs)
-        CompleteTags ns -> or $ fmap (\n -> usefulMaranget env (specializeTag n (forget ps)) (fmap void qs)) ns
+        CompleteTags ns -> any (\n -> usefulMaranget env (specializeTag n (forget ps)) (fmap void qs)) ns
 
 specializeTupleVector :: Int -> Pattern a -> [Pattern a] -> [Pattern a]
 specializeTupleVector n p ps = {-# SCC "specializeTupleVector" #-} replicate n p ++ ps

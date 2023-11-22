@@ -1,21 +1,21 @@
+{-# LANGUAGE TransformListComp #-}
+
 module Language.Dickinson.Check.Duplicate ( checkDuplicates
                                           ) where
 
 import           Control.Applicative      ((<|>))
 import           Data.Foldable            (toList)
 import           Data.Foldable.Ext        (foldMapAlternative)
-import           Data.Function            (on)
-import           Data.List                (groupBy, sortBy)
 import           Data.Maybe               (mapMaybe)
 import qualified Data.Text                as T
+import           GHC.Exts                 (groupWith, sortWith)
 import           Language.Dickinson.Error
 import           Language.Dickinson.Type
 
 -- TODO: duplicate check better? hm
--- FIXME: HashSet or whatever?
 
 checkNames :: [(a, T.Text)] -> Maybe (DickinsonWarning a)
-checkNames ns = foldMapAlternative announce (groupBy ((==) `on` snd) $ sortBy (compare `on` snd) ns)
+checkNames ns = foldMapAlternative announce [ zip l x | (l, x) <- ns, then sortWith by x, then group by x using groupWith ]
     where announce (_:(l, y):_) = Just $ DuplicateStr l y
           announce _            = Nothing
 
