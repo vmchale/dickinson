@@ -181,10 +181,7 @@ renameLet :: (MonadState s m, HasRenames s)
           -> Expression a
           -> m (Expression a)
 renameLet constructor p bs e = do
-    newBs <- traverse (withName.fst) bs
-    let (newNames, localRenames) = NE.unzip newBs
-        newBinds = thread localRenames
-    newBound <-
-        traverse (renameExpressionM.snd) bs
-    withRenames newBinds $
+    (newNames, localRenames) <- NE.unzip <$> traverse (withName.fst) bs
+    newBound <- traverse (renameExpressionM.snd) bs
+    withRenames (thread localRenames) $
         constructor p (NE.zip newNames newBound) <$> renameExpressionM e
