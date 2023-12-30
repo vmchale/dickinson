@@ -167,7 +167,7 @@ pushScd st =
 
 exitInterp :: Alex ()
 exitInterp = do
-    (_,iSt:_,_,_) <- get_ust
+    (_,iSt:_,_,_) <- alexGetUserState
     case iSt of
         InStr -> set_scd string
         InMultiStr -> set_scd multiStr
@@ -186,9 +186,6 @@ mod_ust f = Alex (Right . (go &&& (const ())))
 
 gets_alex :: (AlexState -> a) -> Alex a
 gets_alex f = Alex (Right . (id &&& f))
-
-get_ust :: Alex AlexUserState
-get_ust = gets_alex alex_ust
 
 get_pos :: Alex AlexPosn
 get_pos = gets_alex alex_pos
@@ -218,9 +215,9 @@ class HasLexerState a where
 
 newIdentAlex :: AlexPosn -> T.Text -> Alex (Name AlexPosn)
 newIdentAlex pos t = do
-    st <- get_ust
+    st <- alexGetUserState
     let (st', n) = newIdent pos t st
-    set_ust st' $> (n $> pos)
+    alexSetUserState st' $> (n $> pos)
 
 newIdent :: AlexPosn -> T.Text -> AlexUserState -> (AlexUserState, Name AlexPosn)
 newIdent pos t pre@(max', scd, names, uniqs) = {-# SCC "newIdent" #-}
