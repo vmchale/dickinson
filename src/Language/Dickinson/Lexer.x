@@ -176,10 +176,6 @@ set_scd :: Int -> Alex ()
 set_scd st = Alex (Right . (go &&& (const ())))
     where go s = s { alex_scd = st }
 
-set_ust :: AlexUserState -> Alex ()
-set_ust st = Alex (Right . (go &&& (const ())))
-    where go s = s { alex_ust = st }
-
 mod_ust :: (AlexUserState -> AlexUserState) -> Alex ()
 mod_ust f = Alex (Right . (go &&& (const ())))
     where go s = s { alex_ust = f (alex_ust s) }
