@@ -4,6 +4,7 @@
   (:oneof
     (| "professor")
     (| "psychiatrist")
+    (| "equerry")
     (| "physician")
     (| "poet")
     (| "psychologist")
