@@ -1,3 +1,1 @@
-augroup dickinson
-    autocmd BufNewFile,BufRead *.dck set filetype=dickinson
-augroup END
+au BufNewFile,BufRead *.dck set filetype=dickinson
