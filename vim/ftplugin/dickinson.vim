@@ -4,5 +4,5 @@ set smarttab
 
 setl shiftwidth=2
 
-" use emd as a checker
-let g:syntastic_dickinson_checkers = [ 'emd' ]
+set makeprg=emd\ ide\ %
+set errorformat=emd:\ %l:%c:\ %m
