@@ -92,6 +92,8 @@ To configure exuberant ctags or universal ctags, put
     --langmap=DICKINSON:.dck
     --regex-DICKINSON=/:def *([[:lower:]][[:alnum:]]+)/\1/f,function/
     --regex-DICKINSON=/tydecl *([[:lower:]][[:alnum:]]+) *=/\1/t,type/
+    --regex-DICKINSON=/= *([[:upper:]][[:alnum:]_]+)/\1/t,type/
+    --regex-DICKINSON=/\| *([[:upper:]][[:alnum:]_]+)/\1/t,type/
 
 in the project .ctags
 
