@@ -68,7 +68,7 @@ A vim plugin is available; see
 .PP
 https://github.com/vmchale/dickinson/tree/master/vim
 .SS CTAGS
-To configure exuberant ctags or universal ctags, put
+To configure universal ctags, put
 .IP
 .EX
 \-\-langdef=DICKINSON
@@ -76,10 +76,10 @@ To configure exuberant ctags or universal ctags, put
 \-\-regex\-DICKINSON=/:def *([[:lower:]][[:alnum:]]+)/\[rs]1/f,function/
 \-\-regex\-DICKINSON=/tydecl *([[:lower:]][[:alnum:]]+) *=/\[rs]1/t,type/
 \-\-regex\-DICKINSON=/= *([[:upper:]][[:alnum:]_]+)/\[rs]1/t,type/
-\-\-regex\-DICKINSON=/\[rs]| *([[:upper:]][[:alnum:]_]+)/\[rs]1/t,type/
+\-\-regex\-DICKINSON=/\[ha][\[ha]\[rs][]*\[rs]| *([[:upper:]][[:alnum:]_]+)/\[rs]1/t,type/
 .EE
 .PP
-in the project .ctags
+in \[ti]/.ctags.d/dickinson.ctags
 .SH SHELL COMPLETIONS
 To get shell completions in your current session:
 .IP

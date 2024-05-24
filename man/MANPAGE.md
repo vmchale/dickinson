@@ -86,16 +86,16 @@ https://github.com/vmchale/dickinson/tree/master/vim
 
 ## CTAGS
 
-To configure exuberant ctags or universal ctags, put
+To configure universal ctags, put
 
     --langdef=DICKINSON
     --langmap=DICKINSON:.dck
     --regex-DICKINSON=/:def *([[:lower:]][[:alnum:]]+)/\1/f,function/
     --regex-DICKINSON=/tydecl *([[:lower:]][[:alnum:]]+) *=/\1/t,type/
     --regex-DICKINSON=/= *([[:upper:]][[:alnum:]_]+)/\1/t,type/
-    --regex-DICKINSON=/\| *([[:upper:]][[:alnum:]_]+)/\1/t,type/
+    --regex-DICKINSON=/^[^\[]*\| *([[:upper:]][[:alnum:]_]+)/\1/t,type/
 
-in the project .ctags
+in ~/.ctags.d/dickinson.ctags
 
 # SHELL COMPLETIONS
 
