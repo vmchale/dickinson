@@ -6,6 +6,7 @@ setl shiftwidth=2
 
 set makeprg=emd\ ide\ %
 set errorformat=%Eemd:\ %l:%c\ %m
+set errorformat+=%Eemd:\ %m\ %trror\ at\ line\ %l\\,\ column\ %c
 
 fun! DickinsonCheck()
     exec 'silent make'
