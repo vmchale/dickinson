@@ -21,6 +21,7 @@ import           Control.Monad                 (forM, (<=<))
 import           Control.Monad.State           (MonadState, State, runState)
 import           Data.Bifunctor                (second)
 import           Data.Binary                   (Binary)
+import qualified Data.Functor                  as Fun
 import qualified Data.IntMap                   as IM
 import qualified Data.List.NonEmpty            as NE
 import           Data.Text.Prettyprint.Doc.Ext
@@ -181,7 +182,7 @@ renameLet :: (MonadState s m, HasRenames s)
           -> Expression a
           -> m (Expression a)
 renameLet constructor p bs e = do
-    (newNames, localRenames) <- NE.unzip <$> traverse (withName.fst) bs
+    (newNames, localRenames) <- Fun.unzip <$> traverse (withName.fst) bs
     newBound <- traverse (renameExpressionM.snd) bs
     withRenames (thread localRenames) $
         constructor p (NE.zip newNames newBound) <$> renameExpressionM e
