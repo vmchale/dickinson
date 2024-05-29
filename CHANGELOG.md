@@ -1,5 +1,9 @@
 # dickinson
 
+## 1.4.3.1
+
+  * `base` catch-up
+
 ## 1.4.3.0
 
   * REPL tab-completions no longer hang indefinitely
