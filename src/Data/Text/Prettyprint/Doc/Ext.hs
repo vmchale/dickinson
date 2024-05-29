@@ -19,7 +19,6 @@ module Data.Text.Prettyprint.Doc.Ext ( prettyText
 
 import qualified Data.IntMap               as IM
 import           Data.List                 (intersperse)
-import           Data.Semigroup            ((<>))
 import qualified Data.Text                 as T
 import qualified Data.Text.Lazy            as TL
 import           Prettyprinter             (Doc, LayoutOptions (LayoutOptions), PageWidth (AvailablePerLine), Pretty (pretty), SimpleDocStream, concatWith,

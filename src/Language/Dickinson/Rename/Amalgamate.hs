@@ -12,7 +12,6 @@ import           Control.Monad.IO.Class           (MonadIO)
 import           Control.Monad.State              (MonadState)
 import qualified Data.ByteString.Lazy             as BSL
 import           Data.Functor                     (($>))
-import           Data.Semigroup                   ((<>))
 import           Language.Dickinson.Check.Pattern
 import           Language.Dickinson.Error
 import           Language.Dickinson.Lexer

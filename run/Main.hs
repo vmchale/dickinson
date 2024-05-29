@@ -1,7 +1,6 @@
 module Main (main) where
 
 import           Data.Foldable            (traverse_)
-import           Data.Semigroup
 import qualified Data.Text.IO             as TIO
 import           Format
 import           Language.Dickinson       (dickinsonVersionString)

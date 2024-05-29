@@ -33,7 +33,6 @@ import Data.Functor (($>))
 import qualified Data.IntMap as IM
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Map as M
-import Data.Semigroup ((<>))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Prettyprinter (Pretty (pretty), pipe, lparen, rparen, rbrace, rbracket, lbracket, colon, squotes, dquotes, dquote, rangle, comma, (<+>))

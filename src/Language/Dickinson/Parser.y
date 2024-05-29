@@ -22,7 +22,6 @@ import Data.Foldable (toList)
 import qualified Data.List.NonEmpty as NE
 import Data.List.NonEmpty (NonEmpty ((:|)), (<|))
 import Data.Maybe (mapMaybe)
-import Data.Semigroup ((<>))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Prettyprinter (Pretty (pretty), (<+>))

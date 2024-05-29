@@ -20,7 +20,6 @@ import           Data.Data                     (Data)
 import           Data.Foldable                 (toList)
 import           Data.List.NonEmpty            (NonEmpty (..))
 import qualified Data.List.NonEmpty            as NE
-import           Data.Semigroup                ((<>))
 import qualified Data.Text                     as T
 import           Data.Text.Prettyprint.Doc.Ext (Debug (..), hardSep, (<#*>), (<#>), (<^>))
 import           GHC.Generics                  (Generic)

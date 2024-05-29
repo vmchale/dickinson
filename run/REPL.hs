@@ -14,7 +14,6 @@ import qualified Data.IntMap                    as IM
 import qualified Data.IntSet                    as IS
 import qualified Data.Map                       as M
 import           Data.Maybe                     (fromJust)
-import           Data.Semigroup                 ((<>))
 import qualified Data.Text                      as T
 import qualified Data.Text.IO                   as TIO
 import qualified Data.Text.Lazy                 as TL

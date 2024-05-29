@@ -10,7 +10,6 @@ module Language.Dickinson.Error ( DickinsonError (..)
 import           Control.DeepSeq           (NFData)
 import           Control.Exception         (Exception)
 import           Control.Monad.Except      (MonadError, throwError)
-import           Data.Semigroup            ((<>))
 import qualified Data.Text                 as T
 import           Data.Typeable             (Typeable)
 import           GHC.Generics              (Generic)
