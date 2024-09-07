@@ -5,7 +5,6 @@
     {-# LANGUAGE OverloadedStrings #-}
     {-# LANGUAGE StandaloneDeriving #-}
     module Language.Dickinson.Lexer ( alexMonadScan
-                                    , runAlex
                                     , runAlexSt
                                     , withAlexSt
                                     , lexDickinson
