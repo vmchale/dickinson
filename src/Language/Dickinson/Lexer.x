@@ -223,7 +223,7 @@ newIdent pos t pre@(max', scd, names, uniqs) = {-# SCC "newIdent" #-}
     where tQual = NE.fromList (T.splitOn "." t)
 
 scdInitState :: [ScdState]
-scdInitState = mempty
+scdInitState = []
 
 alexInitUserState :: AlexUserState
 alexInitUserState = (0, scdInitState, mempty, mempty)
