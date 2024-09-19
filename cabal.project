@@ -2,6 +2,6 @@ packages: ./
 
 program-options
   alex-options: -g
-  happy-options: -gcsa
+  happy-options: -cs
 
 haddock-internal: true
