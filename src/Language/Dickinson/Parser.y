@@ -24,7 +24,7 @@ import Data.List.NonEmpty (NonEmpty ((:|)), (<|))
 import Data.Maybe (mapMaybe)
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
-import Prettyprinter (Pretty (pretty), (<+>))
+import Prettyprinter (Pretty (pretty), (<+>), concatWith, squotes)
 import Data.Tuple.Ext (fst4)
 import Data.Typeable (Typeable)
 import GHC.Generics (Generic)
@@ -40,6 +40,7 @@ import Language.Dickinson.Unique
 %name parseExpression Expression
 %name parseRepl DeclarationOrExpression
 %tokentype { Token AlexPosn }
+%errorhandlertype explist
 %error { parseError }
 %monad { Parse } { (>>=) } { pure }
 %lexer { lift alexMonadScan >>= } { EOF _ }
@@ -214,16 +215,16 @@ processMultiChunks es = {-# SCC "processMultiChunks" #-}
         in let needle = "\n" <> T.replicate toStrip " "
             in mapStrChunk (T.replace needle "\n") <$> es
 
-parseError :: Token AlexPosn -> Parse a
-parseError = throwError . Unexpected
+parseError :: (Token AlexPosn, [String]) -> Parse a
+parseError = throwError . uncurry Unexpected
 
-data ParseError a = Unexpected (Token a)
+data ParseError a = Unexpected (Token a) [String]
                   | LexErr String
                   deriving (Generic, NFData)
 
 instance Pretty a => Pretty (ParseError a) where
-    pretty (Unexpected tok)  = pretty (loc tok) <+> "Unexpected" <+> pretty tok
-    pretty (LexErr str)      = pretty (T.pack str)
+    pretty (Unexpected tok valid) = pretty (loc tok) <+> "Unexpected" <+> pretty tok <> "." <+> "Expected one of" <+> concatWith (\x y -> x <> "," <+> y) (squotes.pretty<$>valid)
+    pretty (LexErr str)           = pretty (T.pack str)
 
 instance Pretty a => Show (ParseError a) where
     show = show . pretty

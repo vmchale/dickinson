@@ -1,5 +1,7 @@
 # dickinson
 
+  * Use happy's `explist` for more informative parse errors
+
 ## 1.4.3.1
 
   * `base` catch-up
