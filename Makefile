@@ -158,3 +158,6 @@ man/emd.1: man/MANPAGE.md
 install: man/emd.1
 	@cabal install exe:emd --overwrite-policy=always
 	cp man/emd.1 $(HOME)/.local/share/man/man1
+
+fix:
+	fd '\.(cpphs|hs|x|y)$$' $$(ja -F'\s*:\s*' '{%/hs-source-dirs/}{`2}' -i language-dickinson.cabal) -x ja "{%/infix(r|l)?\s+\d+/}{sprintf '- fixity: %s' \`0}}" -i | ja '~.$$0'
