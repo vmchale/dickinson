@@ -52,6 +52,9 @@ library
     autogen-modules:  Paths_language_dickinson
     default-language: Haskell2010
     ghc-options:      -Wall
+                      -Wincomplete-uni-patterns -Wincomplete-record-updates
+                      -Wredundant-constraints -Widentities
+                      -Wmissing-export-lists -Wcpp-undef -Wunused-packages
     build-depends:
         base >=4.19.0.0 && <5,
         dickinson
@@ -66,20 +69,6 @@ library
         build-depends:
             template-haskell,
             text
-
-    if impl(ghc >=8.0)
-        ghc-options:
-            -Wincomplete-uni-patterns -Wincomplete-record-updates
-            -Wredundant-constraints -Widentities
-
-    if impl(ghc >=8.4)
-        ghc-options: -Wmissing-export-lists
-
-    if impl(ghc >=8.2)
-        ghc-options: -Wcpp-undef
-
-    if impl(ghc >=8.10)
-        ghc-options: -Wunused-packages
 
 library dickinson
     exposed-modules:
@@ -128,6 +117,11 @@ library dickinson
         TransformListComp
 
     ghc-options:      -Wall -O2 -fstatic-argument-transformation
+                      -Wincomplete-uni-patterns -Wincomplete-record-updates
+                      -Wredundant-constraints -Widentities
+                      -Wmissing-export-lists -Wcpp-undef -Wunused-packages
+                      -Wno-x-partial
+
     build-depends:
         base >=4.9 && <5,
         array,
@@ -150,23 +144,6 @@ library dickinson
     if !flag(cross)
         build-tool-depends: alex:alex >=3.5.0.0, happy:happy >=1.17.1
 
-    if !impl(ghc >=8.0)
-        build-depends: semigroups
-
-    if impl(ghc >=8.0)
-        ghc-options:
-            -Wincomplete-uni-patterns -Wincomplete-record-updates
-            -Wredundant-constraints -Widentities
-
-    if impl(ghc >=8.4)
-        ghc-options: -Wmissing-export-lists
-
-    if impl(ghc >=8.2)
-        ghc-options: -Wcpp-undef
-
-    if impl(ghc >=8.10)
-        ghc-options: -Wunused-packages
-
 executable emd
     main-is:          Main.hs
     hs-source-dirs:   run
@@ -182,6 +159,10 @@ executable emd
     other-extensions: FlexibleContexts OverloadedStrings TupleSections
     ghc-options:
         -Wall -rtsopts -with-rtsopts=-A4M -fstatic-argument-transformation
+        -Wincomplete-uni-patterns -Wincomplete-record-updates
+        -Wredundant-constraints -Widentities
+        -Wmissing-export-lists -Wcpp-undef -Wunused-packages
+        -Wno-x-partial
 
     build-depends:
         base,
@@ -208,20 +189,6 @@ executable emd
         cpp-options:   -DZSTD
         build-depends: zstd
 
-    if impl(ghc >=8.0)
-        ghc-options:
-            -Wincomplete-uni-patterns -Wincomplete-record-updates
-            -Wredundant-constraints -Widentities
-
-    if impl(ghc >=8.4)
-        ghc-options: -Wmissing-export-lists
-
-    if impl(ghc >=8.2)
-        ghc-options: -Wcpp-undef
-
-    if impl(ghc >=8.10)
-        ghc-options: -Wunused-packages
-
 test-suite dickinson-test
     type:             exitcode-stdio-1.0
     main-is:          Spec.hs
@@ -236,6 +203,9 @@ test-suite dickinson-test
     default-language: Haskell2010
     other-extensions: OverloadedStrings TemplateHaskell
     ghc-options:      -threaded -rtsopts "-with-rtsopts=-N -K1K" -Wall
+                      -Wincomplete-uni-patterns -Wincomplete-record-updates
+                      -Wredundant-constraints -Widentities
+                      -Wmissing-export-lists -Wcpp-undef -Wunused-packages
     build-depends:
         base,
         dickinson,
@@ -248,20 +218,6 @@ test-suite dickinson-test
         tasty-golden,
         pretty-simple >=4.0.0.0,
         language-dickinson
-
-    if impl(ghc >=8.0)
-        ghc-options:
-            -Wincomplete-uni-patterns -Wincomplete-record-updates
-            -Wredundant-constraints -Widentities
-
-    if impl(ghc >=8.4)
-        ghc-options: -Wmissing-export-lists
-
-    if impl(ghc >=8.2)
-        ghc-options: -Wcpp-undef
-
-    if impl(ghc >=8.10)
-        ghc-options: -Wunused-packages
 
 benchmark dickinson-bench
     type:             exitcode-stdio-1.0
@@ -278,17 +234,3 @@ benchmark dickinson-bench
         criterion,
         bytestring,
         text
-
-    if impl(ghc >=8.0)
-        ghc-options:
-            -Wincomplete-uni-patterns -Wincomplete-record-updates
-            -Wredundant-constraints -Widentities
-
-    if impl(ghc >=8.4)
-        ghc-options: -Wmissing-export-lists
-
-    if impl(ghc >=8.2)
-        ghc-options: -Wcpp-undef
-
-    if impl(ghc >=8.10)
-        ghc-options: -Wunused-packages
