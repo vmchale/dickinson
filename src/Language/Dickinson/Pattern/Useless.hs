@@ -13,19 +13,19 @@ module Language.Dickinson.Pattern.Useless ( PatternM
                                           , specializeTag
                                           ) where
 
-import           Control.Monad              (forM_)
-import           Control.Monad.State.Strict (State, execState)
-import           Data.Coerce                (coerce)
-import           Data.Foldable              (toList, traverse_)
-import           Data.Functor               (void)
-import           Data.IntMap.Strict         (findWithDefault)
-import qualified Data.IntMap.Strict         as IM
-import qualified Data.IntSet                as IS
+import           Control.Monad                    (forM_)
+import           Control.Monad.Trans.State.Strict (State, execState)
+import           Data.Coerce                      (coerce)
+import           Data.Foldable                    (toList, traverse_)
+import           Data.Functor                     (void)
+import           Data.IntMap.Strict               (findWithDefault)
+import qualified Data.IntMap.Strict               as IM
+import qualified Data.IntSet                      as IS
 import           Language.Dickinson.Name
 import           Language.Dickinson.Type
 import           Language.Dickinson.Unique
-import           Lens.Micro                 (Lens')
-import           Lens.Micro.Mtl             (modifying)
+import           Lens.Micro                       (Lens')
+import           Lens.Micro.Mtl                   (modifying)
 
 -- all constructors of a
 data PatternEnv = PatternEnv { allCons :: IM.IntMap IS.IntSet -- ^ all constructors indexed by type
