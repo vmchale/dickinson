@@ -6,7 +6,6 @@
     module Language.Dickinson.Parser ( parse
                                      , parseWithMax
                                      , parseWithCtx
-                                     , parseWithInitCtx
                                      , parseReplWithCtx
                                      , parseExpressionWithCtx
                                      , ParseError (..)
@@ -242,9 +241,6 @@ parseReplWithCtx = parseWithInitSt parseRepl
 
 parseExpressionWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Expression AlexPosn)
 parseExpressionWithCtx = parseWithInitSt parseExpression
-
-parseWithInitCtx :: BSL.ByteString -> Either (ParseError AlexPosn) (AlexUserState, Dickinson AlexPosn)
-parseWithInitCtx bsl = parseWithCtx bsl alexInitUserState
 
 parseWithCtx :: BSL.ByteString -> AlexUserState -> Either (ParseError AlexPosn) (AlexUserState, Dickinson AlexPosn)
 parseWithCtx = parseWithInitSt parseDickinson
