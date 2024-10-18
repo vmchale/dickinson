@@ -2,7 +2,6 @@
 
 module Language.Dickinson.File ( evalIO
                                , evalFile
-                               , checkFile
                                , validateFile
                                , validateBSL
                                , validateAmalgamate
@@ -21,7 +20,6 @@ module Language.Dickinson.File ( evalIO
 
 import           Control.Applicative                  ((<|>))
 import           Control.Composition                  ((.*), (.**), (<=*<))
-import           Control.Exception                    (Exception)
 import           Control.Exception.Value
 import           Control.Monad                        (void, (<=<))
 import           Control.Monad.Except                 (ExceptT, MonadError, runExceptT)
@@ -94,10 +92,6 @@ amalgamateRenameBSL :: [FilePath]
                     -> IO [Declaration AlexPosn]
 amalgamateRenameBSL is fp bsl = flip evalStateT initAmalgamateSt $ fmap eitherThrow $ runExceptT $ amalgamateRenameInpM is fp bsl
 
--- | Check scoping
-checkFile :: [FilePath] -> FilePath -> IO ()
-checkFile = ioChecker checkScope
-
 -- | Check scoping and types
 validateFile :: [FilePath] -> FilePath -> IO ()
 validateFile = void .* validateAmalgamate
@@ -129,9 +123,6 @@ warnFile = warnBSL <=< BSL.readFile
 warnBSL :: BSL.ByteString -> IO ()
 warnBSL = maybeThrowIO . (\x -> checkDuplicates x <|> checkMultiple x) . modDefs
     <=< eitherThrowIO . parse
-
-ioChecker :: Exception e => ([Declaration AlexPosn] -> Maybe e) -> [FilePath] -> FilePath -> IO ()
-ioChecker checker is = maybeThrowIO . checker <=< amalgamateRename is
 
 tcFile :: [FilePath] -> FilePath -> IO ()
 tcFile is = eitherThrowIO . tyRun <=< amalgamateRename is
