@@ -1,4 +1,4 @@
-{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TemplateHaskellQuotes #-}
 
 -- | @since 0.1.2.0
 module Language.Dickinson.TH ( dickinson

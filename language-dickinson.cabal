@@ -63,7 +63,7 @@ library
         exposed-modules: Language.Dickinson.TH
 
     if !flag(cross)
-        other-extensions: TemplateHaskell
+        other-extensions: TemplateHaskellQuotes
 
     if !flag(cross)
         build-depends:
