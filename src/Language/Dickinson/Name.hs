@@ -7,7 +7,6 @@
 module Language.Dickinson.Name ( TyName
                                , Name (..)
                                , NameEnv
-                               , isMain
                                ) where
 
 import           Control.DeepSeq               (NFData (..))
@@ -33,9 +32,6 @@ data Name a = Name { name   :: NonEmpty T.Text
 
 instance NFData a => NFData (Name a) where
     rnf (Name _ u x) = rnf x `seq` u `seq` ()
-
-isMain :: Name a -> Bool
-isMain = (== ("main" :| [])) . name
 
 instance Eq (Name a) where
     (==) (Name _ u _) (Name _ u' _) = u == u'

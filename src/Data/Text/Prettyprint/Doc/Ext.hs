@@ -1,7 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 module Data.Text.Prettyprint.Doc.Ext ( prettyText
-                                     , prettyLazyText
                                      , smartDickinson
                                      , dickinsonText
                                      , dickinsonLazyText
@@ -12,7 +11,6 @@ module Data.Text.Prettyprint.Doc.Ext ( prettyText
                                      , Debug (..)
                                      -- * Operators
                                      , (<#>)
-                                     , (<:>)
                                      , (<^>)
                                      , (<#*>)
                                      ) where
@@ -22,11 +20,10 @@ import           Data.List                 (intersperse)
 import qualified Data.Text                 as T
 import qualified Data.Text.Lazy            as TL
 import           Prettyprinter             (Doc, LayoutOptions (LayoutOptions), PageWidth (AvailablePerLine), Pretty (pretty), SimpleDocStream, concatWith,
-                                            flatAlt, hardline, indent, layoutSmart, softline, vsep, (<+>))
+                                            flatAlt, hardline, indent, layoutSmart, vsep, (<+>))
 import           Prettyprinter.Render.Text (renderLazy, renderStrict)
 
 infixr 6 <#>
-infixr 6 <:>
 infixr 6 <^>
 
 class Debug a where
@@ -34,9 +31,6 @@ class Debug a where
 
 (<#>) :: Doc a -> Doc a -> Doc a
 (<#>) x y = x <> hardline <> y
-
-(<:>) :: Doc a -> Doc a -> Doc a
-(<:>) x y = x <> softline <> y
 
 (<#*>) :: Doc a -> Doc a -> Doc a
 (<#*>) x y = x <> hardline <> indent 2 y
@@ -72,6 +66,3 @@ dickinsonLazyText = renderLazy . smartDickinson
 
 prettyText :: Pretty a => a -> T.Text
 prettyText = dickinsonText . pretty
-
-prettyLazyText :: Pretty a => a -> TL.Text
-prettyLazyText = dickinsonLazyText . pretty
