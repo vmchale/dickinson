@@ -13,6 +13,7 @@
                                      ) where
 
 import Data.Bifunctor (first)
+import Control.Composition ((.*))
 import Control.DeepSeq (NFData)
 import Control.Exception (Exception)
 import Control.Monad.Except (ExceptT, runExceptT, throwError)
@@ -40,8 +41,8 @@ import Language.Dickinson.Unique
 %name parseExpression Expression
 %name parseRepl DeclarationOrExpression
 %tokentype { Token AlexPosn }
-%errorhandlertype explist
 %error { parseError }
+%error.expected
 %monad { Parse } { (>>=) } { pure }
 %lexer { lift alexMonadScan >>= } { EOF _ }
 
@@ -215,8 +216,8 @@ processMultiChunks es = {-# SCC "processMultiChunks" #-}
         in let needle = "\n" <> T.replicate toStrip " "
             in mapStrChunk (T.replace needle "\n") <$> es
 
-parseError :: (Token AlexPosn, [String]) -> Parse a
-parseError = throwError . uncurry Unexpected
+parseError :: Token AlexPosn -> [String] -> Parse a
+parseError = throwError .* Unexpected
 
 data ParseError a = Unexpected (Token a) [String]
                   | LexErr String
