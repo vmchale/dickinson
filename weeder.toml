@@ -1,0 +1,15 @@
+roots = [
+    '^Main\.main$',
+    '^Paths_',
+    'Language\.Dickinson\.[a-zA-Z]',
+    '^Language\.Dickinson\.TH',
+    '^Language\.Dickinson\.Parser\.happy',
+    '^Language\.Dickinson\.Lexer\.(alexInputPrevChar|runAlex|loop|skip|begin|token)',
+]
+unused-types = true
+
+[[root-instances]]
+class = '\.NFData$'
+
+[[root-instances]]
+module = 'Language.Dickinson.Lexer'
