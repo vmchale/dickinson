@@ -9,6 +9,8 @@ include mk/compress.mk
 DCK_LIB := $(wildcard ./lib/*.dck) $(wildcard ./lib/grammar/*.dck)
 DCK_PRELUDE := $(wildcard ./prelude/*.dck)
 
+HC ?= ghc
+
 HS_SRC := $(shell find run -type f) $(shell find src -type f) language-dickinson.cabal
 
 VERSION := $(shell grep -o '[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*' language-dickinson.cabal | head -n1)
@@ -156,7 +158,7 @@ man/emd.1: man/MANPAGE.md
 	pandoc $< -s -t man -o $@
 
 install: man/emd.1
-	@cabal install exe:emd --overwrite-policy=always
+	@cabal install exe:emd --overwrite-policy=always -w $(HC)
 	cp man/emd.1 $(HOME)/.local/share/man/man1
 
 fix:
