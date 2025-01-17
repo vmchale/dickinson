@@ -51,7 +51,7 @@ common warnings
         -Wall
         -Wincomplete-uni-patterns -Wincomplete-record-updates
         -Wredundant-constraints -Widentities -Wmissing-export-lists
-        -Wcpp-undef -Wunused-packages
+        -Wcpp-undef -Wunused-packages -Winvalid-haddock
 
 library
     import:           warnings
