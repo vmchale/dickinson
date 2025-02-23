@@ -120,7 +120,7 @@ data Complete a = NotComplete
 
 extrCons :: Pattern a -> [Name a]
 extrCons (PatternCons _ c) = [c]
-extrCons (OrPattern _ ps)  = concatMap extrCons (toList ps)
+extrCons (OrPattern _ ps)  = concatMap extrCons ps
 extrCons _                 = []
 
 -- Is the first column of the pattern matrix complete?
