@@ -314,11 +314,8 @@ instance Pretty AlexPosn where
     pretty (AlexPn _ line col) = pretty line <> colon <> pretty col
 
 deriving instance Generic AlexPosn
-
 deriving instance NFData AlexPosn
-
 deriving instance Binary AlexPosn
-
 deriving instance Data AlexPosn
 
 data Token a = EOF { loc :: a }
