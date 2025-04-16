@@ -206,8 +206,7 @@ mapStrChunk f (StrChunk l t) = StrChunk l (f t)
 mapStrChunk _ e              = e
 
 minIndentChunks :: [Expression a] -> Int
-minIndentChunks es =
-    minimum (maxBound : mapMaybe minIndentExpr es)
+minIndentChunks es = minimum (maxBound : mapMaybe minIndentExpr es)
 
 processMultiChunks :: [Expression a] -> [Expression a]
 processMultiChunks es = {-# SCC "processMultiChunks" #-}
