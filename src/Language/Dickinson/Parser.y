@@ -198,7 +198,7 @@ minIndent :: T.Text -> Int
 minIndent t = minimum (maxBound : fmap countSpaces (dropDoubleNewlines $ T.lines t)) -- reduce duplicates
 
 minIndentExpr :: Expression a -> Maybe Int
-minIndentExpr (StrChunk _ t) | "\n" `T.isInfixOf` t  = Just $ minIndent $ T.tail $ T.dropWhile (/= '\n') t -- tail because T.lines "\n   hello" is ["", "    hello"]
+minIndentExpr (StrChunk _ t) | "\n" `T.isInfixOf` t  = Just $ minIndent $ T.tail $ T.dropWhile (/= '\n') t
 minIndentExpr _                                      = Nothing
 
 mapStrChunk :: (T.Text -> T.Text) -> Expression a -> Expression a
