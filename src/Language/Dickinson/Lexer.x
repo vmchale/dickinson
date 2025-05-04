@@ -141,8 +141,7 @@ tokens :-
 
 {
 
-instance MonadFail Alex where
-    fail = alexError
+instance MonadFail Alex where fail = alexError
 
 escReplace :: T.Text -> T.Text
 escReplace =
@@ -160,8 +159,7 @@ popScd :: Alex ()
 popScd = mod_ust (\(x,pop,y,z) -> (x,tail pop,y,z))
 
 pushScd :: ScdState -> Alex ()
-pushScd st =
-    mod_ust (\(x,push,y,z) -> (x,st:push,y,z))
+pushScd st = mod_ust (\(x,push,y,z) -> (x,st:push,y,z))
 
 exitInterp :: Alex ()
 exitInterp = do
@@ -191,9 +189,7 @@ tok f (p,_,s,_) len = f p (BSL.take len s)
 constructor c t = tok (\p _ -> alex $ c p t)
 
 mkKeyword = constructor TokKeyword
-
 mkBuiltin = constructor TokBuiltin
-
 mkSym = constructor TokSym
 
 doSym t act = tok (\p _ -> TokSym p t <$ act)
