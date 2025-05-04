@@ -52,6 +52,7 @@ common warnings
         -Wincomplete-uni-patterns -Wincomplete-record-updates
         -Wredundant-constraints -Widentities -Wmissing-export-lists
         -Wcpp-undef -Wunused-packages -Winvalid-haddock
+        -Wno-x-partial
 
 library
     import:           warnings
@@ -157,7 +158,7 @@ executable emd
     autogen-modules:  Paths_language_dickinson
     other-extensions: FlexibleContexts OverloadedStrings TupleSections
     ghc-options:
-        -Wall -rtsopts -with-rtsopts=-A4M -fstatic-argument-transformation
+        -rtsopts -with-rtsopts=-A4M -fstatic-argument-transformation
 
     build-depends:
         base,
