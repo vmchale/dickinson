@@ -208,10 +208,10 @@ class HasLexerState a where
     lexerStateLens :: Lens' a AlexUserState
 
 newIdentAlex :: AlexPosn -> T.Text -> Alex (Name AlexPosn)
-newIdentAlex pos t = do
-    st <- alexGetUserState
-    let (st', n) = newIdent pos t st
-    alexSetUserState st' $> (n $> pos)
+newIdentAlex pos t = Alex $ Right . \s ->
+    let st = alex_ust s
+        (st', n) = newIdent pos t st
+    in (s { alex_ust = st' }, n$>pos)
 
 newIdent :: AlexPosn -> T.Text -> AlexUserState -> (AlexUserState, Name AlexPosn)
 newIdent pos t pre@(max', scd, names, uniqs) = {-# SCC "newIdent" #-}
