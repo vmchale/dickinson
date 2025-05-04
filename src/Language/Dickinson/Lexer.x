@@ -144,10 +144,13 @@ tokens :-
 instance MonadFail Alex where fail = alexError
 
 escReplace :: T.Text -> T.Text
-escReplace =
-      T.replace "\\\"" "\""
-    . T.replace "\\n" "\n"
-    . T.replace "\\$" "$"
+escReplace = fst . T.foldl' g (T.empty, False) where
+    g (t, True) '\\'  = (t `T.snoc` '\\', False)
+    g (t, False) '\\' = (t, True)
+    g (t, True) '"'   = (t `T.snoc` '"', False)
+    g (t, True) 'n'   = (t `T.snoc` '\n', False)
+    g (t, True) '$'   = (t `T.snoc` '$', False)
+    g (t, _) c        = (t `T.snoc` c, False)
 
 mkText :: BSL.ByteString -> T.Text
 mkText = {-# SCC "mkText" #-} decodeUtf8 . BSL.toStrict
