@@ -510,4 +510,7 @@
       (| "plissé")
       (| "moiré")
       (| "hangtag")
+      (| "peplum")
+      (| "grosgrain")
+      (| "bodkin")
       (| "folderol"))))
