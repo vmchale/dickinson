@@ -15,4 +15,5 @@
     (| "lemmatize")
     (| "mercerize")
     (| "miter")
+    (| "shirr")
     (| "boke")))
