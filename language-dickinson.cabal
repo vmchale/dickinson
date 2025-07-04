@@ -193,7 +193,6 @@ test-suite dickinson-test
     other-modules:
         Eval
         Golden
-        Roundtrip.Compare
         TypeCheck
         TH
 
