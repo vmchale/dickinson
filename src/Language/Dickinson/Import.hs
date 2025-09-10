@@ -3,6 +3,8 @@ module Language.Dickinson.Import ( resolveImport
 
 import           Control.Monad           (filterM)
 import           Control.Monad.IO.Class  (MonadIO (..))
+import           Data.List               (foldl')
+import           Data.List.NonEmpty      (NonEmpty ((:|)))
 import           Data.Maybe              (listToMaybe)
 import qualified Data.Text               as T
 import           Language.Dickinson.Name
@@ -24,4 +26,4 @@ resolveImport incl n = liftIO
     . fmap (</> getFileName n) $ incl
 
 getFileName :: Name a -> FilePath
-getFileName = (<> ".dck") . foldr ((</>) . T.unpack) mempty . name
+getFileName = (<> ".dck") . (\(x:|xs) -> foldl' (</>) x xs) . fmap T.unpack . name

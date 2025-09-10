@@ -1,6 +1,7 @@
 # dickinson
 
   * Use happy's `explist` for more informative parse errors
+  * Fix imports in nested directories
 
 ## 1.4.3.1
 
