@@ -3,6 +3,36 @@
 
 %-
 
+(:def pattern
+  (:oneof
+    (| "herringbone")
+    (| "houndstooth")))
+
+(:def fabric
+  (:oneof
+    (| "satin")
+    (| "velvet")
+    (| "velveteen")
+    (| "georgette")
+    (| "velour")
+    (| "linen")))
+
+(:def fiber
+  (:oneof
+    (| "cotton")
+    (| "silk")
+    (| "rayon")
+    (| "jute")
+    (| "hemp")
+    (| "acetate")
+    (| "viscose")
+    (| "ramie")
+    (| "wool")
+    (| "cashmere")
+    (| "mohair")
+    (| "alpaca")
+    (| "flax")))
+
 ; see: http://rhetoric.byu.edu/default.htm
 (:def rhetoricalDevice
   (:oneof
@@ -475,6 +505,7 @@
       (| "panjandrum")
       (| "sortition")
       (| "stotting")
+      (| "knobkerrie")
       (| "chevet")
       (| "subrogation")
       (| "stoup")
@@ -514,11 +545,39 @@
       (| "grosgrain")
       (| "bodkin")
       (| "armscye")
-      (| "georgette")
+      (| "heddle")
       (| "décolletage")
+      (| "akathisia")
       (| "slub")
       (| "fagoting")
       (| "wale")
       (| "zibeline")
+      (| "trousseau")
+      (| "desman")
       (| "virago")
+      (| "pomace")
+      (| "soutache")
+      (| "rickrack")
+      (| "noil")
+      (| "tracery")
+      (| "tippet")
+      (| "dirndl")
+      (| "skiving")
+      (| "spoliation")
+      (| "burin")
+      (| "pongee")
+      (| "jenny")
+      (| "scrim")
+      (| "doxology")
+      (| "distaff")
+      (| "genet")
+      (| "suslik")
+      (| "gubbins")
+      (| "viscacha")
+      (| "pondage")
+      (| "demesne")
+      (| "tortfeasor")
+      (| "armiger")
+      (| "serjeanty")
+      (| "cupellation")
       (| "folderol"))))
