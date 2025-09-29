@@ -1,7 +1,6 @@
 module Data.Foldable.Ext ( foldMapAlternative ) where
 
-import           Control.Applicative (Alternative)
-import           Data.Foldable       (asum)
+import           Control.Applicative (Alternative (empty, (<|>)))
 
-foldMapAlternative :: (Traversable t, Alternative f) => (a -> f b) -> t a -> f b
-foldMapAlternative f xs = asum (f <$> xs)
+foldMapAlternative :: (Alternative f, Foldable t) => (a -> f b) -> t a -> f b
+foldMapAlternative f = foldr (\x acc -> f x <|> acc) empty
