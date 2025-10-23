@@ -327,7 +327,7 @@ data Token a = EOF { loc :: a }
              | TokKeyword { loc :: a, kw :: Keyword }
              | TokSym { loc :: a, sym :: Sym }
              | TokBuiltin { loc :: a, builtin :: Builtin }
-             deriving (Eq, Generic, NFData)
+             deriving (Generic, NFData)
 
 instance Pretty (Token a) where
     pretty EOF{}                = mempty
