@@ -15,6 +15,7 @@
     (| "velveteen")
     (| "georgette")
     (| "velour")
+    (| "loden")
     (| "linen")))
 
 (:def fiber
