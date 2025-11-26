@@ -15,8 +15,8 @@ import Data.Bifunctor (first)
 import Control.Composition ((.*))
 import Control.DeepSeq (NFData)
 import Control.Exception (Exception)
-import Control.Monad.Except (ExceptT, runExceptT, throwError)
 import Control.Monad.Trans.Class (lift)
+import Control.Monad.Trans.Except (ExceptT, runExceptT, throwE)
 import qualified Data.ByteString.Lazy as BSL
 import Data.Foldable (toList)
 import qualified Data.List.NonEmpty as NE
@@ -215,7 +215,7 @@ processMultiChunks es = {-# SCC "processMultiChunks" #-}
             in mapStrChunk (T.replace needle "\n") <$> es
 
 parseError :: Token AlexPosn -> [String] -> Parse a
-parseError = throwError .* Unexpected
+parseError = throwE .* Unexpected
 
 data ParseError a = Unexpected (Token a) [String]
                   | LexErr String
