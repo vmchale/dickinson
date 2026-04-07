@@ -117,6 +117,7 @@
   (:oneof
     (| "balneology")
     (| "soteriology")
+    (| "psephology")
     (| "dietetics")))
 
 ; ogee
