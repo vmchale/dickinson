@@ -185,13 +185,15 @@ escReplace =
 allEq :: Eq a => NonEmpty a -> Bool
 allEq (x :| xs) = all (== x) xs
 
--- figure out indentation
+vsnoc :: [Doc a] -> Doc a -> Doc a
+vsnoc [] x = x
+vsnoc xs x = vsep xs <> line <> x
+
 instance Pretty (Expression a) where
     pretty (Var _ n)          = pretty n
     pretty (Literal _ l)      = dquotes $ pretty (escReplace l)
-    pretty (Let _ ls e)       = group (parens (":let" <^> vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e])))
-    pretty (Bind _ ls e)      = group (parens (":bind" <^> vsep (toList (fmap prettyLetLeaf ls) ++ [pretty e])))
-    -- also comments lol
+    pretty (Let _ ls e)       = group (parens (":let" <^> vsnoc (toList (fmap prettyLetLeaf ls)) (pretty e)))
+    pretty (Bind _ ls e)      = group (parens (":bind" <^> vsnoc (toList (fmap prettyLetLeaf ls)) (pretty e)))
     pretty (Choice _ brs)
         | allEq (fst <$> brs) = parens (":oneof" <#> indent 2 (hardSep (toList $ fmap prettyChoiceOneof (snd <$> brs))))
         | otherwise           = parens (":branch" <#> indent 2 (hardSep (toList $ fmap prettyChoiceBranch brs)))
